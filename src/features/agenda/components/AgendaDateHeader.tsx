@@ -1,0 +1,33 @@
+import React from "react";
+import { formatDateWithDayOfWeekBR } from "@/utils/dateUtils";
+import HolidayIndicator from "./HolidayIndicator";
+import { useHolidayForDate } from "../hooks/useHolidayForDate";
+
+interface AgendaDateHeaderProps {
+  date: string; // YYYY-MM-DD format
+}
+
+/**
+ * AgendaDateHeader - Displays date with optional holiday indicator
+ */
+const AgendaDateHeader: React.FC<AgendaDateHeaderProps> = ({ date }) => {
+  const { holiday } = useHolidayForDate(date);
+
+  return (
+    <div className="flex items-start gap-2">
+      <div className="flex-1">
+        <div className="font-semibold">{formatDateWithDayOfWeekBR(date)}</div>
+        {holiday && (
+          <div className="mt-1">
+            <HolidayIndicator
+              holidayName={holiday.name}
+              description={holiday.description}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default AgendaDateHeader;

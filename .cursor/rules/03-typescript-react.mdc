@@ -1,0 +1,189 @@
+---
+globs: *.ts,*.tsx
+---
+
+# TypeScript and React Guidelines
+
+## TypeScript Strict Mode
+
+This project uses TypeScript strict mode. **NO** exceptions.
+
+### Type Requirements
+
+```typescript
+// ✅ CORRECT: Explicit types for props
+interface ComponentProps {
+  required: string;
+  optional?: number;
+  children: React.ReactNode;
+}
+
+export function Component({ required, optional, children }: ComponentProps) {
+  return <div>{children}</div>;
+}
+
+// ❌ WRONG: No any types allowed
+function badFunction(data: any) {} // NEVER DO THIS
+```
+
+### API Response Types
+
+Backend returns `snake_case`, frontend uses `camelCase`:
+
+```typescript
+// Backend response
+interface PatientResponse {
+  patient_id: number;
+  full_name: string;
+  birth_date: string;
+}
+
+// Frontend type (after transformation)
+interface Patient {
+  patientId: number;
+  fullName: string;
+  birthDate: string;
+}
+```
+
+**Always use transformKeys.toCamelCase() for API responses** - see [axios.ts](mdc:src/api/lib/axios.ts)
+
+## React Patterns
+
+### Component Structure
+
+```typescript
+// Main component file
+export function MyComponent({ prop }: Props) {
+  const logic = useMyComponentLogic();
+  return <div>{/* JSX */}</div>;
+}
+
+// Custom hook (if complex logic)
+function useMyComponentLogic() {
+  // Business logic, side effects
+  return {
+    /* state and handlers */
+  };
+}
+```
+
+### Performance Optimizations
+
+```typescript
+// ✅ CORRECT: Selective Zustand subscriptions
+const selectedDate = useAttendanceStore((state) => state.selectedDate);
+
+// ❌ WRONG: Subscribe to entire store
+const store = useAttendanceStore(); // Re-renders on any change
+
+// ✅ CORRECT: Memoize expensive calculations
+const sortedData = useMemo(() => data.sort(complexSort), [data]);
+
+// ✅ CORRECT: Stable callbacks
+const handleClick = useCallback(() => doSomething(data), [data]);
+```
+
+### Code Splitting
+
+Use lazy loading for route-level components:
+
+```typescript
+const AttendanceBoard = lazy(
+  () => import("@/features/attendance/AttendanceBoard")
+);
+
+<Suspense fallback={<LoadingFallback />}>
+  <AttendanceBoard />
+</Suspense>;
+```
+
+## Import Organization
+
+```typescript
+// 1. External libraries
+import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+// 2. Internal modules (use @ alias)
+import { Patient } from "@/types/types";
+import { usePatientQueries } from "@/hooks/usePatientQueries";
+
+// 3. Relative imports
+import { SubComponent } from "./SubComponent";
+```
+
+## Never Commit
+
+- `any` types (use `unknown` if truly unknown)
+- Unused variables or imports
+- console.log statements (except intentional logging)
+- Commented-out code
+- TypeScript errors or warnings
+
+## No `any` Type — Strict Type Safety
+
+**CRITICAL**: Never use the `any` type anywhere in this project. Always use proper TypeScript types.
+
+### ❌ NEVER
+
+```typescript
+// WRONG - Using any
+function processData(data: any) {
+  return data.someProperty;
+}
+
+const result: any = await fetchData();
+
+function handleEvent(event: any) {
+  event.preventDefault();
+}
+```
+
+### ✅ ALWAYS
+
+```typescript
+// GOOD - Use proper types
+interface DataResponse {
+  someProperty: string;
+}
+
+function processData(data: DataResponse) {
+  return data.someProperty;
+}
+
+const result: DataResponse = await fetchData();
+
+function handleEvent(event: React.MouseEvent<HTMLButtonElement>) {
+  event.preventDefault();
+}
+```
+
+### Alternatives to `any`
+
+| Instead of               | Use                                                         |
+| ------------------------ | ----------------------------------------------------------- |
+| `any`                    | Define a proper interface or type                           |
+| `any[]`                  | `Array<ConcreteType>` or `ConcreteType[]`                   |
+| Function parameter `any` | Define parameter interface                                  |
+| Generic `any`            | Use proper generic constraints like `<T extends SomeType>`  |
+| Unknown API response     | Create interface from API docs or use `unknown` then narrow |
+
+### When You Don't Know the Type
+
+```typescript
+// Use 'unknown' and narrow the type
+function processUnknown(data: unknown) {
+  if (typeof data === "object" && data !== null && "id" in data) {
+    // Type narrowed safely
+    return (data as { id: number }).id;
+  }
+  throw new Error("Invalid data");
+}
+```
+
+### Applies To
+
+- All `.ts` and `.tsx` files in frontend (`hms-frontend`)
+- All `.ts` files in backend (`hms-backend`)
+- No exceptions - strict type safety is required

@@ -1,0 +1,102 @@
+---
+alwaysApply: true
+description: Enforces timezone-aware date handling to prevent UTC vs local timezone bugs
+---
+
+# Timezone-Aware Date Handling
+
+**CRITICAL**: This project has specific requirements for handling dates to prevent timezone bugs. Always use timezone-aware utilities.
+
+## ❌ NEVER DO THIS
+
+```typescript
+// WRONG - Returns UTC date, not user's timezone
+const today = new Date().toISOString().slice(0, 10);
+
+// WRONG - In stores
+const initialState = {
+  selectedDate: new Date().toISOString().slice(0, 10),
+};
+
+// WRONG - In API calls
+scheduledDate: params.scheduledDate || new Date().toISOString().slice(0, 10);
+```
+
+**Why?** When it's 9 PM on Jan 21 in GMT-8, UTC time is already Jan 22 at 5 AM. Using `.toISOString()` gives you the wrong date!
+
+## ✅ ALWAYS DO THIS
+
+### In React Components
+
+```typescript
+import { useDateHelpers } from "@/hooks/useDateHelpers";
+
+function MyComponent() {
+  const { getTodayDate } = useDateHelpers();
+  const today = getTodayDate(); // "2026-01-21" ✅
+}
+```
+
+### In Stores, API Calls, Utilities (Non-React Code)
+
+```typescript
+import { getTodayClinic } from "@/utils/timezoneDate";
+
+const today = getTodayClinic(); // "2026-01-21" in clinic timezone ✅
+```
+
+## Quick Decision Tree
+
+```
+Need a date?
+├─ In React component?
+│  ├─ Yes → Use useDateHelpers()
+│  └─ No → Use getTodayClinic() or formatDateClinic()
+│
+└─ Need specific timezone?
+   └─ Use getTodayInTimezone(tz) or formatDateInTimezone(date, tz)
+```
+
+## Common Patterns
+
+| Task              | React Component                                                                                                           | Non-React Code                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| Get today         | `const { getTodayDate } = useDateHelpers();<br>const today = getTodayDate();`                                             | `import { getTodayClinic } from '@/utils/timezoneDate';<br>const today = getTodayClinic();`                               |
+| Format date       | `const { formatDate } = useDateHelpers();<br>const formatted = formatDate(date);`                                         | `import { formatDateClinic } from '@/utils/timezoneDate';<br>const formatted = formatDateClinic(date);`                   |
+| Specific timezone | `const { formatDateInTimezone } = useDateHelpers();<br>const laDate = formatDateInTimezone(date, "America/Los_Angeles");` | `import { getTodayInTimezone } from '@/utils/timezoneDate';<br>const laDate = getTodayInTimezone("America/Los_Angeles");` |
+
+## Usage Context Reference
+
+| Context                | Utility to Use                                                                           |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| React component        | `useDateHelpers()` hook from `@/hooks/useDateHelpers`                                    |
+| Zustand store          | `getTodayClinic()` or `formatDateClinic()` from `@/utils/timezoneDate`                   |
+| API function           | `getTodayClinic()` or `formatDateClinic()` from `@/utils/timezoneDate`                   |
+| React Query hook       | `getTodayClinic()` or `formatDateClinic()` from `@/utils/timezoneDate`                   |
+| Utility function       | `getTodayClinic()` or `formatDateClinic()` from `@/utils/timezoneDate`                   |
+| Need specific timezone | `getTodayInTimezone(tz)` or `formatDateInTimezone(date, tz)` from `@/utils/timezoneDate` |
+
+## Important Notes
+
+1. **Always use YYYY-MM-DD format** for dates in the application
+2. **Never use `.toISOString().slice(0, 10)` directly** - it returns UTC dates
+3. **All functions handle null/undefined gracefully** - they return today as fallback
+4. **Can't use hooks in stores** - use utility functions from `@/utils/timezoneDate` instead
+5. **Clinic timezone** comes from `NEXT_PUBLIC_CLINIC_TIMEZONE` (must match backend `CLINIC_TIMEZONE`)
+
+## Before Code Review Checklist
+
+When implementing features with dates:
+
+- [ ] Not using `new Date().toISOString().slice(0, 10)` anywhere
+- [ ] Using `useDateHelpers()` in React components
+- [ ] Using `getTodayClinic()`/`formatDateClinic()` in non-React code
+- [ ] All dates in YYYY-MM-DD format
+- [ ] Date inputs use clinic timezone (not browser UTC via `toISOString`)
+
+## Full Documentation
+
+For complete reference and examples, see:
+
+- [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md) — Date handling and timezone utilities
+- [SETUP.md](mdc:docs/SETUP.md) — Environment and timezone configuration notes

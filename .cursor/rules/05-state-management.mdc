@@ -1,0 +1,190 @@
+---
+globs: src/stores/**,src/api/query/hooks/**,src/contexts/**
+---
+
+# State Management Rules
+
+## Decision Tree
+
+**Before creating any state, ask:**
+
+1. **Is it server data?** → Use React Query
+2. **Is it UI state?** → Use Zustand
+3. **Is it a global setting?** → Use React Context (sparingly)
+
+## React Query - Server State
+
+### Query Hooks Pattern
+
+```typescript
+// src/api/query/hooks/usePatientQueries.ts
+export function usePatients() {
+  return useQuery({
+    queryKey: ["patients"],
+    queryFn: getPatients,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+export function usePatient(id: number) {
+  return useQuery({
+    queryKey: ["patient", id],
+    queryFn: () => getPatient(id),
+    enabled: !!id, // Only run if id exists
+  });
+}
+```
+
+### Mutation Pattern
+
+```typescript
+export function useCreatePatient() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createPatient,
+    onSuccess: () => {
+      // Invalidate and refetch
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+    },
+  });
+}
+```
+
+### Query Keys
+
+Consistent naming for cache management:
+
+```typescript
+// ✅ CORRECT: Hierarchical keys
+["patients"][("patient", id)][("attendances", date)][("treatments", patientId)][ // All patients // Single patient // Attendances by date // Patient treatments
+  // ❌ WRONG: Inconsistent keys
+  "getPatients"
+]["patient_1"];
+```
+
+## Zustand - UI State
+
+### Store Structure
+
+```typescript
+// src/stores/featureStore.ts
+import { getTodayClinic } from "@/utils/timezoneDate";
+
+interface FeatureStore {
+  // State
+  selectedDate: string;
+  draggedItem: Item | null;
+
+  // Actions
+  setSelectedDate: (date: string) => void;
+  setDraggedItem: (item: Item | null) => void;
+
+  // Computed/Async
+  checkStatus: () => Promise<boolean>;
+}
+
+export const useFeatureStore = create<FeatureStore>()(
+  devtools(
+    (set, get) => ({
+      selectedDate: getTodayClinic(),
+      draggedItem: null,
+
+      setSelectedDate: (date) => set({ selectedDate: date }),
+      setDraggedItem: (item) => set({ draggedItem: item }),
+
+      checkStatus: async () => {
+        const state = get();
+        // Business logic
+        return true;
+      },
+    }),
+    { name: "FeatureStore" }
+  )
+);
+```
+
+### Selective Subscriptions (Performance)
+
+```typescript
+// ✅ CORRECT: Only re-renders when selectedDate changes
+const selectedDate = useFeatureStore((state) => state.selectedDate);
+const setDate = useFeatureStore((state) => state.setSelectedDate);
+
+// ❌ WRONG: Re-renders on any store change
+const store = useFeatureStore();
+```
+
+### Selectors Pattern
+
+```typescript
+// src/stores/featureSelectors.ts
+export const useSelectedDate = () =>
+  useFeatureStore((state) => state.selectedDate);
+
+export const useSetSelectedDate = () =>
+  useFeatureStore((state) => state.setSelectedDate);
+```
+
+## React Context - Global Settings
+
+**Use sparingly** - Only for truly global, infrequently-changing data.
+
+### Current Usage
+
+- **Timezone Settings** - see [TimezoneContext.tsx](mdc:src/contexts/TimezoneContext.tsx)
+- **Theme Preferences** (planned)
+
+### Context Pattern
+
+```typescript
+// Context definition
+const MyContext = createContext<MyContextType | undefined>(undefined);
+
+// Provider
+export function MyProvider({ children }: Props) {
+  const [state, setState] = useState(initialState);
+
+  return (
+    <MyContext.Provider value={{ state, setState }}>
+      {children}
+    </MyContext.Provider>
+  );
+}
+
+// Hook
+export function useMyContext() {
+  const context = useContext(MyContext);
+  if (!context) throw new Error("useMyContext must be used within MyProvider");
+  return context;
+}
+```
+
+## State Management Anti-Patterns
+
+❌ **Don't duplicate server data in Zustand**
+
+```typescript
+// WRONG: Server data should only be in React Query
+const patients = useStore((state) => state.patients);
+```
+
+❌ **Don't use Context for frequently-changing data**
+
+```typescript
+// WRONG: Use Zustand for UI state that changes often
+const [draggedItem, setDraggedItem] = useState();
+```
+
+❌ **Don't use Zustand for server data**
+
+```typescript
+// WRONG: Use React Query for server data
+const fetchPatients = useStore((state) => state.fetchPatients);
+```
+
+## See Also
+
+- [ARCHITECTURE.md - Hybrid State Management](mdc:docs/ARCHITECTURE.md)
+- [attendanceStore.ts](mdc:src/stores/attendanceStore.ts) - Example Zustand store
+- [usePatientQueries.ts](mdc:src/api/query/hooks/usePatientQueries.ts) - Example React Query hooks

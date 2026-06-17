@@ -1,0 +1,203 @@
+---
+globs: src/api/**
+---
+
+# API Integration Guidelines
+
+## Case Transformation
+
+**Critical:** Backend uses `snake_case`, frontend uses `camelCase`.
+
+All API responses MUST be transformed using [apiTransformers.ts](mdc:src/utils/apiTransformers.ts).
+
+### Automatic Transformation
+
+The shared axios client in [axios.ts](mdc:src/api/lib/axios.ts) automatically handles transformations:
+
+```typescript
+// Requests: camelCase → snake_case (automatic)
+// Responses: snake_case → camelCase (automatic)
+
+// Just use camelCase in your code:
+const patient = await getPatient(1);
+console.log(patient.fullName); // ✅ Automatically transformed
+```
+
+### Manual Transformation
+
+If you need to transform manually:
+
+```typescript
+import { transformKeys } from "@/utils/apiTransformers";
+
+// Response transformation
+const frontendData = transformKeys.toCamelCase(backendResponse);
+
+// Request transformation
+const backendData = transformKeys.toSnakeCase(frontendData);
+```
+
+## API Function Pattern
+
+All API functions follow this structure:
+
+```typescript
+// src/api/[resource]/index.ts
+
+import api from "../lib/axios";
+import { Patient } from "@/types/types";
+
+// GET - Fetch single item
+export async function getPatient(id: number): Promise<Patient> {
+  const response = await api.get(`/patients/${id}`);
+  return response.data; // Already transformed by interceptor
+}
+
+// GET - Fetch list
+export async function getPatients(): Promise<Patient[]> {
+  const response = await api.get("/patients");
+  return response.data;
+}
+
+// POST - Create
+export async function createPatient(
+  data: Omit<Patient, "id">
+): Promise<Patient> {
+  const response = await api.post("/patients", data);
+  return response.data;
+}
+
+// PUT/PATCH - Update
+export async function updatePatient(
+  id: number,
+  data: Partial<Patient>
+): Promise<Patient> {
+  const response = await api.put(`/patients/${id}`, data);
+  return response.data;
+}
+
+// DELETE
+export async function deletePatient(id: number): Promise<void> {
+  await api.delete(`/patients/${id}`);
+}
+```
+
+## React Query Integration
+
+Wrap API functions with React Query:
+
+```typescript
+// src/api/query/hooks/usePatientQueries.ts
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPatient, createPatient, updatePatient } from "@/api/patients";
+
+// Query hook
+export function usePatient(id: number) {
+  return useQuery({
+    queryKey: ["patient", id],
+    queryFn: () => getPatient(id),
+    enabled: !!id,
+  });
+}
+
+// Mutation hook
+export function useCreatePatient() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: createPatient,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["patients"] });
+    },
+  });
+}
+```
+
+## Error Handling
+
+The shared axios client includes error interceptors. Handle errors in components:
+
+```typescript
+const { data, isLoading, error } = usePatient(id);
+
+if (error) {
+  return <ErrorDisplay message="Failed to load patient" />;
+}
+```
+
+## Type Safety
+
+### Frontend Types (camelCase)
+
+```typescript
+// src/types/types.ts
+export interface Patient {
+  id: number;
+  fullName: string;
+  birthDate: string;
+  phoneNumber: string;
+}
+```
+
+### Backend Types (snake_case)
+
+Only needed for reference or custom handling:
+
+```typescript
+// Backend response structure
+interface PatientResponse {
+  id: number;
+  full_name: string;
+  birth_date: string;
+  phone_number: string;
+}
+```
+
+## API Organization
+
+```
+src/api/
+├── lib/
+│   ├── axios.ts              # Configured axios with interceptors
+│   └── errorHandler.ts       # Error handling utilities
+├── patients/
+│   ├── index.ts              # Patient API functions
+│   └── __tests__/            # API function tests
+├── attendances/
+│   └── index.ts
+├── consultations/
+│   └── index.ts
+├── treatments/
+│   └── index.ts
+├── sessions/
+│   └── index.ts
+└── types.ts                  # Shared API types
+```
+
+## Testing API Functions
+
+```typescript
+import { getPatient } from "../index";
+import api from "../../lib/axios";
+
+jest.mock("../../lib/axios");
+
+describe("getPatient", () => {
+  it("fetches patient data", async () => {
+    const mockData = { id: 1, fullName: "John Doe" };
+    (api.get as jest.Mock).mockResolvedValue({ data: mockData });
+
+    const result = await getPatient(1);
+
+    expect(result).toEqual(mockData);
+    expect(api.get).toHaveBeenCalledWith("/patients/1");
+  });
+});
+```
+
+## See Also
+
+- [axios.ts](mdc:src/api/lib/axios.ts) - Axios configuration
+- [apiTransformers.ts](mdc:src/utils/apiTransformers.ts) - Case transformation utilities
+- [ARCHITECTURE.md - API Integration](mdc:docs/ARCHITECTURE.md)

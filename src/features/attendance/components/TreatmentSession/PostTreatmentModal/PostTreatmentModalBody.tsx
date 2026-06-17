@@ -1,0 +1,90 @@
+import React from "react";
+import { TreatmentTypeSection } from "./TreatmentTypeSection";
+import { GeneralNotesField } from "./GeneralNotesField";
+import type { PostTreatmentRow } from "./types";
+import { Button } from "@/components/ui";
+
+interface PostTreatmentModalBodyProps {
+  loading: boolean;
+  error: Error | unknown | null | undefined;
+  rows: PostTreatmentRow[];
+  rowsByType: { physiotherapy: PostTreatmentRow[]; tens: PostTreatmentRow[] };
+  completedAttendanceIds: Set<number>;
+  cancellationReasons: Map<number, string>;
+  generalNotes: string;
+  setGeneralNotes: (value: string) => void;
+  isSubmitting: boolean;
+  onToggle: (attendanceId: number) => void;
+  onCancellationReasonChange: (attendanceId: number, value: string) => void;
+  onRetry: () => void | Promise<void>;
+}
+
+export const PostTreatmentModalBody: React.FC<PostTreatmentModalBodyProps> = ({
+  loading,
+  error,
+  rows,
+  rowsByType,
+  completedAttendanceIds,
+  cancellationReasons,
+  generalNotes,
+  setGeneralNotes,
+  isSubmitting,
+  onToggle,
+  onCancellationReasonChange,
+  onRetry,
+}) => (
+  <div className="p-4 overflow-y-auto flex-1 min-h-0">
+    {loading ? (
+      <div className="flex justify-center py-8 text-gray-500">
+        Carregando...
+      </div>
+    ) : error ? (
+      <div className="py-8 text-red-600 text-center space-y-3">
+        <p>
+          Erro ao carregar:{" "}
+          {typeof error === "object" && error !== null && "message" in error
+            ? String((error as Error).message)
+            : String(error)}
+        </p>
+        <Button type="button" onClick={onRetry} variant="secondary">
+          Tentar Novamente
+        </Button>
+      </div>
+    ) : rows.length === 0 ? (
+      <div className="py-8 text-gray-500 text-center space-y-3">
+        <p>Nenhum tratamento encontrado para estes atendimentos.</p>
+        <Button type="button" onClick={onRetry} variant="secondary">
+          Tentar Novamente
+        </Button>
+      </div>
+    ) : (
+      <>
+        <p className="text-sm text-gray-600 mb-3">
+          Tratamentos realizados. Caso algum não tenha sido concluído, desmarque
+          e informe o motivo (estes terão seu status alteados para
+          &quot;cancelado&quot;).
+        </p>
+        <div className="space-y-4">
+          {(["physiotherapy", "tens"] as const).map((treatmentType) => {
+            const typeRows = rowsByType[treatmentType];
+            if (typeRows.length === 0) return null;
+
+            return (
+              <TreatmentTypeSection
+                key={treatmentType}
+                treatmentType={treatmentType}
+                rows={typeRows}
+                completedAttendanceIds={completedAttendanceIds}
+                cancellationReasons={cancellationReasons}
+                isSubmitting={isSubmitting}
+                onToggle={onToggle}
+                onCancellationReasonChange={onCancellationReasonChange}
+              />
+            );
+          })}
+        </div>
+        <GeneralNotesField value={generalNotes} onChange={setGeneralNotes} />
+      </>
+    )}
+  </div>
+);

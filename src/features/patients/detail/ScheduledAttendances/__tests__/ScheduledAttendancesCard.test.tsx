@@ -1,0 +1,470 @@
+import React from "react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import { ScheduledAttendancesCard } from "../ScheduledAttendancesCard";
+
+// Mock all dependencies to focus on testing the component logic
+jest.mock("@/api/query/hooks/usePatientQueries", () => ({
+  usePatientAttendances: jest.fn(),
+}));
+
+jest.mock("@/api/query/hooks/useTreatmentsQueries", () => ({
+  useTreatmentsByPatient: jest.fn(),
+}));
+
+jest.mock("@/features/patients/detail/shared/hooks/usePagination", () => ({
+  usePagination: jest.fn(),
+}));
+
+jest.mock("@/utils/dateUtils", () => ({
+  formatDateBR: jest.fn(() => "20/12/2023"),
+  getDaysUntil: jest.fn(() => 3),
+}));
+
+jest.mock("@/utils/apiTransformers", () => ({
+  transformAttendanceToNext: jest.fn((item) => item),
+}));
+
+jest.mock("@/utils/attendanceHistoryUtils", () => ({
+  groupScheduledAttendancesByDate: jest.fn(() => []),
+  getScheduledTreatmentTypesLabel: jest.fn(() => "Assessment Consultation"),
+}));
+
+jest.mock("@/components/common/LoadingSpinner", () => ({
+  LoadingSpinner: ({ message }: { message?: string }) => (
+    <div data-testid="loading-spinner">{message}</div>
+  ),
+}));
+
+jest.mock("@/features/patients/detail/shared/ShowMoreButton", () => ({
+  ShowMoreButton: ({
+    onClick,
+    disabled,
+  }: {
+    onClick: () => void;
+    disabled?: boolean;
+  }) => (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      data-testid="show-more-button"
+    >
+      Show More
+    </button>
+  ),
+}));
+
+jest.mock("@/features/patients/detail/shared/CardStates", () => ({
+  ErrorState: ({
+    title,
+    message,
+    onRetry,
+  }: {
+    title: string;
+    message: string;
+    onRetry: () => void;
+  }) => (
+    <div data-testid="error-state">
+      <h3>{title}</h3>
+      <p>{message}</p>
+      <button onClick={onRetry} data-testid="retry-button">
+        Retry
+      </button>
+    </div>
+  ),
+  ScheduledAttendancesEmpty: () => (
+    <div data-testid="empty-state">No scheduled attendances</div>
+  ),
+}));
+
+jest.mock(
+  "@/features/patients/detail/AttendanceDetails/TreatmentDetailsContainer",
+  () => ({
+    TreatmentDetailsContainer: ({
+      children,
+    }: {
+      children: React.ReactNode;
+    }) => <div data-testid="treatment-details">{children}</div>,
+  }),
+);
+
+jest.mock(
+  "@/features/patients/detail/AttendanceDetails/AssessmentDetails",
+  () => ({
+    AssessmentDetails: () => (
+      <div data-testid="assessment-consultation">Assessment Consultation</div>
+    ),
+  }),
+);
+
+jest.mock(
+  "@/features/patients/detail/AttendanceDetails/PhysiotherapyDetails",
+  () => ({
+    PhysiotherapyDetails: () => (
+      <div data-testid="physiotherapy">Physiotherapy Treatment</div>
+    ),
+  }),
+);
+
+jest.mock("@/features/patients/detail/AttendanceDetails/TensDetails", () => ({
+  TensDetails: () => <div data-testid="tens-details">TENS Treatment</div>,
+}));
+
+jest.mock("../ScheduledAttendanceItem", () => ({
+  ScheduledAttendanceItem: ({
+    groupedScheduled,
+    isFirstItem,
+  }: {
+    groupedScheduled: {
+      date: string;
+      treatments: {
+        assessment?: { isScheduled?: boolean };
+        physiotherapy?: {
+          bodyLocationsWithColors?: { bodyLocation: string; color?: string }[];
+        };
+        tens?: { bodyLocations?: string[] };
+      };
+      notes?: string;
+    };
+    isFirstItem: boolean;
+  }) => (
+    <div data-testid="scheduled-attendance-item">
+      <div data-testid={isFirstItem ? "first-item" : "other-item"}>
+        {groupedScheduled.date}
+      </div>
+      {groupedScheduled.treatments.assessment && (
+        <div data-testid="assessment-consultation">Assessment Consultation</div>
+      )}
+      {groupedScheduled.treatments.physiotherapy && (
+        <div data-testid="physiotherapy">Physiotherapy Treatment</div>
+      )}
+      {groupedScheduled.treatments.tens && (
+        <div data-testid="tens-details">TENS Treatment</div>
+      )}
+      {groupedScheduled.notes && (
+        <div data-testid="notes-box">{groupedScheduled.notes}</div>
+      )}
+    </div>
+  ),
+}));
+
+describe("ScheduledAttendancesCard", () => {
+  // Mock patient for testing - using type assertion since we only need id for this component
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mockPatient: any = {
+    id: "1",
+    name: "Test Patient",
+    nextAttendanceDates: [],
+  };
+
+  const mockAttendancesHook = jest.requireMock(
+    "@/api/query/hooks/usePatientQueries",
+  ).usePatientAttendances;
+  const mockTreatmentsByPatientHook = jest.requireMock(
+    "@/api/query/hooks/useTreatmentsQueries",
+  ).useTreatmentsByPatient;
+  const mockPaginationHook = jest.requireMock(
+    "@/features/patients/detail/shared/hooks/usePagination",
+  ).usePagination;
+  const mockGroupScheduled = jest.requireMock(
+    "@/utils/attendanceHistoryUtils",
+  ).groupScheduledAttendancesByDate;
+
+  beforeEach(() => {
+    // Default mock implementations
+    mockAttendancesHook.mockReturnValue({
+      data: [],
+      isLoading: false,
+      error: null,
+      refetch: jest.fn(),
+    });
+
+    mockTreatmentsByPatientHook.mockReturnValue({
+      treatments: [],
+      loading: false,
+      error: null,
+      refetch: jest.fn(),
+    });
+
+    mockPaginationHook.mockReturnValue({
+      visibleItems: [],
+      hasMoreItems: false,
+      showMore: jest.fn(),
+      totalItems: 0,
+      visibleCount: 0,
+    });
+
+    mockGroupScheduled.mockReturnValue([]);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should render the card header", () => {
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+
+    expect(screen.getByText("Próximos Agendamentos")).toBeInTheDocument();
+    expect(screen.getByText("(0)")).toBeInTheDocument(); // Shows count
+    expect(screen.getByTitle("Expandir")).toBeInTheDocument(); // Card starts collapsed
+  });
+
+  it("should show loading state when data is loading and expanded", async () => {
+    mockAttendancesHook.mockReturnValue({
+      data: null,
+      isLoading: true,
+      error: null,
+      refetch: jest.fn(),
+    });
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    expect(
+      screen.getByText("Carregando próximos agendamentos..."),
+    ).toBeInTheDocument();
+  });
+
+  it("should show error state when there is an error and expanded", async () => {
+    const mockRefetch = jest.fn();
+    mockAttendancesHook.mockReturnValue({
+      data: null,
+      isLoading: false,
+      error: { message: "Failed to load" },
+      refetch: mockRefetch,
+    });
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    expect(screen.getByTestId("error-state")).toBeInTheDocument();
+    expect(screen.getByText("Failed to load")).toBeInTheDocument();
+  });
+
+  it("should show empty state when no attendances and expanded", async () => {
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+    expect(screen.getByText("No scheduled attendances")).toBeInTheDocument();
+  });
+
+  it("should handle refresh button click when expanded", async () => {
+    const mockRefetchAttendances = jest.fn();
+    const mockRefetchTreatments = jest.fn();
+
+    mockAttendancesHook.mockReturnValue({
+      data: [],
+      isLoading: false,
+      error: null,
+      refetch: mockRefetchAttendances,
+    });
+
+    mockTreatmentsByPatientHook.mockReturnValue({
+      treatments: [],
+      loading: false,
+      error: null,
+      refetch: mockRefetchTreatments,
+    });
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    const refreshButton = screen.getByText("Atualizar");
+    fireEvent.click(refreshButton);
+
+    expect(mockRefetchAttendances).toHaveBeenCalled();
+    expect(mockRefetchTreatments).toHaveBeenCalled();
+  });
+
+  it("should render scheduled attendances with treatment details when expanded", async () => {
+    const mockGroupedAttendances = [
+      {
+        date: "2023-12-20",
+        attendanceId: "1",
+        attendanceIds: ["1"],
+        treatments: {
+          assessment: { isScheduled: true },
+          physiotherapy: {
+            bodyLocationsWithColors: [{ bodyLocation: "head", color: "blue" }],
+            color: "blue",
+            duration: 30,
+            sessionNumber: "3",
+          },
+        },
+        notes: "Test notes",
+        createdDate: "2023-12-20",
+        updatedDate: "2023-12-20",
+      },
+    ];
+
+    mockPaginationHook.mockReturnValue({
+      visibleItems: mockGroupedAttendances,
+      hasMoreItems: false,
+      showMore: jest.fn(),
+      totalItems: 1,
+      visibleCount: 1,
+    });
+
+    mockGroupScheduled.mockReturnValue(mockGroupedAttendances);
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    expect(screen.getByTestId("scheduled-attendance-item")).toBeInTheDocument();
+    expect(screen.getByTestId("assessment-consultation")).toBeInTheDocument();
+    expect(screen.getByTestId("physiotherapy")).toBeInTheDocument();
+    expect(screen.getByTestId("notes-box")).toBeInTheDocument();
+  });
+
+  it("should render first appointment correctly when expanded", async () => {
+    const mockGroupedAttendances = [
+      {
+        date: "2023-12-20",
+        attendanceId: "1",
+        attendanceIds: ["1"],
+        treatments: { assessment: { isScheduled: true } },
+        notes: null,
+        createdDate: "2023-12-20",
+        updatedDate: "2023-12-20",
+      },
+    ];
+
+    mockPaginationHook.mockReturnValue({
+      visibleItems: mockGroupedAttendances,
+      hasMoreItems: false,
+      showMore: jest.fn(),
+      totalItems: 1,
+      visibleCount: 1,
+    });
+
+    mockGroupScheduled.mockReturnValue(mockGroupedAttendances);
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    expect(screen.getByTestId("first-item")).toBeInTheDocument();
+    expect(screen.getByTestId("scheduled-attendance-item")).toBeInTheDocument();
+  });
+
+  it('should show "show more" button when there are more items and expanded', async () => {
+    const mockShowMore = jest.fn();
+    const mockGroupedAttendances = [
+      {
+        date: "2023-12-20",
+        attendanceId: "1",
+        attendanceIds: ["1"],
+        treatments: {},
+        createdDate: "2023-12-20",
+        updatedDate: "2023-12-20",
+      },
+    ];
+
+    mockPaginationHook.mockReturnValue({
+      visibleItems: mockGroupedAttendances,
+      hasMoreItems: true,
+      showMore: mockShowMore,
+      totalItems: 5,
+      visibleCount: 3,
+    });
+
+    mockGroupScheduled.mockReturnValue(mockGroupedAttendances);
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    const showMoreButton = screen.getByTestId("show-more-button");
+    expect(showMoreButton).toBeInTheDocument();
+
+    fireEvent.click(showMoreButton);
+    expect(mockShowMore).toHaveBeenCalled();
+  });
+
+  it("should handle treatment sessions loading error when expanded", async () => {
+    mockTreatmentsByPatientHook.mockReturnValue({
+      treatments: [],
+      loading: false,
+      error: "Treatment error",
+      refetch: jest.fn(),
+    });
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    expect(screen.getByTestId("error-state")).toBeInTheDocument();
+    expect(screen.getByText("Treatment error")).toBeInTheDocument();
+  });
+
+  it("should hide refresh button when loading", async () => {
+    mockAttendancesHook.mockReturnValue({
+      data: null,
+      isLoading: true,
+      error: null,
+      refetch: jest.fn(),
+    });
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    expect(screen.queryByText("Atualizar")).not.toBeInTheDocument();
+  });
+
+  it("should toggle collapse/expand state", async () => {
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+
+    // Card starts collapsed
+    expect(screen.getByTitle("Expandir")).toBeInTheDocument();
+    expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
+
+    // Expand the card
+    fireEvent.click(screen.getByTitle("Expandir"));
+    expect(screen.getByTitle("Recolher")).toBeInTheDocument();
+    expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+
+    // Collapse again
+    fireEvent.click(screen.getByTitle("Recolher"));
+    expect(screen.getByTitle("Expandir")).toBeInTheDocument();
+    expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
+  });
+
+  it("should render multiple treatment types when expanded", async () => {
+    const mockGroupedAttendances = [
+      {
+        date: "2023-12-20",
+        attendanceId: "1",
+        attendanceIds: ["1"],
+        treatments: {
+          assessment: { isScheduled: true },
+          physiotherapy: {
+            bodyLocationsWithColors: [],
+            color: "blue",
+            duration: 30,
+            sessionNumber: "1",
+          },
+          tens: { bodyLocations: [], sessionNumber: "1" },
+        },
+        notes: "Multiple treatments",
+        createdDate: "2023-12-20",
+        updatedDate: "2023-12-20",
+      },
+    ];
+
+    mockPaginationHook.mockReturnValue({
+      visibleItems: mockGroupedAttendances,
+      hasMoreItems: false,
+      showMore: jest.fn(),
+      totalItems: 1,
+      visibleCount: 1,
+    });
+
+    mockGroupScheduled.mockReturnValue(mockGroupedAttendances);
+
+    render(<ScheduledAttendancesCard patient={mockPatient} />);
+    fireEvent.click(screen.getByTitle("Expandir"));
+
+    expect(screen.getByTestId("assessment-consultation")).toBeInTheDocument();
+    expect(screen.getByTestId("physiotherapy")).toBeInTheDocument();
+    expect(screen.getByTestId("tens-details")).toBeInTheDocument();
+  });
+});

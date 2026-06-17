@@ -1,0 +1,280 @@
+import {
+  groupAbsenceJustificationsByCard,
+  getAbsenceCardLabelParts,
+  groupAttendancesForDisplayWithBodyLocation,
+  type AbsenceCard,
+} from "../confirmationStepUtils";
+import type { AbsenceJustification, ScheduledAbsence } from "../../types";
+import type { IAttendanceStatusDetailWithType } from "../../../../utils/attendanceDataUtils";
+
+const createScheduledAbsence = (
+  overrides: Partial<ScheduledAbsence> = {},
+): ScheduledAbsence => ({
+  patientId: 1,
+  patientName: "John Doe",
+  attendanceType: "assessment",
+  ...overrides,
+});
+
+const createAbsenceJustification = (
+  overrides: Partial<AbsenceJustification> = {},
+): AbsenceJustification => ({
+  patientId: 1,
+  patientName: "John Doe",
+  attendanceType: "assessment",
+  justified: true,
+  justification: "Medical appointment",
+  ...overrides,
+});
+
+const createAttendance = (
+  overrides: Partial<IAttendanceStatusDetailWithType> = {},
+): IAttendanceStatusDetailWithType => ({
+  name: "John Doe",
+  priority: "3",
+  patientId: 1,
+  attendanceType: "assessment",
+  ...overrides,
+});
+
+describe("confirmationStepUtils", () => {
+  describe("groupAbsenceJustificationsByCard", () => {
+    it("groups assessment absences as one card", () => {
+      const scheduledAbsences = [
+        createScheduledAbsence({ patientId: 1, patientName: "John", attendanceType: "assessment" }),
+      ];
+      const justifications = [
+        createAbsenceJustification({ patientId: 1, attendanceType: "assessment", justified: true }),
+      ];
+
+      const result = groupAbsenceJustificationsByCard(scheduledAbsences, justifications);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        patientId: 1,
+        patientName: "John",
+        hasAssessment: true,
+        physiotherapyCount: 0,
+        tensCount: 0,
+        justified: true,
+      });
+    });
+
+    it("groups treatments (physiotherapy + tens) as one card", () => {
+      const scheduledAbsences = [
+        createScheduledAbsence({ patientId: 1, attendanceType: "physiotherapy" }),
+        createScheduledAbsence({ patientId: 1, attendanceType: "tens" }),
+      ];
+      const justifications = [
+        createAbsenceJustification({ patientId: 1, attendanceType: "physiotherapy", justified: false }),
+      ];
+
+      const result = groupAbsenceJustificationsByCard(scheduledAbsences, justifications);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        patientId: 1,
+        hasAssessment: false,
+        physiotherapyCount: 1,
+        tensCount: 1,
+        justified: false,
+      });
+    });
+
+    it("creates two cards when patient has assessment and treatments", () => {
+      const scheduledAbsences = [
+        createScheduledAbsence({ patientId: 1, attendanceType: "assessment" }),
+        createScheduledAbsence({ patientId: 1, attendanceType: "physiotherapy" }),
+      ];
+      const justifications = [
+        createAbsenceJustification({ patientId: 1, attendanceType: "assessment", justified: true }),
+        createAbsenceJustification({ patientId: 1, attendanceType: "physiotherapy", justified: false }),
+      ];
+
+      const result = groupAbsenceJustificationsByCard(scheduledAbsences, justifications);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].hasAssessment).toBe(true);
+      expect(result[1].hasAssessment).toBe(false);
+    });
+
+    it("derives from justifications when scheduledAbsences is empty", () => {
+      const scheduledAbsences: ScheduledAbsence[] = [];
+      const justifications = [
+        createAbsenceJustification({ patientId: 1, attendanceType: "assessment", justified: true }),
+      ];
+
+      const result = groupAbsenceJustificationsByCard(scheduledAbsences, justifications);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        patientId: 1,
+        hasAssessment: true,
+        justified: true,
+      });
+    });
+
+    it("returns empty array when both inputs are empty", () => {
+      const result = groupAbsenceJustificationsByCard([], []);
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("getAbsenceCardLabelParts", () => {
+    it("returns Consulta for assessment card", () => {
+      const card: AbsenceCard = {
+        patientId: 1,
+        patientName: "John",
+        hasAssessment: true,
+        physiotherapyCount: 0,
+        tensCount: 0,
+        justified: true,
+      };
+
+      const result = getAbsenceCardLabelParts(card);
+
+      expect(result).toEqual(["Consulta de Avaliação"]);
+    });
+
+    it("returns Fisioterapia with locais for physiotherapy-only card", () => {
+      const card: AbsenceCard = {
+        patientId: 1,
+        patientName: "John",
+        hasAssessment: false,
+        physiotherapyCount: 1,
+        tensCount: 0,
+        justified: false,
+      };
+
+      const result = getAbsenceCardLabelParts(card);
+
+      expect(result).toEqual(["Fisioterapia (1 local)"]);
+    });
+
+    it("returns TENS with locais for tens-only card", () => {
+      const card: AbsenceCard = {
+        patientId: 1,
+        patientName: "John",
+        hasAssessment: false,
+        physiotherapyCount: 0,
+        tensCount: 2,
+        justified: false,
+      };
+
+      const result = getAbsenceCardLabelParts(card);
+
+      expect(result).toEqual(["TENS (2 locais)"]);
+    });
+
+    it("returns both treatment labels for combined treatments", () => {
+      const card: AbsenceCard = {
+        patientId: 1,
+        patientName: "John",
+        hasAssessment: false,
+        physiotherapyCount: 1,
+        tensCount: 1,
+        justified: false,
+      };
+
+      const result = getAbsenceCardLabelParts(card);
+
+      expect(result).toHaveLength(2);
+      expect(result).toContain("Fisioterapia (1 local)");
+      expect(result).toContain("TENS (1 local)");
+    });
+  });
+
+  describe("groupAttendancesForDisplayWithBodyLocation", () => {
+    it("groups assessment attendance as one entry", () => {
+      const attendances = [
+        createAttendance({ name: "John", patientId: 1, attendanceType: "assessment" }),
+      ];
+
+      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        patientName: "John",
+        label: "Consulta de Avaliação",
+      });
+    });
+
+    it("groups physiotherapy attendance with locais count", () => {
+      const attendances = [
+        createAttendance({ name: "Jane", patientId: 2, attendanceType: "physiotherapy" }),
+      ];
+
+      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].label).toBe("Fisioterapia - 1 local");
+    });
+
+    it("groups tens attendance with locais count", () => {
+      const attendances = [
+        createAttendance({ name: "Bob", patientId: 3, attendanceType: "tens" }),
+      ];
+
+      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].label).toBe("TENS - 1 local");
+    });
+
+    it("groups patient with assessment and treatments as two entries", () => {
+      const attendances = [
+        createAttendance({ name: "Patient 10", patientId: 10, attendanceType: "assessment" }),
+        createAttendance({ name: "Patient 10", patientId: 10, attendanceType: "physiotherapy" }),
+        createAttendance({ name: "Patient 10", patientId: 10, attendanceType: "tens" }),
+      ];
+
+      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+
+      expect(result).toHaveLength(2);
+      expect(result[0].label).toBe("Consulta de Avaliação");
+      expect(result[1].label).toBe("Fisioterapia - 1 local e TENS - 1 local");
+    });
+
+    it("groups patient with both physiotherapy and tens as one entry", () => {
+      const attendances = [
+        createAttendance({ name: "Patient D", patientId: 4, attendanceType: "physiotherapy" }),
+        createAttendance({ name: "Patient D", patientId: 4, attendanceType: "tens" }),
+      ];
+
+      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].label).toBe("Fisioterapia - 1 local e TENS - 1 local");
+    });
+
+    it("uses plural locais for multiple treatments of same type", () => {
+      const attendances = [
+        createAttendance({ name: "Patient", patientId: 5, attendanceType: "physiotherapy" }),
+        createAttendance({ name: "Patient", patientId: 5, attendanceType: "physiotherapy" }),
+      ];
+
+      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].label).toBe("Fisioterapia - 2 locais");
+    });
+
+    it("handles attendances without patientId using name as key", () => {
+      const attendances = [
+        createAttendance({ name: "Unknown", patientId: undefined, attendanceType: "assessment" }),
+      ];
+
+      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].patientName).toBe("Unknown");
+    });
+
+    it("returns empty array for empty input", () => {
+      const result = groupAttendancesForDisplayWithBodyLocation([]);
+
+      expect(result).toEqual([]);
+    });
+  });
+});

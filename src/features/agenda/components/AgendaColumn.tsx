@@ -1,0 +1,288 @@
+import React from "react";
+import AttendanceTypeTag from "@/features/attendance/components/Cards/AttendanceTypeTag";
+import { AttendanceType } from "@/types/types";
+import { AttendanceStatus } from "@/api/types";
+import Spinner from "@/components/common/Spinner";
+import AgendaDateHeader from "./AgendaDateHeader";
+import { useOpenCancellation } from "@/stores/modalStore";
+import AgendaAttendanceStatusIcon from "./AgendaAttendanceStatusIcon";
+import { Button } from "@/components/ui";
+
+interface Patient {
+  id: string;
+  name: string;
+  attendanceId?: number;
+  attendanceType: AttendanceType;
+  attendanceStatus?: AttendanceStatus;
+}
+
+interface PatientWithTreatmentsCounts {
+  id: string;
+  name: string;
+  attendanceType: AttendanceType;
+  /** Resolved row status (defaults to scheduled when missing on raw patient) */
+  attendanceStatus: AttendanceStatus;
+  attendanceIds: number[];
+  physiotherapy: number;
+  tens: number;
+}
+
+interface AgendaItem {
+  date: string; // YYYY-MM-DD format
+  patients: Patient[];
+}
+
+interface AgendaColumnProps {
+  title: string;
+  agendaItems: AgendaItem[];
+  openAgendaIdx: number[];
+  setOpenAgendaIdx: (indices: number[]) => void;
+  columnType: "assessment" | "physiotherapy";
+  isLoading?: boolean;
+  isRefreshing?: boolean;
+}
+
+function patientNameTextClass(status: AttendanceStatus): string {
+  if (
+    status === AttendanceStatus.COMPLETED ||
+    status === AttendanceStatus.MISSED ||
+    status === AttendanceStatus.CANCELLED
+  ) {
+    return "font-medium text-gray-500 line-clamp-2";
+  }
+  return "font-medium text-gray-800 line-clamp-2";
+}
+
+const AgendaColumn: React.FC<AgendaColumnProps> = ({
+  title,
+  agendaItems,
+  openAgendaIdx,
+  setOpenAgendaIdx,
+  columnType,
+  isLoading = false,
+  isRefreshing = false,
+}) => {
+  const openCancellation = useOpenCancellation();
+  const allIndices = agendaItems.map((_, idx) => idx);
+  const allExpanded =
+    agendaItems.length > 0 && openAgendaIdx.length === agendaItems.length;
+  const handleToggleAll = () => {
+    setOpenAgendaIdx(allExpanded ? [] : allIndices);
+  };
+
+  const getPatientsWithTreatmentsCounts = (patients: Patient[]) => {
+    const groupedPatients = patients.reduce(
+      (acc: PatientWithTreatmentsCounts[], patient: Patient) => {
+        const rowStatus =
+          patient.attendanceStatus ?? AttendanceStatus.SCHEDULED;
+        const existingPatient = acc.find(
+          (p) => p.id === patient.id && p.attendanceStatus === rowStatus,
+        );
+
+        if (existingPatient) {
+          if (patient.attendanceId) {
+            existingPatient.attendanceIds.push(patient.attendanceId);
+          }
+
+          if (patient.attendanceType === "physiotherapy") {
+            existingPatient.physiotherapy += 1;
+          } else if (patient.attendanceType === "tens") {
+            existingPatient.tens += 1;
+          }
+        } else {
+          acc.push({
+            id: patient.id,
+            name: patient.name,
+            attendanceType: patient.attendanceType,
+            attendanceStatus: rowStatus,
+            attendanceIds: patient.attendanceId ? [patient.attendanceId] : [],
+            physiotherapy: patient.attendanceType === "physiotherapy" ? 1 : 0,
+            tens: patient.attendanceType === "tens" ? 1 : 0,
+          });
+        }
+        return acc;
+      },
+      [],
+    );
+
+    return groupedPatients;
+  };
+
+  return (
+    <div
+      className={`flex-1 border border-gray-200 shadow rounded-lg p-4 bg-white relative ${
+        isRefreshing ? "opacity-75" : ""
+      }`}
+    >
+      {isRefreshing && (
+        <div className="absolute inset-0 bg-white/60 flex items-center justify-center rounded-lg z-10">
+          <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-md border">
+            <Spinner size="sm" className="text-blue-500" />
+            <span className="text-sm text-gray-600">Atualizando...</span>
+          </div>
+        </div>
+      )}
+
+      <div className="mb-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+            <p className="mt-1 text-sm text-gray-600">
+              {agendaItems.length} data{agendaItems.length !== 1 ? "s" : ""} com
+              agendamentos
+            </p>
+          </div>
+          {agendaItems.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="min-h-[44px] w-full shrink-0 sm:w-auto"
+              onClick={handleToggleAll}
+              aria-label={
+                allExpanded
+                  ? "Recolher todos os agendamentos da coluna"
+                  : "Expandir todos os agendamentos da coluna"
+              }
+            >
+              {allExpanded ? "Recolher todos" : "Expandir todos"}
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {agendaItems.length > 0 ? (
+        agendaItems.map(({ date, patients }, idx: number) => {
+          const isExpanded = openAgendaIdx.includes(idx);
+          const patientsWithTreatmentsCounts =
+            getPatientsWithTreatmentsCounts(patients);
+
+          return (
+            <div
+              key={date + "-" + columnType + "-" + idx}
+              className={`mb-4 border border-gray-200 rounded-lg shadow-sm ${
+                !isExpanded ? "bg-white" : "bg-gray-100"
+              }`}
+            >
+              <Button
+                variant="ghost"
+                className="h-auto min-h-[44px] w-full justify-between rounded-t-lg p-4 text-gray-800 hover:bg-gray-50"
+                onClick={() => {
+                  if (isExpanded) {
+                    setOpenAgendaIdx(
+                      openAgendaIdx.filter((openIdx) => openIdx !== idx),
+                    );
+                    return;
+                  }
+                  setOpenAgendaIdx([...openAgendaIdx, idx]);
+                }}
+                aria-expanded={isExpanded}
+                aria-controls={`agenda-patients-${columnType}-${idx}`}
+              >
+                <span className="text-left w-full">
+                  <AgendaDateHeader date={date} />
+                  <div className="text-sm text-gray-600 mt-1">
+                    {patientsWithTreatmentsCounts.length} paciente
+                    {patientsWithTreatmentsCounts.length !== 1 ? "s" : ""}{" "}
+                    agendado
+                    {patientsWithTreatmentsCounts.length !== 1 ? "s" : ""}
+                  </div>
+                </span>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`ml-2 transition-transform text-gray-400 ${
+                      isExpanded ? "rotate-90" : ""
+                    }`}
+                  >
+                    ▶
+                  </span>
+                </div>
+              </Button>
+              {isExpanded && (
+                <div
+                  id={`agenda-patients-${columnType}-${idx}`}
+                  className="p-4 pt-0 border-t border-gray-200 bg-gray-100"
+                >
+                  <div className="space-y-2 mt-4">
+                    {patientsWithTreatmentsCounts.map(
+                      ({
+                        name,
+                        id,
+                        attendanceIds,
+                        physiotherapy,
+                        tens,
+                        attendanceStatus,
+                      }) => (
+                        <div
+                          key={`${id}-${attendanceStatus}`}
+                          className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-3 transition-all hover:shadow-sm sm:flex-row sm:items-center"
+                        >
+                          <AgendaAttendanceStatusIcon
+                            status={attendanceStatus}
+                            className="shrink-0"
+                          />
+                          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                            <span
+                              className={patientNameTextClass(attendanceStatus)}
+                            >
+                              {name}
+                            </span>
+                            {columnType == "physiotherapy" && (
+                              <div className="flex shrink-0 flex-wrap items-end gap-2 sm:ml-auto">
+                                {physiotherapy > 0 && (
+                                  <AttendanceTypeTag
+                                    type="physiotherapy"
+                                    count={physiotherapy}
+                                  />
+                                )}
+                                {tens > 0 && (
+                                  <AttendanceTypeTag type="tens" count={tens} />
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          {attendanceStatus === AttendanceStatus.SCHEDULED ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="min-h-[44px] w-full shrink-0 text-gray-600 hover:text-gray-800 sm:w-auto"
+                              onClick={() =>
+                                openCancellation(attendanceIds, name, date)
+                              }
+                              aria-label="Gerenciar agendamento"
+                            >
+                              Gerenciar
+                            </Button>
+                          ) : null}
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })
+      ) : isLoading ? (
+        <div className="text-center py-8 text-gray-500 bg-white border border-gray-200 rounded-lg">
+          <div className="flex flex-col items-center justify-center">
+            <Spinner size="md" className="text-blue-500 mb-3" />
+            <div className="text-sm">Carregando agendamentos...</div>
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-8 text-gray-500 bg-white border border-gray-200 rounded-lg">
+          <div className="text-sm">
+            {columnType === "assessment"
+              ? "Nenhuma consulta de avaliação encontrada."
+              : "Nenhum fisioterapia/TENS encontrado."}
+          </div>
+          <div className="text-xs mt-1">
+            Selecione uma data diferente ou crie um novo agendamento.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AgendaColumn;

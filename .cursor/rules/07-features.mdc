@@ -1,0 +1,121 @@
+---
+alwaysApply: true
+---
+
+# Feature Implementation Guidelines
+
+## Check Feature Status First
+
+**Before implementing any feature**, check the documentation:
+
+1. **Business Requirements:** Check [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md) for:
+   - Business rules and workflows
+   - User journeys and expected behavior
+   - Data model and validation rules
+   - Feature specifications and acceptance criteria
+
+2. **Implementation Status:** Check the project README for feature status and roadmap
+   - Implementation status (Complete, In Progress, Planned)
+   - Feature dependencies and related components
+   - Priority level and timeline
+   - Known limitations or planned enhancements
+
+## Implemented Features (DO NOT BREAK)
+
+### Core Workflows
+
+- **Attendance Management** (/attendance) - Drag & drop, real-time status updates
+- **Session completion** - Post-treatment modal, body location selector (`/sessions` API)
+- **Day Finalization Workflow** - End-of-day processing with undo
+- **Patient Management** (/patients) - CRUD operations, patient details
+- **Walk-In Check-In** - Unscheduled patient registration
+- **Calendar & Scheduling** (/agenda) - Monthly/weekly views
+
+### Cross-Cutting Features
+
+- **Timezone Support** - 12 timezones, browser detection, localStorage persistence
+- **Form Handling** - Client-side validation, Portuguese error messages
+- **Error Handling** - Error boundaries, loading states, retry mechanisms
+
+## Feature-Specific Rules
+
+### Attendance Management
+
+Key files:
+
+- [AttendanceBoard](mdc:src/features/attendance/AttendanceBoard.tsx)
+- [useDragAndDrop.ts](mdc:src/features/attendance/hooks/useDragAndDrop.ts)
+- [attendanceStore.ts](mdc:src/stores/attendanceStore.ts)
+
+Rules:
+
+- Maintain drag-and-drop functionality
+- Keep combined treatment handling (physiotherapy + tens move together)
+- Preserve priority system (Emergency=1, Intermediate=2, Normal=3)
+- Maintain patient grouping logic
+
+### Patient Management
+
+Key files:
+
+- [Patient form](mdc:src/features/patients/form)
+- [Patient detail](mdc:src/features/patients/detail)
+- [usePatientQueries.ts](mdc:src/api/query/hooks/usePatientQueries.ts)
+
+Rules:
+
+- Validate all patient data before submission
+- Support Portuguese error messages
+- Maintain treatment recommendations workflow
+- Keep attendance history integration
+
+## Adding New Features
+
+1. **Understand requirements** - Read [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md) for business context and workflows
+2. **Check patterns** - Review [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md) for similar implementations
+3. **Verify status** - Check the project README to avoid duplicating work
+4. **Follow architecture** - Use established patterns from [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md)
+5. **Write tests** - Cover new or changed behavior with focused tests
+6. **Test integration** - Ensure no breaking changes to existing features
+7. **Update docs** - Update the project README with new feature status
+
+## Feature Testing Checklist
+
+Before considering a feature complete:
+
+- [ ] Unit tests for all components and hooks
+- [ ] Integration tests for feature workflows
+- [ ] Error states and edge cases handled
+- [ ] Loading states implemented
+- [ ] Mobile responsive (ongoing)
+- [ ] TypeScript strict mode passing
+- [ ] No console errors or warnings
+- [ ] Documentation updated
+
+## Feature Dependencies
+
+Some features depend on others. Check the project README for feature dependencies and status
+
+- Treatments (`hms_treatment`) depend on consultations and patient records
+- Day finalization depends on attendance status
+- Calendar depends on attendance scheduling
+- Session rows (`hms_session`) depend on treatment plans
+
+## Future Features (Planned)
+
+See the project README for planned features and roadmap. Don't implement these without coordination:
+
+- Advanced session management
+- Analytics dashboard
+- Medical records system
+- Enhanced mobile optimization
+
+## Feature Requests
+
+To propose new features:
+
+1. Review [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md) to understand business context
+2. Check project README / roadmap to see if already planned
+3. Verify it aligns with project scope (assessment center management)
+4. Review [SETUP.md](mdc:docs/SETUP.md) and `src/features/README.md` for implementation guidelines
+5. Consider implementation complexity and impact

@@ -1,0 +1,229 @@
+---
+globs: src/components/**,src/hooks/**
+---
+
+# Performance Optimization Guidelines
+
+## Bundle Size Targets
+
+Keep shared routes and reusable components light. Prefer route-level splitting for heavy screens and avoid importing large dependencies into common modules.
+
+## Code Splitting
+
+### Route-Level Lazy Loading
+
+```typescript
+import { lazy, Suspense } from "react";
+
+// ✅ CORRECT: Lazy load heavy components
+const AttendanceBoard = lazy(
+  () => import("@/features/attendance/AttendanceBoard")
+);
+
+export default function AttendancePage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AttendanceBoard />
+    </Suspense>
+  );
+}
+```
+
+### Component-Level Splitting
+
+```typescript
+// Only for very large, conditionally-rendered components
+const HeavyModal = lazy(() => import("./HeavyModal"));
+
+{
+  showModal && (
+    <Suspense fallback={<ModalSkeleton />}>
+      <HeavyModal />
+    </Suspense>
+  );
+}
+```
+
+## React Query Optimization
+
+### Caching Strategy
+
+```typescript
+// ✅ CORRECT: Appropriate stale times
+export function usePatients() {
+  return useQuery({
+    queryKey: ["patients"],
+    queryFn: getPatients,
+    staleTime: 5 * 60 * 1000, // 5 minutes for relatively static data
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+  });
+}
+
+// For real-time data
+export function useAttendances(date: string) {
+  return useQuery({
+    queryKey: ["attendances", date],
+    queryFn: () => getAttendances(date),
+    staleTime: 0, // Always check for updates
+    refetchInterval: 30000, // Refetch every 30 seconds
+  });
+}
+```
+
+### Request Deduplication
+
+React Query automatically deduplicates requests with the same queryKey. Use this:
+
+```typescript
+// Multiple components can call this - only one request made
+const { data } = usePatients();
+```
+
+### Prefetching
+
+```typescript
+// Prefetch data before navigation
+const queryClient = useQueryClient();
+
+function prefetchPatient(id: number) {
+  queryClient.prefetchQuery({
+    queryKey: ["patient", id],
+    queryFn: () => getPatient(id),
+  });
+}
+```
+
+## Zustand Performance
+
+### Selective Subscriptions
+
+```typescript
+// ✅ CORRECT: Only re-renders when selectedDate changes
+const selectedDate = useAttendanceStore((state) => state.selectedDate);
+
+// ❌ WRONG: Re-renders on ANY store change
+const store = useAttendanceStore();
+const { selectedDate } = store; // Don't destructure entire store
+```
+
+### Computed Values in Selectors
+
+```typescript
+// ✅ CORRECT: Compute derived state in selector
+const hasUnsavedChanges = useAttendanceStore((state) =>
+  state.attendances.some((a) => a.modified)
+);
+
+// ❌ WRONG: Computing in component causes re-renders
+const attendances = useAttendanceStore((state) => state.attendances);
+const hasUnsavedChanges = attendances.some((a) => a.modified);
+```
+
+## React Memoization
+
+### useMemo for Expensive Calculations
+
+```typescript
+// ✅ Use for expensive computations
+const sortedAndFiltered = useMemo(() => {
+  return data.filter(complexFilter).sort(complexSort).map(complexTransform);
+}, [data]);
+
+// ❌ Don't use for simple operations
+const doubled = useMemo(() => count * 2, [count]); // Overkill
+```
+
+### useCallback for Stable References
+
+```typescript
+// ✅ CORRECT: Stable callback for child components
+const handleClick = useCallback(
+  (id: number) => {
+    updateItem(id);
+  },
+  [updateItem]
+);
+
+// Pass to memoized children
+<MemoizedChild onClick={handleClick} />;
+```
+
+### React.memo for Pure Components
+
+```typescript
+// ✅ CORRECT: Memo for components that re-render often with same props
+export const PatientCard = memo(({ patient }: Props) => {
+  return <div>{patient.name}</div>;
+});
+
+// ❌ WRONG: Don't memo everything - it has overhead
+export const SimpleText = memo(({ text }: Props) => <span>{text}</span>);
+```
+
+## Bundle Analysis
+
+Check bundle size regularly:
+
+```bash
+npm run analyze        # Generate bundle analysis
+npm run bundle-size    # Quick size check
+```
+
+Review:
+
+- Large dependencies (consider alternatives)
+- Duplicate code (consolidate)
+- Unused exports (remove)
+
+### Performance Monitoring
+
+Use bundle analysis and React DevTools Profiler when a change affects a route, list, or modal that renders often.
+
+## Anti-Patterns (Avoid)
+
+❌ **Don't inline large objects in JSX**
+
+```typescript
+// WRONG
+<Component
+  config={
+    {
+      /* large object */
+    }
+  }
+/>;
+
+// RIGHT
+const config = useMemo(
+  () => ({
+    /* large object */
+  }),
+  []
+);
+<Component config={config} />;
+```
+
+❌ **Don't create functions in render**
+
+```typescript
+// WRONG
+<button onClick={() => handleClick(id)}>
+
+// RIGHT
+const handleButtonClick = useCallback(() => handleClick(id), [id]);
+<button onClick={handleButtonClick}>
+```
+
+❌ **Don't subscribe to entire Zustand store**
+
+```typescript
+// WRONG
+const store = useMyStore();
+
+// RIGHT
+const value = useMyStore((state) => state.value);
+```
+
+## See Also
+
+- [ARCHITECTURE.md - Performance Optimizations](mdc:docs/ARCHITECTURE.md)

@@ -1,0 +1,376 @@
+---
+---
+
+# Authentication Patterns - MUST FOLLOW
+
+## Authentication Architecture
+
+This project uses **Server Actions + JWT + HTTP-only Cookies** for authentication.
+The frontend acts as a BFF (Backend-for-Frontend) — all API calls are proxied
+through `/api/[...path]` route handlers; tokens never touch client JavaScript.
+
+**CRITICAL**: Tokens NEVER touch client JavaScript. All auth logic runs server-side.
+
+---
+
+## Backend URL in Server-Side Code (H3)
+
+### ✅ CORRECT: Use getBackendUrl()
+
+```typescript
+// src/app/api/lib/getBackendUrl.ts  — server-only helper
+import "server-only";
+
+export function getBackendUrl(): string {
+  const url = process.env.API_URL;
+  if (!url) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("API_URL env var is required in production");
+    }
+    return "http://localhost:3002";
+  }
+  return url;
+}
+```
+
+```typescript
+// Server Action or API route handler
+import { getBackendUrl } from "@/app/api/lib/getBackendUrl";
+
+const BACKEND_URL = getBackendUrl(); // uses API_URL, not NEXT_PUBLIC_API_URL
+```
+
+### ❌ WRONG: Using NEXT_PUBLIC_API_URL in server code
+
+```typescript
+// NEVER DO THIS in Server Actions or API route handlers
+const url = process.env.NEXT_PUBLIC_API_URL; // ❌ leaks backend origin to browser
+```
+
+**Rule:** `NEXT_PUBLIC_API_URL` may appear only in client-only utilities (browser
+widgets that must know an endpoint directly). All server-side calls must use
+`getBackendUrl()` → `API_URL`.
+
+---
+
+## BFF Internal Secret (H9)
+
+Token-issuing backend routes (`POST /auth/login`, `POST /auth/refresh`) require a
+server-only shared secret so direct calls to the public Railway URL cannot obtain
+JWTs without knowing `BFF_INTERNAL_SECRET`.
+
+```typescript
+import { getBffSecretHeaders } from "@/app/api/lib/getBffSecretHeaders";
+
+await fetch(`${BACKEND_URL}/auth/login`, {
+  headers: {
+    "Content-Type": "application/json",
+    ...getBffSecretHeaders(),
+  },
+  // ...
+});
+```
+
+Set the same `BFF_INTERNAL_SECRET` on Vercel and Railway (`openssl rand -base64 32`).
+Optional in local dev when the backend also omits the secret.
+
+---
+
+## BFF Proxy Allowlist (H1)
+
+The catch-all proxy at `src/app/api/[...path]/route.ts` uses an explicit
+allowlist of permitted first path segments. Requests for `auth/*` are denied
+with 404 to prevent the browser from reaching backend auth endpoints directly.
+
+```typescript
+// src/app/api/[...path]/allowlist.ts
+export const PROXY_ALLOWED_SEGMENTS = new Set([
+  "patients",
+  "attendances",
+  "consultations",
+  "treatments",
+  "sessions",
+  "schedule-settings",
+  "day-finalization",
+  "holidays",
+  "holiday-templates",
+  "settings",
+  "timezone",
+  "users",
+  // ... add new first-segment names here when adding API routes
+]);
+
+export function isProxyPathAllowed(segments: string[]): boolean {
+  const first = segments[0]?.toLowerCase();
+  if (!first || first === "auth") return false;
+  return PROXY_ALLOWED_SEGMENTS.has(first);
+}
+```
+
+### ❌ WRONG: Open relay
+
+```typescript
+// NEVER forward every path without checking
+const backendUrl = `${BACKEND_URL}/${segments.join("/")}`;
+```
+
+---
+
+## Server Actions Pattern
+
+### ✅ CORRECT: Use Server Actions
+
+```typescript
+// src/app/actions/auth.actions.ts
+"use server";
+
+import { cookies } from "next/headers";
+import { getBackendUrl } from "@/app/api/lib/getBackendUrl";
+import {
+  getAccessTokenCookieOptions,
+  getRefreshTokenCookieOptions,
+} from "@/app/api/lib/authCookieOptions";
+import { getBffSecretHeaders } from "@/app/api/lib/getBffSecretHeaders";
+
+const BACKEND_URL = getBackendUrl();
+
+export async function loginAction(credentials: LoginCredentials) {
+  const response = await fetch(`${BACKEND_URL}/auth/login`, {
+    method: "POST",
+    body: JSON.stringify(credentials),
+    headers: {
+      "Content-Type": "application/json",
+      ...getBffSecretHeaders(),
+    },
+  });
+
+  const { accessToken, refreshToken, user } = await response.json();
+
+  // BFF owns browser cookies — backend returns JSON only
+  const cookieStore = await cookies();
+  cookieStore.set("access_token", accessToken, getAccessTokenCookieOptions());
+  cookieStore.set(
+    "refresh_token",
+    refreshToken,
+    getRefreshTokenCookieOptions(),
+  );
+
+  return { success: true, data: user };
+}
+```
+
+### ❌ WRONG: Client-Side Token Storage
+
+```typescript
+// NEVER DO THIS
+localStorage.setItem("token", token); // ❌ XSS vulnerable
+sessionStorage.setItem("token", token); // ❌ XSS vulnerable
+document.cookie = `token=${token}`; // ❌ not httpOnly
+```
+
+---
+
+## Protected Routes — proxy.ts (NOT middleware.ts)
+
+This project uses Next.js 16's **`src/proxy.ts`** (not `src/middleware.ts`) as
+the route interceptor. Renaming it `middleware.ts` will break the build.
+
+```typescript
+// src/proxy.ts  ← correct filename for Next.js 16
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+
+export function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  const accessToken = request.cookies.get("access_token")?.value;
+
+  const publicRoutes = ["/login"];
+  if (!publicRoutes.includes(pathname) && !accessToken) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)", "/"],
+};
+```
+
+**Important:** proxy-level redirects are a **UX gate only**. Backend
+`JwtAuthGuard` is the authoritative enforcement. Do NOT rely solely on
+the proxy for security.
+
+---
+
+## Refresh Token Rotation (H7 + L8)
+
+On every `/auth/refresh` call the backend:
+
+1. Validates the incoming `refresh_token` cookie (forwarded by the BFF).
+2. Revokes that token from the DB.
+3. Returns a new access token **and** a new refresh token in JSON.
+
+The **BFF sets both httpOnly cookies** — the backend does not use `Set-Cookie`
+(the browser never talks to Nest directly for auth).
+
+```typescript
+// src/app/api/lib/backend.ts  (simplified)
+import {
+  getAccessTokenCookieOptions,
+  getRefreshTokenCookieOptions,
+} from "@/app/api/lib/authCookieOptions";
+
+async function refreshAccessToken(cookieStore: ReadonlyRequestCookies) {
+  const refreshToken = cookieStore.get("refresh_token")?.value;
+  const res = await fetch(`${BACKEND_URL}/auth/refresh`, {
+    method: "POST",
+    headers: {
+      Cookie: `refresh_token=${refreshToken}`,
+      ...getBffSecretHeaders(),
+    },
+  });
+
+  const data = await res.json();
+  if (!data.accessToken || !data.refreshToken) return null;
+
+  cookieStore.set(
+    "access_token",
+    data.accessToken,
+    getAccessTokenCookieOptions(),
+  );
+  cookieStore.set(
+    "refresh_token",
+    data.refreshToken,
+    getRefreshTokenCookieOptions(),
+  );
+}
+```
+
+Shared cookie options live in `src/app/api/lib/authCookieOptions.ts`
+(`httpOnly`, `secure` in production, `sameSite: 'strict'`).
+
+---
+
+## Backend Route Protection — Global Guard + @Public()
+
+`JwtAuthGuard` is a **global `APP_GUARD`** (registered in `AppModule`). All
+endpoints are authenticated by default. Use `@Public()` to opt out:
+
+```typescript
+// src/controllers/auth.controller.ts
+import { Public } from '@/common/decorators/public.decorator';
+
+@Public()    // ✅ login is public
+@Post('login')
+login(@Body() dto: LoginDto) { ... }
+
+@Public()    // ✅ refresh is public (token is validated internally)
+@Post('refresh')
+refresh(@Req() req: Request) { ... }
+```
+
+### ❌ WRONG: Per-controller guard with public exceptions via middleware
+
+```typescript
+// NEVER protect routes only through Next.js proxy/middleware
+// The backend must always enforce JWT independently.
+```
+
+---
+
+## Environment Variables
+
+### Backend (.env / .env.local)
+
+```bash
+JWT_SECRET=min-32-chars-cryptographically-secure  # required — app won't start without it
+JWT_REFRESH_SECRET=different-min-32-chars-secure  # required — app won't start without it
+```
+
+Generate with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+### Frontend (.env.local)
+
+```bash
+# Private server-side URL — do NOT prefix with NEXT_PUBLIC_
+API_URL=http://localhost:3002
+
+# Must match the backend JWT_SECRET exactly.
+# proxy.ts uses it to verify access token signatures on the Edge Runtime
+# (server-side only — no NEXT_PUBLIC_ prefix means it is never sent to the browser).
+JWT_SECRET=<same-value-as-backend>
+
+# JWT_REFRESH_SECRET is NOT needed here — refresh tokens are only validated by the backend.
+```
+
+### ❌ NEVER
+
+- Commit secrets to git
+- Use short/weak secrets
+- Reuse secrets across environments
+- Use `NEXT_PUBLIC_API_URL` in Server Actions or API route handlers
+
+---
+
+## Getting Current User
+
+### ✅ Server Component
+
+```typescript
+import { getCurrentUser } from '@/app/actions/auth.actions';
+
+export default async function Page() {
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+  return <div>Welcome {user.name}</div>;
+}
+```
+
+### ✅ Client Component via Context
+
+```typescript
+'use client';
+import { useAuthContext } from '@/contexts/AuthContext';
+
+export function MyComponent() {
+  const { user, isAuthenticated } = useAuthContext();
+  return isAuthenticated ? <div>Hello {user.name}</div> : null;
+}
+```
+
+---
+
+## Security Checklist
+
+Before implementing auth features:
+
+- [ ] Using `getBackendUrl()` in all Server Actions / API route handlers?
+- [ ] NOT using `NEXT_PUBLIC_API_URL` in any server-side code?
+- [ ] Proxy allowlist updated for new path segments?
+- [ ] `auth/*` never in the proxy allowlist?
+- [ ] Backend endpoint is either behind global `JwtAuthGuard` or decorated `@Public()`?
+- [ ] Storing tokens in HTTP-only cookies (not localStorage)?
+- [ ] Both `access_token` AND `refresh_token` cookies set on login and refresh?
+- [ ] Refresh rotation tested (old token revoked)?
+- [ ] Using `proxy.ts` (not `middleware.ts`) for frontend route gating?
+
+---
+
+## Key Files
+
+| Purpose                       | File                                                    |
+| ----------------------------- | ------------------------------------------------------- |
+| Server-side backend URL       | `src/app/api/lib/getBackendUrl.ts`                      |
+| Server Actions (auth)         | `src/app/actions/auth.actions.ts`                       |
+| BFF proxy handler             | `src/app/api/[...path]/route.ts`                        |
+| Proxy allowlist               | `src/app/api/[...path]/allowlist.ts`                    |
+| Token refresh + backend calls | `src/app/api/lib/backend.ts`                            |
+| Frontend route gating         | `src/proxy.ts`                                          |
+| Auth Context                  | `src/contexts/AuthContext.tsx`                          |
+| Backend global guard          | `hms-backend/src/common/guards/jwt-auth.guard.ts`       |
+| @Public() decorator           | `hms-backend/src/common/decorators/public.decorator.ts` |
+| Backend auth controller       | `hms-backend/src/controllers/auth.controller.ts`        |

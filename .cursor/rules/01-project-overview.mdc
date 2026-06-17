@@ -1,0 +1,31 @@
+---
+alwaysApply: true
+---
+
+# Healthcare Management System - Project Overview
+
+This is a volunteer project for managing attendances and treatments in a assessment center in Brazil. The system is built with modern web technologies and follows specific architectural patterns.
+
+## Critical Documentation
+
+**ALWAYS** check these documentation files before implementing any new features or making architectural changes:
+
+- [Architecture Reference](mdc:docs/ARCHITECTURE.md) - Technical architecture, patterns, and folder structure
+- [Setup Guide](mdc:docs/SETUP.md) - Development setup, testing, and deployment
+- Project README - Feature status and roadmap (see project README)
+- [Authentication](mdc:docs/AUTHENTICATION.md) - BFF auth, cookies, env vars, production deployment
+  -- Mobile responsiveness — [09-styling-responsive.mdc](mdc:.cursor/rules/09-styling-responsive.mdc), [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md) § Responsive Rules, [TESTING_CHECKLIST.md](mdc:docs/TESTING_CHECKLIST.md) §13
+
+## Documentation-First Development
+
+1. **Read First**: Always read relevant documentation before implementing features
+2. **Update Documentation**: Update docs when adding features or changing architecture
+3. **Maintain Consistency**: Follow established patterns from [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md)
+4. **Respect Features**: Check the project README for feature status and planned work
+
+## Project Context
+
+- **Tech Stack**: Next.js 16.2.6+, React 19, TypeScript 5, TailwindCSS 4
+- **State Management**: Hybrid pattern (React Query + Zustand + Context)
+- **Testing**: Jest 29 and React Testing Library; keep tests co-located with the code they cover
+- **Quality**: TypeScript strict mode, keep the suite green

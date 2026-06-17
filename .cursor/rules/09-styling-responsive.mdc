@@ -1,0 +1,41 @@
+---
+alwaysApply: true
+globs: src/components/**/*.tsx,src/app/**/*.tsx,*.css
+---
+
+# Styling & Responsive Patterns
+
+This file consolidates styling and responsive UI patterns (Tailwind + responsive rules).
+
+## Tailwind & Styling
+
+This project uses TailwindCSS 4 with JIT. Use Tailwind utility classes in components and prefer theme colors from `globals.css` / Tailwind config.
+
+### Reusable Components & Utilities
+
+Create styled component wrappers for consistency (buttons, cards, inputs). Use `className` templates or `classnames`.
+
+### Accessibility & Focus
+
+Always include visible focus states and ensure color contrast meets accessibility guidelines.
+
+## Responsive UI Patterns
+
+Follow mobile-first approach and Tailwind breakpoints. Prefer extending existing patterns and avoid ad-hoc breakpoints.
+
+### Attendance Board & Layout
+
+Use grid and responsive classes (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4`), and ensure no horizontal scroll at small widths.
+
+### Modals & Tables
+
+Use `BaseModal` for dialogs; body scrolls inside modal. For data tables, prefer stacked/card views on mobile and table on larger screens.
+
+### Touch Targets
+
+Ensure primary actions and icon buttons meet minimum touch target sizes (44x44px).
+
+## See Also
+
+- Tailwind docs: https://tailwindcss.com/docs
+- Project patterns in `ARCHITECTURE.md` for detailed responsive rules

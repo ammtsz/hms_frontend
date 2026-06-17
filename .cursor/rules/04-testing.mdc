@@ -1,0 +1,108 @@
+---
+globs: **/__tests__/**,*.test.ts,*.test.tsx,*.spec.ts,*.spec.tsx
+---
+
+# Testing Guidelines
+
+## Test Requirements
+
+**ALL new components and hooks MUST have tests.**
+
+Keep coverage healthy for new and changed code; prefer tests that exercise behavior over implementation details.
+
+## Test Location
+
+Co-locate tests with source code:
+
+```
+src/components/MyComponent/
+├── MyComponent.tsx
+├── __tests__/
+│   └── MyComponent.test.tsx
+└── index.ts
+```
+
+## Test Structure
+
+### Component Tests
+
+```typescript
+import { render, screen } from "@testing-library/react";
+import { MyComponent } from "../MyComponent";
+
+describe("MyComponent", () => {
+  it("renders correctly", () => {
+    render(<MyComponent />);
+    expect(screen.getByText("Expected Text")).toBeInTheDocument();
+  });
+
+  it("handles user interactions", async () => {
+    const { user } = render(<MyComponent />);
+    await user.click(screen.getByRole("button"));
+    expect(screen.getByText("Updated Text")).toBeInTheDocument();
+  });
+});
+```
+
+### Hook Tests
+
+```typescript
+import { renderHook, waitFor } from "@testing-library/react";
+import { usePatient } from "../usePatient";
+
+describe("usePatient", () => {
+  it("fetches patient data", async () => {
+    const { result } = renderHook(() => usePatient(1));
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toBeDefined();
+  });
+});
+```
+
+## Mocking Strategy
+
+### API Mocks
+
+```typescript
+// Mock API calls
+jest.mock("@/api/patients", () => ({
+  getPatient: jest.fn().mockResolvedValue(mockPatient),
+}));
+```
+
+### Factory Functions
+
+Create reusable test data:
+
+```typescript
+// test/factories.ts
+export const createMockPatient = (overrides = {}) => ({
+  id: 1,
+  name: "John Doe",
+  birthDate: "1990-01-01",
+  ...overrides,
+});
+```
+
+## Running Tests
+
+```bash
+npm test                    # Run all tests
+npm test -- --watch        # Watch mode
+npm test -- --coverage     # With coverage
+npm test -- MyComponent    # Specific test
+```
+
+## Test Best Practices
+
+1. **Test behavior, not implementation** - Focus on what users see/do
+2. **Use descriptive test names** - Clearly state what is being tested
+3. **Arrange-Act-Assert** - Structure tests clearly
+4. **Mock external dependencies** - Keep tests isolated
+5. **Test edge cases** - Empty states, errors, loading states
+6. **Keep tests fast** - Mock expensive operations
+
+## Common Testing Patterns
+
+See [SETUP.md](mdc:docs/SETUP.md) and [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md) for testing examples and patterns.

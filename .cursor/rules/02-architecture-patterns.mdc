@@ -1,0 +1,162 @@
+---
+alwaysApply: true
+---
+
+# Architecture Patterns - MUST FOLLOW
+
+## Hybrid State Management Pattern
+
+Use the correct tool for each type of state:
+
+### Server State → React Query
+
+```typescript
+// ✅ CORRECT: Server data with React Query
+const { data: patients, isLoading } = usePatientQueries();
+```
+
+### UI State → Zustand
+
+```typescript
+// ✅ CORRECT: UI state with Zustand
+const selectedDate = useAttendanceStore((state) => state.selectedDate);
+const setSelectedDate = useAttendanceStore((state) => state.setSelectedDate);
+```
+
+### Global Settings → React Context
+
+```typescript
+// ✅ CORRECT: Global settings with Context
+const { currentTimezone } = useTimezone();
+```
+
+## Component Organization
+
+```
+src/components/FeatureName/
+├── FeatureName.tsx          # Main component
+├── SubComponent.tsx         # Supporting components
+├── useFeatureLogic.ts      # Custom hook for business logic
+├── index.ts                # Barrel export
+└── __tests__/
+    ├── FeatureName.test.tsx
+    └── useFeatureLogic.test.ts
+```
+
+**Rules:**
+
+- Co-locate tests in `__tests__/` folders
+- Extract complex logic to custom hooks
+- Keep components under 300 lines
+- Always create barrel exports (index.ts)
+
+## Custom Hook Pattern
+
+Use single-responsibility hooks:
+
+```typescript
+// ❌ BAD: God hook doing everything
+function useEverything() {
+  /* 500 lines */
+}
+
+// ✅ GOOD: Focused hooks
+function useDragAndDrop() {
+  /* drag logic */
+}
+function useModalManagement() {
+  /* modal state */
+}
+function useBusinessLogic() {
+  /* domain rules */
+}
+```
+
+**Hook Categories:**
+
+- **Query Hooks**: React Query wrappers (`usePatientQueries.ts`)
+- **Business Logic**: Domain logic (`useDragAndDrop.ts`)
+- **UI Hooks**: UI state (`useModalManagement.ts`)
+- **Form Hooks**: Form handling (`usePatientForm.ts`)
+
+## API Integration Pattern
+
+All API calls must follow this pattern:
+
+```typescript
+// 1. API function - Transformation handled by axios interceptors
+export async function getPatient(
+  id: string,
+): Promise<ApiResponse<PatientResponseDto>> {
+  try {
+    const { data } = await api.get(`/patients/${id}`);
+    return { success: true, value: data }; // Already camelCase from interceptor
+  } catch (error) {
+    const message = getErrorMessage((error as AxiosError).status);
+    return { success: false, error: message };
+  }
+}
+
+// 2. React Query hook
+export function usePatient(id: string) {
+  return useQuery({
+    queryKey: ["patient", id],
+    queryFn: async () => {
+      const result = await getPatient(id);
+      if (!result.success || !result.value) {
+        throw new Error(result.error || "Patient not found");
+      }
+      return result.value;
+    },
+    enabled: !!id,
+  });
+}
+
+// 3. Use in component
+const { data: patient, isLoading, error } = usePatient(id);
+```
+
+**Important Notes:**
+
+- **Automatic Transformation**: The axios instance (`api`) has interceptors that automatically convert snake_case ↔ camelCase for ALL requests/responses
+- **Manual Transformation**: Only needed in special cases (e.g., holidays API for backward compatibility)
+- **Import Pattern**: Always `import api from '@/api/lib/axios'` (not `axiosInstance`)
+- **transformKeys Location**: Available at `@/utils/caseConverters` (used in axios interceptors)
+
+## Domain-Specific Patterns
+
+### Attendance Grouping Pattern
+
+**CRITICAL**: This project uses a specific grouping approach for attendances. See [11-attendance-grouping.mdc](mdc:.cursor/rules/11-attendance-grouping.mdc) for complete rules.
+
+**Quick Reference:**
+
+- Physiotherapy and tens treatments are **always grouped together** for the same patient
+- Patient with assessment + treatments: show as **2 entries**
+- Patient with only treatments: show as **1 entry** (combined if both)
+- Use `groupAttendancesForDisplayWithBodyLocation()` from `confirmationStepUtils.ts`
+
+```typescript
+// ✅ CORRECT: Use the utility function
+import { groupAttendancesForDisplayWithBodyLocation } from "@/features/attendance/components/EndOfDay/utils/confirmationStepUtils";
+
+const groupedAttendances = useMemo(
+  () => groupAttendancesForDisplayWithBodyLocation(attendances),
+  [attendances]
+);
+
+// ❌ WRONG: Manually implementing grouping logic
+attendances.map(attendance => ...)
+```
+
+## Folder Structure
+
+See [ARCHITECTURE.md](mdc:docs/ARCHITECTURE.md) for complete folder responsibilities:
+
+- `/src/api/` - Backend integration with type transformers
+- `/src/app/` - Next.js App Router pages
+- `/src/components/` - React components (organized by feature)
+- `/src/hooks/` - Custom React hooks
+- `/src/stores/` - Zustand stores for UI state
+- `/src/types/` - TypeScript definitions
+- `/src/utils/` - Pure helper functions

@@ -1,0 +1,82 @@
+---
+alwaysApply: true
+description: Git commit conventions and staging rules combined
+---
+
+# Git: Commit Conventions & Staging
+
+This file combines commit message conventions and staging rules.
+
+## Commit Message Conventions
+
+Always use **Conventional Commits** format when committing changes. Be concise and clear.
+
+### Format
+
+```
+<type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+```
+
+### Commit Types
+
+- **feat**: New feature
+- **fix**: Bug fix
+- **docs**: Documentation changes
+- **style**: Code style changes (formatting, missing semicolons, etc.)
+- **refactor**: Code refactoring without feature changes or bug fixes
+- **test**: Adding or updating tests
+- **chore**: Maintenance tasks (dependencies, build config, etc.)
+- **perf**: Performance improvements
+- **ci**: CI/CD changes
+
+### Scope (Optional)
+
+Use the affected area/module: `attendance`, `patient`, `treatment`, `agenda`, `api`, `components`, `hooks`, `stores`, `utils`, etc.
+
+### Subject
+
+- Use imperative mood ("add" not "added" or "adds")
+- First letter lowercase
+- No period at the end
+- Maximum 72 characters
+
+### Examples
+
+```
+feat(attendance): add drag and drop functionality
+fix(patient): resolve form validation error
+docs: update architecture patterns
+refactor(hooks): extract business logic to custom hook
+test(components): add unit tests for PatientForm
+chore: update dependencies
+perf(api): optimize patient query performance
+```
+
+## Staging Rules
+
+**CRITICAL**: Do not stage changes on your own. The agent may run `git add` **only when the user explicitly asks** (e.g. “stage these files”, “git add src/foo.ts”).
+
+### Do Not Stage Automatically
+
+- Do **not** run `git add`, `git add -A`, `git add -u`, `git add .`, or `git add <path>` unless the user asked you to
+- Do **not** use `git commit -a` (it stages and commits tracked changes)
+- Do **not** stage “helpfully” before `git status`, review, or commit
+
+### When the User Asks to Commit (and did not ask to stage)
+
+1. Run `git status` and `git diff` to inspect **unstaged** and **staged** changes.
+2. Commit **only** what is already staged (`git commit` with no add step).
+3. If nothing is staged (or the wrong set is staged), tell the user which paths changed and ask them to stage what they want—or wait for them to ask you to run `git add`.
+
+### When the User Asks to Stage
+
+Run `git add` as requested. If scope is ambiguous, ask before staging.
+
+### Related Commands
+
+- `git restore --staged`, `git reset`, and other index-changing commands: only use when the user explicitly asks.
+- Read-only git commands (`git status`, `git diff`, `git log`, etc.) are always fine.
