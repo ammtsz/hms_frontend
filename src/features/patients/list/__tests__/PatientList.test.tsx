@@ -34,14 +34,14 @@ jest.mock("next/link", () => {
 const mockPatients = [
   {
     id: 1,
-    name: "João Silva",
+    name: "John Smith",
     phone: "(11) 99999-9999",
     priority: "3",
     status: "T",
   },
   {
     id: 2,
-    name: "Maria Santos",
+    name: "Emily Williams",
     phone: "(11) 88888-8888",
     priority: "1",
     status: "A",
@@ -58,14 +58,15 @@ const defaultMockReturn = {
   handleSort: jest.fn(),
   paginated: mockPatients,
   statusLegend: {
-    T: "Em Tratamento",
-    A: "Alta do tratamento",
-    F: "Faltas Consecutivas",
+    N: "New patient",
+    T: "In Treatment",
+    A: "Discharged",
+    F: "Missed — consecutive",
   },
   priorityLegend: {
-    "1": "Exceção",
-    "2": "Idoso/crianças",
-    "3": "Padrão",
+    "1": "Priority",
+    "2": "Standard",
+    "3": "Priority 3",
   },
   loading: false,
   error: null,
@@ -92,9 +93,9 @@ describe("PatientList", () => {
     it("should display header with title and description", () => {
       render(<PatientList />);
 
-      expect(screen.getByText("Pacientes")).toBeInTheDocument();
+      expect(screen.getByText("Patients")).toBeInTheDocument();
       expect(
-        screen.getByText("Gerencie e visualize todos os pacientes cadastrados"),
+        screen.getByText("Manage and view all registered patients"),
       ).toBeInTheDocument();
     });
 
@@ -107,7 +108,7 @@ describe("PatientList", () => {
     it("should display new patient button", () => {
       render(<PatientList />);
 
-      const newPatientButton = screen.getByText("+ Novo Paciente");
+      const newPatientButton = screen.getByText("+ New Patient");
       expect(newPatientButton).toBeInTheDocument();
       expect(newPatientButton.closest("a")).toHaveAttribute(
         "href",
@@ -120,7 +121,7 @@ describe("PatientList", () => {
     it("should render search input", () => {
       render(<PatientList />);
 
-      const searchInput = screen.getByPlaceholderText("Buscar por nome...");
+      const searchInput = screen.getByPlaceholderText("Search by name...");
       expect(searchInput).toBeInTheDocument();
     });
 
@@ -133,10 +134,10 @@ describe("PatientList", () => {
 
       render(<PatientList />);
 
-      const searchInput = screen.getByPlaceholderText("Buscar por nome...");
-      fireEvent.change(searchInput, { target: { value: "João" } });
+      const searchInput = screen.getByPlaceholderText("Search by name...");
+      fireEvent.change(searchInput, { target: { value: "John" } });
 
-      expect(mockSetSearch).toHaveBeenCalledWith("João");
+      expect(mockSetSearch).toHaveBeenCalledWith("John");
     });
   });
 
@@ -145,10 +146,12 @@ describe("PatientList", () => {
       render(<PatientList />);
 
       const table = within(screen.getByTestId("patient-list-table"));
-      expect(table.getByText("Registro")).toBeInTheDocument();
-      expect(table.getByText("Nome")).toBeInTheDocument();
-      expect(table.getByText("Telefone")).toBeInTheDocument();
-      expect(table.getByText("Prioridade")).toBeInTheDocument();
+      expect(table.getByText("Record")).toBeInTheDocument();
+      expect(table.getByText("Name")).toBeInTheDocument();
+      expect(table.getByText("Phone")).toBeInTheDocument();
+      expect(
+        table.getByRole("columnheader", { name: "Priority" }),
+      ).toBeInTheDocument();
       expect(table.getByText("Status")).toBeInTheDocument();
     });
 
@@ -156,12 +159,12 @@ describe("PatientList", () => {
       render(<PatientList />);
 
       const cards = within(screen.getByTestId("patient-list-cards"));
-      expect(cards.getByText("João Silva")).toBeInTheDocument();
-      expect(cards.getByText("Maria Santos")).toBeInTheDocument();
+      expect(cards.getByText("John Smith")).toBeInTheDocument();
+      expect(cards.getByText("Emily Williams")).toBeInTheDocument();
 
       const table = within(screen.getByTestId("patient-list-table"));
-      expect(table.getByText("João Silva")).toBeInTheDocument();
-      expect(table.getByText("Maria Santos")).toBeInTheDocument();
+      expect(table.getByText("John Smith")).toBeInTheDocument();
+      expect(table.getByText("Emily Williams")).toBeInTheDocument();
       expect(table.getByText("(11) 99999-9999")).toBeInTheDocument();
       expect(table.getByText("(11) 88888-8888")).toBeInTheDocument();
     });
@@ -170,7 +173,7 @@ describe("PatientList", () => {
       render(<PatientList />);
 
       const table = screen.getByTestId("patient-list-table");
-      const firstRow = within(table).getByText("João Silva").closest("tr");
+      const firstRow = within(table).getByText("John Smith").closest("tr");
       expect(firstRow).toHaveClass("cursor-pointer");
     });
   });
@@ -186,7 +189,7 @@ describe("PatientList", () => {
       render(<PatientList />);
 
       const table = within(screen.getByTestId("patient-list-table"));
-      fireEvent.click(table.getByText(/Nome/));
+      fireEvent.click(table.getByText(/Name/));
 
       expect(mockHandleSort).toHaveBeenCalledWith("name");
     });
@@ -201,7 +204,7 @@ describe("PatientList", () => {
       render(<PatientList />);
 
       const table = within(screen.getByTestId("patient-list-table"));
-      expect(table.getByText("Nome")).toBeInTheDocument();
+      expect(table.getByText("Name")).toBeInTheDocument();
       // The sort indicator might be in a different element, so just check for the column header
     });
   });
@@ -210,22 +213,26 @@ describe("PatientList", () => {
     it("should display status legend", () => {
       render(<PatientList />);
 
-      expect(screen.getByText("Legenda de Status:")).toBeInTheDocument();
+      expect(screen.getByText("Status Legend:")).toBeInTheDocument();
       expect(
         screen.getByText(
-          (content, element) => element?.textContent === "T: Em Tratamento",
+          (content, element) => element?.textContent === "N: New patient",
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          (content, element) => element?.textContent === "T: In Treatment",
+        ),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          (content, element) => element?.textContent === "A: Discharged",
         ),
       ).toBeInTheDocument();
       expect(
         screen.getByText(
           (content, element) =>
-            element?.textContent === "A: Alta do tratamento",
-        ),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          (content, element) =>
-            element?.textContent === "F: Faltas Consecutivas",
+            element?.textContent === "F: Missed — consecutive",
         ),
       ).toBeInTheDocument();
     });
@@ -233,20 +240,20 @@ describe("PatientList", () => {
     it("should display priority legend", () => {
       render(<PatientList />);
 
-      expect(screen.getByText("Legenda de Prioridade:")).toBeInTheDocument();
+      expect(screen.getByText("Priority Legend:")).toBeInTheDocument();
       expect(
         screen.getByText(
-          (content, element) => element?.textContent === "1: Exceção",
+          (content, element) => element?.textContent === "1: Priority",
         ),
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          (content, element) => element?.textContent === "2: Idoso/crianças",
+          (content, element) => element?.textContent === "2: Standard",
         ),
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          (content, element) => element?.textContent === "3: Padrão",
+          (content, element) => element?.textContent === "3: Priority 3",
         ),
       ).toBeInTheDocument();
     });
@@ -261,10 +268,8 @@ describe("PatientList", () => {
 
       render(<PatientList />);
 
-      expect(screen.getByText("Carregando pacientes...")).toBeInTheDocument();
-      expect(
-        screen.getByText("Carregando lista de pacientes..."),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Loading patients...")).toBeInTheDocument();
+      expect(screen.getByText("Loading patient list...")).toBeInTheDocument();
     });
   });
 
@@ -274,20 +279,18 @@ describe("PatientList", () => {
       (usePatientList as jest.Mock).mockReturnValue({
         ...defaultMockReturn,
         loading: false,
-        error: "Erro ao carregar pacientes",
+        error: "Error loading patients",
         refreshPatients: mockRefreshPatients,
       });
 
       render(<PatientList />);
 
+      expect(screen.getByText("Error loading patients")).toBeInTheDocument();
       expect(
-        screen.getByText("Erro ao carregar pacientes"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("Erro ao carregar lista de pacientes"),
+        screen.getByText("Error loading patient list"),
       ).toBeInTheDocument();
 
-      const retryButton = screen.getByText("Tentar novamente");
+      const retryButton = screen.getByText("Try again");
       expect(retryButton).toBeInTheDocument();
 
       fireEvent.click(retryButton);
@@ -322,7 +325,7 @@ describe("PatientList", () => {
       expect(
         screen.getByTestId("patient-list-mobile-sort"),
       ).toBeInTheDocument();
-      expect(screen.getByLabelText("Ordenar por")).toBeInTheDocument();
+      expect(screen.getByLabelText("Sort by")).toBeInTheDocument();
     });
 
     it("should have overflow-x-auto for table", () => {

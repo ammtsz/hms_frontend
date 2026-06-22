@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AgendaColumn from "../components/AgendaColumn";
+import { AGENDA_COLUMN_MESSAGES } from "../utils/agendaFilterConstants";
 import { AttendanceType } from "@/types/types";
 import { AttendanceStatus } from "@/api/types";
 import { useOpenCancellation } from "@/stores/modalStore";
@@ -23,7 +24,7 @@ jest.mock("@/features/attendance/components/Cards/AttendanceTypeTag", () => {
 });
 
 jest.mock("@/utils/dateUtils", () => ({
-  formatDateWithDayOfWeekBR: jest.fn(
+  formatDisplayDateWithDayOfWeek: jest.fn(
     (dateStr: string) => `Formatted ${dateStr}`,
   ),
 }));
@@ -61,14 +62,14 @@ describe("AgendaColumn", () => {
 
   const mockPatient1 = {
     id: "1",
-    name: "João Silva",
+    name: "John Smith",
     attendanceId: 100,
     attendanceType: "assessment" as AttendanceType,
   };
 
   const mockPatient2 = {
     id: "2",
-    name: "Maria Santos",
+    name: "Emily Williams",
     attendanceId: 101,
     attendanceType: "physiotherapy" as AttendanceType,
   };
@@ -79,7 +80,7 @@ describe("AgendaColumn", () => {
   };
 
   const defaultProps = {
-    title: "Consultas",
+    title: "Consultations",
     agendaItems: [defaultAgendaItem],
     openAgendaIdx: [] as number[],
     setOpenAgendaIdx: jest.fn(),
@@ -101,7 +102,7 @@ describe("AgendaColumn", () => {
     it("renders without crashing", () => {
       render(<AgendaColumn {...defaultProps} />);
 
-      expect(screen.getByText("Consultas")).toBeInTheDocument();
+      expect(screen.getByText("Consultations")).toBeInTheDocument();
     });
 
     it("displays column title correctly", () => {
@@ -114,7 +115,7 @@ describe("AgendaColumn", () => {
     it("displays agenda items count correctly - singular", () => {
       render(<AgendaColumn {...defaultProps} />);
 
-      expect(screen.getByText("1 data com agendamentos")).toBeInTheDocument();
+      expect(screen.getByText("1 date with appointments")).toBeInTheDocument();
     });
 
     it("displays agenda items count correctly - plural", () => {
@@ -124,7 +125,7 @@ describe("AgendaColumn", () => {
       ];
       render(<AgendaColumn {...defaultProps} agendaItems={multipleItems} />);
 
-      expect(screen.getByText("2 datas com agendamentos")).toBeInTheDocument();
+      expect(screen.getByText("2 dates with appointments")).toBeInTheDocument();
     });
 
     it("applies correct styling classes", () => {
@@ -149,7 +150,9 @@ describe("AgendaColumn", () => {
       render(<AgendaColumn {...defaultProps} isRefreshing={true} />);
 
       expect(screen.getAllByTestId("spinner").length).toBeGreaterThan(0);
-      expect(screen.getByText("Atualizando...")).toBeInTheDocument();
+      expect(
+        screen.getByText(AGENDA_COLUMN_MESSAGES.refreshing),
+      ).toBeInTheDocument();
     });
 
     it("applies opacity class when refreshing", () => {
@@ -169,7 +172,9 @@ describe("AgendaColumn", () => {
         (el) => el.getAttribute("data-size") === "sm",
       );
       expect(overlaySpinners).toHaveLength(0);
-      expect(screen.queryByText("Atualizando...")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(AGENDA_COLUMN_MESSAGES.refreshing),
+      ).not.toBeInTheDocument();
     });
 
     it("does not apply opacity class when not refreshing", () => {
@@ -198,13 +203,13 @@ describe("AgendaColumn", () => {
         <AgendaColumn {...defaultProps} agendaItems={[singlePatientItem]} />,
       );
 
-      expect(screen.getByText("1 paciente agendado")).toBeInTheDocument();
+      expect(screen.getByText("1 patient scheduled")).toBeInTheDocument();
     });
 
     it("displays patient count correctly - plural", () => {
       render(<AgendaColumn {...defaultProps} />);
 
-      expect(screen.getByText("2 pacientes agendados")).toBeInTheDocument();
+      expect(screen.getByText("2 patients scheduled")).toBeInTheDocument();
     });
 
     it("shows collapsed state by default", () => {
@@ -212,14 +217,14 @@ describe("AgendaColumn", () => {
 
       const expandButton = rowExpandButtons()[0];
       expect(expandButton).toBeInTheDocument();
-      expect(screen.queryByText("João Silva")).not.toBeInTheDocument();
+      expect(screen.queryByText("John Smith")).not.toBeInTheDocument();
     });
 
     it("shows expanded state when openAgendaIdx matches", () => {
       render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
 
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
-      expect(screen.getByText("Maria Santos")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
+      expect(screen.getByText("Emily Williams")).toBeInTheDocument();
     });
   });
 
@@ -279,8 +284,8 @@ describe("AgendaColumn", () => {
     });
 
     it("displays patient names when expanded", () => {
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
-      expect(screen.getByText("Maria Santos")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
+      expect(screen.getByText("Emily Williams")).toBeInTheDocument();
     });
 
     it("does not show type tags on assessment column", () => {
@@ -297,13 +302,13 @@ describe("AgendaColumn", () => {
         patients: [
           {
             id: "1",
-            name: "João",
+            name: "John",
             attendanceId: 1,
             attendanceType: "physiotherapy" as AttendanceType,
           },
           {
             id: "1",
-            name: "João",
+            name: "John",
             attendanceId: 2,
             attendanceType: "tens" as AttendanceType,
           },
@@ -312,7 +317,7 @@ describe("AgendaColumn", () => {
       render(
         <AgendaColumn
           {...defaultProps}
-          title="Tratamentos"
+          title="Treatments"
           columnType="physiotherapy"
           agendaItems={[physiotherapyItem]}
           openAgendaIdx={[0]}
@@ -326,23 +331,23 @@ describe("AgendaColumn", () => {
     });
   });
 
-  describe("Gerenciar / cancellation flow", () => {
-    it("calls openCancellation when Gerenciar is clicked for scheduled rows", () => {
+  describe("Manage / cancellation flow", () => {
+    it("calls openCancellation when Manage is clicked for scheduled rows", () => {
       render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
 
       const manageButtons = screen.getAllByRole("button", {
-        name: "Gerenciar agendamento",
+        name: "Manage appointment",
       });
       fireEvent.click(manageButtons[0]);
 
       expect(mockOpenCancellation).toHaveBeenCalledWith(
         [100],
-        "João Silva",
+        "John Smith",
         "2024-01-15",
       );
     });
 
-    it("does not show Gerenciar for non-scheduled status", () => {
+    it("does not show Manage for non-scheduled status", () => {
       const completedPatient = {
         ...mockPatient1,
         attendanceStatus: AttendanceStatus.COMPLETED,
@@ -356,7 +361,7 @@ describe("AgendaColumn", () => {
       );
 
       expect(
-        screen.queryByRole("button", { name: "Gerenciar agendamento" }),
+        screen.queryByRole("button", { name: "Manage appointment" }),
       ).not.toBeInTheDocument();
     });
   });
@@ -369,7 +374,7 @@ describe("AgendaColumn", () => {
 
       expect(screen.getByTestId("spinner")).toBeInTheDocument();
       expect(
-        screen.getByText("Carregando agendamentos..."),
+        screen.getByText(AGENDA_COLUMN_MESSAGES.loading),
       ).toBeInTheDocument();
     });
 
@@ -395,12 +400,10 @@ describe("AgendaColumn", () => {
       );
 
       expect(
-        screen.getByText("Nenhuma consulta de avaliação encontrada."),
+        screen.getByText(AGENDA_COLUMN_MESSAGES.emptyAssessment),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(
-          "Selecione uma data diferente ou crie um novo agendamento.",
-        ),
+        screen.getByText(AGENDA_COLUMN_MESSAGES.emptyHint),
       ).toBeInTheDocument();
     });
 
@@ -414,12 +417,10 @@ describe("AgendaColumn", () => {
       );
 
       expect(
-        screen.getByText("Nenhum fisioterapia/TENS encontrado."),
+        screen.getByText(AGENDA_COLUMN_MESSAGES.emptyPhysiotherapy),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(
-          "Selecione uma data diferente ou crie um novo agendamento.",
-        ),
+        screen.getByText(AGENDA_COLUMN_MESSAGES.emptyHint),
       ).toBeInTheDocument();
     });
   });
@@ -436,7 +437,7 @@ describe("AgendaColumn", () => {
 
       expect(
         screen.getByRole("button", {
-          name: "Expandir todos os agendamentos da coluna",
+          name: "Expand all appointments in column",
         }),
       ).toBeInTheDocument();
       expect(rowExpandButtons()).toHaveLength(3);
@@ -501,10 +502,10 @@ describe("AgendaColumn", () => {
       expect(content).toBeInTheDocument();
     });
 
-    it("has aria-label for Gerenciar buttons", () => {
+    it("has aria-label for Manage buttons", () => {
       render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
 
-      const manageButtons = screen.getAllByLabelText("Gerenciar agendamento");
+      const manageButtons = screen.getAllByLabelText("Manage appointment");
       expect(manageButtons).toHaveLength(2);
     });
   });
@@ -520,9 +521,9 @@ describe("AgendaColumn", () => {
         />,
       );
 
-      expect(screen.getByText("0 pacientes agendados")).toBeInTheDocument();
+      expect(screen.getByText("0 patients scheduled")).toBeInTheDocument();
       expect(
-        screen.queryByRole("button", { name: "Gerenciar agendamento" }),
+        screen.queryByRole("button", { name: "Manage appointment" }),
       ).not.toBeInTheDocument();
     });
 
@@ -544,7 +545,7 @@ describe("AgendaColumn", () => {
         />,
       );
 
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
       expect(
         screen.queryByTestId("attendance-type-tag"),
       ).not.toBeInTheDocument();
@@ -553,7 +554,7 @@ describe("AgendaColumn", () => {
     it("handles very long patient names", () => {
       const longNamePatient = {
         ...mockPatient1,
-        name: "João Silva da Costa Santos Oliveira Pereira",
+        name: "John Smith Miller Williams Taylor Davis",
       };
       const agendaWithLongName = {
         ...defaultAgendaItem,
@@ -569,7 +570,7 @@ describe("AgendaColumn", () => {
       );
 
       expect(
-        screen.getByText("João Silva da Costa Santos Oliveira Pereira"),
+        screen.getByText("John Smith Miller Williams Taylor Davis"),
       ).toBeInTheDocument();
     });
   });

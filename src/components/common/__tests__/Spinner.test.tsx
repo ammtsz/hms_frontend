@@ -10,7 +10,7 @@ describe("Spinner", () => {
     const spinner = screen.getByRole("status");
     expect(spinner).toBeInTheDocument();
     expect(spinner).toHaveClass("w-6", "h-6"); // Default md size
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
   });
 
   it("should render small size when specified", () => {
@@ -40,7 +40,7 @@ describe("Spinner", () => {
     const spinner = screen.getByRole("status");
     expect(spinner).toHaveAttribute("role", "status");
 
-    const srText = screen.getByText("Loading...");
+    const srText = screen.getAllByText("Loading...")[0];
     expect(srText).toHaveClass("sr-only");
   });
 

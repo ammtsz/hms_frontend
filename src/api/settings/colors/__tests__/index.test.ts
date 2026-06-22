@@ -43,7 +43,7 @@ describe("Settings colors API", () => {
       expect(mockApi.get).toHaveBeenCalledWith("/settings/colors", {
         params: { all: "true" },
       });
-      expect(result).toEqual({ success: false, error: "Opção não encontrada" });
+      expect(result).toEqual({ success: false, error: "Option not found" });
     });
   });
 
@@ -68,7 +68,7 @@ describe("Settings colors API", () => {
 
       const result = await checkSimilarColors("blu");
 
-      expect(result).toEqual({ success: false, error: "Este nome já existe" });
+      expect(result).toEqual({ success: false, error: "This name already exists" });
     });
   });
 
@@ -131,7 +131,7 @@ describe("Settings colors API", () => {
 
       const result = await updateColor(999, { label: "X" });
 
-      expect(result).toEqual({ success: false, error: "Opção não encontrada" });
+      expect(result).toEqual({ success: false, error: "Option not found" });
     });
   });
 
@@ -150,7 +150,7 @@ describe("Settings colors API", () => {
 
       const result = await deleteColor(999);
 
-      expect(result).toEqual({ success: false, error: "Opção não encontrada" });
+      expect(result).toEqual({ success: false, error: "Option not found" });
     });
   });
 });

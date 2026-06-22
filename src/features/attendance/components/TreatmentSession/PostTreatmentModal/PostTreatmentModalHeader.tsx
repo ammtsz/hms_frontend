@@ -13,15 +13,15 @@ export const PostTreatmentModalHeader: React.FC<
   <div className="px-4 py-3 border-b border-gray-300 flex items-center justify-between shrink-0">
     <div>
       <h2 className="text-lg font-bold text-gray-900">
-        Registrar Sessão de Tratamento
+        Register Treatment Session
       </h2>
-      <p className="text-sm text-gray-600">Paciente: {patientName}</p>
+      <p className="text-sm text-gray-600">Patient: {patientName}</p>
     </div>
     <IconButton
       onClick={onClose}
       className="text-2xl leading-none text-gray-400 hover:text-gray-600"
       disabled={isSubmitting}
-      aria-label="Fechar"
+      aria-label="Close"
     >
       ×
     </IconButton>

@@ -12,11 +12,11 @@ export type ApiResponse<T> =
 function getErrorMessage(status?: number): string {
   switch (status) {
     case 400:
-      return 'Valor inválido (use entre 1 e 10)';
+      return 'Invalid value (use between 1 and 10)';
     case 403:
-      return 'Apenas administradores podem alterar este valor';
+      return 'Only administrators can change this value';
     default:
-      return 'Erro ao processar requisição';
+      return 'Error processing request';
   }
 }
 

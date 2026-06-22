@@ -45,7 +45,7 @@ describe("PatientForm Date Handling", () => {
   test("should handle invalid date input without crashing", () => {
     renderWithProvider(<PatientForm />);
 
-    const birthDateInput = screen.getByLabelText(/Data de Nascimento/i);
+    const birthDateInput = screen.getByLabelText(/Date of Birth/i);
 
     // Test various invalid date inputs that could crash the app
     const invalidDates = [
@@ -67,7 +67,7 @@ describe("PatientForm Date Handling", () => {
   test("should handle valid date input correctly", () => {
     renderWithProvider(<PatientForm />);
 
-    const birthDateInput = screen.getByLabelText(/Data de Nascimento/i);
+    const birthDateInput = screen.getByLabelText(/Date of Birth/i);
 
     // Test valid date
     fireEvent.change(birthDateInput, { target: { value: "1990-05-15" } });
@@ -78,7 +78,7 @@ describe("PatientForm Date Handling", () => {
   test("should not crash when toISOString is called on invalid dates", () => {
     renderWithProvider(<PatientForm />);
 
-    const birthDateInput = screen.getByLabelText(/Data de Nascimento/i);
+    const birthDateInput = screen.getByLabelText(/Date of Birth/i);
 
     // Set an invalid date
     fireEvent.change(birthDateInput, { target: { value: "invalid-date" } });
@@ -87,7 +87,7 @@ describe("PatientForm Date Handling", () => {
     expect(birthDateInput).toBeInTheDocument();
 
     // The form should still be functional
-    const nameInput = screen.getByLabelText(/Nome/i);
+    const nameInput = screen.getByLabelText(/Name/i);
     expect(() => {
       fireEvent.change(nameInput, { target: { value: "Test Patient" } });
     }).not.toThrow();
@@ -96,7 +96,7 @@ describe("PatientForm Date Handling", () => {
   test("should not reset birth date to today when invalid date is entered", () => {
     renderWithProvider(<PatientForm />);
 
-    const birthDateInput = screen.getByLabelText(/Data de Nascimento/i);
+    const birthDateInput = screen.getByLabelText(/Date of Birth/i);
 
     fireEvent.change(birthDateInput, { target: { value: "1990-05-15" } });
     fireEvent.change(birthDateInput, { target: { value: "invalid-date" } });

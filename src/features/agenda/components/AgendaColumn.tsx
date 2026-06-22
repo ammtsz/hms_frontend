@@ -7,6 +7,7 @@ import AgendaDateHeader from "./AgendaDateHeader";
 import { useOpenCancellation } from "@/stores/modalStore";
 import AgendaAttendanceStatusIcon from "./AgendaAttendanceStatusIcon";
 import { Button } from "@/components/ui";
+import { AGENDA_COLUMN_MESSAGES } from "../utils/agendaFilterConstants";
 
 interface Patient {
   id: string;
@@ -118,7 +119,7 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
         <div className="absolute inset-0 bg-white/60 flex items-center justify-center rounded-lg z-10">
           <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-md border">
             <Spinner size="sm" className="text-blue-500" />
-            <span className="text-sm text-gray-600">Atualizando...</span>
+            <span className="text-sm text-gray-600">{AGENDA_COLUMN_MESSAGES.refreshing}</span>
           </div>
         </div>
       )}
@@ -128,8 +129,8 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
           <div className="min-w-0">
             <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
             <p className="mt-1 text-sm text-gray-600">
-              {agendaItems.length} data{agendaItems.length !== 1 ? "s" : ""} com
-              agendamentos
+              {agendaItems.length} date{agendaItems.length !== 1 ? "s" : ""}{" "}
+              with appointments
             </p>
           </div>
           {agendaItems.length > 0 && (
@@ -140,11 +141,11 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
               onClick={handleToggleAll}
               aria-label={
                 allExpanded
-                  ? "Recolher todos os agendamentos da coluna"
-                  : "Expandir todos os agendamentos da coluna"
+                  ? "Collapse all appointments in column"
+                  : "Expand all appointments in column"
               }
             >
-              {allExpanded ? "Recolher todos" : "Expandir todos"}
+              {allExpanded ? "Collapse all" : "Expand all"}
             </Button>
           )}
         </div>
@@ -181,10 +182,9 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
                 <span className="text-left w-full">
                   <AgendaDateHeader date={date} />
                   <div className="text-sm text-gray-600 mt-1">
-                    {patientsWithTreatmentsCounts.length} paciente
+                    {patientsWithTreatmentsCounts.length} patient
                     {patientsWithTreatmentsCounts.length !== 1 ? "s" : ""}{" "}
-                    agendado
-                    {patientsWithTreatmentsCounts.length !== 1 ? "s" : ""}
+                    scheduled
                   </div>
                 </span>
                 <div className="flex items-center gap-3">
@@ -248,9 +248,9 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
                               onClick={() =>
                                 openCancellation(attendanceIds, name, date)
                               }
-                              aria-label="Gerenciar agendamento"
+                              aria-label="Manage appointment"
                             >
-                              Gerenciar
+                              Manage
                             </Button>
                           ) : null}
                         </div>
@@ -266,18 +266,18 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
         <div className="text-center py-8 text-gray-500 bg-white border border-gray-200 rounded-lg">
           <div className="flex flex-col items-center justify-center">
             <Spinner size="md" className="text-blue-500 mb-3" />
-            <div className="text-sm">Carregando agendamentos...</div>
+            <div className="text-sm">{AGENDA_COLUMN_MESSAGES.loading}</div>
           </div>
         </div>
       ) : (
         <div className="text-center py-8 text-gray-500 bg-white border border-gray-200 rounded-lg">
           <div className="text-sm">
             {columnType === "assessment"
-              ? "Nenhuma consulta de avaliação encontrada."
-              : "Nenhum fisioterapia/TENS encontrado."}
+              ? AGENDA_COLUMN_MESSAGES.emptyAssessment
+              : AGENDA_COLUMN_MESSAGES.emptyPhysiotherapy}
           </div>
           <div className="text-xs mt-1">
-            Selecione uma data diferente ou crie um novo agendamento.
+            {AGENDA_COLUMN_MESSAGES.emptyHint}
           </div>
         </div>
       )}

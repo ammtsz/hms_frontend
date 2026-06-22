@@ -94,7 +94,7 @@ export const processEndOfDay = async (
     if (axiosError.response?.status === 409) {
       return {
         success: false,
-        error: 'Dia já finalizado',
+        error: 'Day already finalized',
       };
     }
     const message = getErrorMessage(axiosError.status);

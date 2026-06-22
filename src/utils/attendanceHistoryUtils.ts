@@ -708,15 +708,15 @@ export const groupScheduledAttendancesByDate = (
  */
 export const getTreatmentTypesLabel = (
   treatments: GroupedAttendance["treatments"] | GroupedScheduledAttendance["treatments"],
-  fallbackLabel: string = "Tipo não especificado"
+  fallbackLabel: string = "Unspecified type"
 ): string => {
   const types: string[] = [];
 
   if (treatments.assessment) {
-    types.push("Consulta de Avaliação");
+    types.push("Assessment Consultation");
   }
   if (treatments.physiotherapy) {
-    types.push("Fisioterapia");
+    types.push("Physiotherapy");
   }
   if (treatments.tens) {
     types.push("TENS");

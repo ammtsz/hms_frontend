@@ -9,6 +9,7 @@ import {
   pickFallbackPriorityValue,
   sortPriorityOptionsBySortOrder,
 } from "@/utils/priorityOptions";
+import { getTreatmentStatusLabel } from "@/utils/patientUtils";
 import {
   Card,
   CardBody,
@@ -29,7 +30,7 @@ interface PatientFormFieldsProps {
         birthDate: string | null; // YYYY-MM-DD format
         priority: string;
         status: string;
-        mainComplaint: string;
+        mainConcern: string;
         dischargeDate?: string | null; // YYYY-MM-DD format
         nextAttendanceDates?: { date: string; type: string }[]; // dates as YYYY-MM-DD strings
       };
@@ -144,7 +145,7 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
       <div className="space-y-6">
         {/* Personal Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Field label="Nome *" htmlFor="name" error={validationErrors.name}>
+          <Field label="Name *" htmlFor="name" error={validationErrors.name}>
             <Input
               id="name"
               name="name"
@@ -152,11 +153,11 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
               onChange={handleChange}
               invalid={Boolean(validationErrors.name)}
               required
-              placeholder="Nome completo do paciente"
+              placeholder="Patient full name"
             />
           </Field>
           <Field
-            label="Telefone"
+            label="Phone"
             htmlFor="phone"
             error={validationErrors.phone}
           >
@@ -173,7 +174,7 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Field
-            label="Data de Nascimento *"
+            label="Date of Birth *"
             htmlFor="birthDate"
             error={validationErrors.birthDate}
           >
@@ -185,11 +186,11 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
               value={formatDateForInput(patient.birthDate)}
               onChange={handleChange}
               required
-              lang="pt-BR"
+              lang="en-US"
               max={getTodayDate()}
             />
           </Field>
-          <Field label="Prioridade" htmlFor="priority">
+          <Field label="Priority" htmlFor="priority">
             <Select
               id="priority"
               name="priority"
@@ -232,11 +233,11 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                 }
                 title={
                   statusConfig?.hasCompletedAttendances
-                    ? "Só é possível alterar para Novo quando não há atendimentos concluídos."
+                    ? "Can only change to New when no completed attendances exist."
                     : undefined
                 }
               >
-                Novo Paciente
+                {getTreatmentStatusLabel("N")}
               </option>
               <option
                 value="T"
@@ -245,11 +246,11 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                 }
                 title={
                   statusConfig && statusConfig.currentStatus !== "T"
-                    ? "Agende um novo atendimento para alterar o status."
+                    ? "Schedule a New Attendance to change the status."
                     : undefined
                 }
               >
-                Em Tratamento
+                {getTreatmentStatusLabel("T")}
               </option>
               <option
                 value="A"
@@ -263,11 +264,11 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                   statusConfig &&
                   statusConfig.currentStatus !== "T" &&
                   statusConfig.currentStatus !== "A"
-                    ? "Apenas pacientes em tratamento podem receber Alta."
+                    ? "Only patients in treatment can receive discharge."
                     : undefined
                 }
               >
-                Alta do tratamento
+                {getTreatmentStatusLabel("A")}
               </option>
               <option
                 value="F"
@@ -281,11 +282,11 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                   statusConfig &&
                   statusConfig.currentStatus !== "T" &&
                   statusConfig.currentStatus !== "F"
-                    ? "Apenas pacientes em tratamento podem receber Faltas Consecutivas."
+                    ? "Only patients in treatment can receive Missed — consecutive."
                     : undefined
                 }
               >
-                Faltas Consecutivas
+                {getTreatmentStatusLabel("F")}
               </option>
             </Select>
           </Field>
@@ -295,8 +296,8 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
           <Field
             label={
               patient.status === "A"
-                ? "Alta recebida em"
-                : "Alta Prevista (opcional)"
+                ? "Discharged on"
+                : "Expected Discharge (optional)"
             }
             htmlFor="dischargeDate"
           >
@@ -310,19 +311,19 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                   : ""
               }
               onChange={handleChange}
-              lang="pt-BR"
+              lang="en-US"
             />
           </Field>
         )}
 
-        <Field label="Principal Queixa" htmlFor="mainComplaint">
+        <Field label="Main Concern" htmlFor="mainConcern">
           <Textarea
-            id="mainComplaint"
-            name="mainComplaint"
-            value={patient.mainComplaint}
+            id="mainConcern"
+            name="mainConcern"
+            value={patient.mainConcern}
             onChange={handleChange}
             className="min-h-[100px] resize-y"
-            placeholder="Descreva a principal queixa do paciente..."
+            placeholder="Describe the patient's main concern..."
           />
         </Field>
 
@@ -331,13 +332,13 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
           <Card>
             <CardHeader className="p-4">
               <h3 className="text-lg font-semibold text-gray-800">
-                Consulta de Avaliação
+                Assessment Consultation
               </h3>
             </CardHeader>
             <CardBody className="p-4 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Field
-                  label="Primeira Consulta (opcional)"
+                  label="First Consultation (optional)"
                   htmlFor="firstConsultationDate"
                   error={validationErrors.firstConsultationDate}
                 >
@@ -354,11 +355,14 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                         : ""
                     }
                     onChange={handleAssessmentConsultationChange}
-                    lang="pt-BR"
+                    lang="en-US"
                     min={getTodayDate()}
                   />
                 </Field>
-                <Field label="Alta Prevista (opcional)" htmlFor="dischargeDate">
+                <Field
+                  label="Expected Discharge (optional)"
+                  htmlFor="dischargeDate"
+                >
                   <Input
                     id="dischargeDate"
                     name="dischargeDate"
@@ -369,7 +373,7 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                         : ""
                     }
                     onChange={handleAssessmentConsultationChange}
-                    lang="pt-BR"
+                    lang="en-US"
                   />
                 </Field>
               </div>

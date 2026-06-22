@@ -48,7 +48,7 @@ export interface AgendaStore {
   isNavigating: boolean;
   isProcessingSchedule: boolean;
 
-  // Agenda Calendar Specific State
+  // Calendar-specific state
   selectedDateString: string;
   /** Forward-only window length in days from selected date (inclusive). */
   agendaDayWindowDays: AgendaDayWindowDays;
@@ -80,7 +80,7 @@ export interface AgendaStore {
   setIsNavigating: (isNavigating: boolean) => void;
   setIsProcessingSchedule: (isProcessing: boolean) => void;
 
-  // Actions - Agenda Calendar Specific
+  // Calendar-specific actions
   setSelectedDateString: (date: string) => void;
   setAgendaDayWindowDays: (days: AgendaDayWindowDays) => void;
   setAgendaStatusFilters: (filters: AttendanceStatus[]) => void;
@@ -105,7 +105,7 @@ const initialState = {
   editingAppointmentId: null,
   isNavigating: false,
   isProcessingSchedule: false,
-  // Agenda Calendar Specific
+  // Calendar-specific defaults
   selectedDateString: '',
   agendaDayWindowDays: 30 as AgendaDayWindowDays,
   agendaStatusFilters: defaultAgendaCalendarStatusFilters(),
@@ -216,7 +216,7 @@ export const useAgendaStore = create<AgendaStore>()(
         setIsProcessingSchedule: (isProcessingSchedule: boolean) =>
           set({ isProcessingSchedule }, false, 'setIsProcessingSchedule'),
 
-        // Agenda Calendar Specific Actions
+        // Calendar-specific actions
         setSelectedDateString: (selectedDateString: string) =>
           set({ selectedDateString }, false, 'setSelectedDateString'),
 

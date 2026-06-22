@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { getTreatmentStatusLabel } from "@/utils/patientUtils";
 
 interface TreatmentStatusBadgeProps {
   /** Treatment status (N, T, A, F) */
@@ -8,13 +9,6 @@ interface TreatmentStatusBadgeProps {
   /** Additional CSS classes */
   className?: string;
 }
-
-const STATUS_LABELS: Record<string, string> = {
-  N: "Paciente Novo",
-  T: "Em Tratamento",
-  A: "Alta do tratamento",
-  F: "Faltas Consecutivas",
-};
 
 /**
  * TreatmentStatusBadge - Displays patient treatment status with color coding
@@ -26,7 +20,7 @@ export const TreatmentStatusBadge: React.FC<TreatmentStatusBadgeProps> = ({
   const getStatusConfig = () => {
     const baseClasses =
       "inline-flex items-center px-3 rounded text-sm font-medium border rounded-md h-8";
-    const label = STATUS_LABELS[status] ?? status;
+    const label = getTreatmentStatusLabel(status);
 
     switch (status) {
       case "N":

@@ -7,25 +7,39 @@ import { useLogout } from "@/api/query/hooks/useAuthQueries";
 import { useRouter } from "next/navigation";
 import type { User } from "@/types/auth";
 import { ROLE_LABELS, UserRole } from "@/types/auth";
+import {
+  getTimezoneCityName,
+  getTimezoneOffsetString,
+} from "@/utils/timezoneUtils";
 
 jest.mock("@/contexts/ClinicTimezoneContext");
 const mockUseClinicTimezone = useClinicTimezone as jest.MockedFunction<
   typeof useClinicTimezone
 >;
 
-// Mock AuthContext
 jest.mock("@/contexts/AuthContext");
 const mockUseAuthContext = useAuthContext as jest.MockedFunction<
   typeof useAuthContext
 >;
 
-// Mock useLogout hook
 jest.mock("@/api/query/hooks/useAuthQueries");
 const mockUseLogout = useLogout as jest.MockedFunction<typeof useLogout>;
 
-// Mock Next.js router
 jest.mock("next/navigation");
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
+
+jest.mock("@/utils/timezoneUtils", () => ({
+  getTimezoneCityName: jest.fn(),
+  getTimezoneOffsetString: jest.fn(),
+}));
+
+const mockGetTimezoneCityName = getTimezoneCityName as jest.MockedFunction<
+  typeof getTimezoneCityName
+>;
+const mockGetTimezoneOffsetString =
+  getTimezoneOffsetString as jest.MockedFunction<
+    typeof getTimezoneOffsetString
+  >;
 
 describe("TopNavigation", () => {
   const mockLogout = jest.fn();
@@ -54,6 +68,8 @@ describe("TopNavigation", () => {
 
   beforeEach(() => {
     mockUseClinicTimezone.mockReturnValue(mockClinicTimezoneValue);
+    mockGetTimezoneCityName.mockReturnValue("São Paulo");
+    mockGetTimezoneOffsetString.mockReturnValue("GMT-3");
 
     mockUseAuthContext.mockReturnValue({
       user: mockAuthUser,
@@ -85,22 +101,19 @@ describe("TopNavigation", () => {
     it("should render the complete navigation structure", () => {
       render(<TopNavigation />);
 
-      // Check main navigation element
       expect(screen.getByRole("navigation")).toBeInTheDocument();
 
-      // Check app branding
       expect(
         screen.getByRole("heading", {
           name: "Healthcare Management System",
         }),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          "Sistema de gestão de atendimentos e tratamentos fisioterapêuticos",
-        ),
-      ).toBeInTheDocument();
 
-      // Check app logo/icon
+      const subtitle = screen.getByText(
+        "Attendance and physiotherapy treatment management system",
+      );
+      expect(subtitle).toBeInTheDocument();
+
       expect(
         screen.getByRole("img", {
           name: "Healthcare Management System",
@@ -138,30 +151,30 @@ describe("TopNavigation", () => {
     it("should show read-only clinic timezone label", () => {
       render(<TopNavigation />);
 
-      expect(screen.getByText(clinicTimezoneLabelText)).toBeInTheDocument();
+      expect(screen.getByText("São Paulo (GMT-3)")).toBeInTheDocument();
     });
 
     it("should show timezone display on desktop but not on mobile", () => {
       render(<TopNavigation />);
 
-      const timezoneText = screen.getByText(clinicTimezoneLabelText);
+      const timezoneText = screen.getByText("São Paulo (GMT-3)");
       expect(timezoneText).toHaveClass("hidden", "sm:inline");
     });
 
     it("should have title on clinic timezone label", () => {
       render(<TopNavigation />);
 
-      expect(
-        screen.getByTitle("Fuso horário da clínica (configurado no ambiente)"),
-      ).toBeInTheDocument();
+      const titleEl = screen.queryByTitle(
+        "Clinic timezone (set in environment)",
+      );
+      expect(titleEl).toBeInTheDocument();
     });
 
     it("should render Globe icon for timezone display", () => {
       render(<TopNavigation />);
 
-      const timezoneContainer = screen.getByText(
-        clinicTimezoneLabelText,
-      ).parentElement;
+      const timezoneContainer =
+        screen.getByText("São Paulo (GMT-3)").parentElement;
       expect(timezoneContainer).toHaveClass(
         "flex",
         "items-center",
@@ -181,9 +194,10 @@ describe("TopNavigation", () => {
         screen.queryByText(clinicTimezoneLabelText),
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByTitle(
-          "Fuso horário da clínica (configurado no ambiente)",
-        ),
+        screen.queryByTitle("Clinic timezone (set in environment)"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByTitle("Clinic timezone (set in environment)"),
       ).not.toBeInTheDocument();
     });
   });
@@ -192,10 +206,8 @@ describe("TopNavigation", () => {
     it("should have semantic HTML structure", () => {
       render(<TopNavigation />);
 
-      // Should use proper nav element
       expect(screen.getByRole("navigation")).toBeInTheDocument();
 
-      // Should have proper heading structure
       const heading = screen.getByRole("heading", { level: 1 });
       expect(heading).toHaveTextContent("Healthcare Management System");
     });
@@ -237,7 +249,7 @@ describe("TopNavigation", () => {
       );
 
       const subtitle = screen.getByText(
-        "Sistema de gestão de atendimentos e tratamentos fisioterapêuticos",
+        "Attendance and physiotherapy treatment management system",
       );
       expect(subtitle).toHaveClass(
         "hidden",
@@ -279,7 +291,7 @@ describe("TopNavigation", () => {
     it("should show user menu button when authenticated", () => {
       render(<TopNavigation />);
 
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       expect(userButton).toBeInTheDocument();
       expect(screen.getByText("Test User")).toBeInTheDocument();
     });
@@ -294,49 +306,47 @@ describe("TopNavigation", () => {
 
       render(<TopNavigation />);
 
-      expect(screen.queryByTitle("Menu do Usuário")).not.toBeInTheDocument();
+      expect(screen.queryByTitle("User Menu")).not.toBeInTheDocument();
     });
 
     it("should open user menu dropdown on click", () => {
       render(<TopNavigation />);
 
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
       expect(screen.getByText(mockAuthUser.email)).toBeInTheDocument();
       expect(
         screen.getByText(ROLE_LABELS[mockAuthUser.role]),
       ).toBeInTheDocument();
-      expect(screen.getByText("Sair")).toBeInTheDocument();
-      expect(screen.getByText("Configurações")).toBeInTheDocument();
+      expect(screen.getByText("Sign out")).toBeInTheDocument();
+      expect(screen.getByText("Settings")).toBeInTheDocument();
+      expect(screen.getByText("My Profile")).toBeInTheDocument();
+      expect(screen.getByText("Manage Users")).toBeInTheDocument();
     });
 
     it("should close user menu on outside click", async () => {
       render(<TopNavigation />);
 
-      // Open menu
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
-      expect(screen.getByText("Sair")).toBeInTheDocument();
+      expect(screen.getByText("Sign out")).toBeInTheDocument();
 
-      // Click outside
       fireEvent.mouseDown(document.body);
 
       await waitFor(() => {
-        expect(screen.queryByText("Sair")).not.toBeInTheDocument();
+        expect(screen.queryByText("Sign out")).not.toBeInTheDocument();
       });
     });
 
     it("should navigate to settings page when Settings button is clicked", () => {
       render(<TopNavigation />);
 
-      // Open user menu
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
-      // Click Settings button
-      const settingsButton = screen.getByText("Configurações");
+      const settingsButton = screen.getByText("Settings");
       fireEvent.click(settingsButton);
 
       expect(mockPush).toHaveBeenCalledWith("/settings/system");
@@ -345,30 +355,23 @@ describe("TopNavigation", () => {
     it("should close user menu when navigating to settings", () => {
       render(<TopNavigation />);
 
-      // Open user menu
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
-      expect(screen.getByText("Configurações")).toBeInTheDocument();
-
-      // Click Settings button
-      const settingsButton = screen.getByText("Configurações");
+      const settingsButton = screen.getByText("Settings");
       fireEvent.click(settingsButton);
 
-      // Menu should be closed
-      expect(screen.queryByText("Sair")).not.toBeInTheDocument();
+      expect(screen.queryByText("Sign out")).not.toBeInTheDocument();
     });
 
     it("should call logout when logout button is clicked", () => {
       render(<TopNavigation />);
 
-      // Open user menu
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
-      // Click logout button
-      const logoutButton = screen.getByText("Sair");
-      fireEvent.click(logoutButton);
+      const logoutButton = screen.getByText("Sign out").closest("button");
+      fireEvent.click(logoutButton as Element);
 
       expect(mockLogout).toHaveBeenCalled();
     });
@@ -381,27 +384,24 @@ describe("TopNavigation", () => {
 
       render(<TopNavigation />);
 
-      // Open user menu
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
-      // Logout button should show loading state
-      expect(screen.getByText("Saindo...")).toBeInTheDocument();
+      const loadingEl = screen.getByText("Signing out...");
+      expect(loadingEl).toBeInTheDocument();
 
-      const logoutButton = screen.getByText("Saindo...").closest("button");
+      const logoutButton = loadingEl?.closest("button");
       expect(logoutButton).toBeDisabled();
     });
 
     it("should close user menu when user becomes unauthenticated", async () => {
       const { rerender } = render(<TopNavigation />);
 
-      // Open user menu
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
-      expect(screen.getByText("Sair")).toBeInTheDocument();
+      expect(screen.getByText("Sign out")).toBeInTheDocument();
 
-      // User becomes unauthenticated
       mockUseAuthContext.mockReturnValue({
         user: null,
         isAuthenticated: false,
@@ -412,19 +412,17 @@ describe("TopNavigation", () => {
       rerender(<TopNavigation />);
 
       await waitFor(() => {
-        expect(screen.queryByText("Sair")).not.toBeInTheDocument();
+        expect(screen.queryByText("Sign out")).not.toBeInTheDocument();
       });
     });
 
     it("should have proper styling for Settings button", () => {
       render(<TopNavigation />);
 
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
-      const settingsButton = screen
-        .getByText("Configurações")
-        .closest("button");
+      const settingsButton = screen.getByText("Settings").closest("button");
       expect(settingsButton).toHaveClass("hover:bg-gray-50");
       expect(settingsButton).toHaveClass("text-gray-700");
     });
@@ -432,10 +430,10 @@ describe("TopNavigation", () => {
     it("should have proper styling for Logout button", () => {
       render(<TopNavigation />);
 
-      const userButton = screen.getByTitle("Menu do Usuário");
+      const userButton = screen.getByTitle("User Menu");
       fireEvent.click(userButton);
 
-      const logoutButton = screen.getByText("Sair").closest("button");
+      const logoutButton = screen.getByText("Sign out").closest("button");
       expect(logoutButton).toHaveClass("hover:bg-red-50");
       expect(logoutButton).toHaveClass("text-red-600");
     });

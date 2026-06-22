@@ -33,7 +33,7 @@ export const TreatmentRow: React.FC<TreatmentRowProps> = ({
           {row.bodyLocation}
           {row.color && ` • ${row.color}`}
           {row.durationMinutes != null &&
-            ` • ${row.durationMinutes} ${row.durationMinutes === 1 ? "unidade" : "unidades"}`}
+            ` • ${row.durationMinutes} ${row.durationMinutes === 1 ? "unit" : "units"}`}
         </span>
       </label>
       <div className="ml-auto shrink-0">
@@ -52,7 +52,7 @@ export const TreatmentRow: React.FC<TreatmentRowProps> = ({
       <div className="mt-2 pl-6">
         <Field
           htmlFor={`cancellation-reason-${row.attendanceId}`}
-          label="Motivo da não realização (obrigatório)"
+          label="Reason for non-performance (required)"
         >
           <Textarea
             id={`cancellation-reason-${row.attendanceId}`}
@@ -60,7 +60,7 @@ export const TreatmentRow: React.FC<TreatmentRowProps> = ({
             onChange={(e) =>
               onCancellationReasonChange(row.attendanceId, e.target.value)
             }
-            placeholder="Ex.: Paciente não compareceu ao horário"
+            placeholder="Ex.: Patient did not attend at the scheduled time"
             rows={2}
             maxLength={500}
             disabled={isSubmitting}

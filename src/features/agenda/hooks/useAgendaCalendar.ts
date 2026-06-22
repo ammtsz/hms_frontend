@@ -17,7 +17,7 @@ import {
   useSetOpenAssessmentIdx,
   useSetOpenPhysiotherapyIdx,
 } from "@/stores";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import type { AgendaItem } from "@/types/types";
 
 export function useAgendaCalendar() {
@@ -139,9 +139,9 @@ export function useAgendaCalendar() {
   };
 
   const rangeSummaryText = useMemo(() => {
-    const fromLabel = formatDateBR(referenceDate);
-    const toLabel = formatDateBR(rangeEndDate);
-    return `Período: ${fromLabel} — ${toLabel} (${agendaDayWindowDays} dia${agendaDayWindowDays !== 1 ? "s" : ""})`;
+    const fromLabel = formatDisplayDate(referenceDate);
+    const toLabel = formatDisplayDate(rangeEndDate);
+    return `Period: ${fromLabel} — ${toLabel} (${agendaDayWindowDays} day${agendaDayWindowDays !== 1 ? "s" : ""})`;
   }, [referenceDate, rangeEndDate, agendaDayWindowDays]);
 
   return {

@@ -19,7 +19,7 @@ const mockErrors: TreatmentCreationError[] = [
   },
 ];
 
-const mockPatientName = "João Silva";
+const mockPatientName = "John Smith";
 
 describe("TreatmentCreationErrors", () => {
   it("should render error component with correct patient name", () => {
@@ -33,7 +33,7 @@ describe("TreatmentCreationErrors", () => {
       />,
     );
 
-    expect(screen.getByText(`Problemas ao Criar Sessões`)).toBeInTheDocument();
+    expect(screen.getByText(`Problems Creating Sessions`)).toBeInTheDocument();
     expect(screen.getByText(mockPatientName)).toBeInTheDocument();
   });
 
@@ -66,12 +66,12 @@ describe("TreatmentCreationErrors", () => {
     );
 
     // Check for physiotherapy treatment section by text content
-    expect(screen.getByText("Fisioterapia")).toBeInTheDocument();
-    expect(screen.getByText("2 erros")).toBeInTheDocument();
+    expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
+    expect(screen.getByText("2 errors")).toBeInTheDocument();
 
     // Check for tens treatment section by text content
     expect(screen.getByText("TENS")).toBeInTheDocument();
-    expect(screen.getByText("1 erro")).toBeInTheDocument();
+    expect(screen.getByText("1 error")).toBeInTheDocument();
   });
 
   it("should display specific error messages", () => {
@@ -112,7 +112,7 @@ describe("TreatmentCreationErrors", () => {
     );
 
     const continueButton = screen.getByRole("button", {
-      name: /Continuar Mesmo Assim/i,
+      name: /Continue Anyway/i,
     });
     expect(continueButton).toBeInTheDocument();
 
@@ -134,7 +134,7 @@ describe("TreatmentCreationErrors", () => {
     );
 
     const retryButton = screen.getByRole("button", {
-      name: /Voltar/i,
+      name: /Back/i,
     });
     expect(retryButton).toBeInTheDocument();
 
@@ -154,7 +154,7 @@ describe("TreatmentCreationErrors", () => {
     );
 
     const retryButton = screen.queryByRole("button", {
-      name: /Voltar/i,
+      name: /Back/i,
     });
     expect(retryButton).not.toBeInTheDocument();
   });
@@ -170,13 +170,13 @@ describe("TreatmentCreationErrors", () => {
       />,
     );
 
-    expect(screen.getByText("Recomendações")).toBeInTheDocument();
+    expect(screen.getByText("Recommendations")).toBeInTheDocument();
     expect(
-      screen.getByText(/Verifique se já existem agendamentos conflitantes/),
+      screen.getByText(/Check for conflicting appointments for this patient/),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Confirme se as configurações de horário estão corretas/,
+        /Confirm scheduling settings are correct/,
       ),
     ).toBeInTheDocument();
   });
@@ -193,13 +193,13 @@ describe("TreatmentCreationErrors", () => {
     );
 
     expect(
-      screen.getByText(/O registro de tratamento foi salvo com sucesso/),
+      screen.getByText(/The treatment record was saved successfully/),
     ).toBeInTheDocument();
   });
 
   it("should handle custom message when provided", () => {
     const mockOnContinue = jest.fn();
-    const customMessage = "Erro personalizado para teste";
+    const customMessage = "Custom error for test";
 
     render(
       <TreatmentCreationErrors
@@ -230,8 +230,8 @@ describe("TreatmentCreationErrors", () => {
       />,
     );
 
-    // Should show "1 erro" (singular) for the specific treatment
-    expect(screen.getByText("1 erro")).toBeInTheDocument();
+    // Should show "1 error" (singular) for the specific treatment
+    expect(screen.getByText("1 error")).toBeInTheDocument();
     // Should show single error message
     expect(screen.getByText("Single error message")).toBeInTheDocument();
   });

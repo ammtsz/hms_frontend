@@ -16,18 +16,27 @@ const mockUpdateUser = updateUser as jest.MockedFunction<typeof updateUser>;
 jest.mock("@/api/query/hooks/useUserQueries", () => ({
   useCreateUser: () => ({
     mutateAsync: async (data: unknown) => {
-      const { createUser } = jest.requireMock("@/api/users") as typeof import("@/api/users");
+      const { createUser } = jest.requireMock(
+        "@/api/users",
+      ) as typeof import("@/api/users");
       const result = await createUser(data as Parameters<typeof createUser>[0]);
-      if (!result.success) throw new Error(result.error ?? "Erro ao criar usuário");
+      if (!result.success)
+        throw new Error(result.error ?? "Unexpected error occurred");
       return result.value;
     },
     isPending: false,
   }),
   useUpdateUser: () => ({
     mutateAsync: async ({ id, data }: { id: number; data: unknown }) => {
-      const { updateUser } = jest.requireMock("@/api/users") as typeof import("@/api/users");
-      const result = await updateUser(id, data as Parameters<typeof updateUser>[1]);
-      if (!result.success) throw new Error(result.error ?? "Erro ao atualizar usuário");
+      const { updateUser } = jest.requireMock(
+        "@/api/users",
+      ) as typeof import("@/api/users");
+      const result = await updateUser(
+        id,
+        data as Parameters<typeof updateUser>[1],
+      );
+      if (!result.success)
+        throw new Error(result.error ?? "Error updating user");
       return result.value;
     },
     isPending: false,
@@ -78,12 +87,12 @@ describe("UserForm", () => {
         />,
       );
 
-      expect(screen.getByText("Novo Usuário")).toBeInTheDocument();
-      expect(screen.getByLabelText(/Nome Completo/)).toBeInTheDocument();
+      expect(screen.getByText("New User")).toBeInTheDocument();
+      expect(screen.getByLabelText(/Full Name/)).toBeInTheDocument();
       expect(screen.getByLabelText(/Email/)).toBeInTheDocument();
-      expect(screen.getByLabelText(/^Senha/)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Confirmar Senha/)).toBeInTheDocument();
-      expect(screen.getByLabelText(/Função/)).toBeInTheDocument();
+      expect(screen.getByLabelText(/^Password/)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Confirm Password/)).toBeInTheDocument();
+      expect(screen.getByLabelText(/Role/)).toBeInTheDocument();
     });
 
     it("should validate required fields", async () => {
@@ -97,13 +106,13 @@ describe("UserForm", () => {
         />,
       );
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
-        expect(screen.getByText("Email é obrigatório")).toBeInTheDocument();
-        expect(screen.getByText("Senha é obrigatória")).toBeInTheDocument();
+        expect(screen.getByText("Name is required")).toBeInTheDocument();
+        expect(screen.getByText("Email is required")).toBeInTheDocument();
+        expect(screen.getByText("Password is required")).toBeInTheDocument();
       });
 
       expect(mockCreateUser).not.toHaveBeenCalled();
@@ -120,10 +129,10 @@ describe("UserForm", () => {
         />,
       );
 
-      const nameInput = screen.getByLabelText(/Nome Completo/);
+      const nameInput = screen.getByLabelText(/Full Name/);
       const emailInput = screen.getByLabelText(/Email/);
-      const passwordInput = screen.getByLabelText(/^Senha/);
-      const confirmPasswordInput = screen.getByLabelText(/Confirmar Senha/);
+      const passwordInput = screen.getByLabelText(/^Password/);
+      const confirmPasswordInput = screen.getByLabelText(/Confirm Password/);
 
       // Fill form with invalid email
       fireEvent.change(nameInput, { target: { value: "John Doe" } });
@@ -135,11 +144,11 @@ describe("UserForm", () => {
         target: { value: "ValidPassword123" },
       });
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.submit(submitButton.closest("form")!);
 
       await waitFor(() => {
-        expect(screen.getByText("Email inválido")).toBeInTheDocument();
+        expect(screen.getByText("Invalid email")).toBeInTheDocument();
       });
     });
 
@@ -155,15 +164,15 @@ describe("UserForm", () => {
         />,
       );
 
-      const passwordInput = screen.getByLabelText(/^Senha/);
+      const passwordInput = screen.getByLabelText(/^Password/);
       await user.type(passwordInput, "short");
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
         expect(
-          screen.getByText("Senha deve ter no mínimo 12 caracteres"),
+          screen.getByText("Password must be at least 12 characters"),
         ).toBeInTheDocument();
       });
     });
@@ -180,17 +189,17 @@ describe("UserForm", () => {
         />,
       );
 
-      const passwordInput = screen.getByLabelText(/^Senha/);
-      const confirmPasswordInput = screen.getByLabelText(/Confirmar Senha/);
+      const passwordInput = screen.getByLabelText(/^Password/);
+      const confirmPasswordInput = screen.getByLabelText(/Confirm Password/);
 
       await user.type(passwordInput, "ValidPassword123");
       await user.type(confirmPasswordInput, "DifferentPassword123");
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText("As senhas não coincidem")).toBeInTheDocument();
+        expect(screen.getByText("Passwords do not match")).toBeInTheDocument();
       });
     });
 
@@ -211,15 +220,15 @@ describe("UserForm", () => {
         />,
       );
 
-      await user.type(screen.getByLabelText(/Nome Completo/), "John Doe");
+      await user.type(screen.getByLabelText(/Full Name/), "John Doe");
       await user.type(screen.getByLabelText(/Email/), "john@example.com");
-      await user.type(screen.getByLabelText(/^Senha/), "ValidPassword123");
+      await user.type(screen.getByLabelText(/^Password/), "ValidPassword123");
       await user.type(
-        screen.getByLabelText(/Confirmar Senha/),
+        screen.getByLabelText(/Confirm Password/),
         "ValidPassword123",
       );
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -250,7 +259,7 @@ describe("UserForm", () => {
         />,
       );
 
-      expect(screen.getByText("Editar Usuário")).toBeInTheDocument();
+      expect(screen.getByText("Edit User")).toBeInTheDocument();
       expect(screen.getByDisplayValue("Admin User")).toBeInTheDocument();
       expect(screen.getByDisplayValue("admin@example.com")).toBeInTheDocument();
       expect(screen.getByDisplayValue("Admin")).toBeInTheDocument();
@@ -267,9 +276,9 @@ describe("UserForm", () => {
         />,
       );
 
-      expect(screen.queryByLabelText(/^Senha/)).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(/^Password/)).not.toBeInTheDocument();
       expect(
-        screen.queryByLabelText(/Confirmar Senha/),
+        screen.queryByLabelText(/Confirm Password/),
       ).not.toBeInTheDocument();
     });
 
@@ -290,11 +299,11 @@ describe("UserForm", () => {
         />,
       );
 
-      const nameInput = screen.getByLabelText(/Nome Completo/);
+      const nameInput = screen.getByLabelText(/Full Name/);
       await user.clear(nameInput);
       await user.type(nameInput, "Updated Name");
 
-      const submitButton = screen.getByRole("button", { name: /Salvar/ });
+      const submitButton = screen.getByRole("button", { name: /Save/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -320,16 +329,16 @@ describe("UserForm", () => {
           />,
         );
 
-        const roleSelect = screen.getByLabelText(/Função/);
+        const roleSelect = screen.getByLabelText(/Role/);
         fireEvent.change(roleSelect, { target: { value: UserRole.STAFF } });
 
-        const submitButton = screen.getByRole("button", { name: /Salvar/ });
+        const submitButton = screen.getByRole("button", { name: /Save/ });
         fireEvent.click(submitButton);
 
         await waitFor(() => {
           expect(
             screen.getByText(
-              "Não é possível alterar a função do último administrador",
+              "Cannot change the role of the last administrator",
             ),
           ).toBeInTheDocument();
         });
@@ -365,10 +374,10 @@ describe("UserForm", () => {
           />,
         );
 
-        const roleSelect = screen.getByLabelText(/Função/);
+        const roleSelect = screen.getByLabelText(/Role/);
         fireEvent.change(roleSelect, { target: { value: UserRole.STAFF } });
 
-        const submitButton = screen.getByRole("button", { name: /Salvar/ });
+        const submitButton = screen.getByRole("button", { name: /Save/ });
         fireEvent.click(submitButton);
 
         await waitFor(() => {
@@ -398,10 +407,10 @@ describe("UserForm", () => {
           />,
         );
 
-        const roleSelect = screen.getByLabelText(/Função/);
+        const roleSelect = screen.getByLabelText(/Role/);
         fireEvent.change(roleSelect, { target: { value: UserRole.ADMIN } });
 
-        const submitButton = screen.getByRole("button", { name: /Salvar/ });
+        const submitButton = screen.getByRole("button", { name: /Save/ });
         fireEvent.click(submitButton);
 
         await waitFor(() => {
@@ -432,11 +441,11 @@ describe("UserForm", () => {
           />,
         );
 
-        const nameInput = screen.getByLabelText(/Nome Completo/);
+        const nameInput = screen.getByLabelText(/Full Name/);
         await user.clear(nameInput);
         await user.type(nameInput, "Updated Admin");
 
-        const submitButton = screen.getByRole("button", { name: /Salvar/ });
+        const submitButton = screen.getByRole("button", { name: /Save/ });
         fireEvent.click(submitButton);
 
         await waitFor(() => {
@@ -462,16 +471,16 @@ describe("UserForm", () => {
           />,
         );
 
-        const roleSelect = screen.getByLabelText(/Função/);
+        const roleSelect = screen.getByLabelText(/Role/);
         fireEvent.change(roleSelect, { target: { value: UserRole.STAFF } });
 
-        const submitButton = screen.getByRole("button", { name: /Salvar/ });
+        const submitButton = screen.getByRole("button", { name: /Save/ });
         fireEvent.click(submitButton);
 
         await waitFor(() => {
           expect(
             screen.getByText(
-              "Não é possível alterar a função do último administrador",
+              "Cannot change the role of the last administrator",
             ),
           ).toBeInTheDocument();
         });
@@ -493,7 +502,7 @@ describe("UserForm", () => {
         />,
       );
 
-      const cancelButton = screen.getByRole("button", { name: /Cancelar/ });
+      const cancelButton = screen.getByRole("button", { name: /Cancel/ });
       fireEvent.click(cancelButton);
 
       expect(mockOnClose).toHaveBeenCalled();
@@ -510,7 +519,7 @@ describe("UserForm", () => {
         />,
       );
 
-      const closeButton = screen.getByRole("button", { name: "Fechar" });
+      const closeButton = screen.getByRole("button", { name: "Close" });
       fireEvent.click(closeButton);
 
       expect(mockOnClose).toHaveBeenCalled();
@@ -520,7 +529,7 @@ describe("UserForm", () => {
       const user = userEvent.setup();
       mockCreateUser.mockResolvedValue({
         success: false,
-        error: "Email já está em uso",
+        error: "Email already in use",
       });
 
       render(
@@ -533,19 +542,19 @@ describe("UserForm", () => {
         />,
       );
 
-      await user.type(screen.getByLabelText(/Nome Completo/), "John Doe");
+      await user.type(screen.getByLabelText(/Full Name/), "John Doe");
       await user.type(screen.getByLabelText(/Email/), "john@example.com");
-      await user.type(screen.getByLabelText(/^Senha/), "ValidPassword123");
+      await user.type(screen.getByLabelText(/^Password/), "ValidPassword123");
       await user.type(
-        screen.getByLabelText(/Confirmar Senha/),
+        screen.getByLabelText(/Confirm Password/),
         "ValidPassword123",
       );
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText("Email já está em uso")).toBeInTheDocument();
+        expect(screen.getByText("Email already in use")).toBeInTheDocument();
         expect(mockOnSuccess).not.toHaveBeenCalled();
       });
     });
@@ -564,15 +573,15 @@ describe("UserForm", () => {
         />,
       );
 
-      await user.type(screen.getByLabelText(/Nome Completo/), "John Doe");
+      await user.type(screen.getByLabelText(/Full Name/), "John Doe");
       await user.type(screen.getByLabelText(/Email/), "john@example.com");
-      await user.type(screen.getByLabelText(/^Senha/), "ValidPassword123");
+      await user.type(screen.getByLabelText(/^Password/), "ValidPassword123");
       await user.type(
-        screen.getByLabelText(/Confirmar Senha/),
+        screen.getByLabelText(/Confirm Password/),
         "ValidPassword123",
       );
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {

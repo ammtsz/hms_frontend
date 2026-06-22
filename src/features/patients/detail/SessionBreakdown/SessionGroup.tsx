@@ -54,7 +54,7 @@ export const SessionGroup: React.FC<SessionGroupProps> = ({ group }) => {
               </span>
               {group.plannedSessions ? (
                 <span className="text-xs text-gray-600">
-                  ({groupCompletedCount}/{group.plannedSessions} sessões)
+                  ({groupCompletedCount}/{group.plannedSessions} sessions)
                 </span>
               ) : null}
             </div>
@@ -84,7 +84,7 @@ export const SessionGroup: React.FC<SessionGroupProps> = ({ group }) => {
       {group.cancellationReason && groupStatus === "cancelled" && (
         <div className="bg-red-50 p-3 border-b border-red-200">
           <p className="text-sm text-red-800">
-            <span className="font-medium">Motivo do Cancelamento:</span>
+            <span className="font-medium">Cancellation reason:</span>
             <span className="ml-1 whitespace-pre-line">
               {formatNotes(group.cancellationReason)}
             </span>
@@ -96,7 +96,7 @@ export const SessionGroup: React.FC<SessionGroupProps> = ({ group }) => {
       {group.treatmentNotes && (
         <div className="bg-white p-3 border-b border-gray-200">
           <p className="text-sm text-gray-700">
-            <span className="font-medium">Notas do Tratamento:</span>{" "}
+            <span className="font-medium">Treatment notes:</span>{" "}
             {group.treatmentNotes}
           </p>
         </div>

@@ -9,6 +9,7 @@ import {
 } from "@/api/query/hooks/useHolidayQueries";
 import { useDateHelpers } from "@/hooks/useDateHelpers";
 import { isValidDateRange } from "@/utils/holidayGrouping";
+import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
 
 jest.mock("@/api/query/hooks/useHolidayQueries");
 jest.mock("@/hooks/useDateHelpers");
@@ -23,16 +24,16 @@ const mockIsValidDateRange = isValidDateRange as jest.MockedFunction<
 const mockHoliday = {
   id: 1,
   holidayDate: "2026-12-25",
-  name: "Natal",
-  description: "Feriado Nacional",
+  name: "Christmas",
+  description: "National Holiday",
   blockedTreatmentTypes: ["assessment", "physiotherapy"],
   createdDate: "2026-01-01",
   updatedDate: "2026-01-01",
 };
 
 function clickHolidayPeriodMode() {
-  const label = screen.getByText("Período").closest("label");
-  if (!label) throw new Error('Expected "Período" option label');
+  const label = screen.getByText("Period").closest("label");
+  if (!label) throw new Error('Expected "Period" option label');
   fireEvent.click(label);
 }
 
@@ -96,8 +97,8 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    expect(screen.getByText("Novo Feriado")).toBeInTheDocument();
-    expect(screen.getByText("Criar Feriado")).toBeInTheDocument();
+    expect(screen.getByText("New Holiday")).toBeInTheDocument();
+    expect(screen.getByText("Create Holiday")).toBeInTheDocument();
   });
 
   it("renders edit mode when holiday provided", () => {
@@ -109,9 +110,9 @@ describe("HolidayFormModal", () => {
       />,
     );
 
-    expect(screen.getByText("Editar Feriado")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("Natal")).toBeInTheDocument();
-    expect(screen.getByText("Salvar Alterações")).toBeInTheDocument();
+    expect(screen.getByText("Edit Holiday")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Christmas")).toBeInTheDocument();
+    expect(screen.getByText("Save Changes")).toBeInTheDocument();
   });
 
   it("pre-fills form with holiday data in edit mode", () => {
@@ -123,8 +124,8 @@ describe("HolidayFormModal", () => {
       />,
     );
 
-    expect(screen.getByDisplayValue("Natal")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("Feriado Nacional")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Christmas")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("National Holiday")).toBeInTheDocument();
     expect(screen.getByDisplayValue("2026-12-25")).toBeInTheDocument();
   });
 
@@ -137,7 +138,7 @@ describe("HolidayFormModal", () => {
       />,
     );
 
-    const dateInput = screen.getByLabelText("Data *");
+    const dateInput = screen.getByLabelText("Date *");
     expect(dateInput).toBeDisabled();
   });
 
@@ -146,7 +147,7 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const dateInput = screen.getByLabelText("Data *");
+    const dateInput = screen.getByLabelText("Date *");
     expect(dateInput).not.toBeDisabled();
   });
 
@@ -155,7 +156,7 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const dateInput = screen.getByLabelText("Data *");
+    const dateInput = screen.getByLabelText("Date *");
     expect(dateInput).toHaveValue("2026-01-28");
   });
 
@@ -164,11 +165,13 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Name is required|Name is required/),
+      ).toBeInTheDocument();
     });
 
     expect(mockCreateHoliday).not.toHaveBeenCalled();
@@ -179,17 +182,17 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const nameInput = screen.getByLabelText("Nome *");
-    const dateInput = screen.getByLabelText("Data *");
+    const nameInput = screen.getByLabelText("Name *");
+    const dateInput = screen.getByLabelText("Date *");
 
     fireEvent.change(nameInput, { target: { value: "Test Holiday" } });
     fireEvent.change(dateInput, { target: { value: "" } });
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText("Data é obrigatória")).toBeInTheDocument();
+      expect(screen.getByText("Date is required")).toBeInTheDocument();
     });
 
     expect(mockCreateHoliday).not.toHaveBeenCalled();
@@ -202,10 +205,10 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const nameInput = screen.getByLabelText("Nome *");
+    const nameInput = screen.getByLabelText("Name *");
     fireEvent.change(nameInput, { target: { value: "New Holiday" } });
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -222,15 +225,15 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const nameInput = screen.getByLabelText("Nome *");
+    const nameInput = screen.getByLabelText("Name *");
     fireEvent.change(nameInput, { target: { value: "New Holiday" } });
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Esta data possui 3 atendimento\(s\) agendado\(s\)/),
+        screen.getByText(/This date has 3 attendance\(s\) scheduled/),
       ).toBeInTheDocument();
     });
 
@@ -244,9 +247,9 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const nameInput = screen.getByLabelText("Nome *");
-    const dateInput = screen.getByLabelText("Data *");
-    const descriptionInput = screen.getByLabelText("Descrição");
+    const nameInput = screen.getByLabelText("Name *");
+    const dateInput = screen.getByLabelText("Date *");
+    const descriptionInput = screen.getByLabelText("Description");
 
     fireEvent.change(nameInput, { target: { value: "New Holiday" } });
     fireEvent.change(dateInput, { target: { value: "2026-12-25" } });
@@ -254,7 +257,7 @@ describe("HolidayFormModal", () => {
       target: { value: "Test Description" },
     });
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -279,10 +282,10 @@ describe("HolidayFormModal", () => {
       />,
     );
 
-    const nameInput = screen.getByDisplayValue("Natal");
+    const nameInput = screen.getByDisplayValue("Christmas");
     fireEvent.change(nameInput, { target: { value: "Updated Name" } });
 
-    const submitButton = screen.getByText("Salvar Alterações");
+    const submitButton = screen.getByText("Save Changes");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -291,7 +294,7 @@ describe("HolidayFormModal", () => {
           id: 1,
           data: {
             name: "Updated Name",
-            description: "Feriado Nacional",
+            description: "National Holiday",
             blockedTreatmentTypes: ["assessment", "physiotherapy"],
           },
         },
@@ -309,15 +312,15 @@ describe("HolidayFormModal", () => {
       />,
     );
 
-    // Uncheck "Consulta de Avaliação"
-    const assessmentCheckbox = screen.getByLabelText("Consulta de Avaliação");
+    // Uncheck assessment consultation checkbox
+    const assessmentCheckbox = screen.getByLabelText(getAttendanceTypeLabel("assessment"));
     fireEvent.click(assessmentCheckbox);
 
     // Check "TENS"
     const tensCheckbox = screen.getByLabelText("TENS");
     fireEvent.click(tensCheckbox);
 
-    const submitButton = screen.getByText("Salvar Alterações");
+    const submitButton = screen.getByText("Save Changes");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -325,8 +328,8 @@ describe("HolidayFormModal", () => {
         {
           id: 1,
           data: {
-            name: "Natal",
-            description: "Feriado Nacional",
+            name: "Christmas",
+            description: "National Holiday",
             blockedTreatmentTypes: ["physiotherapy", "tens"],
           },
         },
@@ -344,10 +347,10 @@ describe("HolidayFormModal", () => {
       />,
     );
 
-    const nameInput = screen.getByDisplayValue("Natal");
+    const nameInput = screen.getByDisplayValue("Christmas");
     fireEvent.change(nameInput, { target: { value: "Updated Name" } });
 
-    const submitButton = screen.getByText("Salvar Alterações");
+    const submitButton = screen.getByText("Save Changes");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -362,7 +365,7 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const closeButton = screen.getByRole("button", { name: "Fechar" });
+    const closeButton = screen.getByRole("button", { name: "Close" });
     fireEvent.click(closeButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -373,7 +376,7 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const cancelButton = screen.getByText("Cancelar");
+    const cancelButton = screen.getByText("Cancel");
     fireEvent.click(cancelButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -390,8 +393,8 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const cancelButton = screen.getByText("Cancelar");
-    const submitButton = screen.getByText("Salvando...");
+    const cancelButton = screen.getByText("Cancel");
+    const submitButton = screen.getByText("Saving...");
 
     expect(cancelButton).toBeDisabled();
     expect(submitButton).toBeDisabled();
@@ -411,14 +414,14 @@ describe("HolidayFormModal", () => {
       />,
     );
 
-    const cancelButton = screen.getByText("Cancelar");
-    const submitButton = screen.getByText("Salvando...");
+    const cancelButton = screen.getByText("Cancel");
+    const submitButton = screen.getByText("Saving...");
 
     expect(cancelButton).toBeDisabled();
     expect(submitButton).toBeDisabled();
   });
 
-  it('shows "Salvando..." text when isPending is true', () => {
+  it('shows "Saving..." text when isPending is true', () => {
     (useCreateHoliday as jest.Mock).mockReturnValue({
       mutate: mockCreateHoliday,
       isPending: true,
@@ -428,8 +431,8 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    expect(screen.getByText("Salvando...")).toBeInTheDocument();
-    expect(screen.queryByText("Criar Feriado")).not.toBeInTheDocument();
+    expect(screen.getByText("Saving...")).toBeInTheDocument();
+    expect(screen.queryByText("Create Holiday")).not.toBeInTheDocument();
   });
 
   it("clears form errors when input changes", async () => {
@@ -437,18 +440,18 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
+      expect(screen.getByText("Name is required")).toBeInTheDocument();
     });
 
-    const nameInput = screen.getByLabelText("Nome *");
+    const nameInput = screen.getByLabelText("Name *");
     fireEvent.change(nameInput, { target: { value: "Test" } });
 
     await waitFor(() => {
-      expect(screen.queryByText("Nome é obrigatório")).not.toBeInTheDocument();
+      expect(screen.queryByText("Name is required")).not.toBeInTheDocument();
     });
   });
 
@@ -457,15 +460,15 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const nameInput = screen.getByLabelText("Nome *");
+    const nameInput = screen.getByLabelText("Name *");
     fireEvent.change(nameInput, { target: { value: "a".repeat(256) } });
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(
-        screen.getByText("Nome deve ter no máximo 255 caracteres"),
+        screen.getByText("Name must not exceed 255 characters"),
       ).toBeInTheDocument();
     });
 
@@ -479,18 +482,18 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const nameInput = screen.getByLabelText("Nome *");
-    const dateInput = screen.getByLabelText("Data *");
+    const nameInput = screen.getByLabelText("Name *");
+    const dateInput = screen.getByLabelText("Date *");
 
     fireEvent.change(nameInput, { target: { value: "Test" } });
     fireEvent.change(dateInput, { target: { value: "2026-12-25" } });
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(
-        screen.getByText("Data deve ser hoje ou no futuro"),
+        screen.getByText("Date must be today or in the future"),
       ).toBeInTheDocument();
     });
 
@@ -507,10 +510,10 @@ describe("HolidayFormModal", () => {
       <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
     );
 
-    const nameInput = screen.getByLabelText("Nome *");
+    const nameInput = screen.getByLabelText("Name *");
     fireEvent.change(nameInput, { target: { value: "New Holiday" } });
 
-    const submitButton = screen.getByText("Criar Feriado");
+    const submitButton = screen.getByText("Create Holiday");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -531,10 +534,10 @@ describe("HolidayFormModal", () => {
       />,
     );
 
-    const nameInput = screen.getByDisplayValue("Natal");
+    const nameInput = screen.getByDisplayValue("Christmas");
     fireEvent.change(nameInput, { target: { value: "Updated" } });
 
-    const submitButton = screen.getByText("Salvar Alterações");
+    const submitButton = screen.getByText("Save Changes");
     fireEvent.click(submitButton);
 
     await waitFor(() => {
@@ -548,9 +551,9 @@ describe("HolidayFormModal", () => {
         <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
       );
 
-      expect(screen.getByText("Tipo de Feriado")).toBeInTheDocument();
-      expect(screen.getByText("Data Única")).toBeInTheDocument();
-      expect(screen.getByText("Período")).toBeInTheDocument();
+      expect(screen.getByText("Holiday Type")).toBeInTheDocument();
+      expect(screen.getByText("Single Day")).toBeInTheDocument();
+      expect(screen.getByText("Period")).toBeInTheDocument();
     });
 
     it("should not show period type selection when editing", () => {
@@ -562,8 +565,8 @@ describe("HolidayFormModal", () => {
         />,
       );
 
-      expect(screen.queryByText("Tipo de Feriado")).not.toBeInTheDocument();
-      expect(screen.queryByText("Período")).not.toBeInTheDocument();
+      expect(screen.queryByText("Holiday Type")).not.toBeInTheDocument();
+      expect(screen.queryByText("Period")).not.toBeInTheDocument();
     });
 
     it("should switch to period inputs when period mode selected", () => {
@@ -572,16 +575,16 @@ describe("HolidayFormModal", () => {
       );
 
       // Initially in single date mode
-      expect(screen.getByLabelText("Data *")).toBeInTheDocument();
-      expect(screen.queryByLabelText("Data Início *")).not.toBeInTheDocument();
+      expect(screen.getByLabelText("Date *")).toBeInTheDocument();
+      expect(screen.queryByLabelText("Start Date *")).not.toBeInTheDocument();
 
       // Switch to period mode
       clickHolidayPeriodMode();
 
       // Should now show period inputs
-      expect(screen.queryByLabelText("Data *")).not.toBeInTheDocument();
-      expect(screen.getByLabelText("Data Início *")).toBeInTheDocument();
-      expect(screen.getByLabelText("Data Fim *")).toBeInTheDocument();
+      expect(screen.queryByLabelText("Date *")).not.toBeInTheDocument();
+      expect(screen.getByLabelText("Start Date *")).toBeInTheDocument();
+      expect(screen.getByLabelText("End Date *")).toBeInTheDocument();
     });
 
     it("should validate period date range", async () => {
@@ -592,26 +595,26 @@ describe("HolidayFormModal", () => {
       clickHolidayPeriodMode();
 
       // Fill form with invalid range (end before start)
-      fireEvent.change(screen.getByLabelText("Nome *"), {
+      fireEvent.change(screen.getByLabelText("Name *"), {
         target: { value: "Test Period" },
       });
-      fireEvent.change(screen.getByLabelText("Data Início *"), {
+      fireEvent.change(screen.getByLabelText("Start Date *"), {
         target: { value: "2026-02-03" },
       });
-      fireEvent.change(screen.getByLabelText("Data Fim *"), {
+      fireEvent.change(screen.getByLabelText("End Date *"), {
         target: { value: "2026-02-01" },
       });
 
       // End date is below min={startDate}; clicking submit is blocked by HTML5
       // validation before React onSubmit. Programmatic submit still runs handlers.
-      const form = screen.getByText("Criar Feriado").closest("form");
+      const form = screen.getByText("Create Holiday").closest("form");
       expect(form).toBeTruthy();
       fireEvent.submit(form as HTMLFormElement);
 
       await waitFor(() => {
         expect(
           screen.getByText(
-            "Data de fim deve ser maior ou igual à data de início",
+            "End date must be greater than or equal to start date",
           ),
         ).toBeInTheDocument();
       });
@@ -631,21 +634,21 @@ describe("HolidayFormModal", () => {
       clickHolidayPeriodMode();
 
       // Fill form with future dates
-      fireEvent.change(screen.getByLabelText("Nome *"), {
+      fireEvent.change(screen.getByLabelText("Name *"), {
         target: { value: "Christmas Period" },
       });
-      fireEvent.change(screen.getByLabelText("Data Início *"), {
+      fireEvent.change(screen.getByLabelText("Start Date *"), {
         target: { value: "2026-02-24" },
       });
-      fireEvent.change(screen.getByLabelText("Data Fim *"), {
+      fireEvent.change(screen.getByLabelText("End Date *"), {
         target: { value: "2026-02-26" },
       });
-      fireEvent.change(screen.getByLabelText("Descrição"), {
+      fireEvent.change(screen.getByLabelText("Description"), {
         target: { value: "Christmas celebration period" },
       });
 
       // Submit form
-      const submitButton = screen.getByText("Criar Feriado");
+      const submitButton = screen.getByText("Create Holiday");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -673,11 +676,11 @@ describe("HolidayFormModal", () => {
       clickHolidayPeriodMode();
 
       // Submit without filling required fields
-      const submitButton = screen.getByText("Criar Feriado");
+      const submitButton = screen.getByText("Create Holiday");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
+        expect(screen.getByText("Name is required")).toBeInTheDocument();
       });
 
       expect(mockCreateHolidayPeriod).not.toHaveBeenCalled();
@@ -691,12 +694,12 @@ describe("HolidayFormModal", () => {
       );
 
       expect(
-        screen.getByText("Tipos de Tratamento Bloqueados"),
+        screen.getByText("Blocked Treatment Types"),
       ).toBeInTheDocument();
       expect(
-        screen.getByLabelText("Consulta de Avaliação"),
+        screen.getByLabelText(getAttendanceTypeLabel("assessment")),
       ).toBeInTheDocument();
-      expect(screen.getByLabelText("Fisioterapia")).toBeInTheDocument();
+      expect(screen.getByLabelText("Physiotherapy")).toBeInTheDocument();
       expect(screen.getByLabelText("TENS")).toBeInTheDocument();
     });
 
@@ -706,7 +709,7 @@ describe("HolidayFormModal", () => {
       );
 
       const assessmentCheckbox = screen.getByLabelText(
-        "Consulta de Avaliação",
+        getAttendanceTypeLabel("assessment"),
       ) as HTMLInputElement;
       expect(assessmentCheckbox).toBeChecked();
 
@@ -723,8 +726,8 @@ describe("HolidayFormModal", () => {
         />,
       );
 
-      expect(screen.getByLabelText("Consulta de Avaliação")).toBeChecked();
-      expect(screen.getByLabelText("Fisioterapia")).toBeChecked();
+      expect(screen.getByLabelText(getAttendanceTypeLabel("assessment"))).toBeChecked();
+      expect(screen.getByLabelText("Physiotherapy")).toBeChecked();
       expect(screen.getByLabelText("TENS")).not.toBeChecked();
     });
 
@@ -733,13 +736,13 @@ describe("HolidayFormModal", () => {
         <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
       );
 
-      const nameInput = screen.getByLabelText("Nome *");
+      const nameInput = screen.getByLabelText("Name *");
       fireEvent.change(nameInput, { target: { value: "Test Holiday" } });
 
-      fireEvent.click(screen.getByLabelText("Fisioterapia"));
+      fireEvent.click(screen.getByLabelText("Physiotherapy"));
       fireEvent.click(screen.getByLabelText("TENS"));
 
-      const submitButton = screen.getByText("Criar Feriado");
+      const submitButton = screen.getByText("Create Holiday");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -762,20 +765,20 @@ describe("HolidayFormModal", () => {
 
       clickHolidayPeriodMode();
 
-      const nameInput = screen.getByLabelText("Nome *");
+      const nameInput = screen.getByLabelText("Name *");
       fireEvent.change(nameInput, { target: { value: "Test Period" } });
 
-      fireEvent.change(screen.getByLabelText("Data Início *"), {
+      fireEvent.change(screen.getByLabelText("Start Date *"), {
         target: { value: "2026-02-01" },
       });
-      fireEvent.change(screen.getByLabelText("Data Fim *"), {
+      fireEvent.change(screen.getByLabelText("End Date *"), {
         target: { value: "2026-02-03" },
       });
 
-      fireEvent.click(screen.getByLabelText("Consulta de Avaliação"));
+      fireEvent.click(screen.getByLabelText(getAttendanceTypeLabel("assessment")));
       fireEvent.click(screen.getByLabelText("TENS"));
 
-      fireEvent.click(screen.getByText("Criar Feriado"));
+      fireEvent.click(screen.getByText("Create Holiday"));
 
       await waitFor(() => {
         expect(mockCreateHolidayPeriod).toHaveBeenCalledWith(
@@ -795,12 +798,12 @@ describe("HolidayFormModal", () => {
         <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
       );
 
-      fireEvent.click(screen.getByLabelText("Consulta de Avaliação"));
+      fireEvent.click(screen.getByLabelText(getAttendanceTypeLabel("assessment")));
 
       clickHolidayPeriodMode();
 
-      expect(screen.getByLabelText("Consulta de Avaliação")).toBeChecked();
-      expect(screen.getByLabelText("Fisioterapia")).toBeChecked();
+      expect(screen.getByLabelText(getAttendanceTypeLabel("assessment"))).toBeChecked();
+      expect(screen.getByLabelText("Physiotherapy")).toBeChecked();
       expect(screen.getByLabelText("TENS")).toBeChecked();
     });
 
@@ -809,8 +812,10 @@ describe("HolidayFormModal", () => {
         <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
       );
 
-      fireEvent.click(screen.getByLabelText("Consulta de Avaliação"));
-      expect(screen.getByLabelText("Consulta de Avaliação")).not.toBeChecked();
+      fireEvent.click(screen.getByLabelText(getAttendanceTypeLabel("assessment")));
+      expect(
+        screen.getByLabelText(getAttendanceTypeLabel("assessment")),
+      ).not.toBeChecked();
 
       clickHolidayPeriodMode();
       const typeRadios = screen
@@ -818,7 +823,9 @@ describe("HolidayFormModal", () => {
         .filter((el) => (el as HTMLInputElement).name === "holidayType");
       fireEvent.click(typeRadios[0]);
 
-      expect(screen.getByLabelText("Consulta de Avaliação")).not.toBeChecked();
+      expect(
+        screen.getByLabelText(getAttendanceTypeLabel("assessment")),
+      ).not.toBeChecked();
     });
   });
 
@@ -839,7 +846,7 @@ describe("HolidayFormModal", () => {
 
       expect(
         screen.getByText(
-          "Este feriado contém mais de um dia. As alterações serão aplicadas a todos os dias do período.",
+          "This holiday spans more than one day. Changes will be applied to all days in the period.",
         ),
       ).toBeInTheDocument();
     });
@@ -855,7 +862,7 @@ describe("HolidayFormModal", () => {
 
       expect(
         screen.queryByText(
-          "Este feriado contém mais de um dia. As alterações serão aplicadas a todos os dias do período.",
+          "This holiday spans more than one day. Changes will be applied to all days in the period.",
         ),
       ).not.toBeInTheDocument();
     });
@@ -869,12 +876,12 @@ describe("HolidayFormModal", () => {
         />,
       );
 
-      const nameInput = screen.getByLabelText(/nome/i);
+      const nameInput = screen.getByLabelText(/^Name \*$/i);
       fireEvent.change(nameInput, {
         target: { value: "Updated Holiday Name" },
       });
 
-      const submitButton = screen.getByText("Salvar Alterações");
+      const submitButton = screen.getByText("Save Changes");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -883,7 +890,7 @@ describe("HolidayFormModal", () => {
             groupId: "group-123-uuid",
             data: {
               name: "Updated Holiday Name",
-              description: "Feriado Nacional",
+              description: "National Holiday",
               blockedTreatmentTypes: ["assessment", "physiotherapy"],
             },
           },
@@ -904,12 +911,12 @@ describe("HolidayFormModal", () => {
         />,
       );
 
-      const nameInput = screen.getByLabelText(/nome/i);
+      const nameInput = screen.getByLabelText(/^Name \*$/i);
       fireEvent.change(nameInput, {
         target: { value: "Updated Single Holiday" },
       });
 
-      const submitButton = screen.getByText("Salvar Alterações");
+      const submitButton = screen.getByText("Save Changes");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -918,7 +925,7 @@ describe("HolidayFormModal", () => {
             id: 1,
             data: {
               name: "Updated Single Holiday",
-              description: "Feriado Nacional",
+              description: "National Holiday",
               blockedTreatmentTypes: ["assessment", "physiotherapy"],
             },
           },
@@ -941,12 +948,12 @@ describe("HolidayFormModal", () => {
         />,
       );
 
-      const nameInput = screen.getByLabelText(/nome/i);
+      const nameInput = screen.getByLabelText(/^Name \*$/i);
       fireEvent.change(nameInput, {
         target: { value: "Updated Holiday Name" },
       });
 
-      const submitButton = screen.getByText("Salvar Alterações");
+      const submitButton = screen.getByText("Save Changes");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -969,12 +976,12 @@ describe("HolidayFormModal", () => {
         />,
       );
 
-      const nameInput = screen.getByLabelText(/nome/i);
+      const nameInput = screen.getByLabelText(/^Name \*$/i);
       fireEvent.change(nameInput, {
         target: { value: "Updated Holiday Name" },
       });
 
-      const submitButton = screen.getByText("Salvar Alterações");
+      const submitButton = screen.getByText("Save Changes");
       fireEvent.click(submitButton);
 
       await waitFor(() => {

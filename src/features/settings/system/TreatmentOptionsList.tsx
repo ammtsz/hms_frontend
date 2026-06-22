@@ -64,18 +64,18 @@ export default function TreatmentOptionsList({
     ? createBodyLocationMutation
     : createColorMutation;
 
-  const label = isBodyLocation ? "local do corpo" : "cor";
-  const labelCapitalized = isBodyLocation ? "Local do Corpo" : "Cor";
+  const label = isBodyLocation ? "body location" : "color";
+  const labelCapitalized = isBodyLocation ? "Body Location" : "Color";
 
   const handleAdd = async () => {
     const trimmed = newValue.trim();
     if (!trimmed) {
-      setError(`Nome do ${label} é obrigatório`);
+      setError(`Name of ${label} is required`);
       return;
     }
 
     if (trimmed.length > maxValueLength) {
-      setError(`Nome deve ter no máximo ${maxValueLength} caracteres`);
+      setError(`Name must not exceed ${maxValueLength} characters`);
       return;
     }
 
@@ -97,11 +97,11 @@ export default function TreatmentOptionsList({
   const createOption = async () => {
     const trimmed = newValue.trim();
     if (!trimmed) {
-      setError(`Nome do ${label} é obrigatório`);
+      setError(`Name of ${label} is required`);
       return;
     }
     if (trimmed.length > maxValueLength) {
-      setError(`Nome deve ter no máximo ${maxValueLength} caracteres`);
+      setError(`Name must not exceed ${maxValueLength} characters`);
       return;
     }
     try {
@@ -115,9 +115,9 @@ export default function TreatmentOptionsList({
       if (
         (err as { response?: { status?: number } }).response?.status === 409
       ) {
-        setError(`Este ${label} já existe`);
+        setError(`This ${label} already exists`);
       } else {
-        setError(`Erro ao criar ${label}. Tente novamente.`);
+        setError(`Error creating ${label}. Please try again.`);
       }
     }
   };
@@ -140,7 +140,7 @@ export default function TreatmentOptionsList({
   };
 
   if (isLoading) {
-    return <div className="text-center py-8 text-gray-500">Carregando...</div>;
+    return <div className="text-center py-8 text-gray-500">Loading...</div>;
   }
 
   return (
@@ -150,11 +150,11 @@ export default function TreatmentOptionsList({
         <Table className={stackedTableClasses.table}>
           <TableHeader className={stackedTableClasses.header}>
             <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead className="hidden w-32 md:table-cell">Uso</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead className="hidden w-32 md:table-cell">Usage</TableHead>
               <TableHead className="w-32">Status</TableHead>
               <TableHead align="center" className="w-24">
-                Ações
+                Actions
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -174,7 +174,7 @@ export default function TreatmentOptionsList({
                   align="center"
                   className="py-8 text-gray-500"
                 >
-                  Nenhum {label} cadastrado
+                  No {label} found
                 </TableCell>
               </TableRow>
             )}
@@ -195,7 +195,7 @@ export default function TreatmentOptionsList({
               onChange={(e) =>
                 setNewValue(e.target.value.slice(0, maxValueLength))
               }
-              placeholder={`Nome do ${label}`}
+              placeholder={`Name of ${label}`}
               className="flex-1"
               maxLength={maxValueLength}
               autoFocus
@@ -204,9 +204,9 @@ export default function TreatmentOptionsList({
               onClick={handleAdd}
               disabled={createMutation.isPending}
               isLoading={createMutation.isPending}
-              loadingText="Salvando..."
+              loadingText="Saving..."
             >
-              Salvar
+              Save
             </Button>
             <Button
               variant="secondary"
@@ -214,7 +214,7 @@ export default function TreatmentOptionsList({
               disabled={createMutation.isPending}
               className="bg-gray-200 text-gray-700 hover:bg-gray-300"
             >
-              Cancelar
+              Cancel
             </Button>
           </div>
 
@@ -237,11 +237,11 @@ export default function TreatmentOptionsList({
                 </div>
                 <div className="ml-3 flex-1">
                   <h3 className="text-sm font-medium text-amber-800">
-                    {labelCapitalized}s Semelhantes Encontrados
+                    Similar {labelCapitalized}s Found
                   </h3>
                   <div className="mt-2 text-sm text-amber-700">
                     <p>
-                      Os seguintes {label}s são muito parecidos com &ldquo;
+                      The following {label}s are very similar to &ldquo;
                       {newValue}&rdquo;:
                     </p>
                     <ul className="list-disc list-inside mt-1">
@@ -252,7 +252,7 @@ export default function TreatmentOptionsList({
                         </li>
                       ))}
                     </ul>
-                    <p className="mt-2">Deseja criar mesmo assim?</p>
+                    <p className="mt-2">Do you want to create it anyway?</p>
                   </div>
                   <div className="mt-4 flex gap-2">
                     <Button
@@ -261,9 +261,9 @@ export default function TreatmentOptionsList({
                       onClick={handleConfirmCreate}
                       disabled={createMutation.isPending}
                       isLoading={createMutation.isPending}
-                      loadingText="Criando..."
+                      loadingText="Creating..."
                     >
-                      Sim, Criar
+                      Yes, Create
                     </Button>
                     <Button
                       variant="outline"
@@ -271,7 +271,7 @@ export default function TreatmentOptionsList({
                       onClick={handleCancelWarning}
                       className="border-amber-300 text-amber-800 hover:bg-amber-50"
                     >
-                      Cancelar
+                      Cancel
                     </Button>
                   </div>
                 </div>
@@ -280,7 +280,7 @@ export default function TreatmentOptionsList({
           )}
 
           <p className="mt-1 text-xs text-gray-500">
-            {newValue.length}/{maxValueLength} caracteres
+            {newValue.length}/{maxValueLength} characters
           </p>
 
           {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
@@ -293,7 +293,7 @@ export default function TreatmentOptionsList({
             className="w-full border-2 border-dashed border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600"
           >
             <Plus className="w-5 h-5" />
-            Adicionar {isBodyLocation ? "Novo" : "Nova"} {labelCapitalized}
+            Add New {labelCapitalized}
           </Button>
         )
       )}

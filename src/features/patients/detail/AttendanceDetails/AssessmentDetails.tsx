@@ -6,6 +6,7 @@ import {
   type ActiveTreatmentRow,
 } from "./helpers/assessmentHelpers";
 import { NotesBox } from "./helpers/treatmentHelpers";
+import { ASSESSMENT_DETAILS_TITLE } from "@/utils/attendanceStatusLabels";
 
 export interface AssessmentRecommendation {
   food?: string;
@@ -33,7 +34,7 @@ interface AssessmentDetailsProps {
 
 export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
   recommendations,
-  title = "📋 Consulta de Avaliação",
+  title = ASSESSMENT_DETAILS_TITLE,
   physiotherapySessions = [],
   tensSessions = [],
   preConsultationNotes,
@@ -59,14 +60,14 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
 
     if (recommendations.returnWhenTreatmentComplete) {
       return recommendations.returnWeeks === 0
-        ? "retornar no último dia de tratamento"
+        ? "return on the last day of treatment"
         : `${recommendations.returnWeeks} ${
-            recommendations.returnWeeks > 1 ? "semanas" : "semana"
-          } após o término do tratamento`;
+            recommendations.returnWeeks > 1 ? "weeks" : "week"
+          } after treatment ends`;
     }
 
     return `${recommendations.returnWeeks} ${
-      recommendations.returnWeeks > 1 ? "semanas" : "semana"
+      recommendations.returnWeeks > 1 ? "weeks" : "week"
     }`;
   };
 
@@ -77,10 +78,10 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
 
       <div className="text-sm text-gray-600 mt-1">
         {isFirstAttendance === undefined
-          ? "Consulta agendada para avaliação e orientação médica"
+          ? "Appointment scheduled for assessment and medical guidance"
           : isFirstAttendance
-            ? "Consulta de retorno agendada para avaliação e orientação médica"
-            : "Primeira consulta agendada para avaliação e orientação médica"}
+            ? "Return appointment scheduled for assessment and medical guidance"
+            : "First appointment scheduled for assessment and medical guidance"}
       </div>
 
       {/* Notes Section */}
@@ -106,12 +107,14 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
       {/* Recommendations Section */}
       {hasRecommendations && (
         <>
-          <div className="text-xs font-semibold mb-2 mt-4">Recomendações:</div>
+          <div className="text-xs font-semibold mb-2 mt-4">
+            Recommendations:
+          </div>
           <div className="flex flex-col gap-y-2 text-xs">
             {recommendations?.food && (
               <RecommendationItem
                 icon="🍎"
-                label="Alimentação"
+                label="Food"
                 value={recommendations.food}
               />
             )}
@@ -119,7 +122,7 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
             {recommendations?.water && (
               <RecommendationItem
                 icon="💧"
-                label="Água"
+                label="Water"
                 value={recommendations.water}
               />
             )}
@@ -127,7 +130,7 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
             {recommendations?.ointment && (
               <RecommendationItem
                 icon="🧴"
-                label="Pomada"
+                label="Ointment"
                 value={recommendations.ointment}
               />
             )}
@@ -135,7 +138,7 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
             {hasPhysiotherapySessions && (
               <RecommendationItem
                 icon="✨"
-                label="Fisioterapia"
+                label="Physiotherapy"
                 value={
                   <ul className="text-gray-900">
                     {formatActiveTreatmentRows(physiotherapySessions).map(
@@ -167,7 +170,7 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
             {recommendations?.returnWeeks !== undefined && (
               <RecommendationItem
                 icon="📅"
-                label="Retorno"
+                label="Return"
                 value={<span className="font-medium">{getReturnText()}</span>}
                 fullWidth
               />

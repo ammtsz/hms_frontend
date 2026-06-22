@@ -110,7 +110,7 @@ const AttendanceCard: React.FC<AttendanceCardProps> = React.memo(
       groupedPatient?.attendanceIds ||
       (patient.attendanceId ? [patient.attendanceId] : []);
 
-    // Fetch patient data when expanded to show main complaint
+    // Fetch patient data when expanded to show main concern
     const { patient: patientData, isLoading: loadingPatient } =
       usePatientComplaint(
         isExpanded && patient.patientId ? patient.patientId : null,
@@ -157,9 +157,9 @@ const AttendanceCard: React.FC<AttendanceCardProps> = React.memo(
         onDragEnd={isDisabled || isExpanded ? undefined : handleDragEnd}
         title={
           isClickable
-            ? "Clique para visualizar os detalhes da consulta finalizada"
+            ? "Click to view completed consultation details"
             : isExpandable
-              ? "Clique para ver detalhes do tratamento"
+              ? "Click to view treatment details"
               : undefined
         }
       >
@@ -182,10 +182,10 @@ const AttendanceCard: React.FC<AttendanceCardProps> = React.memo(
             }`}
             title={
               patient.isMissed
-                ? `FALTA - ${patient.name} - Prioridade: ${priorityDisplay}`
+                ? `MISSED - ${patient.name} - Priority: ${priorityDisplay}`
                 : patient.isCancelled
-                  ? `CANCELADO - ${patient.name} - Prioridade: ${priorityDisplay}`
-                  : `${patient.name} - Prioridade: ${priorityDisplay}`
+                  ? `CANCELLED - ${patient.name} - Priority: ${priorityDisplay}`
+                  : `${patient.name} - Priority: ${priorityDisplay}`
             }
           >
             <span className="m-auto">
@@ -193,7 +193,7 @@ const AttendanceCard: React.FC<AttendanceCardProps> = React.memo(
                 ? `${index + 1}. `
                 : ""}
               {patient.name}
-              <span className="text-xs color-gray-600 ml-2">
+              <span className="text-xs text-gray-600 ml-2">
                 P{priorityDisplay}
               </span>
             </span>
@@ -223,7 +223,7 @@ const AttendanceCard: React.FC<AttendanceCardProps> = React.memo(
           <div className="w-full" onClick={(e) => e.stopPropagation()}>
             {loadingSessions ? (
               <div className="p-3 bg-gray-50 rounded text-sm text-gray-500 italic">
-                Carregando detalhes do tratamento...
+                Loading treatment details...
               </div>
             ) : (
               <ExpandedTreatmentDetails
@@ -243,7 +243,7 @@ const AttendanceCard: React.FC<AttendanceCardProps> = React.memo(
           <div className="w-full" onClick={(e) => e.stopPropagation()}>
             {loadingPatient ? (
               <div className="p-3 bg-gray-50 rounded text-sm text-gray-500 italic">
-                Carregando informações do paciente...
+                Loading patient information...
               </div>
             ) : (
               <ExpandedAssessmentDetails
@@ -265,8 +265,8 @@ const AttendanceCard: React.FC<AttendanceCardProps> = React.memo(
                 handleDelete(deleteAttendanceIds, patient.name);
               }}
               className="absolute top-1 right-1 z-10"
-              title="Gerenciar agendamento"
-              aria-label="Gerenciar agendamento"
+              title="Manage appointment"
+              aria-label="Manage appointment"
             >
               <Settings size={16} aria-hidden />
             </IconButton>

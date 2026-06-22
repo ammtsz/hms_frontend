@@ -80,15 +80,15 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
 
   const validateForm = () => {
     if (!formData.name.trim()) {
-      setError("Nome é obrigatório.");
+      setError("Name is required.");
       return false;
     }
     if (!formData.phone.trim()) {
-      setError("Telefone é obrigatório.");
+      setError("Phone is required.");
       return false;
     }
     if (!formData.birthDate) {
-      setError("Data de nascimento é obrigatória.");
+      setError("Birth date is required.");
       return false;
     }
     return true;
@@ -155,7 +155,7 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
       onSuccess(updatedPatient);
     } catch (err) {
       console.error("Error during check-in:", err);
-      setError("Erro ao processar check-in. Tente novamente.");
+      setError("Error processing check-in. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -164,18 +164,18 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
   return (
     <div className="p-6">
       <div className="space-y-4 mb-6">
-        <Field label="Nome Completo *" htmlFor="new-patient-checkin-name">
+        <Field label="Full Name*" htmlFor="new-patient-checkin-name">
           <Input
             id="new-patient-checkin-name"
             type="text"
             value={formData.name}
             onChange={(e) => handleInputChange("name", e.target.value)}
-            placeholder="Digite o nome completo"
+            placeholder="Enter full name"
             disabled={isSubmitting}
           />
         </Field>
 
-        <Field label="Telefone *" htmlFor="new-patient-checkin-phone">
+        <Field label="Phone *" htmlFor="new-patient-checkin-phone">
           <Input
             id="new-patient-checkin-phone"
             type="tel"
@@ -186,10 +186,7 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
           />
         </Field>
 
-        <Field
-          label="Data de Nascimento *"
-          htmlFor="new-patient-checkin-birth-date"
-        >
+        <Field label="Birth Date *" htmlFor="new-patient-checkin-birth-date">
           <Input
             id="new-patient-checkin-birth-date"
             type="date"
@@ -199,7 +196,7 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
           />
         </Field>
 
-        <Field label="Prioridade" htmlFor="new-patient-checkin-priority">
+        <Field label="Priority" htmlFor="new-patient-checkin-priority">
           <Select
             id="new-patient-checkin-priority"
             value={formData.priority}
@@ -233,17 +230,17 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
           disabled={isSubmitting}
           className="flex-1"
         >
-          Cancelar
+          Cancel
         </Button>
         <Button
           type="button"
           onClick={handleSubmit}
           disabled={isSubmitting || prioritiesLoading}
           isLoading={isSubmitting}
-          loadingText="Processando..."
+          loadingText="Processing..."
           className="flex-1"
         >
-          Fazer Check-in
+          Check In
         </Button>
       </div>
     </div>

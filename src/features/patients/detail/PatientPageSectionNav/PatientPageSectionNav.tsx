@@ -103,7 +103,7 @@ export function PatientPageSectionNav() {
     <>
       {/* Desktop: always visible bar (icons; expand on hover) */}
       <nav
-        aria-label="Navegação por seções da página do paciente"
+        aria-label="Patient page section navigation"
         className="fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 lg:block"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -144,7 +144,7 @@ export function PatientPageSectionNav() {
           <div
             className="absolute bottom-full right-0 z-50 mb-2 flex max-h-[min(70dvh,22rem)] w-48 flex-col gap-0.5 overflow-y-auto overscroll-contain rounded-lg border border-gray-200 bg-white py-2 shadow-lg"
             role="dialog"
-            aria-label="Seções da página"
+            aria-label="Page sections"
             data-testid="patient-section-nav-mobile-menu"
           >
             {PATIENT_PAGE_SECTIONS.map(({ id, label, iconName }) => (
@@ -164,9 +164,7 @@ export function PatientPageSectionNav() {
         <IconButton
           onClick={() => setIsOpenSmall((prev) => !prev)}
           className="relative z-50 h-12 w-12 rounded-full border border-gray-200 bg-white shadow-md hover:bg-gray-50"
-          aria-label={
-            isOpenSmall ? "Fechar menu de seções" : "Abrir menu de seções"
-          }
+          aria-label={isOpenSmall ? "Close section menu" : "Open section menu"}
           aria-expanded={isOpenSmall}
         >
           <PanelRightOpen className="h-6 w-6 text-gray-600" aria-hidden />

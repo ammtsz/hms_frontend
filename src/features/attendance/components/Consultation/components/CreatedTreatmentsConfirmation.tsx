@@ -5,7 +5,7 @@ import type {
   SessionResponseDto,
 } from "@/api/types";
 import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import type { AttendanceType } from "@/types/types";
 import { useCreatedTreatmentsSummary } from "../hooks/useCreatedTreatmentsSummary";
 import { SuccessHeader } from "./CreatedTreatmentsConfirmation/SuccessHeader";
@@ -109,13 +109,13 @@ const CreatedTreatmentsConfirmation: React.FC<
             <span className="text-2xl">✅</span>
             <div className="flex-1">
               <h4 className="text-sm font-semibold text-green-900 mb-1">
-                Alta do tratamento
+                Discharged
               </h4>
               <p className="text-sm text-green-800">
-                O paciente <span className="font-medium">{patientName}</span>{" "}
-                recebeu Alta do tratamento. O tratamento foi encerrado com
-                sucesso e o paciente não necessita mais de acompanhamento neste
-                momento.
+                Patient <span className="font-medium">{patientName}</span> has
+                been discharged from treatment. The treatment was closed
+                successfully and the patient no longer needs follow-up at this
+                time.
               </p>
             </div>
           </div>
@@ -127,8 +127,8 @@ const CreatedTreatmentsConfirmation: React.FC<
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <h4 className="text-md font-medium text-red-800 mb-3">
               {patientStatus === "A"
-                ? "Atendimentos Cancelados devido a Alta do tratamento"
-                : "Atendimentos Cancelados devido a Faltas Consecutivas"}
+                ? "Attendances Cancelled due to Discharged"
+                : "Attendances Cancelled due to Missed — consecutive"}
             </h4>
             <ul className="space-y-3">
               {groupedCancelled.map((item) => (
@@ -140,9 +140,9 @@ const CreatedTreatmentsConfirmation: React.FC<
                         <li key={`${att.type}|${att.scheduledDate}`}>
                           {getAttendanceTypeLabel(att.type as AttendanceType)}
                           {att.type !== "assessment" && att.count > 1
-                            ? ` (${att.count} locais)`
+                            ? ` (${att.count} locations)`
                             : ""}{" "}
-                          - {formatDateBR(att.scheduledDate)}
+                          - {formatDisplayDate(att.scheduledDate)}
                         </li>
                       ))}
                     </ul>
@@ -157,7 +157,7 @@ const CreatedTreatmentsConfirmation: React.FC<
         tensSessions.length > 0 ||
         nextAssessmentConsultation) && (
         <h4 className="text-md text-gray-900 mb-4">
-          Os Agendamentos abaixo foram criados automaticamente:
+          The appointments below were created automatically:
         </h4>
       )}
 
@@ -186,7 +186,7 @@ const CreatedTreatmentsConfirmation: React.FC<
       {onAcknowledge && (
         <div className="flex justify-end mt-auto pb-8">
           <Button type="button" onClick={onAcknowledge}>
-            Entendi
+            OK
           </Button>
         </div>
       )}

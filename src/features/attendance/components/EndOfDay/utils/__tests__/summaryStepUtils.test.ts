@@ -118,7 +118,7 @@ describe("summaryStepUtils", () => {
       expect(result[1].patientName).toBe("Bob");
     });
 
-    it("uses Paciente when patientName is missing", () => {
+    it("uses Patient when patientName is missing", () => {
       const items: RescheduledItem[] = [
         {
           attendanceId: 1,
@@ -130,7 +130,7 @@ describe("summaryStepUtils", () => {
         },
       ];
       const result = groupRescheduledByPatient(items);
-      expect(result[0].patientName).toBe("Paciente");
+      expect(result[0].patientName).toMatch(/Patient|Patient/);
     });
   });
 

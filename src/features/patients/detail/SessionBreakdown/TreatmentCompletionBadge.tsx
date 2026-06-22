@@ -1,4 +1,5 @@
 import React from "react";
+import { ATTENDANCE_HISTORY_STATUS_LABELS } from "@/utils/attendanceStatusLabels";
 
 interface TreatmentCompletionBadgeProps {
   /** Completion percentage (0-100) */
@@ -35,34 +36,34 @@ export const TreatmentCompletionBadge: React.FC<
           color:
             "bg-gray-100 text-gray-700 border-l-4 border-l-green-500 border-gray-200",
           icon: "✅",
-          label: "Concluído",
+          label: ATTENDANCE_HISTORY_STATUS_LABELS.completed,
         };
       case "in_progress":
         return {
           color:
             "bg-gray-100 text-gray-700 border-l-4 border-l-blue-500 border-gray-200",
           icon: "▶️",
-          label: "Em Andamento",
+          label: ATTENDANCE_HISTORY_STATUS_LABELS.inProgress,
         };
       case "suspended":
         return {
           color:
             "bg-gray-100 text-gray-700 border-l-4 border-l-orange-500 border-gray-200",
           icon: "⏸️",
-          label: "Suspenso",
+          label: ATTENDANCE_HISTORY_STATUS_LABELS.suspended,
         };
       case "cancelled":
         return {
           color:
             "bg-gray-100 text-gray-700 border-l-4 border-l-red-500 border-gray-200",
           icon: "❌",
-          label: "Cancelado",
+          label: ATTENDANCE_HISTORY_STATUS_LABELS.cancelled,
         };
       default: // scheduled
         return {
           color: "bg-gray-100 text-gray-700 border-gray-200",
           icon: "📅",
-          label: "Agendado",
+          label: ATTENDANCE_HISTORY_STATUS_LABELS.scheduled,
         };
     }
   };
@@ -70,21 +71,21 @@ export const TreatmentCompletionBadge: React.FC<
   // Get milestone based on completion percentage
   const getMilestone = () => {
     if (completionPercentage >= 100) {
-      return { emoji: "🏆", text: "Tratamento Finalizado!" };
+      return { emoji: "🏆", text: "Treatment Completed!" };
     }
     if (completionPercentage >= 75) {
-      return { emoji: "🎯", text: "Quase Lá!" };
+      return { emoji: "🎯", text: "Almost There!" };
     }
     if (completionPercentage >= 50) {
-      return { emoji: "📈", text: "Meio Caminho" };
+      return { emoji: "📈", text: "Halfway" };
     }
     if (completionPercentage >= 25) {
-      return { emoji: "🔄", text: "Progredindo" };
+      return { emoji: "🔄", text: "Making Progress" };
     }
     if (completionPercentage > 0) {
-      return { emoji: "🚀", text: "Iniciado" };
+      return { emoji: "🚀", text: "Started" };
     }
-    return { emoji: "📋", text: "Planejado" };
+    return { emoji: "📋", text: "Planned" };
   };
 
   // Size configurations

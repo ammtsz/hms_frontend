@@ -31,7 +31,7 @@ jest.mock(
           </button>
           {onCancel && (
             <button onClick={onCancel} data-testid="cancel-button">
-              Cancelar
+              Cancel
             </button>
           )}
         </div>
@@ -150,7 +150,7 @@ describe("NewAttendanceFormModal", () => {
         <NewAttendanceFormModal {...defaultProps} onClose={onCloseMock} />,
       );
 
-      const cancelButton = screen.getByText("Cancelar");
+      const cancelButton = screen.getByText("Cancel");
       fireEvent.click(cancelButton);
 
       expect(onCloseMock).toHaveBeenCalledTimes(1);

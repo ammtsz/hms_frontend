@@ -15,9 +15,9 @@ const mockUsePriorities = usePriorities as jest.MockedFunction<
 >;
 
 const mockPriorities = [
-  { value: "1", label: "Exceção", isActive: true },
-  { value: "2", label: "Idoso/crianças", isActive: true },
-  { value: "3", label: "Padrão", isActive: true },
+  { value: "1", label: "Priority", isActive: true },
+  { value: "2", label: "Standard", isActive: true },
+  { value: "3", label: "Priority 3", isActive: true },
 ] as unknown as Array<{ value: string; label: string; isActive: boolean }>;
 
 // Mock Next.js Link component
@@ -35,10 +35,10 @@ jest.mock("next/link", () => {
 
 const mockPatient: Patient = {
   id: "1",
-  name: "João Silva",
+  name: "John Smith",
   phone: "(11) 99999-9999",
   birthDate: "1980-05-15",
-  mainComplaint: "Dores de cabeça frequentes",
+  mainConcern: "Frequent headaches",
   status: "A",
   priority: "2",
   startDate: "2024-01-15",
@@ -52,9 +52,9 @@ const mockPatient: Patient = {
   ],
   currentRecommendations: {
     date: "2024-12-20",
-    food: "Leve",
-    water: "2L/dia",
-    ointment: "Aplicar 2x/dia",
+    food: "Light meals",
+    water: "2L/day",
+    ointment: "Apply 2x daily",
     physiotherapy: true,
     tens: false,
     returnWeeks: 2,
@@ -92,21 +92,21 @@ describe("HeaderCard", () => {
     renderWithQueryClient(<HeaderCard patient={mockPatient} />);
 
     expect(
-      screen.getByRole("heading", { name: "João Silva" }),
+      screen.getByRole("heading", { name: "John Smith" }),
     ).toBeInTheDocument();
     expect(screen.getByText("#1")).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "(11) 99999-9999" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Alta do tratamento")).toBeInTheDocument();
-    expect(screen.getByText("Dores de cabeça frequentes")).toBeInTheDocument();
-    expect(screen.getByText("Queixa principal")).toBeInTheDocument();
+    expect(screen.getByText("Discharged")).toBeInTheDocument();
+    expect(screen.getByText("Frequent headaches")).toBeInTheDocument();
+    expect(screen.getByText("Main complaint")).toBeInTheDocument();
   });
 
   it("displays priority badge with P-code prefix and styling", () => {
     renderWithQueryClient(<HeaderCard patient={mockPatient} />);
 
-    const priorityBadge = screen.getByText("P2 • Idoso/crianças");
+    const priorityBadge = screen.getByText("P2 • Standard");
     expect(priorityBadge).toBeInTheDocument();
     expect(priorityBadge).toHaveClass(
       "bg-yellow-50",
@@ -128,7 +128,7 @@ describe("HeaderCard", () => {
     if (!hasHadBirthdayThisYear) {
       expectedAge -= 1;
     }
-    expect(screen.getByText(`${expectedAge} anos`)).toBeInTheDocument();
+    expect(screen.getByText(`${expectedAge} years`)).toBeInTheDocument();
   });
 
   it("renders weeks in treatment on metadata line when provided", () => {
@@ -136,13 +136,13 @@ describe("HeaderCard", () => {
       <HeaderCard patient={mockPatient} weeksInTreatment={12} />,
     );
 
-    expect(screen.getByText("12 sem. em tratamento")).toBeInTheDocument();
+    expect(screen.getByText("12 weeks in treatment")).toBeInTheDocument();
   });
 
   it("renders quick action buttons with correct links", () => {
     renderWithQueryClient(<HeaderCard patient={mockPatient} />);
 
-    const editLink = screen.getByRole("link", { name: /editar/i });
+    const editLink = screen.getByRole("link", { name: /Edit/i });
     expect(editLink).toHaveAttribute("href", "/patients/1/edit");
   });
 
@@ -162,7 +162,7 @@ describe("HeaderCard", () => {
         </ClinicTimezoneProvider>
       </QueryClientProvider>,
     );
-    expect(screen.getByText("P1 • Exceção")).toHaveClass(
+    expect(screen.getByText("P1 • Priority")).toHaveClass(
       "bg-red-50",
       "text-red-700",
       "border-red-500",
@@ -176,7 +176,7 @@ describe("HeaderCard", () => {
         </ClinicTimezoneProvider>
       </QueryClientProvider>,
     );
-    expect(screen.getByText("P3 • Padrão")).toHaveClass(
+    expect(screen.getByText("P3 • Priority 3")).toHaveClass(
       "bg-blue-50",
       "text-blue-700",
       "border-blue-500",
@@ -196,7 +196,7 @@ describe("HeaderCard", () => {
 
     expect(
       screen.getByRole("status", {
-        name: "2 faltas consecutivas não justificadas",
+        name: "2 consecutive unjustified absences",
       }),
     ).toBeInTheDocument();
   });
@@ -209,7 +209,7 @@ describe("HeaderCard", () => {
     );
 
     expect(
-      screen.queryByText(/faltas consecutivas não justificadas/i),
+      screen.queryByText(/consecutive unjustified absences/i),
     ).not.toBeInTheDocument();
   });
 
@@ -225,7 +225,7 @@ describe("HeaderCard", () => {
     );
 
     const historicalStreak = screen.getByText(
-      "3 faltas consecutivas não justificadas (tratamento anterior)",
+      "3 consecutive unjustified absences (previous treatment)",
     );
     expect(historicalStreak).toHaveClass("text-gray-400");
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
@@ -243,7 +243,7 @@ describe("HeaderCard", () => {
     );
 
     expect(
-      screen.queryByText(/faltas consecutivas não justificadas/i),
+      screen.queryByText(/consecutive unjustified absences/i),
     ).not.toBeInTheDocument();
   });
 

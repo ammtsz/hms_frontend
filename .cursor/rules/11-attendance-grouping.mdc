@@ -23,13 +23,13 @@ If a patient has both assessment consultation and treatments (physiotherapy and/
 
 If a patient has only treatments (no assessment), display as **one entry**:
 
-- Both physiotherapy + tens: "Fisioterapia e TENS"
-- Only physiotherapy: "Fisioterapia"
+- Both physiotherapy + tens: "Physiotherapy e TENS"
+- Only physiotherapy: "Physiotherapy"
 - Only tens: "TENS"
 
 ### Rule 4: Assessment Only
 
-If a patient has only assessment consultation, display as **one entry**: "Consulta"
+If a patient has only assessment consultation, display as **one entry**: "Consultation"
 
 ## Visual Examples
 
@@ -38,22 +38,22 @@ If a patient has only assessment consultation, display as **one entry**: "Consul
 **Input:** Patient 10 has assessment, physiotherapy, and tens attendances
 **Output:**
 
-- Paciente 10 (Consulta)
-- Paciente 10 (Fisioterapia e TENS)
+- Patient 10 (Consultation)
+- Patient 10 (Physiotherapy e TENS)
 
 ### Example 2: Patient with Only Physiotherapy
 
 **Input:** Patient 2 has physiotherapy attendance
 **Output:**
 
-- Teste Manual 2 (Fisioterapia)
+- Manual Test 2 (Physiotherapy)
 
 ### Example 3: Patient with Both Treatments Only
 
 **Input:** Patient 3 has physiotherapy and tens attendances (no assessment)
 **Output:**
 
-- Patient 3 (Fisioterapia e TENS)
+- Patient 3 (Physiotherapy e TENS)
 
 ## Implementation
 
@@ -142,8 +142,8 @@ it("should group patient with assessment and treatments as two entries", () => {
   const result = groupAttendancesForDisplayWithBodyLocation(attendances);
 
   expect(result).toHaveLength(2); // assessment + combined treatments
-  expect(result[0].label).toContain("Consulta");
-  expect(result[1].label).toMatch(/Fisioterapia|TENS/);
+  expect(result[0].label).toContain("Consultation");
+  expect(result[1].label).toMatch(/Physiotherapy|TENS/);
 });
 ```
 

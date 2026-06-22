@@ -60,7 +60,7 @@ describe('Holiday Grouping Utilities', () => {
       expect(periodGroup?.holidays).toHaveLength(3);
       expect(periodGroup?.displayName).toBe('Christmas Period');
       expect(periodGroup?.isPeriod).toBe(true);
-      expect(periodGroup?.dateRange).toContain('24/12/2026 a 26/12/2026');
+      expect(periodGroup?.dateRange).toContain('12/24/2026 to 12/26/2026');
     });
 
     it('should handle empty array', () => {

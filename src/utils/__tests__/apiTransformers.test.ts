@@ -172,7 +172,7 @@ describe('API Transformers', () => {
       priority: PatientPriority.LEVEL_3,
       patientStatus: PatientStatus.IN_TREATMENT,
       birthDate: '1990-01-01',
-      mainComplaint: 'Test complaint',
+      mainConcern: 'Test complaint',
       startDate: '2025-01-01',
       dischargeDate: undefined,
       missingAppointmentsStreak: 0,
@@ -218,7 +218,7 @@ describe('API Transformers', () => {
       priority: PatientPriority.LEVEL_3,
       patientStatus: PatientStatus.IN_TREATMENT,
       birthDate: '1990-01-01',
-      mainComplaint: 'Test complaint',
+      mainConcern: 'Test complaint',
       startDate: '2025-01-01',
       dischargeDate: undefined,
       missingAppointmentsStreak: 0,
@@ -237,7 +237,7 @@ describe('API Transformers', () => {
       expect(result.priority).toBe('3');
       expect(result.status).toBe('T');
       expect(result.birthDate).toBe('1990-01-01');
-      expect(result.mainComplaint).toBe('Test complaint');
+      expect(result.mainConcern).toBe('Test complaint');
       expect(result.startDate).toBe('2025-01-01');
       expect(result.dischargeDate).toBeNull();
       expect(result.missingAppointmentsStreak).toBe(0);
@@ -258,11 +258,11 @@ describe('API Transformers', () => {
       expect(result.birthDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
-    it('should handle missing main complaint', () => {
-      const apiPatient = createMockPatient({ mainComplaint: null });
+    it('should handle missing main concern', () => {
+      const apiPatient = createMockPatient({ mainConcern: null });
       const result = transformSinglePatientFromApi(apiPatient);
 
-      expect(result.mainComplaint).toBe('');
+      expect(result.mainConcern).toBe('');
     });
 
     it('should handle discharge date when provided', () => {
@@ -393,7 +393,7 @@ describe('API Transformers', () => {
       priority: PatientPriority.LEVEL_3,
       patientStatus: PatientStatus.IN_TREATMENT,
       birthDate: '1990-01-01',
-      mainComplaint: 'Test complaint',
+      mainConcern: 'Test complaint',
       startDate: '2025-01-01',
       dischargeDate: undefined,
       missingAppointmentsStreak: 0,
@@ -581,7 +581,7 @@ describe('API Transformers', () => {
       createdTime: '10:00:00',
       updatedDate: '2024-01-15',
       updatedTime: '10:00:00',
-      mainComplaint: 'Test',
+      mainConcern: 'Test',
       food: '',
       water: '',
       ointments: '',

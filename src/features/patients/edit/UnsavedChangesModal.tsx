@@ -19,7 +19,7 @@ const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onStay}
-      title="Alterações Não Salvas"
+      title="Unsaved Changes"
       maxWidth="md"
       showCloseButton={false}
       initialFocusRef={stayButtonRef}
@@ -27,9 +27,9 @@ const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
       <div className="p-6">
         {/* Message */}
         <div className="text-start mb-6">
-          <p className="text- text-gray-800">
-            Se você sair agora, todas as alterações feitas serão perdidas. Tem
-            certeza que deseja sair?
+          <p className="text-gray-800">
+            If you leave now, all changes will be lost. Are you sure you want to
+            leave?
           </p>
         </div>
 
@@ -41,7 +41,7 @@ const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
             onClick={onStay}
             className="flex-1 order-1 sm:order-2"
           >
-            Continuar Editando
+            Continue Editing
           </Button>
           <Button
             type="button"
@@ -49,7 +49,7 @@ const UnsavedChangesModal: React.FC<UnsavedChangesModalProps> = ({
             onClick={onLeave}
             className="flex-1 order-2 sm:order-1"
           >
-            Sair sem Salvar
+            Leave Without Saving
           </Button>
         </div>
       </div>

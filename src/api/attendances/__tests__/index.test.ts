@@ -79,7 +79,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
   });
@@ -106,7 +106,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
   });
@@ -146,7 +146,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Requisição inválida'
+        error: 'Invalid request'
       });
     });
   });
@@ -187,7 +187,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Requisição inválida'
+        error: 'Invalid request'
       });
     });
 
@@ -199,7 +199,7 @@ describe('Attendances API', () => {
         scheduledTime: '10:00'
       };
       const backendMessage =
-        'Selecione a queixa principal (consulta anterior) relacionada a este agendamento. Se a lista não aparecer, atualize a página e tente novamente.';
+        'Select the main complaint (previous consultation) related to this appointment. If the list does not appear, refresh the page and try again.';
       const mockError = {
         response: {
           status: 400,
@@ -253,7 +253,7 @@ describe('Attendances API', () => {
     });
 
     it('should return 404 response body message when present (e.g. invalid date / no schedule)', async () => {
-      const backendMessage = 'Não há configuração de agenda para esta data. Escolha outro dia.';
+      const backendMessage = 'No schedule configuration for this date. Choose another day.';
       const mockError = {
         response: {
           status: 404,
@@ -298,7 +298,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
   });
@@ -336,7 +336,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
   });
@@ -552,7 +552,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
   });
@@ -561,7 +561,7 @@ describe('Attendances API', () => {
     it('should return eligible parent options for patient on success', async () => {
       const mockOptions = {
         options: [
-          { id: 1, date: '2024-01-01', mainComplaint: 'Queixa A', label: '2024-01-01 - Queixa A' },
+          { id: 1, date: '2024-01-01', mainConcern: 'Complaint A', label: '2024-01-01 - Complaint A' },
         ],
       };
       const mockResponse = { data: mockOptions };
@@ -584,14 +584,14 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
   });
 
   describe('getAttendancesForAgenda', () => {
     it('should return agenda attendances without filters', async () => {
-      const mockAgendaData = [{ id: 1, patientName: 'João', type: 'assessment', scheduledTime: '10:00' }];
+      const mockAgendaData = [{ id: 1, patientName: 'John', type: 'assessment', scheduledTime: '10:00' }];
       const mockResponse = { data: mockAgendaData };
       mockApi.get.mockResolvedValue(mockResponse);
 
@@ -605,7 +605,7 @@ describe('Attendances API', () => {
     });
 
     it('should return agenda attendances with filters', async () => {
-      const mockAgendaData = [{ id: 1, patientName: 'João', type: 'assessment', scheduledTime: '10:00' }];
+      const mockAgendaData = [{ id: 1, patientName: 'John', type: 'assessment', scheduledTime: '10:00' }];
       const mockResponse = { data: mockAgendaData };
       mockApi.get.mockResolvedValue(mockResponse);
 
@@ -628,7 +628,7 @@ describe('Attendances API', () => {
     });
 
     it('should encode a single selected status as one status query param', async () => {
-      const mockAgendaData = [{ id: 1, patientName: 'João', type: 'assessment' }];
+      const mockAgendaData = [{ id: 1, patientName: 'John', type: 'assessment' }];
       mockApi.get.mockResolvedValue({ data: mockAgendaData });
 
       await getAttendancesForAgenda({
@@ -649,7 +649,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
   });
@@ -677,7 +677,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
   });
@@ -735,7 +735,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
   });
@@ -769,7 +769,7 @@ describe('Attendances API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Requisição inválida'
+        error: 'Invalid request'
       });
     });
   });

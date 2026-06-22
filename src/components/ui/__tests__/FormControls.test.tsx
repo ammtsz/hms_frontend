@@ -4,31 +4,31 @@ import { Checkbox, Field, Input, Radio, Select, Textarea } from "../index";
 describe("form controls", () => {
   it("associates a field label with an input", () => {
     render(
-      <Field label="Nome" htmlFor="name">
+      <Field label="Name" htmlFor="name">
         <Input id="name" />
       </Field>,
     );
 
-    expect(screen.getByLabelText("Nome")).toBeInTheDocument();
+    expect(screen.getByLabelText("Name")).toBeInTheDocument();
   });
 
   it("renders help text and error state", () => {
     render(
-      <Field label="Telefone" error="Telefone inválido" helpText="Use DDD">
+      <Field label="Phone" error="Invalid phone" helpText="Use area code">
         <Input invalid />
       </Field>,
     );
 
-    expect(screen.getByText("Use DDD")).toBeInTheDocument();
-    expect(screen.getByRole("alert")).toHaveTextContent("Telefone inválido");
+    expect(screen.getByText("Use area code")).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Invalid phone");
     expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", "true");
   });
 
   it("renders select options", () => {
     render(
-      <Select aria-label="Prioridade" defaultValue="1">
-        <option value="1">Emergência</option>
-        <option value="2">Intermediário</option>
+      <Select aria-label="Priority" defaultValue="1">
+        <option value="1">Priority</option>
+        <option value="2">Standard</option>
       </Select>,
     );
 
@@ -36,16 +36,16 @@ describe("form controls", () => {
   });
 
   it("renders a textarea", () => {
-    render(<Textarea aria-label="Observações" defaultValue="Sem observações" />);
+    render(<Textarea aria-label="Notes" defaultValue="No notes" />);
 
-    expect(screen.getByRole("textbox")).toHaveValue("Sem observações");
+    expect(screen.getByRole("textbox")).toHaveValue("No notes");
   });
 
   it("renders checkbox and radio controls", () => {
     render(
       <>
-        <Checkbox aria-label="Aceitar" defaultChecked />
-        <Radio aria-label="Opção" defaultChecked />
+        <Checkbox aria-label="Accept" defaultChecked />
+        <Radio aria-label="Option" defaultChecked />
       </>,
     );
 

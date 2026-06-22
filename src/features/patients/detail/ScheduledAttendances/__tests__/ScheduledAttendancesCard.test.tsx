@@ -17,7 +17,7 @@ jest.mock("@/features/patients/detail/shared/hooks/usePagination", () => ({
 }));
 
 jest.mock("@/utils/dateUtils", () => ({
-  formatDateBR: jest.fn(() => "20/12/2023"),
+  formatDisplayDate: jest.fn(() => "12/20/2023"),
   getDaysUntil: jest.fn(() => 3),
 }));
 
@@ -204,9 +204,9 @@ describe("ScheduledAttendancesCard", () => {
   it("should render the card header", () => {
     render(<ScheduledAttendancesCard patient={mockPatient} />);
 
-    expect(screen.getByText("Próximos Agendamentos")).toBeInTheDocument();
+    expect(screen.getByText("Upcoming Appointments")).toBeInTheDocument();
     expect(screen.getByText("(0)")).toBeInTheDocument(); // Shows count
-    expect(screen.getByTitle("Expandir")).toBeInTheDocument(); // Card starts collapsed
+    expect(screen.getByTitle("Expand")).toBeInTheDocument(); // Card starts collapsed
   });
 
   it("should show loading state when data is loading and expanded", async () => {
@@ -218,11 +218,11 @@ describe("ScheduledAttendancesCard", () => {
     });
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
     expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
     expect(
-      screen.getByText("Carregando próximos agendamentos..."),
+      screen.getByText("Loading upcoming appointments..."),
     ).toBeInTheDocument();
   });
 
@@ -236,7 +236,7 @@ describe("ScheduledAttendancesCard", () => {
     });
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
     expect(screen.getByTestId("error-state")).toBeInTheDocument();
     expect(screen.getByText("Failed to load")).toBeInTheDocument();
@@ -244,7 +244,7 @@ describe("ScheduledAttendancesCard", () => {
 
   it("should show empty state when no attendances and expanded", async () => {
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
     expect(screen.getByText("No scheduled attendances")).toBeInTheDocument();
@@ -269,9 +269,9 @@ describe("ScheduledAttendancesCard", () => {
     });
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
-    const refreshButton = screen.getByText("Atualizar");
+    const refreshButton = screen.getByText("Refresh");
     fireEvent.click(refreshButton);
 
     expect(mockRefetchAttendances).toHaveBeenCalled();
@@ -310,7 +310,7 @@ describe("ScheduledAttendancesCard", () => {
     mockGroupScheduled.mockReturnValue(mockGroupedAttendances);
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
     expect(screen.getByTestId("scheduled-attendance-item")).toBeInTheDocument();
     expect(screen.getByTestId("assessment-consultation")).toBeInTheDocument();
@@ -342,7 +342,7 @@ describe("ScheduledAttendancesCard", () => {
     mockGroupScheduled.mockReturnValue(mockGroupedAttendances);
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
     expect(screen.getByTestId("first-item")).toBeInTheDocument();
     expect(screen.getByTestId("scheduled-attendance-item")).toBeInTheDocument();
@@ -372,7 +372,7 @@ describe("ScheduledAttendancesCard", () => {
     mockGroupScheduled.mockReturnValue(mockGroupedAttendances);
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
     const showMoreButton = screen.getByTestId("show-more-button");
     expect(showMoreButton).toBeInTheDocument();
@@ -390,7 +390,7 @@ describe("ScheduledAttendancesCard", () => {
     });
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
     expect(screen.getByTestId("error-state")).toBeInTheDocument();
     expect(screen.getByText("Treatment error")).toBeInTheDocument();
@@ -405,26 +405,26 @@ describe("ScheduledAttendancesCard", () => {
     });
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
-    expect(screen.queryByText("Atualizar")).not.toBeInTheDocument();
+    expect(screen.queryByText("Refresh")).not.toBeInTheDocument();
   });
 
   it("should toggle collapse/expand state", async () => {
     render(<ScheduledAttendancesCard patient={mockPatient} />);
 
     // Card starts collapsed
-    expect(screen.getByTitle("Expandir")).toBeInTheDocument();
+    expect(screen.getByTitle("Expand")).toBeInTheDocument();
     expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
 
     // Expand the card
-    fireEvent.click(screen.getByTitle("Expandir"));
-    expect(screen.getByTitle("Recolher")).toBeInTheDocument();
+    fireEvent.click(screen.getByTitle("Expand"));
+    expect(screen.getByTitle("Collapse")).toBeInTheDocument();
     expect(screen.getByTestId("empty-state")).toBeInTheDocument();
 
     // Collapse again
-    fireEvent.click(screen.getByTitle("Recolher"));
-    expect(screen.getByTitle("Expandir")).toBeInTheDocument();
+    fireEvent.click(screen.getByTitle("Collapse"));
+    expect(screen.getByTitle("Expand")).toBeInTheDocument();
     expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
   });
 
@@ -461,7 +461,7 @@ describe("ScheduledAttendancesCard", () => {
     mockGroupScheduled.mockReturnValue(mockGroupedAttendances);
 
     render(<ScheduledAttendancesCard patient={mockPatient} />);
-    fireEvent.click(screen.getByTitle("Expandir"));
+    fireEvent.click(screen.getByTitle("Expand"));
 
     expect(screen.getByTestId("assessment-consultation")).toBeInTheDocument();
     expect(screen.getByTestId("physiotherapy")).toBeInTheDocument();

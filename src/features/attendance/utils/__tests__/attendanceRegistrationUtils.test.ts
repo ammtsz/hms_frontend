@@ -16,31 +16,31 @@ jest.mock("@/utils/businessRules");
 describe("attendanceRegistrationUtils", () => {
   describe("getTreatmentDisplayName", () => {
     it("returns correct display names for treatment types", () => {
-      expect(getTreatmentDisplayName("assessment")).toBe("Consulta de Avaliação");
-      expect(getTreatmentDisplayName("physiotherapy")).toBe("Fisioterapia");
+      expect(getTreatmentDisplayName("assessment")).toBe("Assessment Consultation");
+      expect(getTreatmentDisplayName("physiotherapy")).toBe("Physiotherapy");
       expect(getTreatmentDisplayName("tens")).toBe("TENS");
     });
   });
 
   describe("validateBasicInputs", () => {
     it("returns null when name and types are valid", () => {
-      expect(validateBasicInputs("João Silva", ["assessment"])).toBeNull();
+      expect(validateBasicInputs("John Smith", ["assessment"])).toBeNull();
     });
 
     it("returns error when name is empty", () => {
       const result = validateBasicInputs("", ["assessment"]);
-      expect(result).toContain("preencha o nome do paciente");
+      expect(result).toContain("enter the patient name");
     });
 
     it("returns error when selected types is empty", () => {
-      const result = validateBasicInputs("João", []);
-      expect(result).toContain("selecione pelo menos um tipo de atendimento");
+      const result = validateBasicInputs("John", []);
+      expect(result).toContain("select at least one attendance type");
     });
 
     it("returns error when both are invalid", () => {
       const result = validateBasicInputs("", []);
-      expect(result).toContain("preencha o nome do paciente");
-      expect(result).toContain("selecione pelo menos um tipo de atendimento");
+      expect(result).toContain("enter the patient name");
+      expect(result).toContain("select at least one attendance type");
     });
   });
 
@@ -83,17 +83,17 @@ describe("attendanceRegistrationUtils", () => {
 
   describe("buildNewPatientSchedulingFailureMessage", () => {
     it("includes the reason in the message", () => {
-      const msg = buildNewPatientSchedulingFailureMessage("agenda indisponível");
-      expect(msg).toContain("PACIENTE CRIADO");
-      expect(msg).toContain("agenda indisponível");
-      expect(msg).toContain("Desmarque a opção 'Novo paciente'");
+      const msg = buildNewPatientSchedulingFailureMessage("schedule unavailable");
+      expect(msg).toContain("PATIENT CREATED");
+      expect(msg).toContain("schedule unavailable");
+      expect(msg).toContain("Uncheck the 'New patient' option");
     });
   });
 
   describe("buildSchedulingFailureMessage", () => {
     it("returns conflict message when hasConflict is true", () => {
       const msg = buildSchedulingFailureMessage(2, true, "Original error");
-      expect(msg).toContain("Conflito de horário");
+      expect(msg).toContain("Scheduling conflict");
     });
 
     it("returns firstError when hasConflict is false and firstError exists", () => {
@@ -103,7 +103,7 @@ describe("attendanceRegistrationUtils", () => {
 
     it("returns generic message when no firstError", () => {
       const msg = buildSchedulingFailureMessage(3, false, undefined);
-      expect(msg).toContain("Erro ao criar 3 atendimento(s)");
+      expect(msg).toContain("Error creating 3 attendance(s)");
     });
   });
 });

@@ -22,7 +22,7 @@ jest.mock("next/link", () => {
 
 const patient = {
   id: "1",
-  name: "João Silva",
+  name: "John Smith",
   phone: "(11) 99999-9999",
   priority: "3",
   status: "T",
@@ -33,15 +33,15 @@ describe("PatientListCard", () => {
     render(
       <PatientListCard
         patient={patient}
-        statusLegend={{ T: "Em Tratamento" }}
-        priorityLegend={{ "3": "Padrão" }}
+        statusLegend={{ T: "In Treatment" }}
+        priorityLegend={{ "3": "Priority 3" }}
       />,
     );
 
-    expect(screen.getByText("João Silva")).toBeInTheDocument();
+    expect(screen.getByText("John Smith")).toBeInTheDocument();
     expect(screen.getByText("(11) 99999-9999")).toBeInTheDocument();
-    expect(screen.getByText("Em Tratamento")).toBeInTheDocument();
-    expect(screen.getByText("Padrão")).toBeInTheDocument();
+    expect(screen.getByText("In Treatment")).toBeInTheDocument();
+    expect(screen.getByText("Priority 3")).toBeInTheDocument();
 
     const link = screen.getByRole("link");
     expect(link).toHaveAttribute("href", "/patients/1");

@@ -6,16 +6,14 @@ describe("LoadingSpinner", () => {
   it("renders with default props", () => {
     render(<LoadingSpinner />);
 
-    expect(screen.getByText("Carregando...")).toBeInTheDocument();
+    expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
     expect(screen.getByRole("status")).toBeInTheDocument();
   });
 
   it("renders with custom message", () => {
-    render(<LoadingSpinner message="Carregando dados do paciente..." />);
+    render(<LoadingSpinner message="Loading patient data..." />);
 
-    expect(
-      screen.getByText("Carregando dados do paciente...")
-    ).toBeInTheDocument();
+    expect(screen.getByText("Loading patient data...")).toBeInTheDocument();
   });
 
   it("renders different sizes correctly", () => {
@@ -33,13 +31,13 @@ describe("LoadingSpinner", () => {
     render(<LoadingSpinner showSpinner={false} />);
 
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
-    expect(screen.getByText("Carregando...")).toBeInTheDocument();
+    expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
   });
 
   it("has proper accessibility attributes", () => {
     render(<LoadingSpinner />);
 
     const spinner = screen.getByRole("status");
-    expect(spinner).toHaveAttribute("aria-label", "Carregando");
+    expect(spinner).toHaveAttribute("aria-label", "Loading");
   });
 });

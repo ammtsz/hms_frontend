@@ -1,6 +1,8 @@
 import React from "react";
 import { CheckCircle, XCircle, Clock, Ban } from "lucide-react";
 import { SessionResponseDto } from "@/api/types";
+import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { ATTENDANCE_HISTORY_STATUS_LABELS } from "@/utils/attendanceStatusLabels";
 
 export const getStatusIcon = (status: string) => {
   switch (status) {
@@ -20,13 +22,13 @@ export const getStatusIcon = (status: string) => {
 export const getStatusLabel = (status: string) => {
   switch (status) {
     case "completed":
-      return "Concluída";
+      return ATTENDANCE_HISTORY_STATUS_LABELS.completed;
     case "missed":
-      return "Faltou";
+      return ATTENDANCE_HISTORY_STATUS_LABELS.missed;
     case "scheduled":
-      return "Agendada";
+      return ATTENDANCE_HISTORY_STATUS_LABELS.scheduled;
     case "cancelled":
-      return "Cancelada";
+      return ATTENDANCE_HISTORY_STATUS_LABELS.cancelled;
     default:
       return status;
   }
@@ -47,14 +49,9 @@ export const formatDate = (dateStr: string) => {
 
 export const getTreatmentTypeLabel = (type?: string) => {
   if (!type) return "";
-  switch (type) {
-    case "physiotherapy":
-      return "Fisioterapia";
-    case "tens":
-      return "TENS";
-    default:
-      return type;
-  }
+  if (type === "physiotherapy") return getAttendanceTypeLabel("physiotherapy");
+  if (type === "tens") return getAttendanceTypeLabel("tens");
+  return type;
 };
 
 export const getTreatmentTypeIcon = (type?: string) => {

@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { PhysiotherapyDetails } from "../PhysiotherapyDetails";
 import { TensDetails } from "../TensDetails";
 import { AssessmentDetails } from "../AssessmentDetails";
+import { ASSESSMENT_DETAILS_TITLE } from "@/utils/attendanceStatusLabels";
 import { TreatmentDetailsContainer } from "../TreatmentDetailsContainer";
 import { NotesBox } from "../helpers/treatmentHelpers";
 
@@ -11,28 +12,28 @@ describe("AttendanceDetails components", () => {
     it("renders physiotherapy details correctly", () => {
       render(
         <PhysiotherapyDetails
-          bodyLocations={["Cabeça", "Ombro"]}
-          color="azul"
+          bodyLocations={["Head", "Shoulder"]}
+          color="blue"
           duration={21}
           sessionNumber={"1/3"}
           showSessions={true}
-          sessionLabel="Sessão"
+          sessionLabel="Sessions"
         />,
       );
 
-      expect(screen.getByText(/✨ Fisioterapia/)).toBeInTheDocument();
-      expect(screen.getByText("azul")).toBeInTheDocument();
-      expect(screen.getByText(/Cabeça, Ombro/)).toBeInTheDocument();
-      expect(screen.getByText(/21 unidades/)).toBeInTheDocument();
-      expect(screen.getByText(/Sessão:/)).toBeInTheDocument();
+      expect(screen.getByText(/✨ Physiotherapy/)).toBeInTheDocument();
+      expect(screen.getByText("blue")).toBeInTheDocument();
+      expect(screen.getByText(/Head, Shoulder/)).toBeInTheDocument();
+      expect(screen.getByText(/21 units/)).toBeInTheDocument();
+      expect(screen.getByText(/Sessions:/)).toBeInTheDocument();
       expect(screen.getByText(/1\/3/)).toBeInTheDocument();
     });
 
     it("renders without optional props", () => {
-      render(<PhysiotherapyDetails bodyLocations={["Cabeça"]} />);
+      render(<PhysiotherapyDetails bodyLocations={["Head"]} />);
 
-      expect(screen.getByText(/✨ Fisioterapia/)).toBeInTheDocument();
-      expect(screen.getByText("Cabeça")).toBeInTheDocument();
+      expect(screen.getByText(/✨ Physiotherapy/)).toBeInTheDocument();
+      expect(screen.getByText("Head")).toBeInTheDocument();
     });
   });
 
@@ -40,16 +41,16 @@ describe("AttendanceDetails components", () => {
     it("renders tens details correctly", () => {
       render(
         <TensDetails
-          bodyLocations={["Ombro direito"]}
+          bodyLocations={["Right Ankle"]}
           sessionNumber={"2/3"}
           showSessions={true}
-          sessionLabel="Sessão"
+          sessionLabel="Sessions"
         />,
       );
 
       expect(screen.getByText(/🪄 TENS/)).toBeInTheDocument();
-      expect(screen.getByText(/Ombro direito/)).toBeInTheDocument();
-      expect(screen.getByText(/Sessão/)).toBeInTheDocument();
+      expect(screen.getByText(/Right Ankle/)).toBeInTheDocument();
+      expect(screen.getByText(/Session/)).toBeInTheDocument();
       expect(screen.getByText(/2\/3/)).toBeInTheDocument();
     });
   });
@@ -64,7 +65,7 @@ describe("AttendanceDetails components", () => {
         />,
       );
 
-      expect(screen.getByText(/Notas do tratamento/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment notes/)).toBeInTheDocument();
       expect(screen.getByText(/Test notes content/)).toBeInTheDocument();
     });
 
@@ -77,7 +78,7 @@ describe("AttendanceDetails components", () => {
         />,
       );
 
-      expect(screen.getByText(/Notas da sessão/)).toBeInTheDocument();
+      expect(screen.getByText(/Session notes/)).toBeInTheDocument();
       expect(screen.getByText(/Session observation/)).toBeInTheDocument();
     });
 
@@ -90,7 +91,7 @@ describe("AttendanceDetails components", () => {
         />,
       );
 
-      expect(screen.getByText(/Observações/)).toBeInTheDocument();
+      expect(screen.getByText(/Observations/)).toBeInTheDocument();
       expect(screen.getByText(/Patient was absent/)).toBeInTheDocument();
     });
   });
@@ -98,25 +99,25 @@ describe("AttendanceDetails components", () => {
   describe("AssessmentDetails", () => {
     it("renders recommendations correctly", () => {
       const recommendations = {
-        food: "Evitar carne vermelha",
-        water: "Beber água energizada",
+        food: "Avoid red meat",
+        water: "Drink water",
         physiotherapy: true,
         returnWeeks: 4,
       };
 
       render(<AssessmentDetails recommendations={recommendations} />);
 
-      expect(screen.getByText("📋 Consulta de Avaliação")).toBeInTheDocument();
-      expect(screen.getByText("Recomendações:")).toBeInTheDocument();
-      expect(screen.getByText("Evitar carne vermelha")).toBeInTheDocument();
-      expect(screen.getByText("Beber água energizada")).toBeInTheDocument();
-      expect(screen.getByText("4 semanas")).toBeInTheDocument();
+      expect(screen.getByText(ASSESSMENT_DETAILS_TITLE)).toBeInTheDocument();
+      expect(screen.getByText("Recommendations:")).toBeInTheDocument();
+      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
+      expect(screen.getByText("Drink water")).toBeInTheDocument();
+      expect(screen.getByText("4 weeks")).toBeInTheDocument();
     });
 
     it("renders recommendations with treatment session details", () => {
       const recommendations = {
-        food: "Evitar carne vermelha",
-        water: "Beber água energizada",
+        food: "Avoid red meat",
+        water: "Drink water",
         returnWeeks: 4,
       };
 
@@ -124,10 +125,10 @@ describe("AttendanceDetails components", () => {
         {
           id: 1,
           treatmentType: "physiotherapy" as const,
-          bodyLocation: "cabeça",
+          bodyLocation: "Head",
           plannedSessions: 3,
           completedSessions: 0,
-          color: "azul",
+          color: "blue",
           status: "active",
         },
       ];
@@ -136,7 +137,7 @@ describe("AttendanceDetails components", () => {
         {
           id: 2,
           treatmentType: "tens" as const,
-          bodyLocation: "ombro",
+          bodyLocation: "shoulder",
           plannedSessions: 2,
           completedSessions: 0,
           status: "active",
@@ -151,31 +152,31 @@ describe("AttendanceDetails components", () => {
         />,
       );
 
-      expect(screen.getByText("📋 Consulta de Avaliação")).toBeInTheDocument();
-      expect(screen.getByText("Recomendações:")).toBeInTheDocument();
-      expect(screen.getByText("Evitar carne vermelha")).toBeInTheDocument();
-      expect(screen.getByText("Beber água energizada")).toBeInTheDocument();
+      expect(screen.getByText(ASSESSMENT_DETAILS_TITLE)).toBeInTheDocument();
+      expect(screen.getByText("Recommendations:")).toBeInTheDocument();
+      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
+      expect(screen.getByText("Drink water")).toBeInTheDocument();
       expect(
-        screen.getByText("3 sessões - cabeça (cor: azul)"),
+        screen.getByText("3 sessions - Head (color: blue)"),
       ).toBeInTheDocument();
-      expect(screen.getByText("2 sessões - ombro")).toBeInTheDocument();
-      expect(screen.getByText("4 semanas")).toBeInTheDocument();
+      expect(screen.getByText("2 sessions - shoulder")).toBeInTheDocument();
+      expect(screen.getByText("4 weeks")).toBeInTheDocument();
     });
 
     it("renders without treatment sessions when not provided", () => {
       const recommendations = {
-        food: "Evitar carne vermelha",
+        food: "Avoid red meat",
         returnWeeks: 2,
       };
 
       render(<AssessmentDetails recommendations={recommendations} />);
 
-      expect(screen.getByText("📋 Consulta de Avaliação")).toBeInTheDocument();
-      expect(screen.getByText("Recomendações:")).toBeInTheDocument();
-      expect(screen.getByText("Evitar carne vermelha")).toBeInTheDocument();
-      expect(screen.getByText("2 semanas")).toBeInTheDocument();
+      expect(screen.getByText(ASSESSMENT_DETAILS_TITLE)).toBeInTheDocument();
+      expect(screen.getByText("Recommendations:")).toBeInTheDocument();
+      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
+      expect(screen.getByText("2 weeks")).toBeInTheDocument();
       // Should not show physiotherapy or tens without sessions
-      expect(screen.queryByText(/Fisioterapia/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Physiotherapy/)).not.toBeInTheDocument();
       expect(screen.queryByText(/TENS/)).not.toBeInTheDocument();
     });
   });

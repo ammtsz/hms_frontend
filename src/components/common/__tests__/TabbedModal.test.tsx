@@ -136,7 +136,7 @@ describe("TabbedModal", () => {
         label: "Tab 4",
         isValid: true,
         disabled: true,
-        disabledTitle: "Indisponível para Alta médica",
+        disabledTitle: "Unavailable for treatment discharge",
       },
     ];
     const mockOnTabChange = jest.fn();
@@ -152,7 +152,7 @@ describe("TabbedModal", () => {
     expect(tab4Button).toBeDisabled();
     expect(tab4Button).toHaveAttribute(
       "title",
-      "Indisponível para Alta médica",
+      "Unavailable for treatment discharge",
     );
     tab4Button.click();
     expect(mockOnTabChange).not.toHaveBeenCalled();
@@ -165,7 +165,7 @@ describe("TabbedModal", () => {
     render(<TabbedModal {...defaultProps} tabs={tabsWithDisabled} />);
 
     const button = screen.getByRole("button", { name: /only tab/i });
-    expect(button).toHaveAttribute("title", "Indisponível");
+    expect(button).toHaveAttribute("title", "Unavailable");
   });
 
   it("renders actions when provided", () => {

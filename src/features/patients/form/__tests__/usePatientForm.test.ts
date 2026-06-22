@@ -111,7 +111,7 @@ describe('usePatientForm', () => {
       expect(result.current.patient.phone).toBe('');
       expect(result.current.patient.priority).toBe('3');
       expect(result.current.patient.status).toBe('N');
-      expect(result.current.patient.mainComplaint).toBe('');
+      expect(result.current.patient.mainConcern).toBe('');
       expect(result.current.patient.birthDate).toBe("");
       expect(result.current.patient.dischargeDate).toBeNull();
       expect(result.current.patient.nextAttendanceDates).toEqual([]);
@@ -393,7 +393,7 @@ describe('usePatientForm', () => {
       });
 
       expect(mockEvent.preventDefault).toHaveBeenCalled();
-      expect(global.alert).toHaveBeenCalledWith(expect.stringContaining('Erro de validação'));
+      expect(global.alert).toHaveBeenCalledWith(expect.stringContaining('Validation error'));
       expect(mockCreatePatientMutateAsync).not.toHaveBeenCalled();
     });
 
@@ -491,7 +491,7 @@ describe('usePatientForm', () => {
       );
     });
 
-    it('should include main complaint when provided', async () => {
+    it('should include main concern when provided', async () => {
       const mockCreatedPatient = { id: 1, name: 'John Doe' };
       mockCreatePatientMutateAsync.mockResolvedValue(mockCreatedPatient);
 
@@ -502,7 +502,7 @@ describe('usePatientForm', () => {
           ...result.current.patient,
           name: 'John Doe',
           birthDate: VALID_BIRTH_DATE,
-          mainComplaint: 'Test complaint'
+          mainConcern: 'Test complaint'
         });
       });
 
@@ -514,7 +514,7 @@ describe('usePatientForm', () => {
 
       expect(mockCreatePatientMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
-          mainComplaint: 'Test complaint'
+          mainConcern: 'Test complaint'
         })
       );
     });
@@ -539,7 +539,7 @@ describe('usePatientForm', () => {
         await result.current.handleSubmit(mockEvent);
       });
 
-      expect(global.alert).toHaveBeenCalledWith('Erro ao cadastrar paciente: Creation failed');
+      expect(global.alert).toHaveBeenCalledWith('Error creating patient: Creation failed');
       expect(result.current.isLoading).toBe(false);
     });
 
@@ -571,7 +571,7 @@ describe('usePatientForm', () => {
         type: 'assessment',
         scheduledDate: '2024-02-01',
         scheduledTime: '20:00',
-        notes: 'Agendamento criado durante cadastro do paciente'
+        notes: 'Appointment created during patient registration'
       });
     });
 
@@ -608,14 +608,14 @@ describe('usePatientForm', () => {
         type: 'assessment',
         scheduledDate: '2024-02-01',
         scheduledTime: '20:00',
-        notes: 'Agendamento criado durante cadastro do paciente'
+        notes: 'Appointment created during patient registration'
       });
       expect(mockAddPatientToAgendaMutateAsync).toHaveBeenNthCalledWith(2, {
         patientId: 1,
         type: 'assessment',
         scheduledDate: '2024-02-01',
         scheduledTime: '21:00',
-        notes: 'Agendamento criado durante cadastro do paciente'
+        notes: 'Appointment created during patient registration'
       });
     });
 
@@ -623,7 +623,7 @@ describe('usePatientForm', () => {
       const mockCreatedPatient = { id: 1, name: 'John Doe' };
       mockCreatePatientMutateAsync.mockResolvedValue(mockCreatedPatient);
       mockAddPatientToAgendaMutateAsync.mockRejectedValue(
-        new Error('Nenhum horário disponível para a data selecionada.')
+        new Error('No time slot available for the selected date.')
       );
 
       const { result } = renderHook(() => usePatientForm());
@@ -648,7 +648,7 @@ describe('usePatientForm', () => {
       expect(result.current.scheduledAttendanceDate).toBeNull();
       expect(result.current.attendanceCreationFailed).toEqual({
         requested: true,
-        message: 'Nenhum horário disponível para a data selecionada.',
+        message: 'No time slot available for the selected date.',
       });
     });
 

@@ -141,12 +141,12 @@ const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
 
         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
           <h3 className="text-sm font-medium text-blue-800 mb-1">
-            Tipo de Atendimento
+            Attendance Type
           </h3>
-          <p className="text-sm text-gray-700">Consulta de Avaliação</p>
+          <p className="text-sm text-gray-700">Assessment Consultation</p>
           <p className="text-xs text-gray-500 mt-1">
-            Outros tipos de atendimento (Fisioterapia, TENS) são criados
-            automaticamente após a consulta de avaliação.
+            Other appointment types (Physiotherapy, TENS) are created
+            automatically after the assessment consultation.
           </p>
         </div>
 
@@ -154,7 +154,7 @@ const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
           <Button
             type="submit"
             isLoading={isSubmitting}
-            loadingText="Processando..."
+            loadingText="Processing..."
             className="mt-6 w-full"
             disabled={
               isSubmitting ||
@@ -163,7 +163,7 @@ const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
               (formData.isNewPatient && !formData.birthDate)
             }
           >
-            Fazer Check-in
+            Check In
           </Button>
         </div>
       </form>

@@ -53,7 +53,7 @@ const getSessionDetails = (
 const getTreatmentConfig = (type: "physiotherapy" | "tens") => {
   const configs = {
     physiotherapy: {
-      name: "Fisioterapia",
+      name: "Physiotherapy",
       bgColor: "bg-white",
       borderColor: "border-gray-200 border-l-4 border-l-yellow-500",
     },
@@ -78,13 +78,13 @@ export const TreatmentGroupCard: React.FC<TreatmentGroupCardProps> = ({
 
   const bodyLocations =
     group.bodyLocations ||
-    (group.bodyLocation ? [group.bodyLocation] : ["Local não especificado"]);
+    (group.bodyLocation ? [group.bodyLocation] : ["Location not specified"]);
   const treatmentIds = group.sessionIds || (group.id ? [group.id] : []);
   const isGrouped = bodyLocations.length > 1;
 
   const locationText =
     bodyLocations.length > 8
-      ? `${bodyLocations.slice(0, 8).join(", ")} +${bodyLocations.length - 8} mais`
+      ? `${bodyLocations.slice(0, 8).join(", ")} +${bodyLocations.length - 8} more`
       : bodyLocations.join(", ");
 
   return (
@@ -94,8 +94,8 @@ export const TreatmentGroupCard: React.FC<TreatmentGroupCardProps> = ({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="text-sm font-medium text-gray-700 capitalize">
-            {locationText} - {group.plannedSessions} sessões
-            {isGrouped && ` (${bodyLocations.length} locais)`}
+            {locationText} - {group.plannedSessions} sessions
+            {isGrouped && ` (${bodyLocations.length} locations)`}
           </span>
           {group.color && (
             <span
@@ -110,7 +110,7 @@ export const TreatmentGroupCard: React.FC<TreatmentGroupCardProps> = ({
           {group.durationMinutes && (
             <span className="text-xs text-gray-500">
               {group.durationMinutes}{" "}
-              {group.durationMinutes > 1 ? "unidades" : "unidade"}
+              {group.durationMinutes > 1 ? "minutes" : "minute"}
             </span>
           )}
         </div>
@@ -124,11 +124,11 @@ export const TreatmentGroupCard: React.FC<TreatmentGroupCardProps> = ({
             className="h-auto min-h-0 px-2 py-1 text-xs text-blue-700 hover:text-blue-800"
             title={
               canEdit
-                ? "Editar tratamento"
-                : "Este tratamento já possui sessões concluídas e não pode mais ser editado."
+                ? "Edit treatment"
+                : "This treatment already has completed sessions and cannot be edited."
             }
           >
-            Editar
+            Edit
           </Button>
           <Button
             variant="ghost"
@@ -136,13 +136,9 @@ export const TreatmentGroupCard: React.FC<TreatmentGroupCardProps> = ({
             onClick={() => onDelete(treatmentIds, config.name)}
             disabled={isDeleting}
             className="text-red-500 hover:text-red-700"
-            title={
-              isGrouped
-                ? "Cancelar todos os tratamentos"
-                : "Cancelar tratamento"
-            }
+            title={isGrouped ? "Cancel all treatments" : "Cancel treatment"}
           >
-            Cancelar tratamento{isGrouped ? "s" : ""}
+            Cancel treatment{isGrouped ? "s" : ""}
           </Button>
         </div>
       </div>

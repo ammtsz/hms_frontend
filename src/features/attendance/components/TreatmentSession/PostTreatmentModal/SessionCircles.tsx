@@ -35,7 +35,9 @@ export const SessionCircles: React.FC<SessionCirclesProps> = ({
   const statusByNumber = new Map(
     sessionStatuses.map((s) => [s.sessionNumber, s.status]),
   );
-  const completedCount = sessionStatuses.filter((s) => s.status === "completed").length;
+  const completedCount = sessionStatuses.filter(
+    (s) => s.status === "completed",
+  ).length;
 
   const getCircleColor = (num: number): string => {
     if (num === currentSessionNumber) {
@@ -62,20 +64,18 @@ export const SessionCircles: React.FC<SessionCirclesProps> = ({
             <div
               key={num}
               className={`h-2.5 w-2.5 rounded-full shrink-0 ${getCircleColor(num)}`}
-              title={`Sessão ${num}: ${status}`}
+              title={`Session ${num}: ${status}`}
             />
           );
         })}
       </div>
       <div className="text-xs text-gray-600">
-        Sessão {currentSessionNumber} de {plannedSessions}
+        Session {currentSessionNumber} of {plannedSessions}
       </div>
       {completedCount > 0 && (
         <div className="text-xs text-gray-500">
           {completedSessions}{" "}
-          {completedSessions === 1
-            ? "sessão finalizada"
-            : "sessões finalizadas"}
+          {completedSessions === 1 ? "session completed" : "completed sessions"}
         </div>
       )}
     </div>

@@ -19,7 +19,7 @@ export const SuccessHeader: React.FC<SuccessHeaderProps> = ({
       </div>
       <div>
         <h3 className="text-lg font-semibold text-gray-900">
-          Tratamento registrado com sucesso!
+          Treatment registered successfully!
         </h3>
         {customMessage && (
           <p className="text-sm text-gray-600">{customMessage}</p>

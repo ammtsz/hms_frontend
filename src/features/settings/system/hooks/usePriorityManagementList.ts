@@ -17,7 +17,7 @@ import type { SystemOption } from "@/types/systemOptions";
 
 export const PRIORITY_1_VALUE: Priority = "1";
 export const PRIORITY_1_TOOLTIP =
-  "A prioridade 1 é usada como padrão pelo sistema e não pode ser desativada.";
+  "Priority 1 is used as the system standard and cannot be deactivated.";
 
 export function getPriorityLabel(option: SystemOption): string {
   return option.label || option.value;
@@ -59,12 +59,12 @@ export function usePriorityManagementList() {
     const res = await deactivatePriorityOption.mutateAsync(option.id);
 
     if (res.success) {
-      showToast("Prioridade atualizada com sucesso.", "success");
+      showToast("Priority updated successfully.", "success");
       return res;
     }
 
     showToast(
-      res.error || "Não é possível desativar esta prioridade.",
+      res.error || "Unable to deactivate this priority.",
       "error",
     );
 
@@ -120,13 +120,13 @@ export function usePriorityManagementList() {
       });
 
       if (result) {
-        showToast("Prioridade ativada com sucesso.", "success");
+        showToast("Priority activated successfully.", "success");
       }
       return;
     }
 
     if (option.value === "1") {
-      showToast("A prioridade 1 não pode ser desativada.", "error");
+      showToast("Priority 1 cannot be deactivated.", "error");
       return;
     }
 
@@ -138,11 +138,11 @@ export function usePriorityManagementList() {
 
     const trimmed = editingLabel.trim();
     if (!trimmed) {
-      showToast("Informe um rótulo para a prioridade.", "error");
+      showToast("Provide a label for the priority.", "error");
       return;
     }
     if (trimmed.length > 50) {
-      showToast("Rótulo deve ter no máximo 50 caracteres.", "error");
+      showToast("The label must be at most 50 characters.", "error");
       return;
     }
 
@@ -155,7 +155,7 @@ export function usePriorityManagementList() {
 
     setEditingId(null);
     setEditingLabel("");
-    showToast("Rótulo da prioridade atualizado.", "success");
+    showToast("Priority label updated.", "success");
   };
 
   const togglePatientSelected = (patientId: number) => {
@@ -172,7 +172,7 @@ export function usePriorityManagementList() {
 
     const nextPatientIds = [...selectedPatientIds];
     if (nextPatientIds.length === 0) {
-      showToast("Selecione ao menos um paciente.", "error");
+      showToast("Select at least one patient.", "error");
       return;
     }
 
@@ -189,7 +189,7 @@ export function usePriorityManagementList() {
     const res = await deactivatePriorityOption.mutateAsync(option.id);
     if (res.success) {
       closeDeactivationFlow();
-      showToast("Prioridade desativada com sucesso.", "success");
+      showToast("Priority deactivated successfully.", "success");
       return;
     }
 
@@ -200,12 +200,12 @@ export function usePriorityManagementList() {
 
     if(!res.blockingPatients) {
       showToast(
-        res.error || "Não é possível desativar esta prioridade.",
+        res.error || "Unable to deactivate this priority.",
         "error",
       );
     } else {
       showToast(
-        "Ainda existem pacientes usando esta prioridade. Refaça a reatribuição.",
+        "There are still patients using this priority. Reassign them first.",
         "error",
       );
     }

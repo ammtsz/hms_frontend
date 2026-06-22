@@ -184,7 +184,7 @@ export const useManageAttendanceModal = (
       event.preventDefault();
 
       if (selectedAttendanceIds.length === 0) {
-        const msg = "Selecione pelo menos um atendimento para cancelar.";
+        const msg = "Select at least one attendance to cancel.";
         setError(msg);
         showToast(msg, "error", 5000);
         return;
@@ -198,7 +198,7 @@ export const useManageAttendanceModal = (
 
         if (cancelAllOpenAttendances) {
           if (!trimmedReason) {
-            const msg = "Informe o motivo do cancelamento ao cancelar todos os atendimentos.";
+            const msg = "Provide a cancellation reason when cancelling all attendances.";
             setError(msg);
             showToast(msg, "error", 5000);
             return;
@@ -212,7 +212,7 @@ export const useManageAttendanceModal = (
             const msg =
               fetchError instanceof Error
                 ? fetchError.message
-                : "Falha ao carregar dados do atendimento selecionado.";
+                : "Failed to load selected attendance data.";
             setError(msg);
             showToast(msg, "error", 7000);
             return;
@@ -226,7 +226,7 @@ export const useManageAttendanceModal = (
             },
           });
 
-          showToast("Cancelamento total realizado com sucesso.", "success");
+          showToast("All attendances canceled successfully.", "success");
           handleClose();
           if (onRefresh) onRefresh();
         } else {
@@ -239,12 +239,12 @@ export const useManageAttendanceModal = (
             const failureMessages = result.failures
               .map((failure) => `ID ${failure.attendanceId}: ${failure.error}`)
               .join(", ");
-            const errorMsg = `${result.successCount} cancelado(s), ${result.failureCount} falhou: ${failureMessages}`;
+            const errorMsg = `${result.successCount} cancelled, ${result.failureCount} failed: ${failureMessages}`;
             setError(errorMsg);
             showToast(errorMsg, "error", 7000);
             if (onRefresh) onRefresh();
           } else {
-            showToast("Cancelamento realizado com sucesso.", "success");
+            showToast("Cancellation completed successfully.", "success");
             handleClose();
             if (onRefresh) onRefresh();
           }
@@ -254,7 +254,7 @@ export const useManageAttendanceModal = (
         const errorMsg =
           mutationError instanceof Error
             ? mutationError.message
-            : "Erro ao cancelar atendimentos. Tente novamente.";
+            : "Error cancelling attendances. Please try again.";
         setError(errorMsg);
         showToast(errorMsg, "error", 7000);
       } finally {
@@ -281,14 +281,14 @@ export const useManageAttendanceModal = (
       event.preventDefault();
 
       if (selectedAttendanceIds.length === 0) {
-        const msg = "Selecione pelo menos um atendimento para reagendar.";
+        const msg = "Select at least one attendance to reschedule.";
         setError(msg);
         showToast(msg, "error", 5000);
         return;
       }
 
       if (postponeMode === "by_date" && !selectedDate) {
-        const msg = "Selecione uma data válida.";
+        const msg = "Select a valid date.";
         setError(msg);
         showToast(msg, "error", 5000);
         return;
@@ -300,7 +300,7 @@ export const useManageAttendanceModal = (
       ) {
         if (hasAnyWithoutDate) {
           const msg =
-            "Um ou mais atendimentos não possuem data disponível em 52 semanas. Escolha outra opção.";
+            "One or more attendances have no available date within 52 weeks. Choose another option.";
           setError(msg);
           showToast(msg, "error", 5000);
         }
@@ -363,7 +363,7 @@ export const useManageAttendanceModal = (
                 autoRescheduledReturns.push({
                   attendanceId: recomputeResult.attendanceId,
                   patientId: recomputeResult.patientId ?? 0,
-                  patientName: recomputeResult.patientName ?? "Paciente",
+                  patientName: recomputeResult.patientName ?? "Patient",
                   oldDate: recomputeResult.oldDate ?? "",
                   newDate: recomputeResult.newDate ?? "",
                 });
@@ -399,7 +399,7 @@ export const useManageAttendanceModal = (
         const errorMsg =
           mutationError instanceof Error
             ? mutationError.message
-            : "Erro ao reagendar atendimentos. Tente novamente.";
+            : "Error rescheduling attendances. Please try again.";
         setError(errorMsg);
         showToast(errorMsg, "error", 7000);
       } finally {

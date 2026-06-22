@@ -29,9 +29,9 @@ const mockUseAttendanceForm = {
 
   // Data
   filteredPatients: [
-    { id: "1", name: "João Silva" },
-    { id: "2", name: "Maria Santos" },
-    { id: "3", name: "José Oliveira" },
+    { id: "1", name: "John Smith" },
+    { id: "2", name: "Emily Williams" },
+    { id: "3", name: "James Anderson" },
   ],
   parentAttendanceOptions: [],
   loadingParentOptions: false,
@@ -107,49 +107,52 @@ jest.mock("@/components/common/ErrorDisplay", () => {
   };
 });
 
-jest.mock("@/features/attendance/components/WalkIn/components/ParentAttendanceSelector", () => {
-  return {
-    ParentAttendanceSelector: ({
-      selectedParentAttendance,
-      parentAttendanceOptions,
-      loadingParentOptions,
-      isSubmitting,
-      onParentAttendanceChange,
-    }: {
-      selectedParentAttendance: string;
-      parentAttendanceOptions: Array<{
-        id: number;
-        label: string;
-        date: string;
-        mainComplaint: string;
-      }>;
-      loadingParentOptions: boolean;
-      isSubmitting: boolean;
-      patientStatus?: "N" | "T" | "A" | "F";
-      onParentAttendanceChange: (value: string) => void;
-    }) => (
-      <div data-testid="parent-attendance-selector">
-        {loadingParentOptions ? (
-          <div>Carregando consultas anteriores...</div>
-        ) : (
-          <select
-            data-testid="parent-attendance-select"
-            value={selectedParentAttendance}
-            onChange={(e) => onParentAttendanceChange(e.target.value)}
-            disabled={isSubmitting}
-          >
-            <option value="">Selecione uma opção</option>
-            {parentAttendanceOptions.map((option) => (
-              <option key={option.id} value={option.id.toString()}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        )}
-      </div>
-    ),
-  };
-});
+jest.mock(
+  "@/features/attendance/components/WalkIn/components/ParentAttendanceSelector",
+  () => {
+    return {
+      ParentAttendanceSelector: ({
+        selectedParentAttendance,
+        parentAttendanceOptions,
+        loadingParentOptions,
+        isSubmitting,
+        onParentAttendanceChange,
+      }: {
+        selectedParentAttendance: string;
+        parentAttendanceOptions: Array<{
+          id: number;
+          label: string;
+          date: string;
+          mainConcern: string;
+        }>;
+        loadingParentOptions: boolean;
+        isSubmitting: boolean;
+        patientStatus?: "N" | "T" | "A" | "F";
+        onParentAttendanceChange: (value: string) => void;
+      }) => (
+        <div data-testid="parent-attendance-selector">
+          {loadingParentOptions ? (
+            <div>Loading previous consultations...</div>
+          ) : (
+            <select
+              data-testid="parent-attendance-select"
+              value={selectedParentAttendance}
+              onChange={(e) => onParentAttendanceChange(e.target.value)}
+              disabled={isSubmitting}
+            >
+              <option value="">Select an option</option>
+              {parentAttendanceOptions.map((option) => (
+                <option key={option.id} value={option.id.toString()}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      ),
+    };
+  },
+);
 
 // Mock lucide-react
 jest.mock("lucide-react", () => ({
@@ -162,7 +165,7 @@ jest.mock("@/features/attendance/hooks/useSelectablePrioritiesForForm", () => {
       id: 1,
       type: "priority",
       value: "1",
-      label: "Exceção",
+      label: "Priority",
       isActive: true,
       sortOrder: 1,
       createdAt: "",
@@ -172,7 +175,7 @@ jest.mock("@/features/attendance/hooks/useSelectablePrioritiesForForm", () => {
       id: 2,
       type: "priority",
       value: "2",
-      label: "Idoso/crianças",
+      label: "Standard",
       isActive: true,
       sortOrder: 2,
       createdAt: "",
@@ -182,7 +185,7 @@ jest.mock("@/features/attendance/hooks/useSelectablePrioritiesForForm", () => {
       id: 3,
       type: "priority",
       value: "3",
-      label: "Padrão",
+      label: "Priority 3",
       isActive: true,
       sortOrder: 3,
       createdAt: "",
@@ -257,14 +260,14 @@ describe("NewAttendanceForm", () => {
 
       // Test by finding elements that exist without proper label association
       expect(
-        screen.getByPlaceholderText("Digite o nome do paciente..."),
+        screen.getByPlaceholderText("Enter patient name..."),
       ).toBeInTheDocument();
       expect(screen.getByDisplayValue("2025-01-15")).toBeInTheDocument(); // Matches getTodayInLocalTimezone mock
       expect(
-        screen.getByPlaceholderText("Observações sobre o agendamento..."),
+        screen.getByPlaceholderText("Notes about the appointment..."),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /agendar atendimento/i }),
+        screen.getByRole("button", { name: /Schedule Attendance/i }),
       ).toBeInTheDocument();
     });
 
@@ -274,10 +277,10 @@ describe("NewAttendanceForm", () => {
       // Form includes date, notes and submit; attendance type is managed by the hook
       expect(screen.getByDisplayValue("2025-01-15")).toBeInTheDocument();
       expect(
-        screen.getByPlaceholderText("Observações sobre o agendamento..."),
+        screen.getByPlaceholderText("Notes about the appointment..."),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /agendar atendimento/i }),
+        screen.getByRole("button", { name: /Schedule Attendance/i }),
       ).toBeInTheDocument();
     });
 
@@ -285,7 +288,7 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       expect(screen.getByTestId("switch-new-patient")).toBeInTheDocument();
-      expect(screen.getByText("Novo paciente")).toBeInTheDocument();
+      expect(screen.getByText("New patient")).toBeInTheDocument();
     });
 
     it("should render search icon in patient input", () => {
@@ -301,26 +304,26 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       const searchInput = screen.getByPlaceholderText(
-        "Digite o nome do paciente...",
+        "Enter patient name...",
       );
-      await user.type(searchInput, "João");
+      await user.type(searchInput, "John");
 
       // userEvent.type calls onChange for each character
       expect(mockUseAttendanceForm.setSearch).toHaveBeenCalledWith("J");
       expect(mockUseAttendanceForm.setSearch).toHaveBeenCalledWith("o");
-      expect(mockUseAttendanceForm.setSearch).toHaveBeenCalledWith("ã");
-      expect(mockUseAttendanceForm.setSearch).toHaveBeenCalledWith("o");
+      expect(mockUseAttendanceForm.setSearch).toHaveBeenCalledWith("h");
+      expect(mockUseAttendanceForm.setSearch).toHaveBeenCalledWith("n");
       expect(mockUseAttendanceForm.setSearch).toHaveBeenCalledTimes(4);
     });
 
     it("should show patient suggestions when searching", () => {
       // Mock hook state with search results and showSuggestions = true
       Object.assign(mockUseAttendanceForm, {
-        search: "João",
+        search: "John",
         isNewPatient: false,
         filteredPatients: [
-          { id: "1", name: "João Silva" },
-          { id: "2", name: "João Santos" },
+          { id: "1", name: "John Smith" },
+          { id: "2", name: "John Stevens" },
         ],
       });
 
@@ -329,34 +332,34 @@ describe("NewAttendanceForm", () => {
 
       // The suggestions might not appear without the proper state management
       // Instead test that the filtered patients are available to the component
-      expect(mockUseAttendanceForm.search).toBe("João");
+      expect(mockUseAttendanceForm.search).toBe("John");
       expect(mockUseAttendanceForm.filteredPatients).toHaveLength(2);
     });
 
     it("should not show suggestions for new patients", () => {
       Object.assign(mockUseAttendanceForm, {
-        search: "João",
+        search: "John",
         isNewPatient: true,
-        filteredPatients: [{ id: "1", name: "João Silva" }],
+        filteredPatients: [{ id: "1", name: "John Smith" }],
       });
 
       renderComponent();
 
-      expect(screen.queryByText("João Silva")).not.toBeInTheDocument();
+      expect(screen.queryByText("John Smith")).not.toBeInTheDocument();
     });
 
     it("should handle patient selection from suggestions", () => {
       // Since the patient suggestions dropdown visibility depends on internal state,
       // we verify that the hook provides the necessary data
       Object.assign(mockUseAttendanceForm, {
-        search: "João",
-        filteredPatients: [{ id: "1", name: "João Silva" }],
+        search: "John",
+        filteredPatients: [{ id: "1", name: "John Smith" }],
       });
 
       renderComponent();
 
       // Verify the component has access to filtered patients data
-      expect(mockUseAttendanceForm.filteredPatients[0].name).toBe("João Silva");
+      expect(mockUseAttendanceForm.filteredPatients[0].name).toBe("John Smith");
 
       // The actual click handler would call these functions
       // This tests the component's integration with the hook
@@ -370,10 +373,10 @@ describe("NewAttendanceForm", () => {
       // Mock the state to show suggestions dropdown
       Object.assign(mockUseAttendanceForm, {
         isNewPatient: false,
-        search: "João",
+        search: "John",
         filteredPatients: [
-          { id: "1", name: "João Silva" },
-          { id: "2", name: "Maria Santos" },
+          { id: "1", name: "John Smith" },
+          { id: "2", name: "Emily Williams" },
         ],
       });
 
@@ -415,14 +418,14 @@ describe("NewAttendanceForm", () => {
 
       render(<TestComponent />);
 
-      const patientButton = screen.getByText("João Silva");
+      const patientButton = screen.getByText("John Smith");
       await user.click(patientButton);
 
       expect(mockUseAttendanceForm.setSelectedPatient).toHaveBeenCalledWith(
-        "João Silva",
+        "John Smith",
       );
       expect(mockUseAttendanceForm.setSearch).toHaveBeenCalledWith(
-        "João Silva",
+        "John Smith",
       );
     });
   });
@@ -436,11 +439,11 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       // Test by finding the select element and its options
-      const prioritySelect = screen.getByDisplayValue("3 - Padrão");
+      const prioritySelect = screen.getByDisplayValue("3 - Priority 3");
       expect(prioritySelect).toBeInTheDocument();
-      expect(screen.getByText("1 - Exceção")).toBeInTheDocument();
-      expect(screen.getByText("2 - Idoso/crianças")).toBeInTheDocument();
-      expect(screen.getByText("3 - Padrão")).toBeInTheDocument();
+      expect(screen.getByText("1 - Priority")).toBeInTheDocument();
+      expect(screen.getByText("2 - Standard")).toBeInTheDocument();
+      expect(screen.getByText("3 - Priority 3")).toBeInTheDocument();
     });
 
     it("should hide priority selection for existing patients", () => {
@@ -450,15 +453,17 @@ describe("NewAttendanceForm", () => {
 
       renderComponent();
 
-      expect(screen.queryByDisplayValue("3 - Padrão")).not.toBeInTheDocument();
-      expect(screen.queryByText("1 - Exceção")).not.toBeInTheDocument();
+      expect(
+        screen.queryByDisplayValue("3 - Priority 3"),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText("1 - Priority")).not.toBeInTheDocument();
     });
 
     it("should handle new patient toggle change", async () => {
       const user = userEvent.setup();
       renderComponent();
 
-      const toggle = screen.getByRole("checkbox", { name: /novo paciente/i });
+      const toggle = screen.getByRole("checkbox", { name: /New patient/i });
       await user.click(toggle);
 
       expect(mockUseAttendanceForm.setIsNewPatient).toHaveBeenCalledWith(true);
@@ -472,7 +477,7 @@ describe("NewAttendanceForm", () => {
       // Default type is managed by the hook (selectedTypes); form shows date and submit
       expect(screen.getByDisplayValue("2025-01-15")).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /agendar atendimento/i }),
+        screen.getByRole("button", { name: /Schedule Attendance/i }),
       ).toBeInTheDocument();
     });
   });
@@ -486,7 +491,7 @@ describe("NewAttendanceForm", () => {
 
       renderComponent();
 
-      const prioritySelect = screen.getByDisplayValue("3 - Padrão");
+      const prioritySelect = screen.getByDisplayValue("3 - Priority 3");
       await user.selectOptions(prioritySelect, "1");
 
       expect(mockUseAttendanceForm.setPriority).toHaveBeenCalledWith("1");
@@ -497,7 +502,7 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       const notesTextarea = screen.getByPlaceholderText(
-        "Observações sobre o agendamento...",
+        "Notes about the appointment...",
       );
       await user.type(notesTextarea, "Test notes");
 
@@ -524,7 +529,7 @@ describe("NewAttendanceForm", () => {
       renderComponent({ showDateField: false });
 
       expect(screen.queryByDisplayValue("2025-01-15")).not.toBeInTheDocument(); // Matches getTodayInLocalTimezone mock
-      expect(screen.queryByText("Data do Agendamento")).not.toBeInTheDocument();
+      expect(screen.queryByText("Appointment Date")).not.toBeInTheDocument();
     });
   });
 
@@ -532,14 +537,14 @@ describe("NewAttendanceForm", () => {
     it("should handle form submission", async () => {
       const user = userEvent.setup();
       Object.assign(mockUseAttendanceForm, {
-        search: "João Silva",
+        search: "John Smith",
         selectedTypes: ["assessment"],
       });
 
       renderComponent();
 
       const submitButton = screen.getByRole("button", {
-        name: /agendar atendimento/i,
+        name: /Schedule Attendance/i,
       });
       await user.click(submitButton);
 
@@ -557,14 +562,14 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       const submitButton = screen.getByRole("button", {
-        name: /agendar atendimento/i,
+        name: /Schedule Attendance/i,
       });
       expect(submitButton).toBeDisabled();
     });
 
     it("should disable submit button when submitting", () => {
       Object.assign(mockUseAttendanceForm, {
-        search: "João Silva",
+        search: "John Smith",
         selectedTypes: ["assessment"],
         isSubmitting: true,
       });
@@ -572,7 +577,7 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       const submitButton = screen.getByRole("button", {
-        name: /agendando.../i,
+        name: /Scheduling.../i,
       });
       expect(submitButton).toBeDisabled();
     });
@@ -620,24 +625,24 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       expect(
-        screen.getByPlaceholderText("Digite o nome do paciente..."),
+        screen.getByPlaceholderText("Enter patient name..."),
       ).toBeDisabled();
       expect(
-        screen.getByRole("checkbox", { name: /novo paciente/i }),
+        screen.getByRole("checkbox", { name: /New patient/i }),
       ).toBeDisabled();
       expect(
-        screen.getByPlaceholderText("Observações sobre o agendamento..."),
+        screen.getByPlaceholderText("Notes about the appointment..."),
       ).toBeDisabled();
       expect(
-        screen.getByRole("button", { name: /agendando.../i }),
+        screen.getByRole("button", { name: /Scheduling.../i }),
       ).toBeDisabled();
     });
 
     it("should disable patient suggestions when submitting", () => {
       Object.assign(mockUseAttendanceForm, {
-        search: "João",
+        search: "John",
         isSubmitting: true,
-        filteredPatients: [{ id: "1", name: "João Silva" }],
+        filteredPatients: [{ id: "1", name: "John Smith" }],
       });
 
       renderComponent();
@@ -645,9 +650,9 @@ describe("NewAttendanceForm", () => {
       // When submitting, the patient suggestions dropdown won't appear
       // Test that the main form inputs are disabled instead
       expect(
-        screen.getByPlaceholderText("Digite o nome do paciente..."),
+        screen.getByPlaceholderText("Enter patient name..."),
       ).toBeDisabled();
-      expect(screen.getByRole("button", { name: /agendando/i })).toBeDisabled();
+      expect(screen.getByRole("button", { name: /Scheduling/i })).toBeDisabled();
     });
   });
 
@@ -661,35 +666,35 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       const submitButton = screen.getByRole("button", {
-        name: /agendar atendimento/i,
+        name: /Schedule Attendance/i,
       });
       expect(submitButton).toBeDisabled();
     });
 
     it("should require at least one attendance type for submission", () => {
       Object.assign(mockUseAttendanceForm, {
-        search: "João Silva",
+        search: "John Smith",
         selectedTypes: [],
       });
 
       renderComponent();
 
       const submitButton = screen.getByRole("button", {
-        name: /agendar atendimento/i,
+        name: /Schedule Attendance/i,
       });
       expect(submitButton).toBeDisabled();
     });
 
     it("should enable submission when valid", () => {
       Object.assign(mockUseAttendanceForm, {
-        search: "João Silva",
+        search: "John Smith",
         selectedTypes: ["assessment"],
       });
 
       renderComponent();
 
       const submitButton = screen.getByRole("button", {
-        name: /agendar atendimento/i,
+        name: /Schedule Attendance/i,
       });
       expect(submitButton).not.toBeDisabled();
     });
@@ -722,11 +727,11 @@ describe("NewAttendanceForm", () => {
 
       // Mock that a patient is selected
       Object.assign(mockUseAttendanceForm, {
-        search: "João Silva",
-        selectedPatient: "João Silva",
+        search: "John Smith",
+        selectedPatient: "John Smith",
         filteredPatients: [
-          { id: "1", name: "João Silva" },
-          { id: "2", name: "Maria Santos" },
+          { id: "1", name: "John Smith" },
+          { id: "2", name: "Emily Williams" },
         ],
       });
 
@@ -734,14 +739,14 @@ describe("NewAttendanceForm", () => {
 
       // Select a patient
       const searchInput = screen.getByPlaceholderText(
-        "Digite o nome do paciente...",
+        "Enter patient name...",
       );
       await user.clear(searchInput);
-      await user.type(searchInput, "João");
+      await user.type(searchInput, "John");
 
       // Wait for the dropdown to appear
       const patientButton = await screen.findByRole("button", {
-        name: "João Silva",
+        name: "John Smith",
       });
       await user.click(patientButton);
 
@@ -755,19 +760,19 @@ describe("NewAttendanceForm", () => {
       const user = userEvent.setup();
 
       Object.assign(mockUseAttendanceForm, {
-        search: "João",
-        filteredPatients: [{ id: "1", name: "João Silva" }],
+        search: "John",
+        filteredPatients: [{ id: "1", name: "John Smith" }],
       });
 
       renderComponent();
 
       const searchInput = screen.getByPlaceholderText(
-        "Digite o nome do paciente...",
+        "Enter patient name...",
       );
-      await user.type(searchInput, "João");
+      await user.type(searchInput, "John");
 
       const patientButton = await screen.findByRole("button", {
-        name: "João Silva",
+        name: "John Smith",
       });
       await user.click(patientButton);
 
@@ -784,14 +789,14 @@ describe("NewAttendanceForm", () => {
           {
             id: 1,
             date: "2025-01-10",
-            mainComplaint: "Dores de cabeça",
-            label: "2025-01-10 - Dores de cabeça",
+            mainConcern: "Headache",
+            label: "2025-01-10 - Headache",
           },
           {
             id: 2,
             date: "2025-01-05",
-            mainComplaint: "Ansiedade",
-            label: "2025-01-05 - Ansiedade",
+            mainConcern: "Anxiety",
+            label: "2025-01-05 - Anxiety",
           },
         ],
       });
@@ -799,19 +804,19 @@ describe("NewAttendanceForm", () => {
       // Set a selected patient to trigger display
       const user = userEvent.setup();
       Object.assign(mockUseAttendanceForm, {
-        search: "João Silva",
-        filteredPatients: [{ id: "1", name: "João Silva" }],
+        search: "John Smith",
+        filteredPatients: [{ id: "1", name: "John Smith" }],
       });
 
       renderComponent();
 
       const searchInput = screen.getByPlaceholderText(
-        "Digite o nome do paciente...",
+        "Enter patient name...",
       );
-      await user.type(searchInput, "João");
+      await user.type(searchInput, "John");
 
       const patientButton = await screen.findByRole("button", {
-        name: "João Silva",
+        name: "John Smith",
       });
       await user.click(patientButton);
 
@@ -819,9 +824,9 @@ describe("NewAttendanceForm", () => {
       const selector = await screen.findByTestId("parent-attendance-select");
       expect(selector).toBeInTheDocument();
       expect(
-        screen.getByText("2025-01-10 - Dores de cabeça"),
+        screen.getByText("2025-01-10 - Headache"),
       ).toBeInTheDocument();
-      expect(screen.getByText("2025-01-05 - Ansiedade")).toBeInTheDocument();
+      expect(screen.getByText("2025-01-05 - Anxiety")).toBeInTheDocument();
     });
 
     it("should show loading state for parent attendance options", async () => {
@@ -831,24 +836,24 @@ describe("NewAttendanceForm", () => {
 
       const user = userEvent.setup();
       Object.assign(mockUseAttendanceForm, {
-        search: "João Silva",
-        filteredPatients: [{ id: "1", name: "João Silva" }],
+        search: "John Smith",
+        filteredPatients: [{ id: "1", name: "John Smith" }],
       });
 
       renderComponent();
 
       const searchInput = screen.getByPlaceholderText(
-        "Digite o nome do paciente...",
+        "Enter patient name...",
       );
-      await user.type(searchInput, "João");
+      await user.type(searchInput, "John");
 
       const patientButton = await screen.findByRole("button", {
-        name: "João Silva",
+        name: "John Smith",
       });
       await user.click(patientButton);
 
       expect(
-        await screen.findByText("Carregando consultas anteriores..."),
+        await screen.findByText("Loading previous consultations..."),
       ).toBeInTheDocument();
     });
 
@@ -856,15 +861,15 @@ describe("NewAttendanceForm", () => {
       const user = userEvent.setup();
 
       Object.assign(mockUseAttendanceForm, {
-        search: "João Silva",
-        filteredPatients: [{ id: "1", name: "João Silva" }],
+        search: "John Smith",
+        filteredPatients: [{ id: "1", name: "John Smith" }],
         selectedParentAttendance: "",
         parentAttendanceOptions: [
           {
             id: 1,
             date: "2025-01-10",
-            mainComplaint: "Dores de cabeça",
-            label: "2025-01-10 - Dores de cabeça",
+            mainConcern: "Headache",
+            label: "2025-01-10 - Headache",
           },
         ],
       });
@@ -872,12 +877,12 @@ describe("NewAttendanceForm", () => {
       renderComponent();
 
       const searchInput = screen.getByPlaceholderText(
-        "Digite o nome do paciente...",
+        "Enter patient name...",
       );
-      await user.type(searchInput, "João");
+      await user.type(searchInput, "John");
 
       const patientButton = await screen.findByRole("button", {
-        name: "João Silva",
+        name: "John Smith",
       });
       await user.click(patientButton);
 
@@ -895,8 +900,8 @@ describe("NewAttendanceForm", () => {
       // Start with a patient selected
       Object.assign(mockUseAttendanceForm, {
         isNewPatient: false,
-        search: "João Silva",
-        selectedPatient: "João Silva",
+        search: "John Smith",
+        selectedPatient: "John Smith",
         selectedParentAttendance: "1",
       });
 
@@ -904,7 +909,7 @@ describe("NewAttendanceForm", () => {
 
       // Toggle to new patient
       const newPatientCheckbox = screen.getByRole("checkbox", {
-        name: /novo paciente/i,
+        name: /New patient/i,
       });
       await user.click(newPatientCheckbox);
 
@@ -915,25 +920,25 @@ describe("NewAttendanceForm", () => {
       const user = userEvent.setup();
 
       Object.assign(mockUseAttendanceForm, {
-        search: "Maria",
-        selectedPatient: "João Silva",
+        search: "Emily",
+        selectedPatient: "John Smith",
         selectedParentAttendance: "1",
         filteredPatients: [
-          { id: "1", name: "João Silva" },
-          { id: "2", name: "Maria Santos" },
+          { id: "1", name: "John Smith" },
+          { id: "2", name: "Emily Williams" },
         ],
       });
 
       renderComponent();
 
       const searchInput = screen.getByPlaceholderText(
-        "Digite o nome do paciente...",
+        "Enter patient name...",
       );
       await user.clear(searchInput);
-      await user.type(searchInput, "Maria");
+      await user.type(searchInput, "Emily");
 
       const patientButton = await screen.findByRole("button", {
-        name: "Maria Santos",
+        name: "Emily Williams",
       });
       await user.click(patientButton);
 

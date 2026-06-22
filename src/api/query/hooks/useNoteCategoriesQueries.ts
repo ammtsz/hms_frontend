@@ -16,7 +16,7 @@ export function useNoteCategories(includeInactive = false) {
       const result = await getNoteCategories(includeInactive);
       if (!result.success || !result.value) {
         throw new Error(
-          result.error || "Falha ao carregar categorias de notas",
+          result.error || "Failed to load note categories",
         );
       }
       return result.value;
@@ -32,7 +32,7 @@ export function useCreateNoteCategory() {
     mutationFn: async (params: { value: string; label: string; sortOrder?: number }) => {
       const result = await createNoteCategory(params);
       if (!result.success || !result.value) {
-        throw new Error(result.error || "Falha ao criar categoria de notas");
+        throw new Error(result.error || "Failed to create note category");
       }
       return result.value;
     },
@@ -55,7 +55,7 @@ export function useUpdateNoteCategory() {
     }) => {
       const result = await updateNoteCategory(id, updates);
       if (!result.success || !result.value) {
-        throw new Error(result.error || "Falha ao atualizar categoria de notas");
+        throw new Error(result.error || "Failed to update note category");
       }
       return result.value;
     },
@@ -72,7 +72,7 @@ export function useDeleteNoteCategory() {
     mutationFn: async (id: number) => {
       const result = await deleteNoteCategory(id);
       if (!result.success) {
-        throw new Error(result.error || "Falha ao excluir categoria de notas");
+        throw new Error(result.error || "Failed to delete note category");
       }
     },
     onSuccess: () => {

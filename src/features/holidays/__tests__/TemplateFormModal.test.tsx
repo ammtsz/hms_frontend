@@ -20,7 +20,7 @@ describe("TemplateFormModal", () => {
       />,
     );
 
-    expect(screen.queryByText("Novo Modelo")).not.toBeInTheDocument();
+    expect(screen.queryByText("New Template")).not.toBeInTheDocument();
   });
 
   it("should render when isOpen is true", () => {
@@ -32,14 +32,14 @@ describe("TemplateFormModal", () => {
       />,
     );
 
-    expect(screen.getByText("Novo Modelo")).toBeInTheDocument();
+    expect(screen.getByText("New Template")).toBeInTheDocument();
   });
 
   it("should show edit mode title when template is provided", () => {
     const mockTemplate = {
       id: 1,
-      name: "Feriados Nacionais",
-      description: "Feriados nacionais brasileiros",
+      name: "National Holidays",
+      description: "Brazilian National Holidays",
       holidays: [],
       createdDate: "2024-01-01",
     };
@@ -53,7 +53,7 @@ describe("TemplateFormModal", () => {
       />,
     );
 
-    expect(screen.getByText("Editar Modelo")).toBeInTheDocument();
+    expect(screen.getByText("Edit Template")).toBeInTheDocument();
   });
 
   it("should call onClose when close button is clicked", () => {
@@ -71,7 +71,7 @@ describe("TemplateFormModal", () => {
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should add a holiday when "Adicionar Feriado" is clicked', () => {
+  it('should add a holiday when "Add Holiday" is clicked', () => {
     render(
       <TemplateFormModal
         isOpen={true}
@@ -80,11 +80,11 @@ describe("TemplateFormModal", () => {
       />,
     );
 
-    const addButton = screen.getByText("Adicionar Feriado");
+    const addButton = screen.getByText("Add Holiday");
     fireEvent.click(addButton);
 
-    expect(screen.getByText("Mês")).toBeInTheDocument();
-    expect(screen.getByText("Dia")).toBeInTheDocument();
+    expect(screen.getByText("Month")).toBeInTheDocument();
+    expect(screen.getByText("Day")).toBeInTheDocument();
   });
 
   it("should submit form with correct data", () => {
@@ -98,20 +98,20 @@ describe("TemplateFormModal", () => {
 
     // Fill in template name
     const nameInput = screen.getByPlaceholderText(
-      "Ex: Feriados Nacionais Brasileiros",
+      "e.g. National Brazilian Holidays",
     );
     fireEvent.change(nameInput, { target: { value: "Test Template" } });
 
     // Add a holiday
-    const addButton = screen.getByText("Adicionar Feriado");
+    const addButton = screen.getByText("Add Holiday");
     fireEvent.click(addButton);
 
     // Fill in holiday name
-    const holidayNameInput = screen.getByPlaceholderText("Ex: Natal");
-    fireEvent.change(holidayNameInput, { target: { value: "Natal" } });
+    const holidayNameInput = screen.getByPlaceholderText("e.g. Christmas");
+    fireEvent.change(holidayNameInput, { target: { value: "Christmas" } });
 
     // Submit form
-    const submitButton = screen.getByText("Criar Modelo");
+    const submitButton = screen.getByText("Create Template");
     fireEvent.click(submitButton);
 
     expect(mockOnSubmit).toHaveBeenCalledWith({
@@ -121,7 +121,7 @@ describe("TemplateFormModal", () => {
         expect.objectContaining({
           month: 1,
           day: 1,
-          name: "Natal",
+          name: "Christmas",
         }),
       ]),
     });

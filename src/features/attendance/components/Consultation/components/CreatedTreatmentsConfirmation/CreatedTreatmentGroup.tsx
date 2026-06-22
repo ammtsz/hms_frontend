@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { getColorCodeWithOpacity } from "@/utils/treatmentColors";
 import type { CreatedTreatment } from "../CreatedTreatmentsConfirmation";
 import { ScheduledAppointmentsPreview } from "./ScheduledAppointmentsPreview";
@@ -72,7 +72,7 @@ export const CreatedTreatmentGroup: React.FC<CreatedTreatmentGroupProps> = ({
       >
         <span>{title}</span>
         <span className="text-sm text-gray-500 ml-2">
-          ({totalLocations} {totalLocations === 1 ? "local" : "locais"})
+          ({totalLocations} {totalLocations === 1 ? "location" : "locations"})
         </span>
       </h4>
 
@@ -98,7 +98,9 @@ export const CreatedTreatmentGroup: React.FC<CreatedTreatmentGroupProps> = ({
                 <div className="flex-1 gap-1 flex flex-col text-sm text-gray-800">
                   <div className="flex items-center space-x-2 mb-1">
                     <span className="text-sm font-medium text-gray-900">
-                      {group.bodyLocations.length > 1 ? "Locais:" : "Local:"}
+                      {group.bodyLocations.length > 1
+                        ? "Locations:"
+                        : "Location:"}
                     </span>
                     <span className="text-sm text-gray-700">
                       {bodyLocationsLabel}
@@ -110,7 +112,7 @@ export const CreatedTreatmentGroup: React.FC<CreatedTreatmentGroupProps> = ({
                       {rep.color && (
                         <span className="flex items-center space-x-1">
                           <span className={`text-sm font-medium text-gray-900`}>
-                            Cor:
+                            Color:
                           </span>
                           <span
                             className="px-2 py-1/2 rounded-md"
@@ -129,7 +131,7 @@ export const CreatedTreatmentGroup: React.FC<CreatedTreatmentGroupProps> = ({
                         rep.durationMinutes !== null && (
                           <span className="flex items-center space-x-1">
                             <span className="text-sm font-medium text-gray-900">
-                              Duração:
+                              Duration:
                             </span>
                             <span>{formatDuration(rep.durationMinutes)}</span>
                           </span>
@@ -141,10 +143,10 @@ export const CreatedTreatmentGroup: React.FC<CreatedTreatmentGroupProps> = ({
                 <div className="text-right">
                   <div className="text-md font-semibold text-gray-900">
                     {rep.plannedSessions}{" "}
-                    {rep.plannedSessions === 1 ? "sessão" : "sessões"}
+                    {rep.plannedSessions === 1 ? "session" : "sessions"}
                   </div>
                   <div className="text-xs text-gray-500">
-                    Início: {formatDateBR(rep.startDate)}
+                    Start: {formatDisplayDate(rep.startDate)}
                   </div>
                 </div>
               </div>

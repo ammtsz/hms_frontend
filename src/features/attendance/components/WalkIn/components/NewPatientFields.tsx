@@ -43,10 +43,10 @@ export const NewPatientFields: React.FC<NewPatientFieldsProps> = ({
   return (
     <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
       <h3 className="text-sm font-medium text-blue-800 mb-3">
-        Informações do Novo Paciente
+        New Patient Information
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="Telefone *" htmlFor="phone">
+        <Field label="Phone *" htmlFor="phone">
           <Input
             id="phone"
             name="phone"
@@ -59,7 +59,7 @@ export const NewPatientFields: React.FC<NewPatientFieldsProps> = ({
           />
         </Field>
 
-        <Field label="Data de Nascimento *" htmlFor="birthDate">
+        <Field label="Date of Birth *" htmlFor="birthDate">
           <Input
             id="birthDate"
             name="birthDate"
@@ -72,7 +72,7 @@ export const NewPatientFields: React.FC<NewPatientFieldsProps> = ({
           />
         </Field>
 
-        <Field label="Prioridade" htmlFor="priority" className="md:col-span-2">
+        <Field label="Priority" htmlFor="priority" className="md:col-span-2">
           <Select
             id="priority"
             name="priority"

@@ -7,12 +7,19 @@ import type {
   PatientStatus,
   CancelledAttendanceItemDto,
 } from "@/api/types";
-import type { TreatmentRecommendation, PhysiotherapyLocationTreatment, TensLocationTreatment } from "../types";
+import type {
+  TreatmentRecommendation,
+  PhysiotherapyLocationTreatment,
+  TensLocationTreatment,
+} from "../types";
 import type { CreatedTreatment } from "../components/CreatedTreatmentsConfirmation";
 import type { TreatmentCreationError } from "../components/TreatmentCreationErrors";
 import { useCloseModal, usePostAttendanceModal } from "@/stores/modalStore";
 import { useConsultationSubmission } from "./useConsultationSubmission";
-import { usePatient, useNewlyScheduledAttendances } from "@/api/query/hooks/usePatientQueries";
+import {
+  usePatient,
+  useNewlyScheduledAttendances,
+} from "@/api/query/hooks/usePatientQueries";
 import { useBulkCreateTreatments } from "@/api/query/hooks/useTreatmentTrackingQueries";
 import {
   useLatestConsultationByPatient,
@@ -24,6 +31,7 @@ import {
   TREATMENT_SLOTS_UNAVAILABLE_MESSAGE,
 } from "@/api/query/hooks/useScheduleSettingQueries";
 import { getTodayClinic } from "@/utils/timezoneDate";
+import { getTreatmentStatusLabel } from "@/utils/patientUtils";
 import { ERROR_MESSAGE } from "@/api/utils/messages";
 
 // Patient lifecycle status (N/T/A/F) for consultation form
@@ -31,7 +39,7 @@ export type PatientStatusValue = "N" | "T" | "A" | "F";
 
 export interface PostConsultationFormData {
   // Main form fields from requirements
-  mainComplaint: string;
+  mainConcern: string;
   patientStatus: PatientStatusValue;
   startDate: string;
   returnWeeks: number;
@@ -78,10 +86,8 @@ export function usePostAttendanceForm() {
 
   // Fetch latest consultation for this PATIENT (not attendance) to pre-fill form
   // Uses the most recent consultation for defaults such as return weeks.
-  const {
-    data: latestConsultation,
-    isLoading: fetchingConsultation,
-  } = useLatestConsultationByPatient(patientId?.toString() || "");
+  const { data: latestConsultation, isLoading: fetchingConsultation } =
+    useLatestConsultationByPatient(patientId?.toString() || "");
 
   // Convert React Query error to string for compatibility
   const fetchError = patientQueryError
@@ -89,7 +95,9 @@ export function usePostAttendanceForm() {
     : null;
 
   // State for confirmation (created treatment plans + scheduling summary)
-  const [createdTreatments, setCreatedTreatments] = useState<CreatedTreatment[]>([]);
+  const [createdTreatments, setCreatedTreatments] = useState<
+    CreatedTreatment[]
+  >([]);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [shouldFetchAttendances, setShouldFetchAttendances] = useState(false);
   const [cancelledAttendances, setCancelledAttendances] = useState<
@@ -97,7 +105,9 @@ export function usePostAttendanceForm() {
   >([]);
 
   // State for bulk treatment creation error handling
-  const [treatmentCreationErrors, setTreatmentCreationErrors] = useState<TreatmentCreationError[]>([]);
+  const [treatmentCreationErrors, setTreatmentCreationErrors] = useState<
+    TreatmentCreationError[]
+  >([]);
   const [showErrors, setShowErrors] = useState(false);
 
   // Fetch newly scheduled attendances after treatment creation
@@ -107,7 +117,7 @@ export function usePostAttendanceForm() {
     error: attendancesError,
   } = useNewlyScheduledAttendances(
     patientId?.toString(),
-    shouldFetchAttendances // Only fetch when explicitly enabled
+    shouldFetchAttendances, // Only fetch when explicitly enabled
   );
 
   // Get current date as string for default values (memoized to prevent dependency changes)
@@ -118,206 +128,318 @@ export function usePostAttendanceForm() {
   }, [closeModal]);
 
   // Helper function to validate treatment data before sending to backend
-  const validateTreatmentData = useCallback((
-    treatment: PhysiotherapyLocationTreatment | TensLocationTreatment,
-    treatmentType: 'physiotherapy' | 'tens'
-  ): string[] => {
-    const errors: string[] = [];
+  const validateTreatmentData = useCallback(
+    (
+      treatment: PhysiotherapyLocationTreatment | TensLocationTreatment,
+      treatmentType: "physiotherapy" | "tens",
+    ): string[] => {
+      const errors: string[] = [];
 
-    if (treatmentType === 'physiotherapy') {
-      const physiotherapyTreatment = treatment as PhysiotherapyLocationTreatment;
+      if (treatmentType === "physiotherapy") {
+        const physiotherapyTreatment =
+          treatment as PhysiotherapyLocationTreatment;
 
-      // Validate duration (1-10 units)
-      if (!physiotherapyTreatment.duration || physiotherapyTreatment.duration < 1 || physiotherapyTreatment.duration > 10) {
-        errors.push(`Tempo deve ser entre 1 e 10 unidades (7 a 70 minutos). Valor atual: ${physiotherapyTreatment.duration}`);
+        // Validate duration (1-10 units)
+        if (
+          !physiotherapyTreatment.duration ||
+          physiotherapyTreatment.duration < 1 ||
+          physiotherapyTreatment.duration > 10
+        ) {
+          errors.push(
+            `Duration must be between 1 and 10 units (7 to 70 minutes). Current value: ${physiotherapyTreatment.duration}`,
+          );
+        }
+
+        // Validate color
+        if (
+          !physiotherapyTreatment.color ||
+          physiotherapyTreatment.color.trim() === ""
+        ) {
+          errors.push("Color is required for physiotherapy treatments.");
+        }
       }
 
-      // Validate color
-      if (!physiotherapyTreatment.color || physiotherapyTreatment.color.trim() === '') {
-        errors.push('Cor é obrigatória para tratamentos de fisioterapia.');
+      // Validate common fields
+      if (
+        !treatment.quantity ||
+        treatment.quantity < 1 ||
+        treatment.quantity > 50
+      ) {
+        errors.push(
+          `Number of sessions must be between 1 and 50. Current value: ${treatment.quantity}`,
+        );
       }
-    }
 
-    // Validate common fields
-    if (!treatment.quantity || treatment.quantity < 1 || treatment.quantity > 50) {
-      errors.push(`Quantidade de sessões deve ser entre 1 e 50. Valor atual: ${treatment.quantity}`);
-    }
+      if (!treatment.startDate || treatment.startDate.trim() === "") {
+        errors.push("Registration date is required.");
+      }
 
-    if (!treatment.startDate || treatment.startDate.trim() === '') {
-      errors.push('Data de cadastro é obrigatória.');
-    }
+      if (!treatment.locations || treatment.locations.length === 0) {
+        errors.push("At least one body location must be selected.");
+      }
 
-    if (!treatment.locations || treatment.locations.length === 0) {
-      errors.push('Pelo menos um local do corpo deve ser selecionado.');
-    }
-
-    return errors;
-  }, []);
+      return errors;
+    },
+    [],
+  );
 
   // Helper function to parse bulk treatment creation errors into the format expected by TreatmentCreationErrors
-  const parseTreatmentCreationErrors = useCallback((
-    error: unknown,
-    recommendations: TreatmentRecommendation
-  ): TreatmentCreationError[] => {
-    const errors: TreatmentCreationError[] = [];
+  const parseTreatmentCreationErrors = useCallback(
+    (
+      error: unknown,
+      recommendations: TreatmentRecommendation,
+    ): TreatmentCreationError[] => {
+      const errors: TreatmentCreationError[] = [];
 
-    try {
-      // Check if the error has structured error details from our collection
-      const errorDetails = (error as { errorDetails?: { physiotherapyErrors: string[], tensErrors: string[], allErrors: string[] } })?.errorDetails;
+      try {
+        // Check if the error has structured error details from our collection
+        const errorDetails = (
+          error as {
+            errorDetails?: {
+              physiotherapyErrors: string[];
+              tensErrors: string[];
+              allErrors: string[];
+            };
+          }
+        )?.errorDetails;
 
-      if (errorDetails) {
-        // Use the structured errors we collected
-        if (errorDetails.physiotherapyErrors && errorDetails.physiotherapyErrors.length > 0) {
-          errors.push({
-            treatmentType: 'physiotherapy',
-            errors: errorDetails.physiotherapyErrors
-          });
-        }
+        if (errorDetails) {
+          // Use the structured errors we collected
+          if (
+            errorDetails.physiotherapyErrors &&
+            errorDetails.physiotherapyErrors.length > 0
+          ) {
+            errors.push({
+              treatmentType: "physiotherapy",
+              errors: errorDetails.physiotherapyErrors,
+            });
+          }
 
-        if (errorDetails.tensErrors && errorDetails.tensErrors.length > 0) {
-          errors.push({
-            treatmentType: 'tens',
-            errors: errorDetails.tensErrors
-          });
-        }
-      } else {
-        // Fallback to parsing the error message/response
-        const rawMessage = error instanceof Error ? error.message : String(error);
-        // Map generic API 400 message to user-friendly slot message in session creation context
-        const errorMessage =
-          rawMessage === ERROR_MESSAGE.BAD_REQUEST
-            ? TREATMENT_SLOTS_UNAVAILABLE_MESSAGE
-            : rawMessage;
+          if (errorDetails.tensErrors && errorDetails.tensErrors.length > 0) {
+            errors.push({
+              treatmentType: "tens",
+              errors: errorDetails.tensErrors,
+            });
+          }
+        } else {
+          // Fallback to parsing the error message/response
+          const rawMessage =
+            error instanceof Error ? error.message : String(error);
+          // Map generic API 400 message to user-friendly slot message in session creation context
+          const errorMessage =
+            rawMessage === ERROR_MESSAGE.BAD_REQUEST
+              ? TREATMENT_SLOTS_UNAVAILABLE_MESSAGE
+              : rawMessage;
 
-        // Try to extract validation details from API error response
-        const apiError = error as { 
-          response?: { 
-            data?: { 
-              message?: string | string[], 
-              details?: Array<{ field: string, value: unknown, constraints: Record<string, string> }> 
-            } 
-          } 
-        };
-        
-        let detailedMessages: string[] = [];
-        
-        // Parse backend validation error details if available (422 responses)
-        if (apiError.response?.data?.details) {
-          detailedMessages = apiError.response.data.details.map(detail => {
-            const fieldName = detail.field;
-            const constraints = Object.values(detail.constraints || {});
-            return `${fieldName}: ${constraints.join(', ')}`;
-          });
-        } else if (apiError.response?.data?.message) {
-          // Handle message array from backend
-          const messages = Array.isArray(apiError.response.data.message) 
-            ? apiError.response.data.message 
-            : [apiError.response.data.message];
-          detailedMessages = messages;
-        }
+          // Try to extract validation details from API error response
+          const apiError = error as {
+            response?: {
+              data?: {
+                message?: string | string[];
+                details?: Array<{
+                  field: string;
+                  value: unknown;
+                  constraints: Record<string, string>;
+                }>;
+              };
+            };
+          };
 
-        // Check if we have physiotherapy treatments that might have failed
-        if (recommendations.physiotherapy?.treatments && recommendations.physiotherapy.treatments.length > 0) {
-          const physiotherapyErrors: string[] = [];
+          let detailedMessages: string[] = [];
 
-          // Use detailed validation messages if available
-          if (detailedMessages.length > 0) {
-            physiotherapyErrors.push(...detailedMessages.map(msg => 
-              `Fisioterapia: ${msg}`
-            ));
-          } else {
-            // Check for specific validation errors in error message
-            if (errorMessage.includes('duration_minutes must not be greater than 10')) {
-              physiotherapyErrors.push('Tempo deve ser entre 1 e 10 unidades (7 a 70 minutos). Verifique os valores informados.');
-            } else if (errorMessage.includes('duration_minutes must not be less than 1')) {
-              physiotherapyErrors.push('Tempo deve ser no mínimo 1 unidade (7 minutos). Verifique os valores informados.');
-            } else if (errorMessage.includes('color should not be empty') || errorMessage.includes('color must be a string')) {
-              physiotherapyErrors.push('Cor é obrigatória para tratamentos de fisioterapia.');
-            } else if (errorMessage.includes('Attendance with ID') && errorMessage.includes('not found')) {
-              physiotherapyErrors.push('Erro de dados: atendimento não encontrado. Tente novamente.');
-            } else if (errorMessage.toLowerCase().includes('fisioterapia') ||
-              errorMessage.toLowerCase().includes('physiotherapy')) {
-              physiotherapyErrors.push(errorMessage);
-            } else if (errorMessage.includes('422') || errorMessage.includes('Validation failed')) {
-              physiotherapyErrors.push('Erro de validação ao criar sessões de fisioterapia. Verifique os dados informados (tempo: 1-10 unidades, cor obrigatória).');
-            } else if (errorMessage.includes('400') || errorMessage.includes('Bad Request')) {
-              physiotherapyErrors.push('Dados inválidos para fisioterapia. Verifique tempo (1-10 unidades), cor e demais campos.');
+          // Parse backend validation error details if available (422 responses)
+          if (apiError.response?.data?.details) {
+            detailedMessages = apiError.response.data.details.map((detail) => {
+              const fieldName = detail.field;
+              const constraints = Object.values(detail.constraints || {});
+              return `${fieldName}: ${constraints.join(", ")}`;
+            });
+          } else if (apiError.response?.data?.message) {
+            // Handle message array from backend
+            const messages = Array.isArray(apiError.response.data.message)
+              ? apiError.response.data.message
+              : [apiError.response.data.message];
+            detailedMessages = messages;
+          }
+
+          // Check if we have physiotherapy treatments that might have failed
+          if (
+            recommendations.physiotherapy?.treatments &&
+            recommendations.physiotherapy.treatments.length > 0
+          ) {
+            const physiotherapyErrors: string[] = [];
+
+            // Use detailed validation messages if available
+            if (detailedMessages.length > 0) {
+              physiotherapyErrors.push(
+                ...detailedMessages.map((msg) => `Physiotherapy: ${msg}`),
+              );
+            } else {
+              // Check for specific validation errors in error message
+              if (
+                errorMessage.includes(
+                  "duration_minutes must not be greater than 10",
+                )
+              ) {
+                physiotherapyErrors.push(
+                  "Duration must be between 1 and 10 units (7 to 70 minutes). Check the values provided.",
+                );
+              } else if (
+                errorMessage.includes(
+                  "duration_minutes must not be less than 1",
+                )
+              ) {
+                physiotherapyErrors.push(
+                  "Duration must be at least 1 unit (7 minutes). Check the values provided.",
+                );
+              } else if (
+                errorMessage.includes("color should not be empty") ||
+                errorMessage.includes("color must be a string")
+              ) {
+                physiotherapyErrors.push(
+                  "Color is required for physiotherapy treatments.",
+                );
+              } else if (
+                errorMessage.includes("Attendance with ID") &&
+                errorMessage.includes("not found")
+              ) {
+                physiotherapyErrors.push(
+                  "Data error: attendance not found. Please try again.",
+                );
+              } else if (errorMessage.toLowerCase().includes("physiotherapy")) {
+                physiotherapyErrors.push(errorMessage);
+              } else if (
+                errorMessage.includes("422") ||
+                errorMessage.includes("Validation failed")
+              ) {
+                physiotherapyErrors.push(
+                  "Validation error when creating physiotherapy sessions. Please check the provided data (duration: 1-10 units, color required).",
+                );
+              } else if (
+                errorMessage.includes("400") ||
+                errorMessage.includes("Bad Request")
+              ) {
+                physiotherapyErrors.push(
+                  "Invalid data for physiotherapy. Check duration (1-10 units), color and other fields.",
+                );
+              }
+            }
+
+            if (physiotherapyErrors.length > 0) {
+              errors.push({
+                treatmentType: "physiotherapy",
+                errors: physiotherapyErrors,
+              });
             }
           }
 
-          if (physiotherapyErrors.length > 0) {
-            errors.push({
-              treatmentType: 'physiotherapy',
-              errors: physiotherapyErrors
-            });
-          }
-        }
+          // Check if we have tens treatments that might have failed
+          if (
+            recommendations.tens?.treatments &&
+            recommendations.tens.treatments.length > 0
+          ) {
+            const tensErrors: string[] = [];
 
-        // Check if we have tens treatments that might have failed
-        if (recommendations.tens?.treatments && recommendations.tens.treatments.length > 0) {
-          const tensErrors: string[] = [];
+            // Use detailed validation messages if available
+            if (detailedMessages.length > 0) {
+              tensErrors.push(
+                ...detailedMessages.map((msg) => `TENS Treatment: ${msg}`),
+              );
+            } else {
+              // Check for specific validation errors in error message
+              if (
+                errorMessage.includes("Attendance with ID") &&
+                errorMessage.includes("not found")
+              ) {
+                tensErrors.push(
+                  "Data error: attendance not found. Please try again.",
+                );
+              } else if (
+                errorMessage.toLowerCase().includes("TENS") ||
+                errorMessage.toLowerCase().includes("tens")
+              ) {
+                tensErrors.push(errorMessage);
+              } else if (
+                errorMessage.includes("422") ||
+                errorMessage.includes("Validation failed")
+              ) {
+                tensErrors.push(
+                  "Validation error when creating TENS sessions. Please check the provided data.",
+                );
+              } else if (
+                errorMessage.includes("400") ||
+                errorMessage.includes("Bad Request")
+              ) {
+                tensErrors.push(
+                  "Invalid data for TENS treatment. Check required fields.",
+                );
+              }
+            }
 
-          // Use detailed validation messages if available
-          if (detailedMessages.length > 0) {
-            tensErrors.push(...detailedMessages.map(msg => 
-              `Tratamento com TENS: ${msg}`
-            ));
-          } else {
-            // Check for specific validation errors in error message
-            if (errorMessage.includes('Attendance with ID') && errorMessage.includes('not found')) {
-              tensErrors.push('Erro de dados: atendimento não encontrado. Tente novamente.');
-            } else if (errorMessage.toLowerCase().includes('TENS') ||
-              errorMessage.toLowerCase().includes('tens')) {
-              tensErrors.push(errorMessage);
-            } else if (errorMessage.includes('422') || errorMessage.includes('Validation failed')) {
-              tensErrors.push('Erro de validação ao criar sessões de tratamento com TENS. Verifique os dados informados.');
-            } else if (errorMessage.includes('400') || errorMessage.includes('Bad Request')) {
-              tensErrors.push('Dados inválidos para tratamento com TENS. Verifique os campos obrigatórios.');
+            if (tensErrors.length > 0) {
+              errors.push({
+                treatmentType: "tens",
+                errors: tensErrors,
+              });
             }
           }
 
-          if (tensErrors.length > 0) {
-            errors.push({
-              treatmentType: 'tens',
-              errors: tensErrors
-            });
+          // If no specific treatment errors were found but we have recommendations,
+          // create a generic error for the first treatment type
+          if (errors.length === 0) {
+            if (
+              recommendations.physiotherapy?.treatments &&
+              recommendations.physiotherapy.treatments.length > 0
+            ) {
+              errors.push({
+                treatmentType: "physiotherapy",
+                errors: [
+                  errorMessage ||
+                    "Unexpected error occurred while creating physiotherapy sessions.",
+                ],
+              });
+            } else if (
+              recommendations.tens?.treatments &&
+              recommendations.tens.treatments.length > 0
+            ) {
+              errors.push({
+                treatmentType: "tens",
+                errors: [
+                  errorMessage ||
+                    "Unexpected error occurred while creating TENS sessions.",
+                ],
+              });
+            }
           }
         }
-
-        // If no specific treatment errors were found but we have recommendations, 
-        // create a generic error for the first treatment type
-        if (errors.length === 0) {
-          if (recommendations.physiotherapy?.treatments && recommendations.physiotherapy.treatments.length > 0) {
-            errors.push({
-              treatmentType: 'physiotherapy',
-              errors: [errorMessage || 'Erro inesperado ao criar sessões de fisioterapia.']
-            });
-          } else if (recommendations.tens?.treatments && recommendations.tens.treatments.length > 0) {
-            errors.push({
-              treatmentType: 'tens',
-              errors: [errorMessage || 'Erro inesperado ao criar sessões de tratamento com TENS.']
-            });
-          }
+      } catch {
+        // Fallback: create generic errors for any treatment types that were requested
+        if (
+          recommendations.physiotherapy?.treatments &&
+          recommendations.physiotherapy.treatments.length > 0
+        ) {
+          errors.push({
+            treatmentType: "physiotherapy",
+            errors: [
+              "Unexpected error occurred while creating physiotherapy sessions.",
+            ],
+          });
+        }
+        if (
+          recommendations.tens?.treatments &&
+          recommendations.tens.treatments.length > 0
+        ) {
+          errors.push({
+            treatmentType: "tens",
+            errors: ["Unexpected error occurred while creating TENS sessions."],
+          });
         }
       }
-    } catch {
-      // Fallback: create generic errors for any treatment types that were requested
-      if (recommendations.physiotherapy?.treatments && recommendations.physiotherapy.treatments.length > 0) {
-        errors.push({
-          treatmentType: 'physiotherapy',
-          errors: ['Erro inesperado ao criar sessões de fisioterapia.']
-        });
-      }
-      if (recommendations.tens?.treatments && recommendations.tens.treatments.length > 0) {
-        errors.push({
-          treatmentType: 'tens',
-          errors: ['Erro inesperado ao criar sessões de tratamento com TENS.']
-        });
-      }
-    }
 
-    return errors;
-  }, []);
+      return errors;
+    },
+    [],
+  );
 
   // Helper function to create treatment plan rows from recommendations (bulk `POST /treatments/bulk`)
   // Now builds session array for bulk creation (eliminates race conditions)
@@ -325,11 +447,16 @@ export function usePostAttendanceForm() {
     async (
       recommendations: TreatmentRecommendation,
       consultationId: number,
-      autoScheduleReturn: boolean
-    ): Promise<{ createdTreatmentIds: number[]; createdTreatments: CreatedTreatment[] }> => {
+      autoScheduleReturn: boolean,
+    ): Promise<{
+      createdTreatmentIds: number[];
+      createdTreatments: CreatedTreatment[];
+    }> => {
       // Guard against undefined required values
       if (!attendanceId || !patientId) {
-        throw new Error("Attendance ID and Patient ID are required for creating treatment plans");
+        throw new Error(
+          "Attendance ID and Patient ID are required for creating treatment plans",
+        );
       }
 
       const treatmentRowsToCreate: CreateTreatmentRequest[] = [];
@@ -343,7 +470,10 @@ export function usePostAttendanceForm() {
       ) {
         for (const treatment of recommendations.physiotherapy.treatments) {
           // Validate treatment data before processing
-          const validationErrors = validateTreatmentData(treatment, 'physiotherapy');
+          const validationErrors = validateTreatmentData(
+            treatment,
+            "physiotherapy",
+          );
           if (validationErrors.length > 0) {
             physiotherapyErrors.push(...validationErrors);
             continue; // Skip this treatment if validation fails
@@ -374,7 +504,7 @@ export function usePostAttendanceForm() {
       ) {
         for (const treatment of recommendations.tens.treatments) {
           // Validate treatment data before processing
-          const validationErrors = validateTreatmentData(treatment, 'tens');
+          const validationErrors = validateTreatmentData(treatment, "tens");
           if (validationErrors.length > 0) {
             tensErrors.push(...validationErrors);
             continue; // Skip this treatment if validation fails
@@ -402,10 +532,11 @@ export function usePostAttendanceForm() {
         const errorDetails = {
           physiotherapyErrors,
           tensErrors,
-          allErrors
+          allErrors,
         };
         const error = new Error(allErrors.join("\n\n"));
-        (error as Error & { errorDetails: typeof errorDetails }).errorDetails = errorDetails;
+        (error as Error & { errorDetails: typeof errorDetails }).errorDetails =
+          errorDetails;
         throw error;
       }
 
@@ -427,7 +558,7 @@ export function usePostAttendanceForm() {
         // Check for any failed treatment creations
         if (bulkResult.failedTreatments.length > 0) {
           const failedErrors = bulkResult.failedTreatments.map(
-            (failed) => `Erro: ${failed.error}`
+            (failed) => `Error: ${failed.error}`,
           );
           throw new Error(failedErrors.join("\n\n"));
         }
@@ -438,44 +569,50 @@ export function usePostAttendanceForm() {
         }
 
         // Transform created treatments to our format for confirmation display
-        const mappedCreatedTreatments: CreatedTreatment[] = bulkResult.createdTreatments.map((treatmentRow) => ({
-          id: treatmentRow.id,
-          consultationId: treatmentRow.consultationId,
-          attendanceId: treatmentRow.attendanceId,
-          patientId: treatmentRow.patientId,
-          treatmentType: treatmentRow.treatmentType,
-          bodyLocation: treatmentRow.bodyLocation,
-          startDate: treatmentRow.startDate,
-          plannedSessions: treatmentRow.plannedSessions,
-          completedSessions: treatmentRow.completedSessions,
-          status: treatmentRow.status,
-          durationMinutes: treatmentRow.durationMinutes,
-          color: treatmentRow.color,
-          notes: treatmentRow.notes,
-          sessions: treatmentRow.sessions,
-          createdDate: treatmentRow.createdDate,
-          createdTime: treatmentRow.createdTime,
-          updatedDate: treatmentRow.updatedDate,
-          updatedTime: treatmentRow.updatedTime,
-        }));
+        const mappedCreatedTreatments: CreatedTreatment[] =
+          bulkResult.createdTreatments.map((treatmentRow) => ({
+            id: treatmentRow.id,
+            consultationId: treatmentRow.consultationId,
+            attendanceId: treatmentRow.attendanceId,
+            patientId: treatmentRow.patientId,
+            treatmentType: treatmentRow.treatmentType,
+            bodyLocation: treatmentRow.bodyLocation,
+            startDate: treatmentRow.startDate,
+            plannedSessions: treatmentRow.plannedSessions,
+            completedSessions: treatmentRow.completedSessions,
+            status: treatmentRow.status,
+            durationMinutes: treatmentRow.durationMinutes,
+            color: treatmentRow.color,
+            notes: treatmentRow.notes,
+            sessions: treatmentRow.sessions,
+            createdDate: treatmentRow.createdDate,
+            createdTime: treatmentRow.createdTime,
+            updatedDate: treatmentRow.updatedDate,
+            updatedTime: treatmentRow.updatedTime,
+          }));
 
-        const createdTreatmentIds = bulkResult.createdTreatments.map((t) => t.id);
+        const createdTreatmentIds = bulkResult.createdTreatments.map(
+          (t) => t.id,
+        );
 
-        return { createdTreatmentIds, createdTreatments: mappedCreatedTreatments };
+        return {
+          createdTreatmentIds,
+          createdTreatments: mappedCreatedTreatments,
+        };
       } catch (error) {
         // Re-throw the error to be handled by the calling function
         throw error;
       }
     },
-    [patientId, attendanceId, validateTreatmentData, bulkCreateTreatments]
+    [patientId, attendanceId, validateTreatmentData, bulkCreateTreatments],
   );
 
   // Validation for post-consultation form (assessment attendance completion)
   const validateTreatment = useCallback(
     (data: PostConsultationFormData): string | null => {
-      // Main complaint is required
-      if (!data.mainComplaint.trim()) {
-        return "Principal queixa é obrigatória";
+      // Main concern is required
+      if (!data.mainConcern.trim()) {
+        return "Main complaint is required";
       }
 
       // General recommendations tab: if not acknowledged as "none apply", must have at least one
@@ -485,70 +622,76 @@ export function usePostAttendanceForm() {
           (data.water?.trim() ?? "").length > 0 ||
           (data.ointments?.trim() ?? "").length > 0;
         if (!hasGeneralRecommendation) {
-          return "Adicione pelo menos uma recomendação geral (alimentação, água ou pomadas) ou marque que nenhuma se aplica";
+          {
+            /* translate to english */
+          }
+          return "Add at least one general recommendation (food, water or ointments) or mark none apply";
         }
       }
 
-      // Treatment recommendations tab: if not acknowledged as "none apply", must have at least one (skip when Alta)
-      if (
-        data.patientStatus !== "A" &&
-        !data.noTreatmentRecommendations
-      ) {
+      // Treatment recommendations tab: if not acknowledged as "none apply", must have at least one (skip when Discharged (A))
+      if (data.patientStatus !== "A" && !data.noTreatmentRecommendations) {
         const hasTreatmentRecommendation =
           (data.recommendations.physiotherapy?.treatments.length ?? 0) > 0 ||
           (data.recommendations.tens?.treatments.length ?? 0) > 0;
         if (!hasTreatmentRecommendation) {
-          return "Adicione pelo menos um tratamento de fisioterapia ou TENS ou marque que nenhum se aplica";
+          return "Add at least one physiotherapy or TENS treatment or mark none apply";
         }
       }
 
       // Return weeks validation
       if (data.returnWeeks < 0 || data.returnWeeks > 52) {
-        return "Semanas para retorno deve estar entre 0 e 52";
+        return "Return weeks must be between 0 and 52";
       }
 
       // Start date validation
       if (data.startDate > today) {
-        return "Data de cadastro não pode ser futura";
+        return "Registration date cannot be future";
       }
 
       // If physiotherapy is recommended, validate required fields
-      if (data.recommendations.physiotherapy && data.recommendations.physiotherapy.treatments.length > 0) {
+      if (
+        data.recommendations.physiotherapy &&
+        data.recommendations.physiotherapy.treatments.length > 0
+      ) {
         const { treatments } = data.recommendations.physiotherapy;
 
         // Validate each treatment
         for (const treatment of treatments) {
           if (!treatment.locations || treatment.locations.length === 0) {
-            return "Todos os locais da fisioterapia devem ser especificados";
+            return "All physiotherapy locations must be specified";
           }
           if (!treatment.color) {
-            return "Cor da fisioterapia é obrigatória para todos os locais";
+            return "Physiotherapy color is required for all locations";
           }
           if (treatment.duration < 1 || treatment.duration > 10) {
-            return "Tempo da fisioterapia deve estar entre 1 e 10 unidades (7-70 minutos)";
+            return "Physiotherapy time must be between 1 and 10 units (7-70 minutes)";
           }
           if (treatment.quantity < 1 || treatment.quantity > 20) {
-            return "Quantidade de fisioterapia deve estar entre 1 e 20";
+            return "Physiotherapy quantity must be between 1 and 20";
           }
         }
       }
 
       // If tens is recommended, validate required fields
-      if (data.recommendations.tens && data.recommendations.tens.treatments.length > 0) {
+      if (
+        data.recommendations.tens &&
+        data.recommendations.tens.treatments.length > 0
+      ) {
         const { treatments } = data.recommendations.tens;
 
         // Validate each treatment
         for (const treatment of treatments) {
           if (!treatment.locations || treatment.locations.length === 0) {
-            return "Todos os locais do tratamento com TENS devem ser especificados";
+            return "All TENS treatment locations must be specified";
           }
           if (treatment.quantity < 1 || treatment.quantity > 20) {
-            return "Quantidade de tratamentos com TENS deve estar entre 1 e 20";
+            return "TENS treatment quantity must be between 1 and 20";
           }
         }
       }
 
-      // Treatment start dates must fall on days with available slots (Fisioterapia / TENS)
+      // Treatment start dates must fall on days with available slots (Physiotherapy / TENS)
       const hasTreatments =
         (data.recommendations.physiotherapy?.treatments.length ?? 0) > 0 ||
         (data.recommendations.tens?.treatments.length ?? 0) > 0;
@@ -565,7 +708,7 @@ export function usePostAttendanceForm() {
 
       return null;
     },
-    [today, scheduleSettings]
+    [today, scheduleSettings],
   );
 
   // Submit: save consultation, then bulk-create physiotherapy / tens treatment plans when applicable
@@ -578,12 +721,14 @@ export function usePostAttendanceForm() {
         const result = await submitConsultation(data, attendanceId);
 
         if (!result) {
-          throw new Error("Falha ao registrar a consulta");
+          throw new Error("Failed to register the consultation");
         }
 
         // Log if this was a retry scenario (existing consultation was updated)
         if (result.isUpdate) {
-          console.log(`[Retry Success] Updated existing consultation ${result.consultationId}; retrying treatment plan creation`);
+          console.log(
+            `[Retry Success] Updated existing consultation ${result.consultationId}; retrying treatment plan creation`,
+          );
         }
 
         // MedicalDischarge: do not create physiotherapy/tens sessions or schedule return
@@ -599,14 +744,16 @@ export function usePostAttendanceForm() {
         // Then, bulk-create physiotherapy / tens treatment plans from recommendations
         try {
           // Determine if we should auto-schedule return
-          const autoScheduleReturn = data.recommendations.returnWhenTreatmentComplete;
+          const autoScheduleReturn =
+            data.recommendations.returnWhenTreatmentComplete;
 
           // Use bulk creation to eliminate race conditions
-          const { createdTreatmentIds, createdTreatments: newTreatments } = await createTreatmentsFromRecommendations(
-            data.recommendations,
-            result.consultationId,
-            autoScheduleReturn
-          );
+          const { createdTreatmentIds, createdTreatments: newTreatments } =
+            await createTreatmentsFromRecommendations(
+              data.recommendations,
+              result.consultationId,
+              autoScheduleReturn,
+            );
 
           // Store created treatment plans for confirmation display
           setCreatedTreatments(newTreatments);
@@ -616,7 +763,7 @@ export function usePostAttendanceForm() {
           if (!autoScheduleReturn && data.recommendations.returnWeeks > 0) {
             await scheduleReturn({
               consultationId: result.consultationId,
-              mode: 'legacy',
+              mode: "legacy",
             });
           }
 
@@ -637,7 +784,10 @@ export function usePostAttendanceForm() {
           // Note: We DON'T close the modal here - let the user see the error and decide
 
           // Parse the error and convert it to TreatmentCreationError format
-          const parsedErrors = parseTreatmentCreationErrors(sessionError, data.recommendations);
+          const parsedErrors = parseTreatmentCreationErrors(
+            sessionError,
+            data.recommendations,
+          );
 
           if (parsedErrors.length > 0) {
             setTreatmentCreationErrors(parsedErrors);
@@ -666,7 +816,7 @@ export function usePostAttendanceForm() {
       attendanceId,
       submitConsultation,
       scheduleReturn,
-    ]
+    ],
   );
 
   const {
@@ -679,8 +829,8 @@ export function usePostAttendanceForm() {
     clearError,
   } = useFormHandler<PostConsultationFormData>({
     initialState: {
-      mainComplaint: "",
-      patientStatus: "T", // Default to "T - Em tratamento"
+      mainConcern: "",
+      patientStatus: "T", // Default to "T - In Treatment""
       startDate: today,
       returnWeeks: 1, // Default to 1 week, will be updated from database
       food: "",
@@ -702,7 +852,8 @@ export function usePostAttendanceForm() {
     },
   });
 
-  const isLoading = externalLoading || formLoading || fetchingPatient || fetchingConsultation;
+  const isLoading =
+    externalLoading || formLoading || fetchingPatient || fetchingConsultation;
 
   // Function to reset error state
   const resetErrors = useCallback(() => {
@@ -723,8 +874,9 @@ export function usePostAttendanceForm() {
   useEffect(() => {
     if (!attendanceId || !patientId) return;
 
-    // Determine the main complaint: patient value, then latest consultation, then empty
-    const mainComplaint = patient?.mainComplaint || latestConsultation?.mainComplaint || "";
+    // Determine the main concern: patient value, then latest consultation, then empty
+    const mainConcern =
+      patient?.mainConcern || latestConsultation?.mainConcern || "";
 
     // Determine return weeks: latest consultation if present, otherwise default to 1
     const returnWeeks = latestConsultation?.returnWeeks || 1;
@@ -738,7 +890,7 @@ export function usePostAttendanceForm() {
         : today;
 
     setFormData({
-      mainComplaint,
+      mainConcern,
       patientStatus: currentTreatmentStatus as PatientStatusValue,
       startDate,
       returnWeeks,
@@ -766,7 +918,7 @@ export function usePostAttendanceForm() {
     today,
     setFormData,
     resetConfirmation,
-    resetErrors
+    resetErrors,
   ]); // resetConfirmation and resetErrors are stable (useCallback with []) so no need to include
 
   const handleRecommendationsChange = useCallback(
@@ -779,33 +931,21 @@ export function usePostAttendanceForm() {
       }));
       if (error) clearError();
     },
-    [setFormData, error, clearError]
+    [setFormData, error, clearError],
   );
 
   const handleDateChange = useCallback(
-    (field: "startDate") =>
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value || today;
-        setFormData((prev) => ({ ...prev, [field]: value }));
-        if (error) clearError();
-      },
-    [setFormData, error, clearError, today]
+    (field: "startDate") => (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value || today;
+      setFormData((prev) => ({ ...prev, [field]: value }));
+      if (error) clearError();
+    },
+    [setFormData, error, clearError, today],
   );
 
   // Format date for input field (already in YYYY-MM-DD format)
   const formatDateForInput = (date: string) => {
     return date;
-  };
-
-  // Get treatment status label
-  const getTreatmentStatusLabel = (status: PatientStatusValue) => {
-    const labels: Record<PatientStatusValue, string> = {
-      N: "Novo paciente",
-      T: "Em tratamento",
-      A: "Alta do tratamento",
-      F: "Faltas consecutivas",
-    };
-    return labels[status];
   };
 
   // Function to retry bulk treatment plan creation after validation/API errors
@@ -826,32 +966,35 @@ export function usePostAttendanceForm() {
     handleCancel,
 
     // Patient data (from React Query, transformed back to DTO format for compatibility)
-    patientData: patient ? ((): PatientResponseDto => {
-      // Transform priority from "1"|"2"|"3" to PatientPriority enum
-      // PatientPriority enum values are '1', '2', '3'
-      const priority = patient.priority as PatientPriority;
+    patientData: patient
+      ? ((): PatientResponseDto => {
+          // Transform priority from "1"|"2"|"3" to PatientPriority enum
+          // PatientPriority enum values are '1', '2', '3'
+          const priority = patient.priority as PatientPriority;
 
-      // Transform status from "N"|"T"|"A"|"F" to PatientStatus enum
-      const patient_status_enum = patient.status as unknown as PatientStatus;
+          // Transform status from "N"|"T"|"A"|"F" to PatientStatus enum
+          const patient_status_enum =
+            patient.status as unknown as PatientStatus;
 
-      return {
-        id: parseInt(patient.id),
-        name: patient.name,
-        phone: patient.phone || undefined,
-        priority,
-        patientStatus: patient_status_enum,
-        birthDate: patient.birthDate || undefined,
-        mainComplaint: patient.mainComplaint || undefined,
-        dischargeDate: patient.dischargeDate || undefined,
-        startDate: patient.startDate || getTodayClinic(),
-        missingAppointmentsStreak: 0, // Default value, not available in Patient type
-        createdAt: new Date().toISOString(), // Default value, not available in Patient type
-        updatedAt: new Date().toISOString(), // Default value, not available in Patient type
-      };
-    })() : null,
+          return {
+            id: parseInt(patient.id),
+            name: patient.name,
+            phone: patient.phone || undefined,
+            priority,
+            patientStatus: patient_status_enum,
+            birthDate: patient.birthDate || undefined,
+            mainConcern: patient.mainConcern || undefined,
+            dischargeDate: patient.dischargeDate || undefined,
+            startDate: patient.startDate || getTodayClinic(),
+            missingAppointmentsStreak: 0, // Default value, not available in Patient type
+            createdAt: new Date().toISOString(), // Default value, not available in Patient type
+            updatedAt: new Date().toISOString(), // Default value, not available in Patient type
+          };
+        })()
+      : null,
     fetchingPatient,
     fetchError,
-    setFetchError: () => { }, // No-op since React Query handles errors
+    setFetchError: () => {}, // No-op since React Query handles errors
 
     // Loading states
     isLoading,

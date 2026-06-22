@@ -160,7 +160,7 @@ describe("scheduleTreatmentSlots", () => {
     it("is a non-empty string", () => {
       expect(typeof TREATMENT_SLOTS_UNAVAILABLE_MESSAGE).toBe("string");
       expect(TREATMENT_SLOTS_UNAVAILABLE_MESSAGE.length).toBeGreaterThan(0);
-      expect(TREATMENT_SLOTS_UNAVAILABLE_MESSAGE).toContain("Fisioterapia");
+      expect(TREATMENT_SLOTS_UNAVAILABLE_MESSAGE).toMatch(/Physiotherapy|Physiotherapy/i);
     });
   });
 
@@ -168,7 +168,7 @@ describe("scheduleTreatmentSlots", () => {
     it("is a non-empty string", () => {
       expect(typeof ASSESSMENT_SLOTS_UNAVAILABLE_MESSAGE).toBe("string");
       expect(ASSESSMENT_SLOTS_UNAVAILABLE_MESSAGE.length).toBeGreaterThan(0);
-      expect(ASSESSMENT_SLOTS_UNAVAILABLE_MESSAGE).toContain("consulta");
+      expect(ASSESSMENT_SLOTS_UNAVAILABLE_MESSAGE).toMatch(/assessment consultation/i);
     });
   });
 });

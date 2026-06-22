@@ -56,9 +56,9 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      expect(screen.getByText("Atendimentos")).toBeInTheDocument();
-      expect(screen.getByText("Agenda")).toBeInTheDocument();
-      expect(screen.getByText("Pacientes")).toBeInTheDocument();
+      expect(screen.getByText("Attendances")).toBeInTheDocument();
+      expect(screen.getByText("Schedule")).toBeInTheDocument();
+      expect(screen.getByText("Patients")).toBeInTheDocument();
     });
 
     it("should render tabs as links with correct hrefs", () => {
@@ -66,17 +66,17 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      expect(screen.getByText("Atendimentos").closest("a")).toHaveAttribute(
+      expect(screen.getByText("Attendances").closest("a")).toHaveAttribute(
         "href",
-        "/attendance"
+        "/attendance",
       );
-      expect(screen.getByText("Agenda").closest("a")).toHaveAttribute(
+      expect(screen.getByText("Schedule").closest("a")).toHaveAttribute(
         "href",
-        "/agenda"
+        "/agenda",
       );
-      expect(screen.getByText("Pacientes").closest("a")).toHaveAttribute(
+      expect(screen.getByText("Patients").closest("a")).toHaveAttribute(
         "href",
-        "/patients"
+        "/patients",
       );
     });
 
@@ -97,7 +97,7 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const attendanceTab = screen.getByText("Atendimentos").closest("a");
+      const attendanceTab = screen.getByText("Attendances").closest("a");
       expect(attendanceTab).toHaveClass("active");
       expect(attendanceTab).toHaveAttribute("aria-current", "page");
     });
@@ -107,7 +107,7 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const agendaTab = screen.getByText("Agenda").closest("a");
+      const agendaTab = screen.getByText("Schedule").closest("a");
       expect(agendaTab).toHaveClass("active");
       expect(agendaTab).toHaveAttribute("aria-current", "page");
     });
@@ -117,7 +117,7 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const patientsTab = screen.getByText("Pacientes").closest("a");
+      const patientsTab = screen.getByText("Patients").closest("a");
       expect(patientsTab).toHaveClass("active");
       expect(patientsTab).toHaveAttribute("aria-current", "page");
     });
@@ -127,7 +127,7 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const patientsTab = screen.getByText("Pacientes").closest("a");
+      const patientsTab = screen.getByText("Patients").closest("a");
       expect(patientsTab).toHaveClass("active");
       expect(patientsTab).toHaveAttribute("aria-current", "page");
     });
@@ -141,7 +141,7 @@ describe("TabNav Component", () => {
         .getAllByRole("link")
         .filter((link) => link.classList.contains("active"));
       expect(activeTabs).toHaveLength(1);
-      expect(activeTabs[0]).toHaveTextContent("Atendimentos");
+      expect(activeTabs[0]).toHaveTextContent("Attendances");
     });
   });
 
@@ -151,8 +151,8 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const agendaTab = screen.getByText("Agenda").closest("a");
-      const patientsTab = screen.getByText("Pacientes").closest("a");
+      const agendaTab = screen.getByText("Schedule").closest("a");
+      const patientsTab = screen.getByText("Patients").closest("a");
 
       expect(agendaTab).not.toHaveClass("active");
       expect(patientsTab).not.toHaveClass("active");
@@ -213,7 +213,7 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const activeTab = screen.getByText("Pacientes").closest("a");
+      const activeTab = screen.getByText("Patients").closest("a");
       expect(activeTab).toHaveAttribute("aria-current", "page");
     });
 
@@ -222,8 +222,8 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const attendanceTab = screen.getByText("Atendimentos").closest("a");
-      const agendaTab = screen.getByText("Agenda").closest("a");
+      const attendanceTab = screen.getByText("Attendances").closest("a");
+      const agendaTab = screen.getByText("Schedule").closest("a");
 
       expect(attendanceTab).not.toHaveAttribute("aria-current");
       expect(agendaTab).not.toHaveAttribute("aria-current");
@@ -290,7 +290,7 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      expect(screen.getByText("Agenda").closest("a")).toHaveClass("active");
+      expect(screen.getByText("Schedule").closest("a")).toHaveClass("active");
     });
 
     it("should match nested routes with startsWith logic", () => {
@@ -298,7 +298,7 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      expect(screen.getByText("Pacientes").closest("a")).toHaveClass("active");
+      expect(screen.getByText("Patients").closest("a")).toHaveClass("active");
     });
 
     it("should not match partial route names", () => {
@@ -306,8 +306,8 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      expect(screen.getByText("Atendimentos").closest("a")).not.toHaveClass(
-        "active"
+      expect(screen.getByText("Attendances").closest("a")).not.toHaveClass(
+        "active",
       );
     });
 
@@ -316,11 +316,13 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      expect(screen.getByText("Pacientes").closest("a")).toHaveClass("active");
-      expect(screen.getByText("Atendimentos").closest("a")).not.toHaveClass(
-        "active"
+      expect(screen.getByText("Patients").closest("a")).toHaveClass("active");
+      expect(screen.getByText("Attendances").closest("a")).not.toHaveClass(
+        "active",
       );
-      expect(screen.getByText("Agenda").closest("a")).not.toHaveClass("active");
+      expect(screen.getByText("Schedule").closest("a")).not.toHaveClass(
+        "active",
+      );
     });
   });
 });

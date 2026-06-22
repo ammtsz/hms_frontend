@@ -39,7 +39,7 @@ export function groupCreatedTreatmentsForDisplay(
   return Array.from(byKey.entries()).map(([, groupTreatments]) => {
     const bodyLocations = Array.from(
       new Set(groupTreatments.map((s) => s.bodyLocation)),
-    ).sort((a, b) => a.localeCompare(b, "pt-BR"));
+    ).sort((a, b) => a.localeCompare(b, "en-US"));
     return {
       representativeSession: groupTreatments[0],
       bodyLocations,

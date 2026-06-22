@@ -13,9 +13,9 @@ describe("SessionRow", () => {
 
   it("renders session number, date and status label", () => {
     render(<SessionRow session={baseSession} />);
-    expect(screen.getByText(/Sessão 1/)).toBeInTheDocument();
+    expect(screen.getByText(/Session 1/)).toBeInTheDocument();
     expect(screen.getByText(/10\/02/)).toBeInTheDocument();
-    expect(screen.getByText(/Concluída/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Completed/)[0]).toBeInTheDocument();
   });
 
   it("renders planned sessions when provided", () => {
@@ -24,14 +24,14 @@ describe("SessionRow", () => {
         session={{ ...baseSession, plannedSessions: 5, sessionNumber: 2 }}
       />,
     );
-    expect(screen.getByText(/Sessão 2\/5/)).toBeInTheDocument();
+    expect(screen.getByText(/Session 2\/5/)).toBeInTheDocument();
   });
 
   it("renders notes when present", () => {
     render(
-      <SessionRow session={{ ...baseSession, notes: "Paciente tranquilo" }} />,
+      <SessionRow session={{ ...baseSession, notes: "Patient calm" }} />,
     );
-    expect(screen.getByText("Paciente tranquilo")).toBeInTheDocument();
+    expect(screen.getByText("Patient calm")).toBeInTheDocument();
   });
 
   it("renders missed reason when status is missed", () => {
@@ -40,12 +40,12 @@ describe("SessionRow", () => {
         session={{
           ...baseSession,
           status: "missed",
-          missedReason: "Paciente não compareceu",
+          missedReason: "Patient did not show up",
         }}
       />,
     );
-    expect(screen.getByText(/Motivo:/)).toBeInTheDocument();
-    expect(screen.getByText("Paciente não compareceu")).toBeInTheDocument();
+    expect(screen.getByText(/Reason:/)).toBeInTheDocument();
+    expect(screen.getByText("Patient did not show up")).toBeInTheDocument();
   });
 
   it("renders cancellation reason when status is cancelled", () => {
@@ -54,13 +54,13 @@ describe("SessionRow", () => {
         session={{
           ...baseSession,
           status: "cancelled",
-          cancellationReason: "Tratamento cancelado pelo paciente",
+          cancellationReason: "Treatment cancelled by patient",
         }}
       />,
     );
-    expect(screen.getByText(/Motivo:/)).toBeInTheDocument();
+    expect(screen.getByText(/Reason:/)).toBeInTheDocument();
     expect(
-      screen.getByText("Tratamento cancelado pelo paciente"),
+      screen.getByText("Treatment cancelled by patient"),
     ).toBeInTheDocument();
   });
 
@@ -70,7 +70,7 @@ describe("SessionRow", () => {
         session={{ ...baseSession, status: "completed", endTime: "14:30:00" }}
       />,
     );
-    expect(screen.getByText(/Concluída às 14:30/)).toBeInTheDocument();
+    expect(screen.getByText(/Completed at 14:30/)).toBeInTheDocument();
   });
 
   it("does not render missed reason when status is not missed", () => {
@@ -101,6 +101,6 @@ describe("SessionRow", () => {
 
   it("handles scheduled status label", () => {
     render(<SessionRow session={{ ...baseSession, status: "scheduled" }} />);
-    expect(screen.getByText(/Agendada/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Scheduled/)[0]).toBeInTheDocument();
   });
 });

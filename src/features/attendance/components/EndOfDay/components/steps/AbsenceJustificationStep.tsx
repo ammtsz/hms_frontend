@@ -5,7 +5,7 @@ import { useAbsenceJustification } from "../../hooks/useAbsenceJustification";
 import { EmptyAbsencesState } from "../EmptyAbsencesState";
 import { AbsencesSummary } from "../AbsencesSummary";
 import { PatientAbsenceCard } from "../PatientAbsenceCard";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { Button } from "@/components/ui";
 
 interface AbsenceJustificationStepProps {
@@ -48,7 +48,7 @@ const AbsenceJustificationStep: React.FC<AbsenceJustificationStepProps> = ({
     <div className="flex flex-col justify-between min-h-96">
       <div>
         <h3 className="text-lg font-semibold mb-4">
-          Faltas Agendadas - {formatDateBR(selectedDate)}
+          Scheduled Absences - {formatDisplayDate(selectedDate)}
         </h3>
 
         {scheduledAbsences.length === 0 ? (
@@ -73,19 +73,15 @@ const AbsenceJustificationStep: React.FC<AbsenceJustificationStepProps> = ({
       </div>
 
       <div className="flex flex-col-reverse justify-between gap-3 mt-6 sm:flex-row">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onBack}
-        >
-          Voltar
+        <Button type="button" variant="outline" onClick={onBack}>
+          Back
         </Button>
         <Button
           type="button"
           onClick={onNext}
           disabled={scheduledAbsences.length > 0 && !allJustified}
         >
-          Próximo
+          Next
         </Button>
       </div>
     </div>

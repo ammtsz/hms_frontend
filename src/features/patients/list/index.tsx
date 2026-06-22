@@ -31,10 +31,8 @@ const PatientList: React.FC = () => {
     return (
       <Card>
         <CardHeader className="border-gray-100 p-4">
-          <h2 className="text-xl font-semibold text-gray-800">Pacientes</h2>
-          <p className="mt-1 text-sm text-gray-600">
-            Carregando lista de pacientes...
-          </p>
+          <h2 className="text-xl font-semibold text-gray-800">Patients</h2>
+          <p className="mt-1 text-sm text-gray-600">Loading patient list...</p>
           <div className="flex items-center justify-between">
             <div>
               <div className="mb-2 h-7 w-48 animate-pulse rounded bg-gray-200" />
@@ -44,7 +42,7 @@ const PatientList: React.FC = () => {
           </div>
         </CardHeader>
         <CardBody className="p-4">
-          <p className="mb-4 text-sm text-gray-600">Carregando pacientes...</p>
+          <p className="mb-4 text-sm text-gray-600">Loading patients...</p>
           <div className="mb-4 h-10 w-full animate-pulse rounded bg-gray-100" />
           <div className="space-y-3 md:hidden">
             {[...Array(4)].map((_, i) => (
@@ -72,14 +70,14 @@ const PatientList: React.FC = () => {
     return (
       <Card>
         <CardHeader className="border-gray-100 p-4">
-          <h2 className="text-xl font-semibold text-gray-800">Pacientes</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Patients</h2>
           <p className="mt-1 text-sm text-gray-600">
-            Erro ao carregar lista de pacientes
+            Error loading patient list
           </p>
         </CardHeader>
         <CardBody className="p-8 text-center">
           <div className="mb-4 text-red-600">{error}</div>
-          <Button onClick={() => refreshPatients()}>Tentar novamente</Button>
+          <Button onClick={() => refreshPatients()}>Try again</Button>
         </CardBody>
       </Card>
     );
@@ -87,12 +85,12 @@ const PatientList: React.FC = () => {
 
   const emptyState = (
     <div className="flex flex-col items-center justify-center gap-4 py-8 text-center text-gray-600">
-      Nenhum paciente cadastrado
+      No patients registered
       <Link
         href="/patients/new"
         className="inline-flex min-h-[44px] items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 transition-colors hover:bg-gray-50"
       >
-        Cadastrar Paciente
+        Register Patient
       </Link>
     </div>
   );
@@ -104,19 +102,19 @@ const PatientList: React.FC = () => {
           <PageHeader
             title={
               <>
-                Pacientes{" "}
+                Patients{" "}
                 <span className="text-sm text-gray-600">
                   ({filtered.length})
                 </span>
               </>
             }
-            description="Gerencie e visualize todos os pacientes cadastrados"
+            description="Manage and view all registered patients"
             actions={
               <Link
                 href="/patients/new"
                 className="inline-flex min-h-[44px] w-full items-center justify-center rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-800 sm:w-auto"
               >
-                + Novo Paciente
+                + New Patient
               </Link>
             }
           />
@@ -125,7 +123,7 @@ const PatientList: React.FC = () => {
         <CardBody className="p-4">
           <div className="mb-4">
             <Input
-              placeholder="Buscar por nome..."
+              placeholder="Search by name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -170,22 +168,13 @@ const PatientList: React.FC = () => {
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Card>
           <CardBody className="p-4">
-            <h3 className="mb-3 font-semibold text-gray-800">
-              Legenda de Status:
-            </h3>
+            <h3 className="mb-3 font-semibold text-gray-800">Status Legend:</h3>
             <div className="flex flex-wrap gap-4 text-sm">
-              <span>
-                <span className="font-bold">N</span>: Paciente Novo
-              </span>
-              <span>
-                <span className="font-bold">T</span>: Em Tratamento
-              </span>
-              <span>
-                <span className="font-bold">A</span>: Alta do tratamento
-              </span>
-              <span>
-                <span className="font-bold">F</span>: Faltas Consecutivas
-              </span>
+              {Object.entries(statusLegend).map(([code, label]) => (
+                <span key={code}>
+                  <span className="font-bold">{code}</span>: {label}
+                </span>
+              ))}
             </div>
           </CardBody>
         </Card>
@@ -193,7 +182,7 @@ const PatientList: React.FC = () => {
         <Card>
           <CardBody className="p-4">
             <h3 className="mb-3 font-semibold text-gray-800">
-              Legenda de Prioridade:
+              Priority Legend:
             </h3>
             <div className="flex flex-wrap gap-4 text-sm">
               {Object.entries(priorityLegend)

@@ -153,7 +153,7 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
     try {
       await cancelTreatmentsMutation.mutateAsync({
         treatmentIds: selectedTreatmentIds,
-        cancellationReason: `Tratamento cancelado - ${cancellationReason.trim()}`,
+        cancellationReason: `Treatment cancelled - ${cancellationReason.trim()}`,
       });
       await refetchTreatments();
       setConfirmDelete(null);
@@ -225,7 +225,7 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
                 className="h-5 w-5 shrink-0 text-gray-600"
                 aria-hidden
               />
-              Status do Tratamento
+              Treatment Status
             </>
           }
         />
@@ -236,7 +236,7 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
             {cancelTreatmentsMutation.error && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-md">
                 <p className="text-sm text-red-600">
-                  Erro ao cancelar tratamento:{" "}
+                  Error cancelling treatment:{" "}
                   {cancelTreatmentsMutation.error.message}
                 </p>
               </div>
@@ -310,16 +310,16 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
       {/* Confirmation Modal for Cancellation */}
       <ConfirmModal
         open={!!confirmDelete}
-        title="Cancelar Tratamento"
+        title="Cancel Treatment"
         message={
           confirmDelete && (
             <>
               <div className="mb-4">
-                Selecione os tratamentos de{" "}
+                Select the treatments of{" "}
                 <span className="font-semibold">
                   {confirmDelete.sessionType}
                 </span>{" "}
-                que deseja cancelar:
+                you want to cancel:
               </div>
               <div className="mb-4 space-y-2 max-h-[280px] overflow-y-auto border border-gray-200 rounded-lg p-3">
                 {treatmentsToCancel.map((treatment) => {
@@ -339,10 +339,10 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900">
                           {treatment.treatmentType === "physiotherapy"
-                            ? "Fisioterapia"
+                            ? "Physiotherapy"
                             : "TENS"}
                           : {treatment.bodyLocation}
-                          {treatment.color && ` (cor: ${treatment.color})`}
+                          {treatment.color && ` (color: ${treatment.color})`}
                         </p>
                       </div>
                     </label>
@@ -352,7 +352,7 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
               <Field
                 label={
                   <>
-                    Motivo do cancelamento:{" "}
+                    Reason for cancellation:{" "}
                     <span className="text-red-600">*</span>
                   </>
                 }
@@ -364,26 +364,26 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
                   value={cancellationReason}
                   onChange={(e) => setCancellationReason(e.target.value)}
                   rows={3}
-                  placeholder="Digite o motivo do cancelamento..."
+                  placeholder="Enter the reason for cancellation..."
                   required
                 />
               </Field>
               <div className="text-sm text-gray-600">
-                Os tratamentos selecionados ficarão marcados como cancelados e
-                poderão ser visualizados no histórico do paciente.
+                The selected treatments will be marked as canceled and can be
+                viewed in the patient&apos;s history.
               </div>
             </>
           )
         }
         confirmLabel={
           selectedTreatmentIds.length > 0
-            ? `Cancelar ${selectedTreatmentIds.length} tratamento${selectedTreatmentIds.length > 1 ? "s" : ""}`
-            : "Cancelar Tratamento"
+            ? `Cancel ${selectedTreatmentIds.length} treatment${selectedTreatmentIds.length > 1 ? "s" : ""}`
+            : "Cancel Treatment"
         }
         confirmDisabled={
           selectedTreatmentIds.length === 0 || !cancellationReason.trim()
         }
-        cancelLabel="Voltar"
+        cancelLabel="Back"
         onCancel={() => {
           setConfirmDelete(null);
           setSelectedTreatmentIds([]);

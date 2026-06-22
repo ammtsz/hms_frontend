@@ -20,18 +20,18 @@ interface TemplateListSectionProps {
 }
 
 const MONTHS = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export const TemplateListSection: React.FC<TemplateListSectionProps> = ({
@@ -54,7 +54,7 @@ export const TemplateListSection: React.FC<TemplateListSectionProps> = ({
   if (isLoading) {
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <p className="text-gray-500">Carregando modelos...</p>
+        <p className="text-gray-500">Loading templates...</p>
       </div>
     );
   }
@@ -63,10 +63,9 @@ export const TemplateListSection: React.FC<TemplateListSectionProps> = ({
     return (
       <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
         <FileText className="mx-auto mb-3 h-12 w-12 text-gray-300" />
-        <p className="mb-1 text-gray-500">Nenhum modelo criado</p>
+        <p className="mb-1 text-gray-500">No templates created</p>
         <p className="text-sm text-gray-400">
-          Clique em &ldquo;Novo Modelo&rdquo; para criar seu primeiro modelo de
-          feriados
+          Click &ldquo;New Template&rdquo; to create your first holiday template
         </p>
       </div>
     );
@@ -96,16 +95,16 @@ export const TemplateListSection: React.FC<TemplateListSectionProps> = ({
           <thead className="border-b border-gray-200 bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Nome
+                Name
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                Descrição
+                Description
               </th>
               <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
-                Feriados
+                Holidays
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                Ações
+                Actions
               </th>
             </tr>
           </thead>
@@ -148,24 +147,24 @@ export const TemplateListSection: React.FC<TemplateListSectionProps> = ({
                       <IconButton
                         onClick={() => onApply(template)}
                         tone="success"
-                        title="Aplicar modelo"
-                        aria-label="Aplicar modelo"
+                        title="Apply template"
+                        aria-label="Apply template"
                       >
                         <Calendar className="h-4 w-4" />
                       </IconButton>
                       <IconButton
                         onClick={() => onEdit(template)}
                         tone="primary"
-                        title="Editar modelo"
-                        aria-label="Editar modelo"
+                        title="Edit template"
+                        aria-label="Edit template"
                       >
                         <Edit className="h-4 w-4" />
                       </IconButton>
                       <IconButton
                         onClick={() => onDelete(template.id)}
                         tone="danger"
-                        title="Excluir modelo"
-                        aria-label="Excluir modelo"
+                        title="Delete template"
+                        aria-label="Delete template"
                       >
                         <Trash2 className="h-4 w-4" />
                       </IconButton>
@@ -178,7 +177,7 @@ export const TemplateListSection: React.FC<TemplateListSectionProps> = ({
                     <td colSpan={4} className="bg-gray-50 px-6 py-4">
                       <div className="pl-6">
                         <h4 className="mb-3 text-sm font-medium text-gray-700">
-                          Feriados neste modelo:
+                          Holidays in this template:
                         </h4>
                         <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                           {[...template.holidays]

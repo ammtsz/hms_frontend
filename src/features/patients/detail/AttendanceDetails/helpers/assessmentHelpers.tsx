@@ -18,10 +18,12 @@ export const formatActiveTreatmentRows = (
   if (rows.length === 0) return [];
 
   return rows.map((row) => {
-    const location = row.bodyLocation || "não especificado";
-    const color = row.color ? ` (cor: ${row.color})` : "";
+    const location = row.bodyLocation || "not specified";
+    const color = row.color ? ` (color: ${row.color})` : "";
     const sessionsText =
-      row.plannedSessions === 1 ? "1 sessão" : `${row.plannedSessions} sessões`;
+      row.plannedSessions === 1
+        ? "1 session"
+        : `${row.plannedSessions} sessions`;
     return `${sessionsText} - ${location}${color}`;
   });
 };

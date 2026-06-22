@@ -51,7 +51,7 @@ describe("AttendanceHeader", () => {
     it("renders the component with correct title", () => {
       render(<AttendanceHeader {...defaultProps} />);
 
-      expect(screen.getByText("Data selecionada:")).toBeInTheDocument();
+      expect(screen.getByText("Selected date:")).toBeInTheDocument();
     });
 
     it("renders date input with correct value", () => {
@@ -67,7 +67,7 @@ describe("AttendanceHeader", () => {
 
       expect(screen.getByTestId("chevron-left")).toBeInTheDocument();
       expect(screen.getByTestId("chevron-right")).toBeInTheDocument();
-      expect(screen.getByText("Hoje")).toBeInTheDocument();
+      expect(screen.getByText("Today")).toBeInTheDocument();
     });
   });
 
@@ -121,7 +121,7 @@ describe("AttendanceHeader", () => {
         "sm:min-w-[180px]",
         "sm:flex-1",
       );
-      expect(dateInput).toHaveAttribute("lang", "pt-BR");
+      expect(dateInput).toHaveAttribute("lang", "en-US");
     });
   });
 
@@ -146,12 +146,12 @@ describe("AttendanceHeader", () => {
       }
     });
 
-    it("calls onDateChange with today when Hoje button is clicked", () => {
+    it("calls onDateChange with today when Today button is clicked", () => {
       render(
         <AttendanceHeader {...defaultProps} selectedDate="2025-01-10" />,
       );
 
-      const todayButton = screen.getByText("Hoje");
+      const todayButton = screen.getByText("Today");
       fireEvent.click(todayButton);
 
       expect(mockOnDateChange).toHaveBeenCalledWith("2025-01-15");
@@ -172,18 +172,18 @@ describe("AttendanceHeader", () => {
     it("shows finalization message when day is finalized", () => {
       render(<AttendanceHeader {...defaultProps} isDayFinalized={true} />);
 
-      expect(screen.getByText("Dia finalizado")).toBeInTheDocument();
+      expect(screen.getByText("Day finalized")).toBeInTheDocument();
       expect(
-        screen.getByText("Os cartões estão desabilitados para edição")
+        screen.getByText("Cards are disabled for editing")
       ).toBeInTheDocument();
     });
 
     it("does not show finalization message when day is not finalized", () => {
       render(<AttendanceHeader {...defaultProps} isDayFinalized={false} />);
 
-      expect(screen.queryByText("Dia finalizado")).not.toBeInTheDocument();
+      expect(screen.queryByText("Day finalized")).not.toBeInTheDocument();
       expect(
-        screen.queryByText("Os cartões estão desabilitados para edição")
+        screen.queryByText("Cards are disabled for editing")
       ).not.toBeInTheDocument();
     });
 
@@ -225,7 +225,7 @@ describe("AttendanceHeader", () => {
     it("title has correct styling", () => {
       render(<AttendanceHeader {...defaultProps} />);
 
-      const title = screen.getByText("Data selecionada:");
+      const title = screen.getByText("Selected date:");
       expect(title).toHaveClass(
         "text-lg",
         "mb-4",
@@ -238,7 +238,7 @@ describe("AttendanceHeader", () => {
     it("button container has correct gap", () => {
       render(<AttendanceHeader {...defaultProps} />);
 
-      const buttonContainer = screen.getByText("Hoje").parentElement;
+      const buttonContainer = screen.getByText("Today").parentElement;
       expect(buttonContainer).toHaveClass(
         "flex",
         "flex-wrap",
@@ -291,7 +291,7 @@ describe("AttendanceHeader", () => {
         <AttendanceHeader {...defaultProps} selectedDate="2025-01-10" />,
       );
 
-      const todayButton = screen.getByText("Hoje");
+      const todayButton = screen.getByText("Today");
       fireEvent.click(todayButton);
 
       expect(mockOnDateChange).toHaveBeenCalledWith("2025-01-15");
@@ -305,7 +305,7 @@ describe("AttendanceHeader", () => {
       render(<AttendanceHeader {...defaultProps} />);
 
       const dateInput = screen.getByDisplayValue("2025-01-15");
-      expect(dateInput).toHaveAttribute("lang", "pt-BR");
+      expect(dateInput).toHaveAttribute("lang", "en-US");
       expect(dateInput).toHaveAttribute("type", "date");
     });
 
@@ -359,7 +359,7 @@ describe("AttendanceHeader", () => {
         "justify-center"
       );
       expect(refreshButton).not.toHaveClass("button", "card-shadow");
-      expect(refreshButton).toHaveAttribute("title", "Atualizar atendimentos");
+      expect(refreshButton).toHaveAttribute("title", "Refresh attendances");
     });
 
     it("refresh button can be clicked multiple times", () => {

@@ -199,7 +199,7 @@ const AttendanceColumn: React.FC<AttendanceColumnProps> = React.memo(
 
             {sortedPatients.length === 0 && (
               <div className="text-gray-400 text-center py-8 text-sm italic">
-                Arraste para mover
+                Drag to move
               </div>
             )}
           </div>

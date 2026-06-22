@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { PatientListTable } from "../PatientListTable";
+import type { PatientBasic } from "@/types/types";
 
 const mockPush = jest.fn();
 
@@ -21,10 +22,10 @@ jest.mock("next/link", () => {
   };
 });
 
-const patients = [
+const patients: PatientBasic[] = [
   {
     id: "1",
-    name: "João Silva",
+    name: "John Smith",
     phone: "(11) 99999-9999",
     priority: "3",
     status: "T",
@@ -44,12 +45,12 @@ describe("PatientListTable", () => {
         sortBy="name"
         sortAsc
         handleSort={jest.fn()}
-        statusLegend={{ T: "Em Tratamento" }}
-        priorityLegend={{ "3": "Padrão" }}
+        statusLegend={{ T: "In Treatment" }}
+        priorityLegend={{ "3": "Priority 3" }}
       />,
     );
 
-    const registroHeader = screen.getByText("Registro").closest("th");
+    const registroHeader = screen.getByText("Record").closest("th");
     expect(registroHeader).toHaveClass("hidden", "sm:table-cell");
   });
 
@@ -61,12 +62,12 @@ describe("PatientListTable", () => {
         sortBy={null}
         sortAsc
         handleSort={jest.fn()}
-        statusLegend={{ T: "Em Tratamento" }}
-        priorityLegend={{ "3": "Padrão" }}
+        statusLegend={{ T: "In Treatment" }}
+        priorityLegend={{ "3": "Priority 3" }}
       />,
     );
 
-    fireEvent.click(screen.getByText("João Silva").closest("tr")!);
+    fireEvent.click(screen.getByText("John Smith").closest("tr")!);
     expect(mockPush).toHaveBeenCalledWith("/patients/1");
   });
 });

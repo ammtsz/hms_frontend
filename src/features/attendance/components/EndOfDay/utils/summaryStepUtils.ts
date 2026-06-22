@@ -86,7 +86,7 @@ export function groupRescheduledByPatient(items: RescheduledItem[]): Array<{
   }
   const groups = Array.from(byPatient.entries()).map(
     ([patientId, attendances]) => {
-      const patientName = attendances[0]?.patientName?.trim() || "Paciente";
+      const patientName = attendances[0]?.patientName?.trim() || "Patient";
       const aggregated = aggregateByKey(
         attendances,
         (att) => `${att.type}|${att.oldDate}|${att.newDate}`,
@@ -155,7 +155,7 @@ export function groupCouldNotRescheduleByPatient(
   }
   const groups = Array.from(byPatient.entries()).map(
     ([patientId, attendances]) => {
-      const patientName = attendances[0]?.patientName?.trim() || "Paciente";
+      const patientName = attendances[0]?.patientName?.trim() || "Patient";
       const aggregated = aggregateByKey(
         attendances,
         (att) => `${att.type}|${att.reason}`,

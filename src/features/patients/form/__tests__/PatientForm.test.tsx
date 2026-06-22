@@ -38,7 +38,7 @@ const mockPriorities = [
     id: 1,
     type: "priority",
     value: "1",
-    label: "Exceção",
+    label: "Priority",
     isActive: true,
     sortOrder: 1,
     createdAt: "",
@@ -48,7 +48,7 @@ const mockPriorities = [
     id: 2,
     type: "priority",
     value: "2",
-    label: "Idoso/crianças",
+    label: "Standard",
     isActive: true,
     sortOrder: 2,
     createdAt: "",
@@ -58,7 +58,7 @@ const mockPriorities = [
     id: 3,
     type: "priority",
     value: "3",
-    label: "Padrão",
+    label: "Priority 3",
     isActive: true,
     sortOrder: 3,
     createdAt: "",
@@ -87,7 +87,7 @@ const mockPatient = {
   priority: "3" as const,
   status: "T" as const,
   birthDate: new Date("1990-01-01"),
-  mainComplaint: "",
+  mainConcern: "",
   dischargeDate: null,
   nextAttendanceDates: [],
   previousAttendances: [],
@@ -134,16 +134,16 @@ describe("PatientForm", () => {
     it("should display form header with title and description", () => {
       renderWithProviders(<PatientForm />);
 
-      expect(screen.getByText("Cadastro de Paciente")).toBeInTheDocument();
+      expect(screen.getByText("Patient Registration")).toBeInTheDocument();
       expect(
-        screen.getByText("Preencha as informações do novo paciente"),
+        screen.getByText("Fill in the new patient information"),
       ).toBeInTheDocument();
     });
 
     it("should display treatment section header", () => {
       renderWithProviders(<PatientForm />);
 
-      expect(screen.getByText("Consulta de Avaliação")).toBeInTheDocument();
+      expect(screen.getByText("Assessment Consultation")).toBeInTheDocument();
     });
   });
 
@@ -151,22 +151,22 @@ describe("PatientForm", () => {
     it("should render all required personal information fields", () => {
       renderWithProviders(<PatientForm />);
 
-      expect(screen.getByLabelText("Nome *")).toBeInTheDocument();
-      expect(screen.getByLabelText("Telefone")).toBeInTheDocument();
-      expect(screen.getByLabelText("Data de Nascimento *")).toBeInTheDocument();
-      expect(screen.getByLabelText("Prioridade")).toBeInTheDocument();
+      expect(screen.getByLabelText("Name *")).toBeInTheDocument();
+      expect(screen.getByLabelText("Phone")).toBeInTheDocument();
+      expect(screen.getByLabelText("Date of Birth *")).toBeInTheDocument();
+      expect(screen.getByLabelText("Priority")).toBeInTheDocument();
       expect(screen.getByLabelText("Status")).toBeInTheDocument();
-      expect(screen.getByLabelText("Principal Queixa")).toBeInTheDocument();
+      expect(screen.getByLabelText("Main Concern")).toBeInTheDocument();
     });
 
     it("should render all treatment information fields", () => {
       renderWithProviders(<PatientForm />);
 
       expect(
-        screen.getByLabelText("Primeira Consulta (opcional)"),
+        screen.getByLabelText("First Consultation (optional)"),
       ).toBeInTheDocument();
       expect(
-        screen.getByLabelText("Alta Prevista (opcional)"),
+        screen.getByLabelText("Expected Discharge (optional)"),
       ).toBeInTheDocument();
     });
   });
@@ -175,17 +175,17 @@ describe("PatientForm", () => {
     it("should display correct priority options with new labels", () => {
       renderWithProviders(<PatientForm />);
 
-      const prioritySelect = screen.getByLabelText("Prioridade");
+      const prioritySelect = screen.getByLabelText("Priority");
 
       expect(prioritySelect).toBeInTheDocument();
-      expect(screen.getByDisplayValue("3 - Padrão")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("3 - Priority 3")).toBeInTheDocument();
 
       const options = screen.getAllByRole("option");
       const priorityOptions = options.filter(
         (option) =>
-          option.textContent?.includes("Padrão") ||
-          option.textContent?.includes("Idoso/crianças") ||
-          option.textContent?.includes("Exceção"),
+          option.textContent?.includes("Standard") ||
+          option.textContent?.includes("Standard") ||
+          option.textContent?.includes("Priority"),
       );
 
       expect(priorityOptions).toHaveLength(3);
@@ -199,14 +199,14 @@ describe("PatientForm", () => {
       const statusSelect = screen.getByLabelText("Status");
 
       expect(statusSelect).toBeInTheDocument();
-      expect(screen.getByDisplayValue("Em Tratamento")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("In Treatment")).toBeInTheDocument();
 
       const options = screen.getAllByRole("option");
       const statusOptions = options.filter(
         (option) =>
-          option.textContent?.includes("Em Tratamento") ||
-          option.textContent?.includes("Alta do tratamento") ||
-          option.textContent?.includes("Faltas Consecutivas"),
+          option.textContent?.includes("In Treatment") ||
+          option.textContent?.includes("Discharged") ||
+          option.textContent?.includes("Missed — consecutive"),
       );
 
       expect(statusOptions).toHaveLength(3);
@@ -223,8 +223,8 @@ describe("PatientForm", () => {
 
       renderWithProviders(<PatientForm />);
 
-      const nameInput = screen.getByLabelText("Nome *");
-      fireEvent.change(nameInput, { target: { value: "João Silva" } });
+      const nameInput = screen.getByLabelText("Name *");
+      fireEvent.change(nameInput, { target: { value: "John Smith" } });
 
       expect(mockHandleChange).toHaveBeenCalled();
     });
@@ -239,7 +239,7 @@ describe("PatientForm", () => {
       renderWithProviders(<PatientForm />);
 
       const firstConsultationDateInput = screen.getByLabelText(
-        "Primeira Consulta (opcional)",
+        "First Consultation (optional)",
       );
       fireEvent.change(firstConsultationDateInput, {
         target: { value: "2024-01-15" },
@@ -270,7 +270,7 @@ describe("PatientForm", () => {
     it("should render submit button with correct text", () => {
       renderWithProviders(<PatientForm />);
 
-      const submitButton = screen.getByText("Cadastrar Paciente");
+      const submitButton = screen.getByText("Register Patient");
       expect(submitButton).toBeInTheDocument();
       expect(submitButton).toHaveAttribute("type", "submit");
     });
@@ -283,7 +283,7 @@ describe("PatientForm", () => {
 
       renderWithProviders(<PatientForm />);
 
-      const submitButton = screen.getByText("Salvando...");
+      const submitButton = screen.getByText("Saving...");
       expect(submitButton).toBeInTheDocument();
       expect(submitButton).toBeDisabled();
     });
@@ -293,9 +293,9 @@ describe("PatientForm", () => {
     it("should display patient data correctly", () => {
       const patientWithData = {
         ...mockPatient,
-        name: "João Silva",
+        name: "John Smith",
         phone: "(11) 99999-9999",
-        mainComplaint: "Dor de cabeça",
+        mainConcern: "Headache",
       };
 
       (usePatientForm as jest.Mock).mockReturnValue({
@@ -305,9 +305,9 @@ describe("PatientForm", () => {
 
       renderWithProviders(<PatientForm />);
 
-      expect(screen.getByDisplayValue("João Silva")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("John Smith")).toBeInTheDocument();
       expect(screen.getByDisplayValue("(11) 99999-9999")).toBeInTheDocument();
-      expect(screen.getByDisplayValue("Dor de cabeça")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("Headache")).toBeInTheDocument();
     });
   });
 
@@ -341,7 +341,7 @@ describe("PatientForm", () => {
 
       renderWithProviders(<PatientForm />);
 
-      const submitButton = screen.getByText("Cadastrar Paciente");
+      const submitButton = screen.getByText("Register Patient");
       expect(submitButton).toBeDisabled();
     });
 
@@ -354,7 +354,7 @@ describe("PatientForm", () => {
 
       renderWithProviders(<PatientForm />);
 
-      const submitButton = screen.getByText("Cadastrar Paciente");
+      const submitButton = screen.getByText("Register Patient");
       expect(submitButton).not.toBeDisabled();
     });
 
@@ -362,20 +362,18 @@ describe("PatientForm", () => {
       (usePatientForm as jest.Mock).mockReturnValue({
         ...defaultMockReturn,
         validationErrors: {
-          name: "Nome é obrigatório",
-          birthDate: "Data de nascimento é obrigatória",
-          phone: "Telefone deve estar no formato (XX) XXXXX-XXXX",
+          name: "Name is required",
+          birthDate: "Date of birth is required",
+          phone: "Phone must be in format (XX) XXXXX-XXXX",
         },
       });
 
       renderWithProviders(<PatientForm />);
 
-      expect(screen.getByText("Nome é obrigatório")).toBeInTheDocument();
+      expect(screen.getByText("Name is required")).toBeInTheDocument();
+      expect(screen.getByText("Date of birth is required")).toBeInTheDocument();
       expect(
-        screen.getByText("Data de nascimento é obrigatória"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("Telefone deve estar no formato (XX) XXXXX-XXXX"),
+        screen.getByText("Phone must be in format (XX) XXXXX-XXXX"),
       ).toBeInTheDocument();
     });
 
@@ -383,15 +381,15 @@ describe("PatientForm", () => {
       (usePatientForm as jest.Mock).mockReturnValue({
         ...defaultMockReturn,
         validationErrors: {
-          name: "Nome é obrigatório",
-          phone: "Formato inválido",
+          name: "Name is required",
+          phone: "Invalid format",
         },
       });
 
       renderWithProviders(<PatientForm />);
 
-      const nameInput = screen.getByLabelText("Nome *");
-      const phoneInput = screen.getByLabelText("Telefone");
+      const nameInput = screen.getByLabelText("Name *");
+      const phoneInput = screen.getByLabelText("Phone");
 
       expect(nameInput).toHaveClass("border-red-500");
       expect(phoneInput).toHaveClass("border-red-500");
@@ -424,7 +422,7 @@ describe("PatientForm", () => {
 
       renderWithProviders(<PatientForm />);
 
-      const nameInput = screen.getByLabelText("Nome *");
+      const nameInput = screen.getByLabelText("Name *");
       fireEvent.keyDown(nameInput, { key: "Enter" });
 
       // The keyDown event should bubble up to the form
@@ -436,9 +434,7 @@ describe("PatientForm", () => {
     it("should not show success modal by default", () => {
       renderWithProviders(<PatientForm />);
 
-      expect(
-        screen.queryByText("Paciente cadastrado!"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Patient registered!")).not.toBeInTheDocument();
     });
 
     it("should show success modal when showSuccessModal is true", () => {
@@ -449,9 +445,11 @@ describe("PatientForm", () => {
 
       renderWithProviders(<PatientForm />);
 
-      expect(screen.getByText("Paciente cadastrado!")).toBeInTheDocument();
+      expect(screen.getByText("Patient registered!")).toBeInTheDocument();
       expect(
-        screen.getByText("O paciente foi cadastrado com sucesso no sistema."),
+        screen.getByText(
+          "The patient was successfully registered in the system.",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -478,21 +476,21 @@ describe("PatientForm", () => {
         scheduledAttendanceDate: null,
         attendanceCreationFailed: {
           requested: true,
-          message: "Nenhum horário disponível para a data selecionada.",
+          message: "No time slot available for the selected date.",
         },
       });
 
       renderWithProviders(<PatientForm />);
 
-      expect(screen.getByText("Paciente cadastrado!")).toBeInTheDocument();
+      expect(screen.getByText("Patient registered!")).toBeInTheDocument();
       expect(
-        screen.getByText("Não foi possível agendar a primeira consulta."),
+        screen.getByText("Unable to schedule the first consultation."),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("Nenhum horário disponível para a data selecionada."),
+        screen.getByText("No time slot available for the selected date."),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("Você pode agendar manualmente na agenda."),
+        screen.getByText("You can schedule it manually in the schedule."),
       ).toBeInTheDocument();
     });
   });

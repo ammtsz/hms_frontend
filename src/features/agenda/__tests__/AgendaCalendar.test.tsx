@@ -3,6 +3,11 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AgendaCalendar from "../index";
 import { useAgendaCalendar } from "../hooks/useAgendaCalendar";
+import {
+  AGENDA_COLUMN_MESSAGES,
+  AGENDA_COLUMN_TITLES,
+  AGENDA_PAGE_LABELS,
+} from "../utils/agendaFilterConstants";
 import { Priority, AttendanceType } from "@/types/types";
 import { AttendanceStatus } from "@/api/types";
 import type { AgendaDayWindowDays } from "@/stores";
@@ -30,7 +35,7 @@ jest.mock("../components/AgendaColumn", () => {
     return (
       <div className={`border ${isRefreshing ? "opacity-75" : ""}`}>
         <span>{title}</span>
-        {isRefreshing ? <span>Atualizando...</span> : null}
+        {isRefreshing ? <span>{AGENDA_COLUMN_MESSAGES.refreshing}</span> : null}
       </div>
     );
   };
@@ -69,8 +74,8 @@ jest.mock("../components/NewAttendanceFormModal", () => {
 
 // Mock date formatters
 jest.mock("@/utils/dateUtils", () => ({
-  formatDateBR: jest.fn(() => "07/08/2025"),
-  formatDateWithDayOfWeekBR: jest.fn(() => "Quinta-feira, 07/08/2025"),
+  formatDisplayDate: jest.fn(() => "07/08/2025"),
+  formatDisplayDateWithDayOfWeek: jest.fn(() => "Thursday, 08/07/2025"),
 }));
 
 describe("AgendaCalendar - Basic Functionality", () => {
@@ -81,7 +86,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
         patients: [
           {
             id: "1",
-            name: "João Silva",
+            name: "John Doe",
             attendanceId: 1,
             priority: "3" as Priority,
             attendanceType: "assessment" as AttendanceType,
@@ -118,7 +123,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
     error: null,
     refreshAgenda: jest.fn(),
     isRefreshing: false,
-    rangeSummaryText: "Período: 07/08/2025 — 05/09/2025 (30 dias)",
+    rangeSummaryText: "Period: 07/08/2025 — 05/09/2025 (30 days)",
     referenceDate: "2025-08-07",
     rangeEndDate: "2025-09-05",
   };
@@ -131,8 +136,10 @@ describe("AgendaCalendar - Basic Functionality", () => {
   it("should render basic component structure", () => {
     render(<AgendaCalendar />);
 
-    expect(screen.getByText("Agenda de Atendimentos")).toBeInTheDocument();
-    expect(screen.getByText("+ Novo Agendamento")).toBeInTheDocument();
+    expect(screen.getByText(AGENDA_PAGE_LABELS.title)).toBeInTheDocument();
+    expect(
+      screen.getByText(AGENDA_PAGE_LABELS.newAttendanceButton),
+    ).toBeInTheDocument();
   });
 
   it("should render loading state", () => {
@@ -142,8 +149,12 @@ describe("AgendaCalendar - Basic Functionality", () => {
     });
 
     render(<AgendaCalendar />);
-    expect(screen.getByText("Consultas de Avaliação")).toBeInTheDocument();
-    expect(screen.getByText("Fisioterapia / TENS")).toBeInTheDocument();
+    expect(
+      screen.getByText(AGENDA_COLUMN_TITLES.assessment),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(AGENDA_COLUMN_TITLES.physiotherapy),
+    ).toBeInTheDocument();
   });
 
   it("should render error state", () => {
@@ -158,7 +169,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
     // Looking at the HTML, errors might not have a specific text pattern
     // Let's just check the component renders without the loading state
     expect(
-      screen.queryByText("Carregando agendamentos..."),
+      screen.queryByText("Loading attendances..."),
     ).not.toBeInTheDocument();
   });
 
@@ -172,16 +183,24 @@ describe("AgendaCalendar - Basic Functionality", () => {
     });
 
     render(<AgendaCalendar />);
-    expect(screen.getByText("Consultas de Avaliação")).toBeInTheDocument();
-    expect(screen.getByText("Fisioterapia / TENS")).toBeInTheDocument();
+    expect(
+      screen.getByText(AGENDA_COLUMN_TITLES.assessment),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(AGENDA_COLUMN_TITLES.physiotherapy),
+    ).toBeInTheDocument();
   });
 
   it("should render agenda items when data is available", () => {
     render(<AgendaCalendar />);
 
     // Should show section headers
-    expect(screen.getByText("Consultas de Avaliação")).toBeInTheDocument();
-    expect(screen.getByText("Fisioterapia / TENS")).toBeInTheDocument();
+    expect(
+      screen.getByText(AGENDA_COLUMN_TITLES.assessment),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(AGENDA_COLUMN_TITLES.physiotherapy),
+    ).toBeInTheDocument();
   });
 
   it("should render refresh button and call refreshAgenda when clicked", () => {
@@ -194,12 +213,9 @@ describe("AgendaCalendar - Basic Functionality", () => {
     render(<AgendaCalendar />);
 
     // Should render the refresh button
-    const refreshButton = screen.getByRole("button", { name: /atualizar/i });
+    const refreshButton = screen.getByRole("button", { name: /Refresh/i });
     expect(refreshButton).toBeInTheDocument();
-    expect(refreshButton).toHaveAttribute(
-      "title",
-      "Atualizar dados dos agendamentos",
-    );
+    expect(refreshButton).toHaveAttribute("title", "Refresh appointment data");
 
     // Should call refreshAgenda when clicked
     refreshButton.click();
@@ -209,9 +225,9 @@ describe("AgendaCalendar - Basic Functionality", () => {
   it("should render day window select and refresh button in controls area", () => {
     render(<AgendaCalendar />);
 
-    expect(screen.getByLabelText(/^Período$/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Period$/)).toBeInTheDocument();
 
-    const refreshButton = screen.getByRole("button", { name: /atualizar/i });
+    const refreshButton = screen.getByRole("button", { name: /Refresh/i });
     expect(refreshButton).toBeInTheDocument();
     expect(refreshButton).toBeVisible();
     expect(refreshButton).toBeEnabled();
@@ -226,13 +242,13 @@ describe("AgendaCalendar - Basic Functionality", () => {
     render(<AgendaCalendar />);
 
     // Should render the refresh button with loading state
-    const refreshButton = screen.getByRole("button", { name: /atualizando/i });
+    const refreshButton = screen.getByRole("button", { name: /Refreshing/i });
     expect(refreshButton).toBeInTheDocument();
     expect(refreshButton).toBeDisabled();
-    expect(refreshButton).toHaveAttribute("title", "Atualizando...");
+    expect(refreshButton).toHaveAttribute("title", "Refreshing...");
 
-    // Button text should change to "Atualizando..."
-    expect(refreshButton).toHaveTextContent("Atualizando...");
+    // Button text should change to "Refreshing..."
+    expect(refreshButton).toHaveTextContent("Refreshing...");
 
     // Should have loading styles
     expect(refreshButton).toHaveClass("opacity-50", "cursor-not-allowed");
@@ -251,16 +267,13 @@ describe("AgendaCalendar - Basic Functionality", () => {
     render(<AgendaCalendar />);
 
     // Should render the refresh button in normal state
-    const refreshButton = screen.getByRole("button", { name: /atualizar$/i });
+    const refreshButton = screen.getByRole("button", { name: /Refresh$/i });
     expect(refreshButton).toBeInTheDocument();
     expect(refreshButton).toBeEnabled();
-    expect(refreshButton).toHaveAttribute(
-      "title",
-      "Atualizar dados dos agendamentos",
-    );
+    expect(refreshButton).toHaveAttribute("title", "Refresh appointment data");
 
-    // Button text should be "Atualizar"
-    expect(refreshButton).toHaveTextContent("Atualizar");
+    // Button text should be "Refresh"
+    expect(refreshButton).toHaveTextContent("Refresh");
 
     // Should not have loading styles
     expect(refreshButton).not.toHaveClass("opacity-50", "cursor-not-allowed");
@@ -280,18 +293,20 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     render(<AgendaCalendar />);
 
-    // Should show "Atualizando..." text in both columns
-    const refreshingTexts = screen.getAllByText("Atualizando...");
+    // Should show "Refreshing..." text in both columns
+    const refreshingTexts = screen.getAllByText(
+      AGENDA_COLUMN_MESSAGES.refreshing,
+    );
 
     // Should have at least 2 instances - one in each column (plus the button makes 3)
     expect(refreshingTexts.length).toBeGreaterThanOrEqual(2);
 
     // Check that columns have reduced opacity when refreshing
     const assessmentColumnContent = screen
-      .getByText("Consultas de Avaliação")
+      .getByText(AGENDA_COLUMN_TITLES.assessment)
       .closest(".border");
     const physiotherapyColumnContent = screen
-      .getByText("Fisioterapia / TENS")
+      .getByText(AGENDA_COLUMN_TITLES.physiotherapy)
       .closest(".border");
 
     expect(assessmentColumnContent).toHaveClass("opacity-75");
@@ -307,18 +322,20 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     render(<AgendaCalendar />);
 
-    // Should not show overlay "Atualizando..." text in columns
-    const refreshingTexts = screen.queryAllByText("Atualizando...");
+    // Should not show overlay "Refreshing..." text in columns
+    const refreshingTexts = screen.queryAllByText(
+      AGENDA_COLUMN_MESSAGES.refreshing,
+    );
 
     // Should only have the button text, not column overlays
     expect(refreshingTexts.length).toBeLessThanOrEqual(1);
 
     // Check that columns don't have reduced opacity
     const assessmentColumnContent = screen
-      .getByText("Consultas de Avaliação")
+      .getByText(AGENDA_COLUMN_TITLES.assessment)
       .closest(".border");
     const physiotherapyColumnContent = screen
-      .getByText("Fisioterapia / TENS")
+      .getByText(AGENDA_COLUMN_TITLES.physiotherapy)
       .closest(".border");
 
     expect(assessmentColumnContent).not.toHaveClass("opacity-75");
@@ -329,9 +346,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
     it("renders date input with correct value", () => {
       render(<AgendaCalendar />);
 
-      const dateInput = screen.getByLabelText(
-        "Selecione uma data para filtrar",
-      );
+      const dateInput = screen.getByLabelText("Select a date to filter");
       expect(dateInput).toBeInTheDocument();
       expect(dateInput).toHaveValue("2025-08-07");
     });
@@ -345,11 +360,11 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
       render(<AgendaCalendar />);
 
-      const patientInput = screen.getByLabelText("Filtrar por paciente");
+      const patientInput = screen.getByLabelText("Filter by patient");
       expect(patientInput).toBeInTheDocument();
-      fireEvent.change(patientInput, { target: { value: "joao" } });
+      fireEvent.change(patientInput, { target: { value: "john" } });
 
-      expect(mockSetPatientFilter).toHaveBeenCalledWith("joao");
+      expect(mockSetPatientFilter).toHaveBeenCalledWith("john");
     });
 
     it("calls setSelectedDate when date is committed via blur after typing", () => {
@@ -361,9 +376,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
       render(<AgendaCalendar />);
 
-      const dateInput = screen.getByLabelText(
-        "Selecione uma data para filtrar",
-      );
+      const dateInput = screen.getByLabelText("Select a date to filter");
       fireEvent.change(dateInput, { target: { value: "2025-08-15" } });
       fireEvent.keyDown(dateInput, { key: "5" });
       fireEvent.blur(dateInput);
@@ -371,7 +384,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
       expect(mockSetSelectedDate).toHaveBeenCalledWith("2025-08-15");
     });
 
-    it('renders and handles "Hoje" button click', () => {
+    it('renders and handles "Today" button click', () => {
       const mockSetSelectedDate = jest.fn();
       mockUseAgendaCalendar.mockReturnValue({
         ...defaultHookReturn,
@@ -380,7 +393,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
       render(<AgendaCalendar />);
 
-      const todayButton = screen.getByRole("button", { name: /hoje/i });
+      const todayButton = screen.getByRole("button", { name: /Today/i });
       expect(todayButton).toBeInTheDocument();
 
       todayButton.click();
@@ -401,7 +414,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
       render(<AgendaCalendar />);
 
-      const select = screen.getByLabelText(/^Período$/);
+      const select = screen.getByLabelText(/^Period$/);
       fireEvent.change(select, { target: { value: "7" } });
 
       expect(mockSetAgendaDayWindowDays).toHaveBeenCalledWith(7);
@@ -410,13 +423,13 @@ describe("AgendaCalendar - Basic Functionality", () => {
     it("displays range summary from hook", () => {
       mockUseAgendaCalendar.mockReturnValue({
         ...defaultHookReturn,
-        rangeSummaryText: "Período: 07/08/2025 — 13/08/2025 (7 dias)",
+        rangeSummaryText: "Period: 07/08/2025 — 13/08/2025 (7 days)",
       });
 
       render(<AgendaCalendar />);
 
       expect(
-        screen.getByText("Período: 07/08/2025 — 13/08/2025 (7 dias)"),
+        screen.getByText("Period: 07/08/2025 — 13/08/2025 (7 days)"),
       ).toBeInTheDocument();
     });
 
@@ -432,14 +445,14 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
       fireEvent.click(
         screen.getByRole("button", {
-          name: /Selecionar todos os status do atendimento/i,
+          name: /Select all attendance statuses/i,
         }),
       );
       expect(mockSetAgendaStatusFilters.mock.calls[0]?.[0]).toHaveLength(6);
 
       fireEvent.click(
         screen.getByRole("button", {
-          name: /Limpar seleção de status do atendimento/i,
+          name: /Clear attendance status selection/i,
         }),
       );
       expect(mockSetAgendaStatusFilters.mock.calls[1]?.[0]).toEqual([]);
@@ -457,7 +470,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
       // First, it should show the loading fallback
       expect(
-        screen.getByText("Carregando formulário de agendamento..."),
+        screen.getByText("Loading scheduling form..."),
       ).toBeInTheDocument();
     });
 
@@ -470,7 +483,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
       render(<AgendaCalendar />);
 
       expect(
-        screen.queryByText("Carregando formulário de agendamento..."),
+        screen.queryByText("Loading scheduling form..."),
       ).not.toBeInTheDocument();
     });
 
@@ -483,7 +496,9 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
       render(<AgendaCalendar />);
 
-      const newAttendanceButton = screen.getByText("+ Novo Agendamento");
+      const newAttendanceButton = screen.getByText(
+        AGENDA_PAGE_LABELS.newAttendanceButton,
+      );
       newAttendanceButton.click();
 
       expect(mockSetShowNewAttendance).toHaveBeenCalledWith(true);
@@ -500,7 +515,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
             patients: [
               {
                 id: "1",
-                name: "Maria Santos",
+                name: "Emily Williams",
                 attendanceId: 2,
                 priority: "2" as Priority,
                 // No attendanceType - should default to 'physiotherapy'
@@ -518,7 +533,9 @@ describe("AgendaCalendar - Basic Functionality", () => {
       render(<AgendaCalendar />);
 
       // Should render the physiotherapy column with the patient
-      expect(screen.getByText("Fisioterapia / TENS")).toBeInTheDocument();
+      expect(
+        screen.getByText(AGENDA_COLUMN_TITLES.physiotherapy),
+      ).toBeInTheDocument();
     });
   });
 

@@ -15,15 +15,19 @@ export const LazyCurrentTreatmentCard = React.lazy(() =>
 );
 
 export const LazyAttendanceHistoryCard = React.lazy(() =>
-  import("@/features/patients/detail/AttendanceHistory/AttendanceHistoryCard").then((module) => ({
-    default: module.AttendanceHistoryCard,
-  })),
+  import("@/features/patients/detail/AttendanceHistory/AttendanceHistoryCard").then(
+    (module) => ({
+      default: module.AttendanceHistoryCard,
+    }),
+  ),
 );
 
 export const LazyScheduledAttendancesCard = React.lazy(() =>
-  import("@/features/patients/detail/ScheduledAttendances/ScheduledAttendancesCard").then((module) => ({
-    default: module.ScheduledAttendancesCard,
-  })),
+  import("@/features/patients/detail/ScheduledAttendances/ScheduledAttendancesCard").then(
+    (module) => ({
+      default: module.ScheduledAttendancesCard,
+    }),
+  ),
 );
 
 export const LazyPatientNotesCard = React.lazy(() =>
@@ -46,9 +50,7 @@ interface LazyComponentWrapperProps {
 
 export function LazyComponentWrapper({
   children,
-  fallback = (
-    <LoadingFallback size="medium" message="Carregando componente..." />
-  ),
+  fallback = <LoadingFallback size="medium" message="Loading component..." />,
 }: LazyComponentWrapperProps) {
   return <React.Suspense fallback={fallback}>{children}</React.Suspense>;
 }

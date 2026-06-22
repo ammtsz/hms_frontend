@@ -5,21 +5,30 @@ export interface PostTreatmentFooterStatus {
   message: string;
 }
 
+export const POST_TREATMENT_FOOTER_MESSAGES = {
+  ready: "✓ Ready to register",
+  selectTreatment: "Select at least one treatment",
+  justifyUnperformed: "Please justify all unperformed treatments",
+} as const;
+
 export function getPostTreatmentFooterStatus(
   canSubmit: boolean,
   uncheckedWithMissingReason: boolean,
 ): PostTreatmentFooterStatus {
   if (canSubmit && !uncheckedWithMissingReason) {
-    return { variant: "ready", message: "✓ Pronto para registrar" };
+    return {
+      variant: "ready",
+      message: POST_TREATMENT_FOOTER_MESSAGES.ready,
+    };
   }
   if (!canSubmit) {
     return {
       variant: "warning",
-      message: "Marque ao menos um tratamento",
+      message: POST_TREATMENT_FOOTER_MESSAGES.selectTreatment,
     };
   }
   return {
     variant: "warning",
-    message: "Justifique todos os tratamentos não realizados",
+    message: POST_TREATMENT_FOOTER_MESSAGES.justifyUnperformed,
   };
 }

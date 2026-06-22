@@ -13,11 +13,12 @@ export const AbsencesSummary: React.FC<AbsencesSummaryProps> = ({ count }) => {
           <AlertTriangle className="h-5 w-5 text-yellow-400" />
         </div>
         <div className="ml-3">
-          <h3 className="text-sm font-medium text-yellow-800">Faltas</h3>
+          <h3 className="text-sm font-medium text-yellow-800">Absences</h3>
           <div className="mt-2 text-sm text-yellow-700">
             <p>
-              Há {count} paciente(s) que faltaram aos atendimentos agendados.
-              Justifique as faltas para finalizar o dia.
+              There {count === 1 ? "is" : "are"} {count} patient(s) who missed
+              scheduled attendances. Please justify absences to complete the
+              day.
             </p>
           </div>
         </div>

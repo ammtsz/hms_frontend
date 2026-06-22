@@ -1,12 +1,5 @@
 import { Holiday } from '@/types/holiday';
-
-/**
- * Simple date formatter - converts YYYY-MM-DD to DD/MM/YYYY
- */
-function formatDateToDDMMYYYY(dateString: string): string {
-  const [year, month, day] = dateString.split('-');
-  return `${day}/${month}/${year}`;
-}
+import { formatDisplayDate } from '@/utils/dateUtils';
 
 export interface HolidayGroup {
   groupId: string | null;
@@ -56,9 +49,9 @@ export function groupHolidaysByPeriod(holidays: Holiday[]): HolidayGroup[] {
     const lastDate = sortedHolidays[sortedHolidays.length - 1].holidayDate;
     const isPeriod = sortedHolidays.length > 1;
     
-    const dateRange = isPeriod 
-      ? `${formatDateToDDMMYYYY(firstDate)} a ${formatDateToDDMMYYYY(lastDate)}`
-      : formatDateToDDMMYYYY(firstDate);
+    const dateRange = isPeriod
+      ? `${formatDisplayDate(firstDate)} to ${formatDisplayDate(lastDate)}`
+      : formatDisplayDate(firstDate);
       
     return {
       ...group,

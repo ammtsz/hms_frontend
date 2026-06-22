@@ -6,6 +6,7 @@ import { useSetCurrentUser } from "@/api/query/hooks/useAuthQueries";
 import { loginAction } from "@/app/actions/auth.actions";
 import type { LoginFormData } from "@/types/auth";
 import { getSafeRedirectPath } from "@/utils/authRedirect";
+import { LOGIN_FORM_LABELS } from "@/utils/authFormLabels";
 import { Button, Field, Input } from "@/components/ui";
 
 /**
@@ -39,7 +40,7 @@ export function LoginForm() {
 
     // Validate form
     if (!formData.email || !formData.password) {
-      setError("Por favor, preencha todos os campos");
+      setError(LOGIN_FORM_LABELS.fillAllFields);
       return;
     }
 
@@ -62,7 +63,7 @@ export function LoginForm() {
         router.refresh(); // Refresh server components to get new user data
       } else {
         // Show error message
-        setError(result.error || "Erro ao fazer login");
+        setError(result.error || LOGIN_FORM_LABELS.genericLoginError);
       }
     });
   };
@@ -72,14 +73,15 @@ export function LoginForm() {
       <div className="space-y-6 rounded-xl border border-gray-200 bg-white px-4 py-8 shadow-md sm:px-8 sm:py-10 md:px-10">
         {/* Header */}
         <div className="text-center mb-8">
-          <h2 className="text-2xl text-gray-700">Clínica</h2>
-          <h1 className="text-3xl text-gray-800">HMS</h1>
+          <h1 className="text-2xl text-gray-700">
+            {LOGIN_FORM_LABELS.clinicHeading}
+          </h1>
         </div>
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           {/* Email Field */}
-          <Field label="Email" htmlFor="email">
+          <Field label={LOGIN_FORM_LABELS.emailLabel} htmlFor="email">
             <Input
               id="email"
               name="email"
@@ -89,12 +91,12 @@ export function LoginForm() {
               value={formData.email}
               onChange={handleChange}
               disabled={isPending}
-              placeholder="seu@email.com"
+              placeholder={LOGIN_FORM_LABELS.emailPlaceholder}
             />
           </Field>
 
           {/* Password Field */}
-          <Field label="Senha" htmlFor="password">
+          <Field label={LOGIN_FORM_LABELS.passwordLabel} htmlFor="password">
             <Input
               id="password"
               name="password"
@@ -120,10 +122,10 @@ export function LoginForm() {
             type="submit"
             disabled={isPending}
             isLoading={isPending}
-            loadingText="Entrando..."
+            loadingText={LOGIN_FORM_LABELS.signingInLoading}
             className="w-full bg-blue-800 hover:bg-blue-900"
           >
-            Entrar
+            {LOGIN_FORM_LABELS.signInButton}
           </Button>
         </form>
 
@@ -131,8 +133,9 @@ export function LoginForm() {
         {process.env.NODE_ENV === "development" && (
           <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
             <p className="text-xs text-blue-800 text-center">
-              <strong>Desenvolvimento:</strong> use{" "}
-              <code>node scripts/create-admin.js --dev</code> para criar o admin
+              <strong>Development:</strong> use{" "}
+              <code>node scripts/create-admin.js --dev</code> to create the
+              admin
             </p>
           </div>
         )}

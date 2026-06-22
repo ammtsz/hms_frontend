@@ -178,14 +178,14 @@ describe("useDragAndDrop", () => {
   const mockPatients = [
     {
       id: "1",
-      name: "João Silva",
+      name: "John Smith",
       status: "A" as const,
       phone: "11999999999",
       priority: "1" as const,
     },
     {
       id: "2",
-      name: "Maria Santos",
+      name: "Emily Williams",
       status: "A" as const,
       phone: "11988888888",
       priority: "2" as const,
@@ -200,7 +200,7 @@ describe("useDragAndDrop", () => {
         {
           patientId: 1,
           attendanceId: 101,
-          name: "João Silva",
+          name: "John Smith",
           priority: "1" as const,
         },
       ],
@@ -213,7 +213,7 @@ describe("useDragAndDrop", () => {
         {
           patientId: 2,
           attendanceId: 102,
-          name: "Maria Santos",
+          name: "Emily Williams",
           priority: "2" as const,
         },
       ],
@@ -366,7 +366,7 @@ describe("useDragAndDrop", () => {
       );
       expect(assessmentCheckedIn).toHaveLength(1);
       expect(assessmentCheckedIn[0].patientId).toBe(1);
-      expect(assessmentCheckedIn[0].name).toBe("João Silva");
+      expect(assessmentCheckedIn[0].name).toBe("John Smith");
 
       const physiotherapyCheckedIn = result.current.getPatients(
         "physiotherapy",

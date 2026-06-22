@@ -5,8 +5,8 @@ import type {
   IAttendanceStatusDetailWithType,
 } from "../../../utils/attendanceDataUtils";
 
-/** Grouped attendance with locais (body location) counts for treatments. Used in ConfirmationStep. */
-export interface GroupedAttendanceDisplayWithLocais extends GroupedAttendanceDisplay {
+/** Grouped attendance with body location counts for treatments. Used in ConfirmationStep. */
+export interface GroupedAttendanceDisplayWithBodyLocation extends GroupedAttendanceDisplay {
   physiotherapyCount?: number;
   tensCount?: number;
 }
@@ -140,24 +140,24 @@ export function getAbsenceCardLabelParts(card: AbsenceCard): string[] {
   const parts: string[] = [];
   if (card.physiotherapyCount > 0) {
     parts.push(
-      `${getAttendanceTypeLabel("physiotherapy")} (${card.physiotherapyCount} ${card.physiotherapyCount === 1 ? "local" : "locais"})`,
+      `${getAttendanceTypeLabel("physiotherapy")} (${card.physiotherapyCount} ${card.physiotherapyCount === 1 ? "location" : "locations"})`,
     );
   }
   if (card.tensCount > 0) {
     parts.push(
-      `${getAttendanceTypeLabel("tens")} (${card.tensCount} ${card.tensCount === 1 ? "local" : "locais"})`,
+      `${getAttendanceTypeLabel("tens")} (${card.tensCount} ${card.tensCount === 1 ? "location" : "locations"})`,
     );
   }
   return parts;
 }
 
 /**
- * Groups attendances with locais (body location) counts for treatment types.
- * Each attendance = 1 local. Used in ConfirmationStep for "Fisioterapia - 1 local" format.
+ * Groups attendances with body location counts for treatment types.
+ * Each attendance = 1 local. Used in ConfirmationStep for "Physiotherapy - 1 site" format.
  */
 export function groupAttendancesForDisplayWithBodyLocation(
   attendances: IAttendanceStatusDetailWithType[],
-): GroupedAttendanceDisplayWithLocais[] {
+): GroupedAttendanceDisplayWithBodyLocation[] {
   const patientGroups = new Map<
     string,
     {
@@ -186,13 +186,14 @@ export function groupAttendancesForDisplayWithBodyLocation(
         patientName: attendance.name,
         patientId: attendance.patientId,
         assessmentCount: attendance.attendanceType === "assessment" ? 1 : 0,
-        physiotherapyCount: attendance.attendanceType === "physiotherapy" ? 1 : 0,
+        physiotherapyCount:
+          attendance.attendanceType === "physiotherapy" ? 1 : 0,
         tensCount: attendance.attendanceType === "tens" ? 1 : 0,
       });
     }
   });
 
-  const result: GroupedAttendanceDisplayWithLocais[] = [];
+  const result: GroupedAttendanceDisplayWithBodyLocation[] = [];
 
   patientGroups.forEach((group) => {
     const hasTreatments = group.physiotherapyCount > 0 || group.tensCount > 0;
@@ -207,18 +208,18 @@ export function groupAttendancesForDisplayWithBodyLocation(
       const treatmentParts: string[] = [];
       if (group.physiotherapyCount > 0) {
         treatmentParts.push(
-          `${getAttendanceTypeLabel("physiotherapy")} - ${group.physiotherapyCount} ${group.physiotherapyCount === 1 ? "local" : "locais"}`,
+          `${getAttendanceTypeLabel("physiotherapy")} - ${group.physiotherapyCount} ${group.physiotherapyCount === 1 ? "location" : "locations"}`,
         );
       }
       if (group.tensCount > 0) {
         treatmentParts.push(
-          `${getAttendanceTypeLabel("tens")} - ${group.tensCount} ${group.tensCount === 1 ? "local" : "locais"}`,
+          `${getAttendanceTypeLabel("tens")} - ${group.tensCount} ${group.tensCount === 1 ? "location" : "locations"}`,
         );
       }
       result.push({
         patientName: group.patientName,
         patientId: group.patientId,
-        label: treatmentParts.join(" e "),
+        label: treatmentParts.join(" and "),
         physiotherapyCount: group.physiotherapyCount,
         tensCount: group.tensCount,
       });
@@ -232,18 +233,18 @@ export function groupAttendancesForDisplayWithBodyLocation(
       const treatmentParts: string[] = [];
       if (group.physiotherapyCount > 0) {
         treatmentParts.push(
-          `${getAttendanceTypeLabel("physiotherapy")} - ${group.physiotherapyCount} ${group.physiotherapyCount === 1 ? "local" : "locais"}`,
+          `${getAttendanceTypeLabel("physiotherapy")} - ${group.physiotherapyCount} ${group.physiotherapyCount === 1 ? "location" : "locations"}`,
         );
       }
       if (group.tensCount > 0) {
         treatmentParts.push(
-          `${getAttendanceTypeLabel("tens")} - ${group.tensCount} ${group.tensCount === 1 ? "local" : "locais"}`,
+          `${getAttendanceTypeLabel("tens")} - ${group.tensCount} ${group.tensCount === 1 ? "location" : "locations"}`,
         );
       }
       result.push({
         patientName: group.patientName,
         patientId: group.patientId,
-        label: treatmentParts.join(" e "),
+        label: treatmentParts.join(" and "),
         physiotherapyCount: group.physiotherapyCount,
         tensCount: group.tensCount,
       });

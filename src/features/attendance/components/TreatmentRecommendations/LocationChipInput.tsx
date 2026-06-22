@@ -165,7 +165,7 @@ function LocationChipInput({
                   onClick={() => handleRemoveLocation(location)}
                   disabled={disabled}
                   className="inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded p-0 text-gray-600 hover:bg-gray-400/60 hover:text-gray-900 disabled:cursor-not-allowed disabled:opacity-40"
-                  aria-label={`Remover ${location}`}
+                  aria-label={`Remove ${location}`}
                 >
                   <X size={10} aria-hidden />
                 </button>
@@ -190,7 +190,7 @@ function LocationChipInput({
             onFocus={() => setShowDropdown(true)}
             onKeyDown={handleKeyDown}
             disabled={disabled || isCreating}
-            placeholder={"Buscar ou criar..."}
+            placeholder={"Search or create..."}
             className={`min-h-8 min-w-[120px] border-0 bg-transparent px-0 py-0 text-sm shadow-none focus:border-transparent focus:ring-0 ${
               hasSingleSelection ? "pr-7" : ""
             }`}
@@ -209,8 +209,8 @@ function LocationChipInput({
               disabled={disabled || isCreating}
               tone="danger"
               className="absolute right-1 top-1/2 min-h-6 min-w-6 -translate-y-1/2 p-0"
-              aria-label="Limpar"
-              title="Limpar"
+              aria-label="Reset"
+              title="Reset"
             >
               <X size={14} className="mr-2 text-red-500" />
             </IconButton>
@@ -266,11 +266,9 @@ function LocationChipInput({
               onMouseEnter={() => setHighlightedIndex(filteredLocations.length)}
             >
               {isCreating ? (
-                <span>Criando...</span>
+                <span>Creating...</span>
               ) : (
-                <span>
-                  ✨ Criar &ldquo;{inputValue.trim()}&rdquo; e adicionar
-                </span>
+                <span>✨ Create &ldquo;{inputValue.trim()}&rdquo; and add</span>
               )}
             </Button>
           )}

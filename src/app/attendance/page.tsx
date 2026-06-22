@@ -44,23 +44,23 @@ export default function AttendancePage() {
       <Card>
         <div className="p-4 border-b border-gray-100">
           <h2 className="text-xl font-semibold text-gray-800">
-            Quadro de Atendimentos
+            Attendance Board
           </h2>
           <p className="mt-1 text-sm text-gray-600">
-            Gerencie o fluxo de atendimentos arrastando e soltando o nome dos
-            pacientes. Use o botão{" "}
+            Manage attendance flow by dragging and dropping patient names. Use
+            the{" "}
             <SettingsIcon
               className="inline h-4 w-4 shrink-0 align-text-bottom"
               aria-hidden
             />{" "}
-            de configurações para gerenciar os agendamentos.
+            settings button to manage appointments.
           </p>
         </div>
         <div className="p-4">
           <Suspense
             fallback={
               <LoadingFallback
-                message="Carregando quadro de atendimentos..."
+                message="Loading attendance board..."
                 size="large"
               />
             }

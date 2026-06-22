@@ -43,7 +43,7 @@ jest.mock("../TreatmentRecommendationsSection", () => {
 
 describe("TreatmentRecommendationsTab", () => {
   const mockFormData = {
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     patientStatus: "T" as const,
     startDate: "2024-01-01",
     returnWeeks: 4,
@@ -70,7 +70,7 @@ describe("TreatmentRecommendationsTab", () => {
         startDate: "2024-01-01",
         treatments: [
           {
-            locations: ["Cabeça"],
+            locations: ["Head"],
             color: "blue",
             duration: 10,
             quantity: 3,
@@ -162,7 +162,7 @@ describe("TreatmentRecommendationsTab", () => {
     );
 
     expect(
-      screen.getByText("Retorno da Consulta de Avaliação"),
+      screen.getByText("Assessment Consultation Return"),
     ).toBeInTheDocument();
   });
 
@@ -177,7 +177,7 @@ describe("TreatmentRecommendationsTab", () => {
     );
 
     const checkbox = screen.getByRole("checkbox", {
-      name: /Agendar retorno para quando o tratamento terminar/i,
+      name: /Schedule a return when the treatment ends/i,
     });
     expect(checkbox).toBeInTheDocument();
     expect(checkbox).not.toBeChecked();
@@ -195,7 +195,7 @@ describe("TreatmentRecommendationsTab", () => {
     );
 
     const checkbox = screen.getByRole("checkbox", {
-      name: /Agendar retorno para quando o tratamento terminar/i,
+      name: /Schedule a return when the treatment ends/i,
     });
 
     await user.click(checkbox);
@@ -207,7 +207,7 @@ describe("TreatmentRecommendationsTab", () => {
         startDate: "2024-01-01",
         treatments: [
           {
-            locations: ["Cabeça"],
+            locations: ["Head"],
             color: "blue",
             duration: 10,
             quantity: 3,
@@ -230,7 +230,7 @@ describe("TreatmentRecommendationsTab", () => {
     );
 
     const input = screen.getByRole("spinbutton", {
-      name: /semanas para retorno/i,
+      name: /weeks until return/i,
     }) as HTMLInputElement;
 
     // Change value directly instead of clear + type to avoid multiple onChange calls
@@ -259,7 +259,7 @@ describe("TreatmentRecommendationsTab", () => {
     );
 
     expect(
-      screen.getByText(/ao selecionar "Alta do tratamento"/i),
+      screen.getByText(/When selecting "Discharged"/i),
     ).toBeInTheDocument();
   });
 
@@ -282,7 +282,9 @@ describe("TreatmentRecommendationsTab", () => {
     );
 
     expect(
-      screen.getByText(/retorno será agendado para.*após o último tratamento/i),
+      screen.getByText(
+        /return on the last day of treatment|after treatment ends/i,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -298,7 +300,7 @@ describe("TreatmentRecommendationsTab", () => {
 
     expect(
       screen.getByText(
-        /consulta será agendada para 4 semana\(s\) após esta consulta/i,
+        /4 week(s) after this consultation|follow-up appointment will be scheduled for 4 week/i,
       ),
     ).toBeInTheDocument();
   });
@@ -314,7 +316,7 @@ describe("TreatmentRecommendationsTab", () => {
     );
 
     const container = screen
-      .getByText("Retorno da Consulta de Avaliação")
+      .getByText("Assessment Consultation Return")
       .closest("div")
       ?.closest("div")?.parentElement;
     expect(container).toHaveClass("space-y-6");

@@ -146,7 +146,7 @@ export const ActiveTreatments: React.FC<ActiveTreatmentsProps> = ({
   return (
     <div className="mb-6 mt-10">
       <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-        Progresso dos Tratamentos Ativos
+        Active Treatments Progress
         {treatmentsLoading && <LoadingSpinner size="small" />}
       </h3>
 
@@ -166,7 +166,7 @@ export const ActiveTreatments: React.FC<ActiveTreatmentsProps> = ({
             ) : (
               <ChevronRight className="w-4 h-4 flex-shrink-0" />
             )}
-            Fisioterapia
+            Physiotherapy
             <span className="text-xs text-gray-500">
               ({groupedPhysiotherapy.length})
             </span>
@@ -203,7 +203,7 @@ export const ActiveTreatments: React.FC<ActiveTreatmentsProps> = ({
                   onClick={showMorePhysiotherapy}
                   totalItems={totalPhysiotherapy}
                   visibleCount={visiblePhysiotherapyCount}
-                  itemLabel="sessões"
+                  itemLabel="sessions"
                   disabled={treatmentsLoading}
                 />
               )}
@@ -263,7 +263,7 @@ export const ActiveTreatments: React.FC<ActiveTreatmentsProps> = ({
                   onClick={showMoreTens}
                   totalItems={totalTens}
                   visibleCount={visibleTensCount}
-                  itemLabel="sessões"
+                  itemLabel="sessions"
                   disabled={treatmentsLoading}
                 />
               )}

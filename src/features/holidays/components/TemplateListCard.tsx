@@ -1,23 +1,29 @@
 "use client";
 
 import React from "react";
-import { ChevronDown, ChevronRight, Calendar, Edit, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Calendar,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import { HolidayTemplate } from "@/types/holidayTemplate";
 import { Button, IconButton } from "@/components/ui";
 
 const MONTHS = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export interface TemplateListCardProps {
@@ -64,24 +70,24 @@ export function TemplateListCard({
             <IconButton
               onClick={() => onApply(template)}
               tone="success"
-              title="Aplicar modelo"
-              aria-label="Aplicar modelo"
+              title="Apply template"
+              aria-label="Apply template"
             >
               <Calendar className="h-4 w-4" />
             </IconButton>
             <IconButton
               onClick={() => onEdit(template)}
               tone="primary"
-              title="Editar modelo"
-              aria-label="Editar modelo"
+              title="Edit template"
+              aria-label="Edit template"
             >
               <Edit className="h-4 w-4" />
             </IconButton>
             <IconButton
               onClick={() => onDelete(template.id)}
               tone="danger"
-              title="Excluir modelo"
-              aria-label="Excluir modelo"
+              title="Delete template"
+              aria-label="Delete template"
             >
               <Trash2 className="h-4 w-4" />
             </IconButton>
@@ -96,7 +102,7 @@ export function TemplateListCard({
 
         <p className="mt-2 text-sm text-gray-600">
           <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-            {template.holidays.length} feriado
+            {template.holidays.length} holiday
             {template.holidays.length !== 1 ? "s" : ""}
           </span>
         </p>
@@ -105,7 +111,7 @@ export function TemplateListCard({
       {isExpanded ? (
         <div className="border-t border-gray-200 bg-gray-50 p-4">
           <h4 className="mb-3 text-sm font-medium text-gray-700">
-            Feriados neste modelo:
+            Holidays in this template:
           </h4>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {[...template.holidays]

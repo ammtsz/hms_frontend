@@ -5,9 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const tabs = [
-  { href: "/attendance", label: "Atendimentos" },
-  { href: "/agenda", label: "Agenda" },
-  { href: "/patients", label: "Pacientes" },
+  { href: "/attendance", label: "Attendances" },
+  { href: "/agenda", label: "Schedule" },
+  { href: "/patients", label: "Patients" },
 ];
 
 export default function TabNav() {

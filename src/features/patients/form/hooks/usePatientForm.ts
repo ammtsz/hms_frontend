@@ -35,7 +35,7 @@ const initialPatient: Omit<Patient, "id"> = {
   priority: "3" as Priority,
   status: "N" as Status,
   birthDate: "",
-  mainComplaint: "",
+  mainConcern: "",
   startDate: formatDateClinic(), // YYYY-MM-DD string format
   dischargeDate: null,
   nextAttendanceDates: [],
@@ -70,20 +70,20 @@ export function usePatientForm() {
 
     // Required field validation
     if (!patient.name.trim()) {
-      errors.name = "Nome é obrigatório";
+      errors.name = "Name is required";
     }
 
     if (!patient.birthDate) {
-      errors.birthDate = "Data de nascimento é obrigatória";
+      errors.birthDate = "Birth date is required";
     } else if (patient.birthDate > formatDateClinic()) {
-      errors.birthDate = "Data de nascimento não pode ser no futuro";
+      errors.birthDate = "Birth date cannot be in the future";
     }
 
     // Phone format validation (optional field, but must be valid if provided)
     if (patient.phone.trim()) {
       const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
       if (!phoneRegex.test(patient.phone.trim())) {
-        errors.phone = "Telefone deve estar no formato (XX) XXXXX-XXXX ou (XX) XXXX-XXXX";
+        errors.phone = "Phone must be in format (XX) XXXXX-XXXX or (XX) XXXX-XXXX";
       }
     }
 
@@ -206,7 +206,7 @@ export function usePatientForm() {
     if (!isValid) {
       // Show first validation error
       const firstError = Object.values(errors)[0];
-      alert(`Erro de validação: ${firstError}`);
+      alert(`Validation error: ${firstError}`);
       return;
     }
 
@@ -218,7 +218,7 @@ export function usePatientForm() {
         setValidationErrors((prev) => ({
           ...prev,
           firstConsultationDate:
-            "Dia já finalizado. Não é mais possível agendar atendimentos para este dia.",
+            "Day already finalized. It is no longer possible to schedule appointments for this day.",
         }));
         return;
       }
@@ -247,9 +247,9 @@ export function usePatientForm() {
         patientCreateData.birthDate = patient.birthDate; // Already in YYYY-MM-DD format
       }
 
-      // Add main complaint only if it's provided and not empty
-      if (patient.mainComplaint && patient.mainComplaint.trim()) {
-        patientCreateData.mainComplaint = patient.mainComplaint.trim();
+      // Add main concern only if it's provided and not empty
+      if (patient.mainConcern && patient.mainConcern.trim()) {
+        patientCreateData.mainConcern = patient.mainConcern.trim();
       }
       
       try {
@@ -271,21 +271,21 @@ export function usePatientForm() {
                 type: "assessment" as AttendanceType,
                 scheduledDate: attendanceDate,
                 scheduledTime: time,
-                notes: "Agendamento criado durante cadastro do paciente"
+                notes: "Appointment created during patient registration"
               });
               attendanceCreated = true;
               setScheduledAttendanceDate(attendanceDate);
               setAttendanceCreationFailed(null);
             } catch (slotError) {
               lastSlotError = slotError instanceof Error ? slotError : new Error(String(slotError));
-              console.log(`Erro no slot ${time}:`, slotError);
+              console.log(`Error in slot ${time}:`, slotError);
             }
           }
 
           if (!attendanceCreated) {
             const userMessage =
               lastSlotError?.message ||
-              "Nenhum horário disponível para a data selecionada.";
+              "No time slot available for the selected date.";
             setScheduledAttendanceDate(null);
             setAttendanceCreationFailed({
               requested: true,
@@ -310,14 +310,14 @@ export function usePatientForm() {
         setShowSuccessModal(true);
       } catch (error) {
         console.error("Error creating patient:", error);
-        alert(`Erro ao cadastrar paciente: ${(error as Error).message}`);
+        alert(`Error creating patient: ${(error as Error).message}`);
       }
     } catch (error) {
       console.error("Error creating patient:", error);
       if (error instanceof Error) {
-        alert(`Erro inesperado ao cadastrar paciente: ${error.message}`);
+        alert(`Unexpected error creating patient: ${error.message}`);
       } else {
-        alert("Erro inesperado ao cadastrar paciente. Tente novamente.");
+        alert("Unexpected error creating patient. Please try again.");
       }
     } finally {
       setIsLoading(false);

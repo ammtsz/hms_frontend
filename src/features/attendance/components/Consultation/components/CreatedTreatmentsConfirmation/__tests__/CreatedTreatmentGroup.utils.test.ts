@@ -1,6 +1,4 @@
-import {
-  groupCreatedTreatmentsForDisplay,
-} from "../CreatedTreatmentGroup.utils";
+import { groupCreatedTreatmentsForDisplay } from "../CreatedTreatmentGroup.utils";
 import type { CreatedTreatment } from "../../CreatedTreatmentsConfirmation";
 
 function createSession(
@@ -16,7 +14,7 @@ function createSession(
     completedSessions: 0,
     status: "scheduled",
     durationMinutes: 3,
-    color: "Azul",
+    color: "Blue",
     notes: "",
     createdDate: "2025-09-16",
     createdTime: "10:00:00",
@@ -29,43 +27,43 @@ function createSession(
 describe("groupCreatedTreatmentsForDisplay", () => {
   it("groups sessions that differ only by body location", () => {
     const sessions: CreatedTreatment[] = [
-      createSession({ id: 1, bodyLocation: "Cabeça" }),
-      createSession({ id: 2, bodyLocation: "Pescoço" }),
-      createSession({ id: 3, bodyLocation: "Ombro" }),
+      createSession({ id: 1, bodyLocation: "Head" }),
+      createSession({ id: 2, bodyLocation: "Neck" }),
+      createSession({ id: 3, bodyLocation: "Shoulder" }),
     ];
 
     const result = groupCreatedTreatmentsForDisplay(sessions);
 
     expect(result).toHaveLength(1);
     expect(result[0].treatments).toHaveLength(3);
-    expect(result[0].bodyLocations).toEqual(["Cabeça", "Ombro", "Pescoço"]);
-    expect(result[0].representativeSession.bodyLocation).toBe("Cabeça");
-    expect(result[0].representativeSession.color).toBe("Azul");
+    expect(result[0].bodyLocations).toEqual(["Head", "Neck", "Shoulder"]);
+    expect(result[0].representativeSession.bodyLocation).toBe("Head");
+    expect(result[0].representativeSession.color).toBe("Blue");
     expect(result[0].representativeSession.durationMinutes).toBe(3);
     expect(result[0].representativeSession.plannedSessions).toBe(5);
   });
 
   it("returns separate groups when color or duration or plannedSessions or startDate differ", () => {
     const sessions: CreatedTreatment[] = [
-      createSession({ id: 1, bodyLocation: "Cabeça", color: "Azul" }),
-      createSession({ id: 2, bodyLocation: "Pescoço", color: "Vermelho" }),
+      createSession({ id: 1, bodyLocation: "Head", color: "Blue" }),
+      createSession({ id: 2, bodyLocation: "Neck", color: "Red" }),
       createSession({
         id: 3,
-        bodyLocation: "Ombro",
-        color: "Azul",
+        bodyLocation: "Shoulder",
+        color: "Blue",
         durationMinutes: 5,
       }),
       createSession({
         id: 4,
-        bodyLocation: "Coluna",
-        color: "Azul",
+        bodyLocation: "Back",
+        color: "Blue",
         durationMinutes: 3,
         plannedSessions: 3,
       }),
       createSession({
         id: 5,
-        bodyLocation: "Costas",
-        color: "Azul",
+        bodyLocation: "Lumbar",
+        color: "Blue",
         durationMinutes: 3,
         plannedSessions: 5,
         startDate: "2025-09-23",
@@ -75,29 +73,29 @@ describe("groupCreatedTreatmentsForDisplay", () => {
     const result = groupCreatedTreatmentsForDisplay(sessions);
 
     expect(result).toHaveLength(5);
-    // Group 1: Azul, 3, 5, 2025-09-16 -> Cabeça
-    expect(result[0].bodyLocations).toEqual(["Cabeça"]);
-    // Group 2: Vermelho, 3, 5, 2025-09-16 -> Pescoço
-    expect(result[1].bodyLocations).toEqual(["Pescoço"]);
-    // Group 3: Azul, 5, 5, 2025-09-16 -> Ombro
-    expect(result[2].bodyLocations).toEqual(["Ombro"]);
-    // Group 4: Azul, 3, 3, 2025-09-16 -> Coluna
-    expect(result[3].bodyLocations).toEqual(["Coluna"]);
-    // Group 5: Azul, 3, 5, 2025-09-23 -> Costas (different startDate)
-    expect(result[4].bodyLocations).toEqual(["Costas"]);
+    // Group 1: Blue, 3, 5, 2025-09-16 -> Head
+    expect(result[0].bodyLocations).toEqual(["Head"]);
+    // Group 2: Red, 3, 5, 2025-09-16 -> Neck
+    expect(result[1].bodyLocations).toEqual(["Neck"]);
+    // Group 3: Blue, 5, 5, 2025-09-16 -> Shoulder
+    expect(result[2].bodyLocations).toEqual(["Shoulder"]);
+    // Group 4: Blue, 3, 3, 2025-09-16 -> Back
+    expect(result[3].bodyLocations).toEqual(["Back"]);
+    // Group 5: Blue, 3, 5, 2025-09-23 -> Lumbar (different startDate)
+    expect(result[4].bodyLocations).toEqual(["Lumbar"]);
   });
 
-  it("sorts body locations by locale pt-BR", () => {
+  it("sorts body locations by locale en-US", () => {
     const sessions: CreatedTreatment[] = [
-      createSession({ id: 1, bodyLocation: "Pescoço" }),
-      createSession({ id: 2, bodyLocation: "Cabeça" }),
-      createSession({ id: 3, bodyLocation: "Área lombar" }),
+      createSession({ id: 1, bodyLocation: "Neck" }),
+      createSession({ id: 2, bodyLocation: "Head" }),
+      createSession({ id: 3, bodyLocation: "Lumbar area" }),
     ];
 
     const result = groupCreatedTreatmentsForDisplay(sessions);
 
     expect(result).toHaveLength(1);
-    expect(result[0].bodyLocations).toEqual(["Área lombar", "Cabeça", "Pescoço"]);
+    expect(result[0].bodyLocations).toEqual(["Head", "Lumbar area", "Neck"]);
   });
 
   it("returns one group per session when all keys differ", () => {
@@ -118,14 +116,14 @@ describe("groupCreatedTreatmentsForDisplay", () => {
       createSession({
         id: 1,
         treatmentType: "tens",
-        bodyLocation: "Coluna",
+        bodyLocation: "Back",
         color: undefined,
         durationMinutes: undefined,
       }),
       createSession({
         id: 2,
         treatmentType: "tens",
-        bodyLocation: "Costas",
+        bodyLocation: "Lumbar",
         color: undefined,
         durationMinutes: undefined,
       }),
@@ -135,7 +133,7 @@ describe("groupCreatedTreatmentsForDisplay", () => {
 
     expect(result).toHaveLength(1);
     expect(result[0].treatments).toHaveLength(2);
-    expect(result[0].bodyLocations).toEqual(["Coluna", "Costas"]);
+    expect(result[0].bodyLocations).toEqual(["Back", "Lumbar"]);
   });
 
   it("handles empty array", () => {

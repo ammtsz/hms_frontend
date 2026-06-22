@@ -3,7 +3,10 @@
 import React, { useState, useCallback, useMemo } from "react";
 import { useRescheduleAttendances } from "@/api/query/hooks/useAttendanceQueries";
 import { useToast } from "@/contexts/ToastContext";
-import { addCalendarDaysToLocalYmd, getTodayClinic } from "@/utils/timezoneDate";
+import {
+  addCalendarDaysToLocalYmd,
+  getTodayClinic,
+} from "@/utils/timezoneDate";
 import BaseModal from "@/components/common/BaseModal";
 import { Button, Field, Input } from "@/components/ui";
 
@@ -53,7 +56,7 @@ export const RescheduleAttendanceModal: React.FC<
         { attendanceIds, newScheduledDate: scheduledDate },
         {
           onSuccess: () => {
-            showToast("Atendimento reagendado com sucesso", "success");
+            showToast("Appointment rescheduled successfully", "success");
             onSuccess?.();
             onClose();
           },
@@ -75,11 +78,11 @@ export const RescheduleAttendanceModal: React.FC<
     <BaseModal
       isOpen
       onClose={onClose}
-      title="Reagendar atendimento"
+      title="Reschedule appointment"
       maxWidth="md"
     >
       <form onSubmit={handleSubmit} className="space-y-4 p-4 sm:p-6">
-        <Field label="Nova Data:" htmlFor="reschedule-date">
+        <Field label="New Date:" htmlFor="reschedule-date">
           <Input
             id="reschedule-date"
             type="date"
@@ -95,16 +98,16 @@ export const RescheduleAttendanceModal: React.FC<
         ) : null}
         <div className="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
           <Button variant="outline" onClick={onClose}>
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="submit"
             isLoading={rescheduleMutation.isPending}
-            loadingText="Reagendando..."
+            loadingText="Rescheduling..."
             disabled={scheduledDate < today}
             className="bg-blue-600 hover:bg-blue-700"
           >
-            Reagendar
+            Reschedule
           </Button>
         </div>
       </form>

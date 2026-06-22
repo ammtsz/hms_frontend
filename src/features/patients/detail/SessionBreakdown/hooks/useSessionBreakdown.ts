@@ -106,7 +106,7 @@ export const useSessionBreakdown = (patientId: string) => {
           cancellationSources
             .map((r) => r?.trim())
             .filter((trimmed): trimmed is string =>
-              !!trimmed && trimmed.includes("Tratamento cancelado"),
+              !!trimmed && (trimmed.includes("Treatment cancelled") || trimmed.includes("Treatment canceled")),
             ),
         )];
 

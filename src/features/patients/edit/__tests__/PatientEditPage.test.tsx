@@ -96,12 +96,12 @@ describe("PatientEditPage", () => {
   let queryClient: QueryClient;
   const mockPatient = {
     id: "123",
-    name: "João Silva",
+    name: "John Smith",
     phone: "(11) 98765-4321",
     priority: "3",
     status: "T",
     birthDate: new Date("1990-01-01"),
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     startDate: new Date(),
     dischargeDate: null,
     nextAttendanceDates: [],
@@ -118,12 +118,12 @@ describe("PatientEditPage", () => {
   };
 
   const mockFormPatient = {
-    name: "João Silva",
+    name: "John Smith",
     phone: "(11) 98765-4321",
     priority: "3",
     status: "T",
     birthDate: new Date("1990-01-01"),
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     dischargeDate: null,
     nextAttendanceDates: [],
   };
@@ -198,28 +198,28 @@ describe("PatientEditPage", () => {
     renderComponent();
 
     expect(screen.getByTestId("skeleton")).toBeInTheDocument();
-    expect(screen.getByText("Carregando...")).toBeInTheDocument();
+    expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
   });
 
   it("should render error state when patient not found", () => {
     (usePatientWithAttendances as jest.Mock).mockReturnValue({
       data: null,
       isLoading: false,
-      error: new Error("Paciente não encontrado"),
+      error: new Error("Patient not found"),
       refetch: jest.fn(),
     });
 
     renderComponent();
 
     expect(screen.getByTestId("page-error")).toBeInTheDocument();
-    expect(screen.getByText("Erro ao carregar paciente")).toBeInTheDocument();
+    expect(screen.getByText("Error loading patient")).toBeInTheDocument();
   });
 
   it("should render patient edit form when data loaded", () => {
     renderComponent();
 
-    expect(screen.getByText("Editar Paciente: João Silva")).toBeInTheDocument();
-    expect(screen.getByText("Registro #123")).toBeInTheDocument();
+    expect(screen.getByText("Edit Patient: John Smith")).toBeInTheDocument();
+    expect(screen.getByText("ID #123")).toBeInTheDocument();
     expect(screen.getByTestId("patient-form-fields")).toBeInTheDocument();
   });
 
@@ -227,22 +227,22 @@ describe("PatientEditPage", () => {
     renderComponent();
 
     const breadcrumb = screen.getByTestId("breadcrumb");
-    expect(breadcrumb).toHaveTextContent("Pacientes");
-    expect(breadcrumb).toHaveTextContent("João Silva");
-    expect(breadcrumb).toHaveTextContent("Editar");
+    expect(breadcrumb).toHaveTextContent("Patients");
+    expect(breadcrumb).toHaveTextContent("John Smith");
+    expect(breadcrumb).toHaveTextContent("Edit");
   });
 
   it("should render action buttons", () => {
     renderComponent();
 
     expect(
-      screen.getByRole("button", { name: /excluir/i }),
+      screen.getByRole("button", { name: /^Delete$/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /cancelar/i }),
+      screen.getByRole("button", { name: /Cancel/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /salvar alterações/i }),
+      screen.getByRole("button", { name: /Save Changes/i }),
     ).toBeInTheDocument();
   });
 
@@ -250,7 +250,7 @@ describe("PatientEditPage", () => {
     renderComponent();
 
     const deleteButton = screen.getByRole("button", {
-      name: /excluir/i,
+      name: /^Delete$/i,
     });
     fireEvent.click(deleteButton);
 
@@ -271,24 +271,24 @@ describe("PatientEditPage", () => {
 
     renderComponent();
 
-    const deleteButton = screen.getByRole("button", { name: /excluir/i });
+    const deleteButton = screen.getByRole("button", { name: /^Delete$/i });
     expect(deleteButton).toBeDisabled();
     expect(deleteButton).toHaveAttribute(
       "title",
-      "É permitida a exclusão apenas de pacientes sem histórico de atendimento ou com apenas atendimentos cancelados ou perdidos.",
+      "Deletion is only allowed for patients without attendance history or with only canceled or missed appointments.",
     );
   });
 
   it("should show unsaved changes modal when canceling with changes", async () => {
     renderComponent();
 
-    const cancelButton = screen.getByRole("button", { name: /cancelar/i });
+    const cancelButton = screen.getByRole("button", { name: /Cancel/i });
     fireEvent.click(cancelButton);
 
     // Wait for modal to appear (component tracks changes via useEffect)
     await waitFor(() => {
       // Either modal appears or navigation happens
-      const hasModal = screen.queryByText("Alterações Não Salvas");
+      const hasModal = screen.queryByText("Unsaved Changes");
       const navigationCalled = mockPush.mock.calls.length > 0;
       expect(hasModal || navigationCalled).toBeTruthy();
     });
@@ -320,7 +320,7 @@ describe("PatientEditPage", () => {
     renderComponent();
 
     const saveButton = screen.getByRole("button", {
-      name: /salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(saveButton);
 
@@ -354,7 +354,7 @@ describe("PatientEditPage", () => {
 
     renderComponent();
 
-    expect(screen.getByText("Salvando...")).toBeInTheDocument();
+    expect(screen.getByText("Saving...")).toBeInTheDocument();
   });
 
   it("should display form errors when present", () => {
@@ -367,7 +367,7 @@ describe("PatientEditPage", () => {
       handleDelete: jest.fn(),
       isLoading: false,
       isDeleting: false,
-      error: "Erro ao salvar paciente",
+      error: "Error saving patient",
       setError: jest.fn(),
       hasUnsavedChanges: false,
       duplicatePatients: [],
@@ -382,13 +382,13 @@ describe("PatientEditPage", () => {
     renderComponent();
 
     expect(screen.getByTestId("error-display")).toHaveTextContent(
-      "Erro ao salvar paciente",
+      "Error saving patient",
     );
   });
 
   it("should render information cards", () => {
     renderComponent();
 
-    expect(screen.getByText("Informações Básicas")).toBeInTheDocument();
+    expect(screen.getByText("Basic Information")).toBeInTheDocument();
   });
 });

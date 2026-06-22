@@ -11,10 +11,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { UserRole } from "@/types/auth";
 import * as priorityHooks from "@/api/query/hooks/usePriorityOptionsQueries";
-import {
-  SystemOptionType,
-  type SystemOption,
-} from "@/types/systemOptions";
+import { SystemOptionType, type SystemOption } from "@/types/systemOptions";
 import type { Priority } from "@/types/types";
 
 jest.mock("@/contexts/AuthContext");
@@ -30,7 +27,7 @@ describe("PriorityManagementList", () => {
       id: 1,
       type: SystemOptionType.PRIORITY,
       value: "1",
-      label: "Exceção",
+      label: "Priority",
       sortOrder: 1,
       isActive: true,
       usageCount: 5,
@@ -41,7 +38,7 @@ describe("PriorityManagementList", () => {
       id: 2,
       type: SystemOptionType.PRIORITY,
       value: "2",
-      label: "Idoso/crianças",
+      label: "Standard",
       sortOrder: 2,
       isActive: true,
       usageCount: 2,
@@ -52,7 +49,7 @@ describe("PriorityManagementList", () => {
       id: 3,
       type: SystemOptionType.PRIORITY,
       value: "3",
-      label: "Padrão",
+      label: "Priority 3",
       sortOrder: 3,
       isActive: true,
       usageCount: 3,
@@ -63,7 +60,7 @@ describe("PriorityManagementList", () => {
       id: 4,
       type: SystemOptionType.PRIORITY,
       value: "4",
-      label: "Idoso 80+",
+      label: "Elderly 80+",
       sortOrder: 4,
       isActive: false,
       usageCount: 0,
@@ -74,7 +71,7 @@ describe("PriorityManagementList", () => {
       id: 5,
       type: SystemOptionType.PRIORITY,
       value: "5",
-      label: "Outros",
+      label: "Other",
       sortOrder: 5,
       isActive: false,
       usageCount: 0,
@@ -128,17 +125,17 @@ describe("PriorityManagementList", () => {
     expect(screen.getByText("4")).toBeInTheDocument();
     expect(screen.getByText("5")).toBeInTheDocument();
 
-    expect(screen.getByText("Exceção")).toBeInTheDocument();
-    expect(screen.getByText("Idoso/crianças")).toBeInTheDocument();
-    expect(screen.getByText("Padrão")).toBeInTheDocument();
+    expect(screen.getByText("Priority")).toBeInTheDocument();
+    expect(screen.getByText("Standard")).toBeInTheDocument();
+    expect(screen.getByText("Priority 3")).toBeInTheDocument();
 
-    expect(screen.getByText("3 paciente(s)")).toBeInTheDocument();
+    expect(screen.getByText("3 patient(s)")).toBeInTheDocument();
   });
 
   it("blocks deactivation and performs bulk reassign", async () => {
     const blockingPatients = [
-      { id: 10, name: "João Silva", priority: "3" as Priority },
-      { id: 11, name: "Maria Santos", priority: "3" as Priority },
+      { id: 10, name: "John Smith", priority: "3" as Priority },
+      { id: 11, name: "Emily Williams", priority: "3" as Priority },
     ];
 
     const deactivateMutateAsync = jest
@@ -167,24 +164,24 @@ describe("PriorityManagementList", () => {
     render(<PriorityManagementList />);
 
     // Enter edit mode for priority "3" (third row, code 3).
-    fireEvent.click(screen.getAllByTitle("Editar rótulo")[2]);
+    fireEvent.click(screen.getAllByTitle("Edit label")[2]);
 
     // Toggle status via the status column button while editing.
-    fireEvent.click(screen.getByRole("button", { name: /Ativo/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Active/i }));
 
     expect(
-      await screen.findByText(/Reatribuição necessária antes de desativar/i),
+      await screen.findByText(/Reassignment required before deactivating/i),
     ).toBeInTheDocument();
-    expect(screen.getByText("João Silva")).toBeInTheDocument();
-    expect(screen.getByText("Maria Santos")).toBeInTheDocument();
+    expect(screen.getByText("John Smith")).toBeInTheDocument();
+    expect(screen.getByText("Emily Williams")).toBeInTheDocument();
 
     fireEvent.click(
-      screen.getByRole("button", { name: /Reatribuir e desativar/i }),
+      screen.getByRole("button", { name: /Reassign/i }),
     );
 
     await waitFor(() =>
       expect(mockShowToast).toHaveBeenCalledWith(
-        "Prioridade desativada com sucesso.",
+        "Priority deactivated successfully.",
         "success",
       ),
     );
@@ -195,7 +192,7 @@ describe("PriorityManagementList", () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByText("João Silva")).not.toBeInTheDocument();
+      expect(screen.queryByText("John Smith")).not.toBeInTheDocument();
     });
   });
 
@@ -206,10 +203,10 @@ describe("PriorityManagementList", () => {
     expect(priority1Row).not.toBeNull();
     if (!priority1Row) return;
 
-    const statusTag = within(priority1Row).getByText("Ativo");
+    const statusTag = within(priority1Row).getByText("Active");
     expect(statusTag).toHaveAttribute(
       "title",
-      expect.stringContaining("não pode ser desativada"),
+      expect.stringContaining("cannot be deactivated"),
     );
   });
 });

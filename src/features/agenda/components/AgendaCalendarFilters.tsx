@@ -9,6 +9,7 @@ import { AttendanceStatus } from "@/api/types";
 import {
   AGENDA_STATUS_CHECKBOX_LABELS,
   ALL_AGENDA_FILTER_STATUSES,
+  AGENDA_FILTER_LABELS,
 } from "../utils/agendaFilterConstants";
 import { Button, Checkbox, Input, Select } from "@/components/ui";
 import AgendaAttendanceStatusIcon, {
@@ -16,12 +17,12 @@ import AgendaAttendanceStatusIcon, {
 } from "./AgendaAttendanceStatusIcon";
 
 const WINDOW_LABELS: Record<AgendaDayWindowDays, string> = {
-  1: "1 dia",
-  7: "7 dias",
-  15: "15 dias",
-  30: "30 dias",
-  60: "60 dias",
-  90: "90 dias",
+  1: "1 day",
+  7: "7 days",
+  15: "15 days",
+  30: "30 days",
+  60: "60 days",
+  90: "90 days",
 };
 
 export interface AgendaCalendarFiltersProps {
@@ -84,7 +85,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
               htmlFor="agenda-date"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Selecione uma data para filtrar
+              Select a date to filter
             </label>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Input
@@ -97,13 +98,13 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
                 onKeyDown={handleKeyDown}
                 onBlur={handleBlur}
                 onMouseDown={handleMouseDown}
-                lang="pt-BR"
+                lang="en-US"
               />
               <Button
                 variant="outline"
                 onClick={() => commitImmediately(getTodayClinic())}
               >
-                Hoje
+                Today
               </Button>
             </div>
           </div>
@@ -113,7 +114,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
               htmlFor="agenda-day-window"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Período
+              Period
             </label>
             <Select
               id="agenda-day-window"
@@ -141,7 +142,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
               htmlFor="agenda-patient-filter"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
-              Filtrar por paciente
+              Filter by patient
             </label>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Input
@@ -150,7 +151,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
                 className="flex-1"
                 value={patientFilter}
                 onChange={(e) => setPatientFilter(e.target.value)}
-                placeholder="Digite o nome do paciente"
+                placeholder="Enter patient name"
                 autoComplete="off"
               />
               <Button
@@ -158,7 +159,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
                 onClick={() => setPatientFilter("")}
                 disabled={!patientFilter}
               >
-                Limpar
+                Clear
               </Button>
             </div>
           </div>
@@ -169,17 +170,13 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
             className={`mt-0 flex items-center gap-1.5 md:mt-7 ${
               isRefreshing ? "opacity-50 cursor-not-allowed" : ""
             }`}
-            title={
-              isRefreshing
-                ? "Atualizando..."
-                : "Atualizar dados dos agendamentos"
-            }
+            title={isRefreshing ? "Refreshing..." : "Refresh appointment data"}
           >
             <RefreshCw
               size={16}
               className={`${isRefreshing ? "animate-spin" : ""}`}
             />
-            {isRefreshing ? "Atualizando..." : "Atualizar"}
+            {isRefreshing ? "Refreshing..." : "Refresh"}
           </Button>
         </div>
       </div>
@@ -189,7 +186,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
 
         <fieldset className="border border-gray-200 rounded-lg p-3">
           <legend className="text-sm font-medium text-gray-800 px-1">
-            Status do atendimento
+            {AGENDA_FILTER_LABELS.attendanceStatus}
           </legend>
           <div className="mb-3 flex flex-wrap gap-2">
             <Button
@@ -199,18 +196,18 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
               onClick={() =>
                 setAgendaStatusFilters([...ALL_AGENDA_FILTER_STATUSES])
               }
-              aria-label="Selecionar todos os status do atendimento"
+              aria-label="Select all attendance statuses"
             >
-              Selecionar todos
+              Select All
             </Button>
             <Button
               variant="outline"
               size="sm"
               className="min-h-[44px] px-3 py-2 text-xs sm:min-h-[32px] sm:px-2 sm:py-1"
               onClick={() => setAgendaStatusFilters([])}
-              aria-label="Limpar seleção de status do atendimento"
+              aria-label="Clear attendance status selection"
             >
-              Limpar
+              Clear
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -229,16 +226,16 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
           </div>
           {agendaStatusFilters.length === 0 ? (
             <p className="text-xs text-amber-800 mt-3 bg-amber-50 border border-amber-100 rounded px-2 py-1.5">
-              Nenhum status selecionado: exibindo todos os status no período.
+              {AGENDA_FILTER_LABELS.noStatusSelected}
             </p>
           ) : null}
         </fieldset>
 
         <div
           className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-600 border-t border-gray-100 pt-3"
-          aria-label="Legenda de status"
+          aria-label="Status legend"
         >
-          <span className="font-medium text-gray-700">Legenda:</span>
+          <span className="font-medium text-gray-700">{AGENDA_FILTER_LABELS.legend}</span>
           {AGENDA_STATUS_LEGEND_ITEMS.map(({ status, label }) => (
             <span key={status} className="inline-flex items-center gap-1">
               <AgendaAttendanceStatusIcon status={status} />

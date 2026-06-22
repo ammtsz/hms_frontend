@@ -6,9 +6,9 @@ import { Field, Select, Button } from "@/components/ui";
 import type { PatientBasic } from "@/types/types";
 
 const SORT_OPTIONS: { value: keyof PatientBasic; label: string }[] = [
-  { value: "name", label: "Nome" },
-  { value: "phone", label: "Telefone" },
-  { value: "priority", label: "Prioridade" },
+  { value: "name", label: "Name" },
+  { value: "phone", label: "Phone" },
+  { value: "priority", label: "Priority" },
   { value: "status", label: "Status" },
 ];
 
@@ -28,7 +28,7 @@ export function PatientListMobileSort({
       className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end"
       data-testid="patient-list-mobile-sort"
     >
-      <Field label="Ordenar por" htmlFor="patient-list-sort" className="flex-1">
+      <Field label="Sort by" htmlFor="patient-list-sort" className="flex-1">
         <Select
           id="patient-list-sort"
           value={sortBy ?? ""}
@@ -40,7 +40,7 @@ export function PatientListMobileSort({
           }}
         >
           <option value="" disabled>
-            Selecione…
+            Select…
           </option>
           {SORT_OPTIONS.map((option) => (
             <option key={option.value} value={option.value}>
@@ -56,7 +56,7 @@ export function PatientListMobileSort({
           className="min-h-[44px] shrink-0"
           onClick={() => handleSort(sortBy)}
           aria-label={
-            sortAsc ? "Ordenação crescente; alternar" : "Ordenação decrescente; alternar"
+            sortAsc ? "Ascending order; toggle" : "Descending order; toggle"
           }
         >
           {sortAsc ? (

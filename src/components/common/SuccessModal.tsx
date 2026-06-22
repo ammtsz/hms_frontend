@@ -14,7 +14,7 @@ interface SuccessModalProps {
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
   isOpen,
-  title = "Sucesso!",
+  title = "Success!",
   message,
   confirmLabel = "OK",
   additionalInfo,

@@ -12,7 +12,7 @@ export function useAppointmentsThreshold() {
     queryFn: async () => {
       const result = await getAppointmentsThreshold();
       if (!result.success) {
-        throw new Error(result.error || 'Falha ao carregar limite de faltas');
+        throw new Error(result.error || 'Failed to load appointments threshold');
       }
       return result.value;
     },
@@ -27,7 +27,7 @@ export function useUpdateAppointmentsThreshold() {
     mutationFn: async (missingAppointmentsThreshold: number) => {
       const result = await updateAppointmentsThreshold(missingAppointmentsThreshold);
       if (!result.success) {
-        throw new Error(result.error || 'Falha ao atualizar limite de faltas');
+        throw new Error(result.error || 'Failed to update appointments threshold');
       }
       return result.value;
     },

@@ -16,7 +16,7 @@ jest.mock("@/api/query/hooks/useUserQueries", () => ({
     mutateAsync: async (data: Parameters<typeof import("@/api/users").createUser>[0]) => {
       const { createUser } = jest.requireMock("@/api/users") as typeof import("@/api/users");
       const result = await createUser(data);
-      if (!result.success) throw new Error(result.error ?? "Erro ao criar usuário");
+      if (!result.success) throw new Error(result.error ?? "Unexpected error occurred");
       return result.value;
     },
     isPending: false,
@@ -25,7 +25,7 @@ jest.mock("@/api/query/hooks/useUserQueries", () => ({
     mutateAsync: async ({ id, data }: { id: number; data: Parameters<typeof import("@/api/users").updateUser>[1] }) => {
       const { updateUser } = jest.requireMock("@/api/users") as typeof import("@/api/users");
       const result = await updateUser(id, data);
-      if (!result.success) throw new Error(result.error ?? "Erro ao atualizar usuário");
+      if (!result.success) throw new Error(result.error ?? "Error updating user");
       return result.value;
     },
     isPending: false,
@@ -74,22 +74,22 @@ describe("Force Password Change Integration Tests", () => {
       );
 
       // Fill in the form
-      await user.type(screen.getByLabelText(/Nome Completo/), "Test User");
-      await user.type(screen.getByLabelText(/Nome de Exibição/), "Test");
+      await user.type(screen.getByLabelText(/Full Name/), "Test User");
+      await user.type(screen.getByLabelText(/Display Name/), "Test");
       await user.type(screen.getByLabelText(/Email/), "test@example.com");
-      await user.type(screen.getByLabelText(/^Senha/), "ValidPassword123");
+      await user.type(screen.getByLabelText(/^Password/), "ValidPassword123");
       await user.type(
-        screen.getByLabelText(/Confirmar Senha/),
+        screen.getByLabelText(/Confirm Password/),
         "ValidPassword123",
       );
 
       // The checkbox should be checked by default
       const checkbox = screen.getByLabelText(
-        /Exigir troca de senha no próximo login/,
+        /Require password change on next login/,
       ) as HTMLInputElement;
       expect(checkbox.checked).toBe(true);
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -135,23 +135,23 @@ describe("Force Password Change Integration Tests", () => {
       );
 
       // Fill in the form
-      await user.type(screen.getByLabelText(/Nome Completo/), "Test User");
-      await user.type(screen.getByLabelText(/Nome de Exibição/), "Test");
+      await user.type(screen.getByLabelText(/Full Name/), "Test User");
+      await user.type(screen.getByLabelText(/Display Name/), "Test");
       await user.type(screen.getByLabelText(/Email/), "test@example.com");
-      await user.type(screen.getByLabelText(/^Senha/), "ValidPassword123");
+      await user.type(screen.getByLabelText(/^Password/), "ValidPassword123");
       await user.type(
-        screen.getByLabelText(/Confirmar Senha/),
+        screen.getByLabelText(/Confirm Password/),
         "ValidPassword123",
       );
 
       // Uncheck the "force password change" checkbox
       const checkbox = screen.getByLabelText(
-        /Exigir troca de senha no próximo login/,
+        /Require password change on next login/,
       ) as HTMLInputElement;
       await user.click(checkbox);
       expect(checkbox.checked).toBe(false);
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -182,7 +182,7 @@ describe("Force Password Change Integration Tests", () => {
       );
 
       const checkbox = screen.getByLabelText(
-        /Exigir troca de senha no próximo login/,
+        /Require password change on next login/,
       ) as HTMLInputElement;
 
       // Initial state should be checked
@@ -229,16 +229,16 @@ describe("Force Password Change Integration Tests", () => {
       );
 
       // Fill in the form
-      await user.type(screen.getByLabelText(/Nome Completo/), "Test User");
-      await user.type(screen.getByLabelText(/Nome de Exibição/), "Test");
+      await user.type(screen.getByLabelText(/Full Name/), "Test User");
+      await user.type(screen.getByLabelText(/Display Name/), "Test");
       await user.type(screen.getByLabelText(/Email/), "test@example.com");
-      await user.type(screen.getByLabelText(/^Senha/), "ValidPassword123");
+      await user.type(screen.getByLabelText(/^Password/), "ValidPassword123");
       await user.type(
-        screen.getByLabelText(/Confirmar Senha/),
+        screen.getByLabelText(/Confirm Password/),
         "ValidPassword123",
       );
 
-      const submitButton = screen.getByRole("button", { name: /Criar/ });
+      const submitButton = screen.getByRole("button", { name: /Create/ });
       fireEvent.click(submitButton);
 
       await waitFor(() => {

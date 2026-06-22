@@ -3,7 +3,10 @@
 import React, { useState } from "react";
 import { useChangeOwnPassword } from "@/api/query/hooks/useUserQueries";
 import { Eye, EyeOff, Lock } from "lucide-react";
-import { translateErrorMessage } from "@/utils/errorTranslations";
+import {
+  normalizePasswordChangeErrorMessage,
+  PASSWORD_CHANGE_ERROR_MESSAGES,
+} from "@/utils/passwordChangeErrorMessages";
 import { Button, Field, IconButton, Input } from "@/components/ui";
 
 export default function PasswordSettings() {
@@ -25,26 +28,27 @@ export default function PasswordSettings() {
     const newErrors: Record<string, string> = {};
 
     if (!passwordData.currentPassword) {
-      newErrors.currentPassword = "Senha atual é obrigatória";
+      newErrors.currentPassword = "Current password is required";
     }
 
     if (!passwordData.newPassword) {
-      newErrors.newPassword = "Nova senha é obrigatória";
+      newErrors.newPassword = "New password is required";
     } else if (passwordData.newPassword.length < 12) {
-      newErrors.newPassword = "Nova senha deve ter no mínimo 12 caracteres";
+      newErrors.newPassword = "New password must be at least 12 characters";
     } else if (
       passwordData.currentPassword &&
       passwordData.currentPassword === passwordData.newPassword
     ) {
       // Only check if passwords are the same when both are non-empty
-      newErrors.newPassword = "A nova senha deve ser diferente da atual";
+      newErrors.newPassword =
+        "New password must be different from the current password";
     }
 
     if (
       passwordData.newPassword &&
       passwordData.newPassword !== passwordData.confirmPassword
     ) {
-      newErrors.confirmPassword = "As senhas não coincidem";
+      newErrors.confirmPassword = "Passwords do not match";
     }
 
     setErrors(newErrors);
@@ -75,18 +79,20 @@ export default function PasswordSettings() {
       });
       setTimeout(() => setIsSuccess(false), 3000);
     } catch (err) {
-      const translatedError = translateErrorMessage(
-        err instanceof Error ? err.message : "Erro ao alterar senha",
+      const normalizedError = normalizePasswordChangeErrorMessage(
+        err instanceof Error
+          ? err.message
+          : PASSWORD_CHANGE_ERROR_MESSAGES.defaultSubmitError,
       );
-      setErrors({ submit: translatedError });
+      setErrors({ submit: normalizedError });
     }
   };
 
   const getPasswordStrength = (password: string): string => {
     if (password.length === 0) return "";
-    if (password.length < 12) return "Fraca";
-    if (password.length < 16) return "Média";
-    return "Forte";
+    if (password.length < 12) return "Weak";
+    if (password.length < 16) return "Medium";
+    return "Strong";
   };
 
   const passwordStrength = getPasswordStrength(passwordData.newPassword);
@@ -101,15 +107,12 @@ export default function PasswordSettings() {
 
       {isSuccess && (
         <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-          Senha alterada com sucesso!
+          Password changed successfully!
         </div>
       )}
 
       {/* Current Password */}
-      <Field
-        label="Senha Atual *"
-        error={errors.currentPassword}
-      >
+      <Field label="Current Password *" error={errors.currentPassword}>
         <Input
           type="password"
           value={passwordData.currentPassword}
@@ -120,13 +123,13 @@ export default function PasswordSettings() {
             })
           }
           invalid={Boolean(errors.currentPassword)}
-          placeholder="Digite sua senha atual"
+          placeholder="Enter your current password"
           autoComplete="current-password"
         />
       </Field>
 
       {/* New Password */}
-      <Field label="Nova Senha *" error={errors.newPassword}>
+      <Field label="New Password *" error={errors.newPassword}>
         <div className="relative">
           <Input
             type={showPasswords.new ? "text" : "password"}
@@ -139,7 +142,7 @@ export default function PasswordSettings() {
             }
             className="pr-10"
             invalid={Boolean(errors.newPassword)}
-            placeholder="Mínimo 12 caracteres"
+            placeholder="Minimum 12 characters"
             autoComplete="new-password"
           />
           <IconButton
@@ -151,7 +154,7 @@ export default function PasswordSettings() {
             }
             className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
             aria-label={
-              showPasswords.new ? "Ocultar nova senha" : "Mostrar nova senha"
+              showPasswords.new ? "Hide new password" : "Show new password"
             }
           >
             {showPasswords.new ? (
@@ -164,20 +167,20 @@ export default function PasswordSettings() {
         {passwordStrength && !errors.newPassword && (
           <p
             className={`mt-1 text-sm ${
-              passwordStrength === "Fraca"
+              passwordStrength === "Weak"
                 ? "text-red-600"
-                : passwordStrength === "Média"
+                : passwordStrength === "Medium"
                   ? "text-yellow-600"
                   : "text-green-600"
             }`}
           >
-            Força: {passwordStrength}
+            Strength: {passwordStrength}
           </p>
         )}
       </Field>
 
       {/* Confirm Password */}
-      <Field label="Confirmar Nova Senha *" error={errors.confirmPassword}>
+      <Field label="Confirm New Password *" error={errors.confirmPassword}>
         <div className="relative">
           <Input
             type={showPasswords.confirm ? "text" : "password"}
@@ -190,7 +193,7 @@ export default function PasswordSettings() {
             }
             className="pr-10"
             invalid={Boolean(errors.confirmPassword)}
-            placeholder="Digite a senha novamente"
+            placeholder="Re-enter the password"
             autoComplete="new-password"
           />
           <IconButton
@@ -202,8 +205,8 @@ export default function PasswordSettings() {
             }
             aria-label={
               showPasswords.confirm
-                ? "Ocultar confirmação de senha"
-                : "Mostrar confirmação de senha"
+                ? "Hide password confirmation"
+                : "Show password confirmation"
             }
             className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
           >
@@ -221,11 +224,11 @@ export default function PasswordSettings() {
         <Button
           type="submit"
           isLoading={isLoading}
-          loadingText="Alterando..."
+          loadingText="Changing..."
           className="bg-blue-600 hover:bg-blue-700"
         >
           <Lock className="h-4 w-4" />
-          Alterar Senha
+          Change Password
         </Button>
       </div>
     </form>

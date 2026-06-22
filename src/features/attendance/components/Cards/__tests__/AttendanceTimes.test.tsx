@@ -12,7 +12,7 @@ describe("AttendanceTimes Component", () => {
   };
 
   describe("Time Formatting", () => {
-    it("should format times correctly in pt-BR format", () => {
+    it("should format times correctly in en-US format", () => {
       render(
         <AttendanceTimes
           status="completed"
@@ -352,7 +352,7 @@ describe("AttendanceTimes Component", () => {
       );
 
       expect(screen.getByText(/check-in: 14:30/)).toBeInTheDocument();
-      expect(screen.getByText(/atendimento: 15:00/)).toBeInTheDocument();
+      expect(screen.getByText(/attendance: 15:00/)).toBeInTheDocument();
     });
 
     it("should gracefully handle invalid times", () => {

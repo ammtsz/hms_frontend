@@ -38,7 +38,7 @@ export const ApplyTemplateModal: React.FC<ApplyTemplateModalProps> = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Aplicar Modelo"
+      title="Apply Template"
       maxWidth="lg"
       showCloseButton={!isLoading}
     >
@@ -50,7 +50,9 @@ export const ApplyTemplateModal: React.FC<ApplyTemplateModalProps> = ({
           <div className="min-w-0">
             <h3 className="font-medium text-gray-900">{template.name}</h3>
             {template.description ? (
-              <p className="mt-1 text-sm text-gray-600">{template.description}</p>
+              <p className="mt-1 text-sm text-gray-600">
+                {template.description}
+              </p>
             ) : null}
           </div>
         </div>
@@ -58,15 +60,16 @@ export const ApplyTemplateModal: React.FC<ApplyTemplateModalProps> = ({
         <div className="flex gap-3 rounded-md border border-blue-200 bg-blue-50 p-3">
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-blue-600" />
           <p className="text-sm text-blue-800">
-            Este modelo contém <strong>{template.holidays.length}</strong> feriado
-            {template.holidays.length !== 1 ? "s" : ""}. Eles serão criados para o
-            ano selecionado abaixo.
+            This template contains <strong>{template.holidays.length}</strong>{" "}
+            holiday
+            {template.holidays.length !== 1 ? "s" : ""}. They will be created
+            for the year selected below.
           </p>
         </div>
 
         <Field
-          label="Selecione o Ano *"
-          helpText={`Anos permitidos: ${currentYear - 2} a ${currentYear + 5}`}
+          label="Select Year *"
+          helpText={`Allowed years: ${currentYear - 2} to ${currentYear + 5}`}
         >
           <Input
             type="number"
@@ -80,9 +83,9 @@ export const ApplyTemplateModal: React.FC<ApplyTemplateModalProps> = ({
 
         <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
           <p className="text-sm text-amber-800">
-            <strong>Atenção:</strong> Datas inválidas (como 31 de fevereiro) serão
-            ignoradas automaticamente. Feriados em datas que já existem não serão
-            duplicados.
+            <strong>Warning:</strong> Invalid dates (like February 31) will be
+            ignored automatically. Holidays on dates that already exist will not
+            be duplicated.
           </p>
         </div>
 
@@ -93,15 +96,15 @@ export const ApplyTemplateModal: React.FC<ApplyTemplateModalProps> = ({
             onClick={onClose}
             disabled={isLoading}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="submit"
             isLoading={isLoading}
-            loadingText="Aplicando..."
+            loadingText="Applying..."
             disabled={isLoading}
           >
-            Aplicar Modelo
+            Apply Template
           </Button>
         </div>
       </form>

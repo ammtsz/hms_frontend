@@ -35,21 +35,20 @@ export default function PersonalDataSettings() {
     // Admin-specific validations
     if (user?.role === "admin") {
       if (!profileData.name || profileData.name.trim().length === 0) {
-        newErrors.name = "Nome completo é obrigatório";
+        newErrors.name = "Full name is required";
       } else if (profileData.name.length > 100) {
-        newErrors.name = "Nome completo deve ter no máximo 100 caracteres";
+        newErrors.name = "Full name must not exceed 100 characters";
       }
 
       if (!profileData.email || profileData.email.trim().length === 0) {
-        newErrors.email = "Email é obrigatório";
+        newErrors.email = "Email is required";
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profileData.email)) {
-        newErrors.email = "Email inválido";
+        newErrors.email = "Invalid email";
       }
     }
 
     if (profileData.displayName && profileData.displayName.length > 50) {
-      newErrors.displayName =
-        "Nome de exibição deve ter no máximo 50 caracteres";
+      newErrors.displayName = "Display name must not exceed 50 characters";
     }
 
     setErrors(newErrors);
@@ -81,7 +80,7 @@ export default function PersonalDataSettings() {
       setTimeout(() => setIsSuccess(false), 3000);
     } catch (err) {
       setErrors({
-        submit: err instanceof Error ? err.message : "Erro ao atualizar perfil",
+        submit: err instanceof Error ? err.message : "Error updating profile",
       });
     }
   };
@@ -100,18 +99,18 @@ export default function PersonalDataSettings() {
 
       {isSuccess && (
         <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm">
-          Perfil atualizado com sucesso!
+          Profile updated successfully!
         </div>
       )}
 
       {/* Name and Email fields - editable for admins */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Field
-          label={`Nome Completo ${user.role === "admin" ? "*" : ""}`}
+          label={`Full Name ${user.role === "admin" ? "*" : ""}`}
           error={errors.name}
           helpText={
             user.role !== "admin"
-              ? "Apenas administradores podem alterar este campo"
+              ? "Only administrators can change this field"
               : undefined
           }
         >
@@ -136,7 +135,7 @@ export default function PersonalDataSettings() {
           error={errors.email}
           helpText={
             user.role !== "admin"
-              ? "Apenas administradores podem alterar este campo"
+              ? "Only administrators can change this field"
               : undefined
           }
         >
@@ -158,9 +157,9 @@ export default function PersonalDataSettings() {
 
       {/* Editable Display Name */}
       <Field
-        label="Nome de Exibição"
+        label="Display Name"
         error={errors.displayName}
-        helpText="Este nome será exibido no sistema ao invés do seu nome completo"
+        helpText="This name will be shown in the system instead of your full name"
       >
         <Input
           type="text"
@@ -172,20 +171,20 @@ export default function PersonalDataSettings() {
             })
           }
           invalid={Boolean(errors.displayName)}
-          placeholder="Como você deseja ser chamado (opcional)"
+          placeholder="How you want to be addressed (optional)"
           maxLength={50}
         />
       </Field>
 
       {/* Role (read-only) */}
-      <Field label="Função">
+      <Field label="Role">
         <Input
           type="text"
           value={
             user.role === "admin"
-              ? "Administrador"
+              ? "Administrator"
               : user.role === "staff"
-                ? "Colaborador"
+                ? "Staff"
                 : user.role
           }
           disabled
@@ -197,11 +196,11 @@ export default function PersonalDataSettings() {
         <Button
           type="submit"
           isLoading={isLoading}
-          loadingText="Salvando..."
+          loadingText="Saving..."
           className="bg-blue-600 hover:bg-blue-700"
         >
           <Save className="h-4 w-4" />
-          Salvar Alterações
+          Save Changes
         </Button>
       </div>
     </form>

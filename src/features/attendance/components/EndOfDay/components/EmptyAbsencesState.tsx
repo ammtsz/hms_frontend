@@ -10,10 +10,10 @@ export const EmptyAbsencesState: React.FC = () => {
         </div>
         <div className="ml-3">
           <h3 className="text-sm font-medium text-green-800">
-            Todas as presenças confirmadas!
+            All attendances confirmed!
           </h3>
           <div className="mt-2 text-sm text-green-700">
-            <p>Não há faltas agendadas para justificar.</p>
+            <p>There are no scheduled absences to justify.</p>
           </div>
         </div>
       </div>

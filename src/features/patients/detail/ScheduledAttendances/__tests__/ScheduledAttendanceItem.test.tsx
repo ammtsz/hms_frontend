@@ -8,15 +8,15 @@ jest.mock("@/utils/dateUtils", () => ({
   ...jest.requireActual("@/utils/dateUtils"),
   getDaysUntil: jest.fn((date: string) => {
     // Return different values based on test dates
-    if (date === "2026-02-18") return 0; // hoje
-    if (date === "2026-02-19") return 1; // amanhã
-    if (date === "2026-02-25") return 7; // em 7 dias
-    if (date === "2026-03-05") return 15; // em 15 dias
+    if (date === "2026-02-18") return 0; // today
+    if (date === "2026-02-19") return 1; // tomorrow
+    if (date === "2026-02-25") return 7; // in 7 days
+    if (date === "2026-03-05") return 15; // in 15 days
     return 0;
   }),
-  formatDateBR: jest.fn((date: string) => {
+  formatDisplayDate: jest.fn((date: string) => {
     const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
+    return `${month}/${day}/${year}`;
   }),
 }));
 
@@ -39,11 +39,11 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getByText("25/02/2026")).toBeInTheDocument();
-    expect(screen.getByText("(em 7 dias)")).toBeInTheDocument();
+    expect(screen.getByText("02/25/2026")).toBeInTheDocument();
+    expect(screen.getByText("(in 7 days)")).toBeInTheDocument();
   });
 
-  it("should display 'hoje' for today's appointment", () => {
+  it("should display '(today)' for today's appointment", () => {
     const todayAttendance = {
       ...baseAttendance,
       date: "2026-02-18",
@@ -56,10 +56,10 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getByText("(hoje)")).toBeInTheDocument();
+    expect(screen.getByText("(today)")).toBeInTheDocument();
   });
 
-  it("should display 'amanhã' for tomorrow's appointment", () => {
+  it("should display 'tomorrow' for tomorrow's appointment", () => {
     const tomorrowAttendance = {
       ...baseAttendance,
       date: "2026-02-19",
@@ -72,10 +72,10 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getByText("(amanhã)")).toBeInTheDocument();
+    expect(screen.getByText("(tomorrow)")).toBeInTheDocument();
   });
 
-  it("should show 'Próximo' badge for first item when not cancelled", () => {
+  it("should show 'Next' badge for first item when not cancelled", () => {
     render(
       <ScheduledAttendanceItem
         groupedScheduled={baseAttendance}
@@ -83,10 +83,10 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getByText("Próximo")).toBeInTheDocument();
+    expect(screen.getByText("Next")).toBeInTheDocument();
   });
 
-  it("should show 'Em breve' badge for upcoming appointments", () => {
+  it("should show 'Coming soon' badge for upcoming appointments", () => {
     render(
       <ScheduledAttendanceItem
         groupedScheduled={baseAttendance}
@@ -94,10 +94,10 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getByText("Em breve")).toBeInTheDocument();
+    expect(screen.getByText("Soon")).toBeInTheDocument();
   });
 
-  it("should not show 'Em breve' for appointments beyond 7 days", () => {
+  it("should not show 'Coming soon' for appointments beyond 7 days", () => {
     const futureAttendance = {
       ...baseAttendance,
       date: "2026-03-05", // 15 days away
@@ -110,7 +110,7 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.queryByText("Em breve")).not.toBeInTheDocument();
+    expect(screen.queryByText("Soon")).not.toBeInTheDocument();
   });
 
   it("should display assessment consultation treatment", () => {
@@ -119,7 +119,7 @@ describe("ScheduledAttendanceItem", () => {
       treatments: {
         assessment: {
           isScheduled: true,
-          notes: "Retorno para avaliação",
+          notes: "Return for assessment",
         },
       },
     };
@@ -131,8 +131,8 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getAllByText(/Consulta/)[0]).toBeInTheDocument();
-    expect(screen.getByText("Retorno para avaliação")).toBeInTheDocument();
+    expect(screen.getAllByText(/Assessment Consultation/)[0]).toBeInTheDocument();
+    expect(screen.getByText("Return for assessment")).toBeInTheDocument();
   });
 
   it("should display physiotherapy treatment", () => {
@@ -141,10 +141,10 @@ describe("ScheduledAttendanceItem", () => {
       treatments: {
         physiotherapy: {
           bodyLocationsWithColors: [
-            { bodyLocation: "Cabeça", color: "Azul" },
-            { bodyLocation: "Peito", color: "Azul" },
+            { bodyLocation: "Head", color: "Blue" },
+            { bodyLocation: "Chest", color: "Blue" },
           ],
-          color: "Azul",
+          color: "Blue",
           duration: 15,
           sessionNumber: "2/5",
           notes: undefined,
@@ -159,9 +159,9 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getAllByText(/Fisioterapia/)[0]).toBeInTheDocument();
-    expect(screen.getByText(/Cabeça, Peito/)).toBeInTheDocument();
-    expect(screen.getByText("Azul")).toBeInTheDocument();
+    expect(screen.getAllByText(/Physiotherapy/)[0]).toBeInTheDocument();
+    expect(screen.getByText(/Head, Chest/)).toBeInTheDocument();
+    expect(screen.getByText("Blue")).toBeInTheDocument();
   });
 
   it("should display tens treatment", () => {
@@ -169,7 +169,7 @@ describe("ScheduledAttendanceItem", () => {
       ...baseAttendance,
       treatments: {
         tens: {
-          bodyLocations: ["Pé direito"],
+          bodyLocations: ["Right Foot"],
           sessionNumber: "3/5",
           notes: undefined,
         },
@@ -184,14 +184,14 @@ describe("ScheduledAttendanceItem", () => {
     );
 
     expect(screen.getAllByText(/TENS/)[0]).toBeInTheDocument();
-    expect(screen.getByText(/Pé direito/)).toBeInTheDocument();
+    expect(screen.getByText(/Right Foot/)).toBeInTheDocument();
   });
 
   it("should display cancelled appointment with orange styling", () => {
     const cancelledAttendance = {
       ...baseAttendance,
       status: "cancelled" as const,
-      absenceNotes: "Paciente solicitou cancelamento",
+      absenceNotes: "Patient requested cancellation",
     };
 
     render(
@@ -201,14 +201,14 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getByText("(CANCELADO)")).toBeInTheDocument();
-    expect(screen.getByText("Cancelado")).toBeInTheDocument();
+    expect(screen.getByText("(CANCELLED)")).toBeInTheDocument();
+    expect(screen.getByText("Cancelled")).toBeInTheDocument();
     expect(
-      screen.getByText("Paciente solicitou cancelamento"),
+      screen.getByText("Patient requested cancellation"),
     ).toBeInTheDocument();
   });
 
-  it("should not show 'Próximo' badge for cancelled appointments", () => {
+  it("should not show 'Next' badge for cancelled appointments", () => {
     const cancelledAttendance = {
       ...baseAttendance,
       status: "cancelled" as const,
@@ -221,8 +221,8 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
-    expect(screen.getByText("Cancelado")).toBeInTheDocument();
+    expect(screen.queryByText("Next")).not.toBeInTheDocument();
+    expect(screen.getByText("Cancelled")).toBeInTheDocument();
   });
 
   it("should display attendance metadata", () => {
@@ -233,8 +233,8 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getByText(/Criado em:/)).toBeInTheDocument();
-    expect(screen.getByText("01/02/2026")).toBeInTheDocument();
+    expect(screen.getByText(/Created on:/)).toBeInTheDocument();
+    expect(screen.getByText("02/01/2026")).toBeInTheDocument();
   });
 
   it("should display cancelled date in metadata when present", () => {
@@ -251,8 +251,8 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getByText(/Cancelado em:/)).toBeInTheDocument();
-    expect(screen.getByText("10/02/2026")).toBeInTheDocument();
+    expect(screen.getByText(/Cancelled on:/)).toBeInTheDocument();
+    expect(screen.getByText("02/10/2026")).toBeInTheDocument();
   });
 
   it("should handle multiple treatments together", () => {
@@ -260,14 +260,14 @@ describe("ScheduledAttendanceItem", () => {
       ...baseAttendance,
       treatments: {
         physiotherapy: {
-          bodyLocationsWithColors: [{ bodyLocation: "Cabeça", color: "Azul" }],
-          color: "Azul",
+          bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
+          color: "Blue",
           duration: 10,
           sessionNumber: "1/3",
           notes: undefined,
         },
         tens: {
-          bodyLocations: ["Pé"],
+          bodyLocations: ["Foot"],
           sessionNumber: "2/4",
           notes: undefined,
         },
@@ -281,10 +281,10 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getAllByText(/Fisioterapia/)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Physiotherapy/)[0]).toBeInTheDocument();
     expect(screen.getAllByText(/TENS/)[0]).toBeInTheDocument();
-    expect(screen.getByText(/Cabeça/)).toBeInTheDocument();
-    expect(screen.getByText(/Pé/)).toBeInTheDocument();
+    expect(screen.getByText(/Head/)).toBeInTheDocument();
+    expect(screen.getByText(/Foot/)).toBeInTheDocument();
   });
 
   describe("Reschedule button visibility (patientTreatmentStatus)", () => {
@@ -293,8 +293,8 @@ describe("ScheduledAttendanceItem", () => {
       status: "cancelled" as const,
       treatments: {
         physiotherapy: {
-          bodyLocationsWithColors: [{ bodyLocation: "Cabeça", color: "Azul" }],
-          color: "Azul",
+          bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
+          color: "Blue",
           duration: 15,
           sessionNumber: "1/3",
           notes: undefined,
@@ -302,7 +302,7 @@ describe("ScheduledAttendanceItem", () => {
       },
     };
 
-    it("should show Reagendar button when patient is in treatment (T)", () => {
+    it("should show Reschedule button when patient is in treatment (T)", () => {
       render(
         <ScheduledAttendanceItem
           groupedScheduled={cancelledWithPhysiotherapy}
@@ -312,11 +312,11 @@ describe("ScheduledAttendanceItem", () => {
       );
 
       expect(
-        screen.getByRole("button", { name: /Reagendar atendimento/i }),
+        screen.getByRole("button", { name: /ReSchedule Attendance/i }),
       ).toBeInTheDocument();
     });
 
-    it("should not show Reagendar button when patient is discharged (A)", () => {
+    it("should not show Reschedule button when patient is discharged (A)", () => {
       render(
         <ScheduledAttendanceItem
           groupedScheduled={cancelledWithPhysiotherapy}
@@ -326,11 +326,11 @@ describe("ScheduledAttendanceItem", () => {
       );
 
       expect(
-        screen.queryByRole("button", { name: /Reagendar atendimento/i }),
+        screen.queryByRole("button", { name: /ReSchedule Attendance/i }),
       ).not.toBeInTheDocument();
     });
 
-    it("should not show Reagendar button when patient has consecutive absences (F)", () => {
+    it("should not show Reschedule button when patient has consecutive absences (F)", () => {
       render(
         <ScheduledAttendanceItem
           groupedScheduled={cancelledWithPhysiotherapy}
@@ -340,11 +340,11 @@ describe("ScheduledAttendanceItem", () => {
       );
 
       expect(
-        screen.queryByRole("button", { name: /Reagendar atendimento/i }),
+        screen.queryByRole("button", { name: /ReSchedule Attendance/i }),
       ).not.toBeInTheDocument();
     });
 
-    it("should not show Reagendar button when patientTreatmentStatus is undefined", () => {
+    it("should not show Reschedule button when patientTreatmentStatus is undefined", () => {
       render(
         <ScheduledAttendanceItem
           groupedScheduled={cancelledWithPhysiotherapy}
@@ -353,7 +353,7 @@ describe("ScheduledAttendanceItem", () => {
       );
 
       expect(
-        screen.queryByRole("button", { name: /Reagendar atendimento/i }),
+        screen.queryByRole("button", { name: /ReSchedule Attendance/i }),
       ).not.toBeInTheDocument();
     });
   });

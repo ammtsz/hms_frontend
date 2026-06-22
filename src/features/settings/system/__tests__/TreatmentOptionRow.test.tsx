@@ -59,7 +59,7 @@ describe("TreatmentOptionRow", () => {
   const mockBodyLocation: SystemOption = {
     id: 1,
     type: SystemOptionType.BODY_LOCATION,
-    value: "Braço Direito",
+    value: "Right Arm",
     isActive: true,
     usageCount: 5,
     createdAt: "2024-01-01T00:00:00.000Z",
@@ -69,7 +69,7 @@ describe("TreatmentOptionRow", () => {
   const mockColor: SystemOption = {
     id: 2,
     type: SystemOptionType.COLOR,
-    value: "Vermelho",
+    value: "Red",
     isActive: true,
     usageCount: 3,
     createdAt: "2024-01-01T00:00:00.000Z",
@@ -126,7 +126,7 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      const editButton = screen.getByTitle("Editar");
+      const editButton = screen.getByTitle("Edit");
       expect(editButton).toBeInTheDocument();
       expect(editButton).not.toBeDisabled();
     });
@@ -143,7 +143,7 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      const deleteButton = screen.getByTitle("Excluir");
+      const deleteButton = screen.getByTitle("Delete");
       expect(deleteButton).toBeInTheDocument();
       expect(deleteButton).not.toBeDisabled();
     });
@@ -160,12 +160,12 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      const editButton = screen.getByTitle("Editar");
+      const editButton = screen.getByTitle("Edit");
       fireEvent.click(editButton);
 
-      expect(screen.getByDisplayValue("Braço Direito")).toBeInTheDocument();
-      expect(screen.getByTitle("Salvar")).toBeInTheDocument();
-      expect(screen.getByTitle("Cancelar")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("Right Arm")).toBeInTheDocument();
+      expect(screen.getByTitle("Save")).toBeInTheDocument();
+      expect(screen.getByTitle("Cancel")).toBeInTheDocument();
     });
 
     it("should allow admin to open delete confirmation modal", () => {
@@ -180,12 +180,12 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      const deleteButton = screen.getByTitle("Excluir");
+      const deleteButton = screen.getByTitle("Delete");
       fireEvent.click(deleteButton);
 
-      expect(screen.getByText("Confirmar Exclusão")).toBeInTheDocument();
+      expect(screen.getByText("Confirm Deletion")).toBeInTheDocument();
       expect(
-        screen.getByText(/Tem certeza que deseja excluir/),
+        screen.getByText(/Are you sure you want to delete/),
       ).toBeInTheDocument();
     });
 
@@ -201,19 +201,19 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      const editButton = screen.getByTitle("Editar");
+      const editButton = screen.getByTitle("Edit");
       fireEvent.click(editButton);
 
-      const input = screen.getByDisplayValue("Braço Direito");
-      fireEvent.change(input, { target: { value: "Braço Esquerdo" } });
+      const input = screen.getByDisplayValue("Right Arm");
+      fireEvent.change(input, { target: { value: "Left Arm" } });
 
-      const saveButton = screen.getByTitle("Salvar");
+      const saveButton = screen.getByTitle("Save");
       fireEvent.click(saveButton);
 
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith({
           id: 1,
-          updates: { value: "Braço Esquerdo" },
+          updates: { value: "Left Arm" },
         });
       });
     });
@@ -230,15 +230,15 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      const deleteButton = screen.getByTitle("Excluir");
+      const deleteButton = screen.getByTitle("Delete");
       fireEvent.click(deleteButton);
 
       // Wait for modal to appear
-      expect(screen.getByText("Confirmar Exclusão")).toBeInTheDocument();
+      expect(screen.getByText("Confirm Deletion")).toBeInTheDocument();
 
       // Get all buttons and find the confirm button in the modal (second one)
       const confirmButtons = screen.getAllByRole("button", {
-        name: /Excluir/i,
+        name: /Delete/i,
       });
       fireEvent.click(confirmButtons[1]); // The second one is in the modal
 
@@ -271,7 +271,7 @@ describe("TreatmentOptionRow", () => {
       );
 
       const editButton = screen.getByTitle(
-        "Somente administradores podem editar",
+        "Only administrators can edit",
       );
       expect(editButton).toBeInTheDocument();
       expect(editButton).toBeDisabled();
@@ -290,7 +290,7 @@ describe("TreatmentOptionRow", () => {
       );
 
       const deleteButton = screen.getByTitle(
-        "Somente administradores podem excluir",
+        "Only administrators can delete",
       );
       expect(deleteButton).toBeInTheDocument();
       expect(deleteButton).toBeDisabled();
@@ -309,15 +309,15 @@ describe("TreatmentOptionRow", () => {
       );
 
       const editButton = screen.getByTitle(
-        "Somente administradores podem editar",
+        "Only administrators can edit",
       );
       fireEvent.click(editButton);
 
       // Should not show edit input
       expect(
-        screen.queryByDisplayValue("Braço Direito"),
+        screen.queryByDisplayValue("Right Arm"),
       ).not.toBeInTheDocument();
-      expect(screen.queryByTitle("Salvar")).not.toBeInTheDocument();
+      expect(screen.queryByTitle("Save")).not.toBeInTheDocument();
     });
 
     it("should not allow staff to open delete confirmation modal", () => {
@@ -333,12 +333,12 @@ describe("TreatmentOptionRow", () => {
       );
 
       const deleteButton = screen.getByTitle(
-        "Somente administradores podem excluir",
+        "Only administrators can delete",
       );
       fireEvent.click(deleteButton);
 
       // Should not show confirmation modal
-      expect(screen.queryByText("Confirmar Exclusão")).not.toBeInTheDocument();
+      expect(screen.queryByText("Confirm Deletion")).not.toBeInTheDocument();
     });
 
     it("should display option data to staff users", () => {
@@ -353,9 +353,9 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      expect(screen.getByText("Braço Direito")).toBeInTheDocument();
-      expect(screen.getByText("5 sessões")).toBeInTheDocument();
-      expect(screen.getByText("● Ativo")).toBeInTheDocument();
+      expect(screen.getByText("Right Arm")).toBeInTheDocument();
+      expect(screen.getByText("5 sessions")).toBeInTheDocument();
+      expect(screen.getByText("● Active")).toBeInTheDocument();
     });
   });
 
@@ -381,19 +381,19 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      const editButton = screen.getByTitle("Editar");
+      const editButton = screen.getByTitle("Edit");
       fireEvent.click(editButton);
 
-      const input = screen.getByDisplayValue("Vermelho");
-      fireEvent.change(input, { target: { value: "Azul" } });
+      const input = screen.getByDisplayValue("Red");
+      fireEvent.change(input, { target: { value: "Blue" } });
 
-      const saveButton = screen.getByTitle("Salvar");
+      const saveButton = screen.getByTitle("Save");
       fireEvent.click(saveButton);
 
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith({
           id: 2,
-          updates: { value: "Azul" },
+          updates: { value: "Blue" },
         });
       });
     });
@@ -426,7 +426,7 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      const optionName = screen.getByText("Braço Direito");
+      const optionName = screen.getByText("Right Arm");
       expect(optionName).toHaveClass("text-gray-400", "line-through");
     });
 
@@ -442,7 +442,7 @@ describe("TreatmentOptionRow", () => {
         </table>,
       );
 
-      expect(screen.getByText("5 sessões")).toBeInTheDocument();
+      expect(screen.getByText("5 sessions")).toBeInTheDocument();
     });
 
     it("should display hyphen when no usage count", () => {

@@ -25,12 +25,10 @@ const AttendanceTimes: React.FC<AttendanceTimesProps> = ({
   return (
     <div className="absolute bottom-1.5 left-2 flex justify-between text-xs w-full">
       <span className="text-gray-500">
-        {shouldShowCheckedIn &&
-          `check-in: ${formatDisplayTime(checkedInTime)}`}
+        {shouldShowCheckedIn && `check-in: ${formatDisplayTime(checkedInTime)}`}
       </span>
       <span className="mx-auto text-gray-500">
-        {shouldShowOnGoing &&
-          `atendimento: ${formatDisplayTime(onGoingTime)}`}
+        {shouldShowOnGoing && `attendance: ${formatDisplayTime(onGoingTime)}`}
       </span>
     </div>
   );

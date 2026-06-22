@@ -96,7 +96,7 @@ const EndOfDayContainer: React.FC = () => {
     <BaseModal
       isOpen
       onClose={handleClose}
-      title="Finalizar o Dia"
+      title="End of Day"
       maxWidth="4xl"
       preventOverflow
     >

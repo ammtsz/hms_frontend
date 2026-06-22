@@ -7,8 +7,8 @@ jest.mock("@/hooks/useDateHelpers");
 const mockHoliday = {
   id: 1,
   holidayDate: "2026-12-25",
-  name: "Natal",
-  description: "Feriado Nacional",
+  name: "Christmas",
+  description: "National Holiday",
   createdDate: "2026-01-01",
   updatedDate: "2026-01-01",
 };
@@ -16,7 +16,7 @@ const mockHoliday = {
 describe("HolidayDeleteConfirmModal", () => {
   const mockFormatDate = jest.fn((date: string) => {
     const d = new Date(date + "T00:00:00");
-    return d.toLocaleDateString("pt-BR");
+    return d.toLocaleDateString("en-US");
   });
 
   const mockOnConfirm = jest.fn();
@@ -53,9 +53,9 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    expect(screen.getByText("Confirmar Exclusão")).toBeInTheDocument();
+    expect(screen.getByText("Confirm Deletion")).toBeInTheDocument();
     expect(
-      screen.getByText(/Tem certeza que deseja excluir o feriado/i),
+      screen.getByText(/Are you sure you want to delete the holiday/i),
     ).toBeInTheDocument();
   });
 
@@ -69,7 +69,7 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    expect(screen.getByText(/Natal/i)).toBeInTheDocument();
+    expect(screen.getByText(/Christmas/i)).toBeInTheDocument();
   });
 
   it("displays formatted holiday date", () => {
@@ -95,7 +95,7 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    const cancelButton = screen.getByText("Cancelar");
+    const cancelButton = screen.getByText("Cancel");
     fireEvent.click(cancelButton);
 
     expect(mockOnCancel).toHaveBeenCalledTimes(1);
@@ -112,7 +112,7 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    const confirmButton = screen.getByText("Excluir");
+    const confirmButton = screen.getByText("Delete");
     fireEvent.click(confirmButton);
 
     expect(mockOnConfirm).toHaveBeenCalledTimes(1);
@@ -129,14 +129,14 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    const cancelButton = screen.getByText("Cancelar");
-    const confirmButton = screen.getByText("Excluindo...");
+    const cancelButton = screen.getByText("Cancel");
+    const confirmButton = screen.getByText("Deleting...");
 
     expect(cancelButton).toBeDisabled();
     expect(confirmButton).toBeDisabled();
   });
 
-  it('shows "Excluindo..." text when isDeleting is true', () => {
+  it('shows "Deleting..." text when isDeleting is true', () => {
     render(
       <HolidayDeleteConfirmModal
         holiday={mockHoliday}
@@ -146,11 +146,11 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    expect(screen.getByText("Excluindo...")).toBeInTheDocument();
-    expect(screen.queryByText("Excluir")).not.toBeInTheDocument();
+    expect(screen.getByText("Deleting...")).toBeInTheDocument();
+    expect(screen.queryByText("Delete")).not.toBeInTheDocument();
   });
 
-  it('shows "Excluir" text when isDeleting is false', () => {
+  it('shows "Delete" text when isDeleting is false', () => {
     render(
       <HolidayDeleteConfirmModal
         holiday={mockHoliday}
@@ -160,8 +160,8 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    expect(screen.getByText("Excluir")).toBeInTheDocument();
-    expect(screen.queryByText("Excluindo...")).not.toBeInTheDocument();
+    expect(screen.getByText("Delete")).toBeInTheDocument();
+    expect(screen.queryByText("Deleting...")).not.toBeInTheDocument();
   });
 
   it("applies red styling to confirm button", () => {
@@ -174,7 +174,7 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    const confirmButton = screen.getByText("Excluir");
+    const confirmButton = screen.getByText("Delete");
     expect(confirmButton).toHaveClass("bg-red-600");
   });
 
@@ -188,7 +188,7 @@ describe("HolidayDeleteConfirmModal", () => {
       />,
     );
 
-    const confirmButton = screen.getByText("Excluindo...");
+    const confirmButton = screen.getByText("Deleting...");
     fireEvent.click(confirmButton);
 
     expect(mockOnConfirm).not.toHaveBeenCalled();
@@ -205,7 +205,7 @@ describe("HolidayDeleteConfirmModal", () => {
     );
 
     expect(
-      screen.getByRole("heading", { level: 2, name: "Confirmar Exclusão" }),
+      screen.getByRole("heading", { level: 2, name: "Confirm Deletion" }),
     ).toBeInTheDocument();
   });
 });

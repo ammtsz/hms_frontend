@@ -349,7 +349,7 @@ describe('useAttendanceData', () => {
           phone: '11777777777',
           priority: "2",
           birthDate: '1990-01-15',
-          mainComplaint: 'Test complaint'
+          mainConcern: 'Test complaint'
         });
       });
 
@@ -365,7 +365,7 @@ describe('useAttendanceData', () => {
         phone: '11777777777',
         priority: PatientPriority.LEVEL_2,
         birthDate: '1990-01-15',
-        mainComplaint: 'Test complaint'
+        mainConcern: 'Test complaint'
       });
 
       expect(mockOnNewPatientDetected).toHaveBeenCalled();

@@ -203,7 +203,7 @@ describe("useAgendaQueries", () => {
       );
 
       expect(result.current.error).toEqual(
-        new Error("Erro ao carregar agenda"),
+        new Error("Failed to load schedule"),
       );
     });
   });

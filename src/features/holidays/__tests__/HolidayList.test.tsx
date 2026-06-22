@@ -1,6 +1,11 @@
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import HolidayList from "../components/HolidayList";
 import { useDateHelpers } from "@/hooks/useDateHelpers";
+import {
+  formatBlockedTreatmentTypes,
+  HOLIDAY_LIST_EMPTY_STATE,
+  HOLIDAY_LIST_TABLE_HEADERS,
+} from "../utils/holidayDisplayUtils";
 
 jest.mock("@/hooks/useDateHelpers");
 
@@ -18,8 +23,8 @@ const mockHolidays = [
   {
     id: 1,
     holidayDate: "2026-12-25",
-    name: "Natal",
-    description: "Feriado Nacional",
+    name: "Christmas",
+    description: "National Holiday",
     holidayGroupId: null,
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
@@ -27,7 +32,7 @@ const mockHolidays = [
   {
     id: 2,
     holidayDate: "2026-01-01",
-    name: "Ano Novo",
+    name: "New Year",
     description: "",
     holidayGroupId: null,
     createdDate: "2026-01-01",
@@ -56,7 +61,7 @@ const mockHolidays = [
 describe("HolidayList", () => {
   const mockFormatDate = jest.fn((date: string) => {
     const d = new Date(date + "T00:00:00");
-    return d.toLocaleDateString("pt-BR");
+    return d.toLocaleDateString("en-US");
   });
 
   const mockOnEdit = jest.fn();
@@ -68,7 +73,7 @@ describe("HolidayList", () => {
 
     (useDateHelpers as jest.Mock).mockReturnValue({
       formatDate: mockFormatDate,
-      formatDateToDDMMYYYY: mockFormatDate,
+      formatDisplayDate: mockFormatDate,
     });
   });
 
@@ -82,11 +87,11 @@ describe("HolidayList", () => {
       />,
     );
 
-    expect(screen.getByText("Nenhum feriado cadastrado")).toBeInTheDocument();
+    expect(screen.getByText(HOLIDAY_LIST_EMPTY_STATE.title)).toBeInTheDocument();
     expect(
-      screen.getByText("Adicione feriados para bloquear datas no calendário"),
+      screen.getByText(HOLIDAY_LIST_EMPTY_STATE.description),
     ).toBeInTheDocument();
-    expect(screen.getByText("Adicionar Primeiro Feriado")).toBeInTheDocument();
+    expect(screen.getByText(HOLIDAY_LIST_EMPTY_STATE.button)).toBeInTheDocument();
   });
 
   it("displays empty state when holidays is undefined", () => {
@@ -99,7 +104,7 @@ describe("HolidayList", () => {
       />,
     );
 
-    expect(screen.getByText("Nenhum feriado cadastrado")).toBeInTheDocument();
+    expect(screen.getByText(HOLIDAY_LIST_EMPTY_STATE.title)).toBeInTheDocument();
   });
 
   it("calls onCreateClick when clicking empty state button", () => {
@@ -112,7 +117,7 @@ describe("HolidayList", () => {
       />,
     );
 
-    const button = screen.getByText("Adicionar Primeiro Feriado");
+    const button = screen.getByText(HOLIDAY_LIST_EMPTY_STATE.button);
     fireEvent.click(button);
 
     expect(mockOnCreateClick).toHaveBeenCalledTimes(1);
@@ -144,9 +149,9 @@ describe("HolidayList", () => {
     );
 
     const table = getHolidayTable();
-    expect(table.getByText("Natal")).toBeInTheDocument();
-    expect(table.getByText("Ano Novo")).toBeInTheDocument();
-    expect(table.getByText("Feriado Nacional")).toBeInTheDocument();
+    expect(table.getByText("Christmas")).toBeInTheDocument();
+    expect(table.getByText("New Year")).toBeInTheDocument();
+    expect(table.getByText("National Holiday")).toBeInTheDocument();
   });
 
   it("displays table headers", () => {
@@ -160,12 +165,12 @@ describe("HolidayList", () => {
     );
 
     const table = getHolidayTable();
-    expect(table.getByText("Data(s)")).toBeInTheDocument();
-    expect(table.getByText("Nome")).toBeInTheDocument();
-    expect(table.getByText("Descrição")).toBeInTheDocument();
-    expect(table.getByText("Duração")).toBeInTheDocument();
-    expect(table.getByText("Folga")).toBeInTheDocument();
-    expect(table.getByText("Ações")).toBeInTheDocument();
+    expect(table.getByText(HOLIDAY_LIST_TABLE_HEADERS.dates)).toBeInTheDocument();
+    expect(table.getByText(HOLIDAY_LIST_TABLE_HEADERS.name)).toBeInTheDocument();
+    expect(table.getByText(HOLIDAY_LIST_TABLE_HEADERS.description)).toBeInTheDocument();
+    expect(table.getByText(HOLIDAY_LIST_TABLE_HEADERS.duration)).toBeInTheDocument();
+    expect(table.getByText(HOLIDAY_LIST_TABLE_HEADERS.dayOff)).toBeInTheDocument();
+    expect(table.getByText(HOLIDAY_LIST_TABLE_HEADERS.actions)).toBeInTheDocument();
   });
 
   it("displays duration and blocked treatment types correctly", () => {
@@ -178,12 +183,12 @@ describe("HolidayList", () => {
       />,
     );
 
-    // Check for duration display - there should be multiple "1 dia" elements since both holidays are single days
-    const durationElements = screen.getAllByText("1 dia");
+    // Check for duration display - there should be multiple "1 day" elements since both holidays are single days
+    const durationElements = screen.getAllByText("1 day");
     expect(durationElements.length).toBeGreaterThan(0);
 
     const blockedTypesElements = screen.getAllByText(
-      "Consulta de Avaliação, Fisioterapia, TENS",
+      formatBlockedTreatmentTypes(),
     );
     expect(blockedTypesElements.length).toBeGreaterThan(0);
   });
@@ -193,8 +198,8 @@ describe("HolidayList", () => {
       {
         id: 1,
         holidayDate: "2026-12-25",
-        name: "Natal",
-        description: "Feriado Nacional",
+        name: "Christmas",
+        description: "National Holiday",
         blockedTreatmentTypes: ["assessment", "physiotherapy"],
         holidayGroupId: null,
         createdDate: "2026-01-01",
@@ -213,7 +218,9 @@ describe("HolidayList", () => {
 
     const table = getHolidayTable();
     expect(
-      table.getByText("Consulta de Avaliação, Fisioterapia"),
+      table.getByText(
+        formatBlockedTreatmentTypes(["assessment", "physiotherapy"]),
+      ),
     ).toBeInTheDocument();
   });
 
@@ -245,12 +252,12 @@ describe("HolidayList", () => {
     );
 
     const table = getHolidayTable();
-    expect(table.getAllByTitle("Editar")).toHaveLength(2);
-    expect(table.getAllByTitle("Excluir")).toHaveLength(2);
+    expect(table.getAllByTitle("Edit")).toHaveLength(2);
+    expect(table.getAllByTitle("Delete")).toHaveLength(2);
 
     const cards = within(screen.getByTestId("holiday-list-cards"));
-    expect(cards.getAllByTitle("Editar")).toHaveLength(2);
-    expect(cards.getAllByTitle("Excluir")).toHaveLength(2);
+    expect(cards.getAllByTitle("Edit")).toHaveLength(2);
+    expect(cards.getAllByTitle("Delete")).toHaveLength(2);
   });
 
   it("calls onEdit with correct holiday when clicking edit", () => {
@@ -263,7 +270,7 @@ describe("HolidayList", () => {
       />,
     );
 
-    const editButtons = screen.getAllByTitle("Editar");
+    const editButtons = screen.getAllByTitle("Edit");
     fireEvent.click(editButtons[0]);
 
     expect(mockOnEdit).toHaveBeenCalledWith(mockHolidays[0]);
@@ -280,7 +287,7 @@ describe("HolidayList", () => {
       />,
     );
 
-    const deleteButtons = screen.getAllByTitle("Excluir");
+    const deleteButtons = screen.getAllByTitle("Delete");
     fireEvent.click(deleteButtons[1]);
 
     expect(mockOnDelete).toHaveBeenCalledWith(mockHolidays[1]);
@@ -318,7 +325,7 @@ describe("HolidayList", () => {
 
     const holidayNames = screen.getAllByRole("cell").filter((cell) => {
       const text = cell.textContent;
-      return text === "Natal" || text === "Ano Novo";
+      return text === "Christmas" || text === "New Year";
     });
 
     expect(holidayNames).toHaveLength(2);

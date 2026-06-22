@@ -80,7 +80,7 @@ describe("BaseModal", () => {
     it("should show close button by default", () => {
       render(<BaseModal {...defaultProps} />);
 
-      const closeButton = screen.getByRole("button", { name: "Fechar" });
+      const closeButton = screen.getByRole("button", { name: "Close" });
       expect(closeButton).toBeInTheDocument();
     });
 
@@ -88,7 +88,7 @@ describe("BaseModal", () => {
       render(<BaseModal {...defaultProps} showCloseButton={false} />);
 
       expect(
-        screen.queryByRole("button", { name: "Fechar" })
+        screen.queryByRole("button", { name: "Close" }),
       ).not.toBeInTheDocument();
     });
 
@@ -96,7 +96,7 @@ describe("BaseModal", () => {
       const mockOnClose = jest.fn();
       render(<BaseModal {...defaultProps} onClose={mockOnClose} />);
 
-      const closeButton = screen.getByRole("button", { name: "Fechar" });
+      const closeButton = screen.getByRole("button", { name: "Close" });
       fireEvent.click(closeButton);
 
       expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -105,8 +105,8 @@ describe("BaseModal", () => {
     it("should have proper accessibility attributes", () => {
       render(<BaseModal {...defaultProps} />);
 
-      const closeButton = screen.getByRole("button", { name: "Fechar" });
-      expect(closeButton).toHaveAttribute("aria-label", "Fechar");
+      const closeButton = screen.getByRole("button", { name: "Close" });
+      expect(closeButton).toHaveAttribute("aria-label", "Close");
       expect(closeButton).toHaveAttribute("type", "button");
     });
   });
@@ -207,7 +207,7 @@ describe("BaseModal", () => {
         "sm:items-center",
         "justify-center",
         "z-50",
-        "p-4"
+        "p-4",
       );
     });
 
@@ -224,7 +224,12 @@ describe("BaseModal", () => {
       const header =
         screen.getByText("Test Modal").parentElement?.parentElement
           ?.parentElement;
-      expect(header).toHaveClass("shrink-0", "p-4", "border-b", "border-gray-100");
+      expect(header).toHaveClass(
+        "shrink-0",
+        "p-4",
+        "border-b",
+        "border-gray-100",
+      );
     });
   });
 
@@ -232,7 +237,7 @@ describe("BaseModal", () => {
     it("should support tab navigation to close button", () => {
       render(<BaseModal {...defaultProps} />);
 
-      const closeButton = screen.getByRole("button", { name: "Fechar" });
+      const closeButton = screen.getByRole("button", { name: "Close" });
       closeButton.focus();
 
       expect(closeButton).toHaveFocus();
@@ -242,7 +247,7 @@ describe("BaseModal", () => {
       const mockOnClose = jest.fn();
       render(<BaseModal {...defaultProps} onClose={mockOnClose} />);
 
-      const closeButton = screen.getByRole("button", { name: "Fechar" });
+      const closeButton = screen.getByRole("button", { name: "Close" });
       fireEvent.click(closeButton);
 
       expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -300,7 +305,7 @@ describe("BaseModal", () => {
       expect(screen.getByText("Section Title")).toBeInTheDocument();
       expect(screen.getByPlaceholderText("Test input")).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "Submit" })
+        screen.getByRole("button", { name: "Submit" }),
       ).toBeInTheDocument();
       expect(screen.getByText("Item 1")).toBeInTheDocument();
       expect(screen.getByText("Item 2")).toBeInTheDocument();
@@ -318,13 +323,13 @@ describe("BaseModal", () => {
       render(<BaseModal {...defaultProps}>{multiParagraphContent}</BaseModal>);
 
       expect(
-        screen.getByText("First paragraph with some text.")
+        screen.getByText("First paragraph with some text."),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("Second paragraph with different content.")
+        screen.getByText("Second paragraph with different content."),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("Third paragraph for testing.")
+        screen.getByText("Third paragraph for testing."),
       ).toBeInTheDocument();
     });
   });
@@ -353,7 +358,7 @@ describe("BaseModal", () => {
         />,
       );
 
-      expect(screen.getByLabelText("Fechar")).toBeInTheDocument();
+      expect(screen.getByLabelText("Close")).toBeInTheDocument();
       expect(screen.queryByRole("heading")).not.toBeInTheDocument();
     });
 

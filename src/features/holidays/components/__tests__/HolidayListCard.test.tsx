@@ -9,16 +9,16 @@ const mockGroup: HolidayGroup = {
     {
       id: 1,
       holidayDate: "2026-12-25",
-      name: "Natal",
-      description: "Feriado Nacional",
+      name: "Christmas",
+      description: "National Holiday",
       holidayGroupId: null,
       createdDate: "2026-01-01",
       updatedDate: "2026-01-01",
     },
   ],
-  dateRange: "25/12/2026",
-  displayName: "Natal",
-  description: "Feriado Nacional",
+  dateRange: "12/25/2026",
+  displayName: "Christmas",
+  description: "National Holiday",
   isPeriod: false,
 };
 
@@ -31,15 +31,15 @@ describe("HolidayListCard", () => {
       <HolidayListCard group={mockGroup} onEdit={onEdit} onDelete={onDelete} />,
     );
 
-    expect(screen.getByText("25/12/2026")).toBeInTheDocument();
-    expect(screen.getByText("Natal")).toBeInTheDocument();
-    expect(screen.getByText("Feriado Nacional")).toBeInTheDocument();
-    expect(screen.getByText("1 dia")).toBeInTheDocument();
+    expect(screen.getByText("12/25/2026")).toBeInTheDocument();
+    expect(screen.getByText("Christmas")).toBeInTheDocument();
+    expect(screen.getByText("National Holiday")).toBeInTheDocument();
+    expect(screen.getByText("1 day")).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /editar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Edit/i }));
     expect(onEdit).toHaveBeenCalledWith(mockGroup.holidays[0]);
 
-    fireEvent.click(screen.getByRole("button", { name: /excluir/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Delete$/i }));
     expect(onDelete).toHaveBeenCalledWith(mockGroup.holidays[0]);
   });
 });

@@ -25,9 +25,8 @@ export function MobileDesktopDnDAlert({
         💻
       </span>
       <p className="text-sm">
-        <strong>Movimentação entre colunas:</strong> use um computador para
-        arrastar cartões e alterar o status. Em telas menores só é possível
-        visualizar o quadro.
+        <strong>Moving between columns:</strong> use a computer to drag cards
+        and change status. On smaller screens, the board can only be viewed.
       </p>
     </div>
   );

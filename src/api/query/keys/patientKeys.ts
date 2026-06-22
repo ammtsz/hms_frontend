@@ -5,6 +5,6 @@ export const patientKeys = {
   details: () => [...patientKeys.all, 'detail'] as const,
   detail: (id: string) => [...patientKeys.details(), id] as const,
   attendances: (patientId: string) => ['attendances', 'patient', patientId] as const,
-  mainComplaint: (patientId: number) =>
-    [...patientKeys.all, 'mainComplaint', patientId] as const,
+  mainConcern: (patientId: number) =>
+    [...patientKeys.all, 'mainConcern', patientId] as const,
 };

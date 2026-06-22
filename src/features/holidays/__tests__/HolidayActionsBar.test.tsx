@@ -20,7 +20,7 @@ describe('HolidayActionsBar', () => {
   it('renders year selector with correct label', () => {
     render(<HolidayActionsBar {...defaultProps} />);
 
-    expect(screen.getByLabelText('Ano:')).toBeInTheDocument();
+    expect(screen.getByLabelText('Year:')).toBeInTheDocument();
   });
 
   it('displays all years in dropdown', () => {
@@ -35,14 +35,14 @@ describe('HolidayActionsBar', () => {
   it('shows selected year as current value', () => {
     render(<HolidayActionsBar {...defaultProps} selectedYear={2028} />);
 
-    const select = screen.getByLabelText('Ano:') as HTMLSelectElement;
+    const select = screen.getByLabelText('Year:') as HTMLSelectElement;
     expect(select.value).toBe('2028');
   });
 
   it('calls onYearChange when selecting a different year', () => {
     render(<HolidayActionsBar {...defaultProps} />);
 
-    const select = screen.getByLabelText('Ano:');
+    const select = screen.getByLabelText('Year:');
     fireEvent.change(select, { target: { value: '2027' } });
 
     expect(mockOnYearChange).toHaveBeenCalledWith(2027);
@@ -53,7 +53,7 @@ describe('HolidayActionsBar', () => {
     render(<HolidayActionsBar {...defaultProps} />);
 
     const createButton = screen.getByRole('button', {
-      name: /Novo Feriado/i,
+      name: /New Holiday/i,
     });
     expect(createButton).toBeInTheDocument();
   });
@@ -62,7 +62,7 @@ describe('HolidayActionsBar', () => {
     render(<HolidayActionsBar {...defaultProps} />);
 
     const createButton = screen.getByRole('button', {
-      name: /Novo Feriado/i,
+      name: /New Holiday/i,
     });
     fireEvent.click(createButton);
 
@@ -73,7 +73,7 @@ describe('HolidayActionsBar', () => {
     render(<HolidayActionsBar {...defaultProps} />);
 
     const createButton = screen.getByRole('button', {
-      name: /Novo Feriado/i,
+      name: /New Holiday/i,
     });
 
     expect(createButton).toHaveClass('bg-blue-800', 'text-white');

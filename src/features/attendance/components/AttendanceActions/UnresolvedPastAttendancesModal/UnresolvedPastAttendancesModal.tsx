@@ -5,17 +5,17 @@ import BaseModal from "@/components/common/BaseModal";
 import { useUnresolvedPastModal, useCloseModal } from "@/stores/modalStore";
 import { useAttendanceStore } from "@/stores";
 import { AlertCircle, Calendar } from "lucide-react";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { Button } from "@/components/ui";
 
-// Map status values to Portuguese labels
+// Map status values to English labels
 const statusLabelMap: Record<string, string> = {
-  scheduled: "agendados",
-  checked_in: "sala de espera",
-  in_progress: "em atendimento",
-  completed: "concluídos",
-  cancelled: "cancelados",
-  missed: "faltas",
+  scheduled: "scheduled",
+  checked_in: "waiting room",
+  in_progress: "in progress",
+  completed: "completed",
+  cancelled: "cancelled",
+  missed: "missed",
 };
 
 const translateStatuses = (statuses: string[] | string): string => {
@@ -63,7 +63,7 @@ const UnresolvedPastAttendancesModal: React.FC = () => {
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Atendimentos Pendentes"
+      title="Pending Attendances"
     >
       <div className="p-6">
         {/* Alert Icon */}
@@ -77,19 +77,19 @@ const UnresolvedPastAttendancesModal: React.FC = () => {
         <div className="text-center mb-6">
           <p className="text-lg font-semibold text-gray-800 mb-2">
             {totalAttendances === 1
-              ? "1 atendimento não resolvido"
-              : `${totalAttendances} atendimentos não resolvidos`}
+              ? "1 unresolved attendance"
+              : `${totalAttendances} unresolved attendances`}
           </p>
           <p className="text-sm text-gray-500">
-            em {totalDatesCount}{" "}
-            {totalDatesCount === 1 ? "data passada" : "datas passadas"}
+            on {totalDatesCount}{" "}
+            {totalDatesCount === 1 ? "past date" : "past dates"}
           </p>
         </div>
 
         {/* List of dates */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 max-h-96 overflow-y-auto">
           <p className="text-sm font-semibold text-gray-700 mb-3">
-            Datas com atendimentos pendentes:
+            Dates with pending attendances:
           </p>
           <div className="space-y-2">
             {dates.map((dateInfo) => (
@@ -99,11 +99,11 @@ const UnresolvedPastAttendancesModal: React.FC = () => {
               >
                 <div>
                   <p className="font-semibold text-gray-800">
-                    {formatDateBR(dateInfo.date)}
+                    {formatDisplayDate(dateInfo.date)}
                   </p>
                   <p className="text-sm text-gray-600">
-                    {dateInfo.count}{" "}
-                    {dateInfo.count === 1 ? "atendimento" : "atendimentos"}
+                    {dateInfo.count} {dateInfo.count}{" "}
+                    {dateInfo.count === 1 ? "attendance" : "attendances"}
                     {dateInfo.statuses && (
                       <span className="text-gray-500 ml-1">
                         ({translateStatuses(dateInfo.statuses)})
@@ -117,7 +117,7 @@ const UnresolvedPastAttendancesModal: React.FC = () => {
                   className="gap-1.5 bg-blue-600 hover:bg-blue-700"
                 >
                   <Calendar className="h-3.5 w-3.5" />
-                  Ver
+                  View
                 </Button>
               </div>
             ))}
@@ -128,8 +128,8 @@ const UnresolvedPastAttendancesModal: React.FC = () => {
         <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
           <p className="text-sm text-gray-700">
             {totalAttendances === 1
-              ? "Este atendimento precisa ser finalizado, cancelado ou marcado como falta."
-              : "Estes atendimentos precisam ser finalizados, cancelados ou marcados como falta."}
+              ? "This attendance needs to be completed, cancelled or marked as missed."
+              : "These attendances need to be completed, cancelled or marked as missed."}
           </p>
         </div>
 
@@ -140,7 +140,7 @@ const UnresolvedPastAttendancesModal: React.FC = () => {
             onClick={handleClose}
             className="w-full rounded-lg text-gray-700"
           >
-            Fechar
+            Close
           </Button>
         </div>
       </div>

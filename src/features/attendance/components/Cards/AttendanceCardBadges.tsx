@@ -1,6 +1,7 @@
 import React from "react";
 import type { IGroupedPatient } from "../../utils/patientGrouping";
 import { countTreatmentTypes } from "../../utils/patientGrouping";
+import { ATTENDANCE_CARD_OVERLAY_LABELS } from "../../styles/cardStyles";
 
 interface AttendanceCardBadgesProps {
   isMissed: boolean;
@@ -26,19 +27,19 @@ const AttendanceCardBadges: React.FC<AttendanceCardBadgesProps> = ({
       {/* Missed/Cancelled indicator */}
       {isMissed && (
         <span className="absolute top-1 right-1 text-red-700 text-xs px-2 py-1 rounded z-10 bg-red-100 font-semibold">
-          FALTA
+          {ATTENDANCE_CARD_OVERLAY_LABELS.missed}
         </span>
       )}
       {isCancelled && (
         <span className="absolute top-1 right-1 text-gray-700 text-xs px-2 py-1 rounded z-10 bg-gray-300 font-semibold">
-          CANCELADO
+          {ATTENDANCE_CARD_OVERLAY_LABELS.cancelled}
         </span>
       )}
 
       {/* Next to be attended indicator (only show if not missed/cancelled) */}
       {isNextToBeAttended && !isMissedOrCancelled && (
         <span className="absolute top-1 right-1 text-red-700 text-xs px-1 py-0.5 rounded z-10">
-          Próximo
+          {ATTENDANCE_CARD_OVERLAY_LABELS.next}
         </span>
       )}
 

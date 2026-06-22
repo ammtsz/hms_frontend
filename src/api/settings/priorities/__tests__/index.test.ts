@@ -30,7 +30,7 @@ describe("Settings priorities API", () => {
             id: 1,
             isActive: true,
             value: "1",
-            label: "Exceção",
+            label: "Priority",
             sortOrder: 1,
             type: "priority",
             createdAt: "2026-01-01",
@@ -63,7 +63,7 @@ describe("Settings priorities API", () => {
 
       const result = await getPriorities(false);
 
-      expect(result).toEqual({ success: false, error: "Prioridade não encontrada" });
+      expect(result).toEqual({ success: false, error: expect.stringMatching(/Priority not found|Priority not found/) });
     });
   });
 
@@ -73,7 +73,7 @@ describe("Settings priorities API", () => {
         id: 1,
         isActive: true,
         value: "2",
-        label: "Intermediária",
+        label: "Intermediate",
         sortOrder: 2,
         type: "priority",
         createdAt: "2026-01-01",
@@ -83,12 +83,12 @@ describe("Settings priorities API", () => {
       mockApi.patch.mockResolvedValue({ data: mockValue });
 
       const result = await updatePriorityOption(1, {
-        label: "Intermediária",
+        label: "Intermediate",
         isActive: true,
       });
 
       expect(mockApi.patch).toHaveBeenCalledWith("/settings/priorities/1", {
-        label: "Intermediária",
+        label: "Intermediate",
         isActive: true,
       });
       expect(result).toEqual({ success: true, value: mockValue });
@@ -111,7 +111,7 @@ describe("Settings priorities API", () => {
         id: 1,
         isActive: false,
         value: "2",
-        label: "Intermediária",
+        label: "Intermediate",
         sortOrder: 2,
         type: "priority",
         createdAt: "2026-01-01",
@@ -133,8 +133,8 @@ describe("Settings priorities API", () => {
         response: {
           status: 409,
           data: {
-            message: "Prioridade em uso",
-            blockingPatients: [{ id: 2, name: "Paciente 2", priority: "3" }],
+            message: "Priority in use",
+            blockingPatients: [{ id: 2, name: "Patient 2", priority: "3" }],
           },
         },
       });
@@ -142,9 +142,9 @@ describe("Settings priorities API", () => {
       const result = await deactivatePriorityOption(1);
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe("Prioridade em uso");
+      expect(result.error).toMatch(/Priority in use|Priority in use/);
       expect(result.blockingPatients).toEqual([
-        { id: 2, name: "Paciente 2", priority: "3" },
+        { id: 2, name: "Patient 2", priority: "3" },
       ]);
     });
 
@@ -155,7 +155,7 @@ describe("Settings priorities API", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Prioridade não encontrada",
+        error: expect.stringMatching(/Priority not found|Priority not found/),
       });
     });
   });

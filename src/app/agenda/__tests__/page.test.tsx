@@ -74,7 +74,7 @@ describe("AgendaPage", () => {
     if (loadingFallback) {
       expect(loadingFallback).toHaveAttribute(
         "data-message",
-        "Carregando calendário da agenda..."
+        "Loading agenda calendar..."
       );
       expect(loadingFallback).toHaveAttribute("data-size", "large");
     }

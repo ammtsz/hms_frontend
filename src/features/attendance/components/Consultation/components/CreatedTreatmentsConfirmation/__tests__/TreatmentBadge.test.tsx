@@ -7,7 +7,7 @@ describe("TreatmentBadge", () => {
     it("should render physiotherapy badge", () => {
       render(<TreatmentBadge type="physiotherapy" variant="badge" />);
 
-      const badge = screen.getByText(/Fisioterapia/i);
+      const badge = screen.getByText(/Physiotherapy/i);
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveClass("bg-yellow-100", "text-yellow-800");
     });
@@ -23,7 +23,7 @@ describe("TreatmentBadge", () => {
     it("should default to badge variant", () => {
       render(<TreatmentBadge type="physiotherapy" />);
 
-      const badge = screen.getByText(/Fisioterapia/i);
+      const badge = screen.getByText(/Physiotherapy/i);
       expect(badge).toBeInTheDocument();
     });
   });

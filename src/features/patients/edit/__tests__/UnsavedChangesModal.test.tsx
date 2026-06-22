@@ -19,10 +19,10 @@ describe("UnsavedChangesModal", () => {
   it("should render modal when open", () => {
     render(<UnsavedChangesModal {...defaultProps} />);
 
-    expect(screen.getByText("Alterações Não Salvas")).toBeInTheDocument();
+    expect(screen.getByText(/Unsaved Changes/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Se você sair agora, todas as alterações feitas serão perdidas. Tem certeza que deseja sair?",
+        /If you leave now, all changes will be lost\. Are you sure you want to leave\?/,
       ),
     ).toBeInTheDocument();
   });
@@ -30,26 +30,32 @@ describe("UnsavedChangesModal", () => {
   it("should not render modal when closed", () => {
     render(<UnsavedChangesModal {...defaultProps} isOpen={false} />);
 
-    expect(screen.queryByText("Alterações Não Salvas")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Unsaved Changes/),
+    ).not.toBeInTheDocument();
   });
 
   it("should render modal content", () => {
     render(<UnsavedChangesModal {...defaultProps} />);
 
-    expect(screen.getByText("Alterações Não Salvas")).toBeInTheDocument();
+    expect(screen.getByText("Unsaved Changes")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /continuar editando/i }),
+      screen.getByRole("button", {
+        name: /continue editing/i,
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /sair sem salvar/i }),
+      screen.getByRole("button", {
+        name: /leave without saving/i,
+      }),
     ).toBeInTheDocument();
   });
 
-  it("should call onStay when 'Continuar Editando' button clicked", () => {
+  it("should call onStay when Continue Editing button clicked", () => {
     render(<UnsavedChangesModal {...defaultProps} />);
 
     const stayButton = screen.getByRole("button", {
-      name: /continuar editando/i,
+      name: /continue editing/i,
     });
     fireEvent.click(stayButton);
 
@@ -57,11 +63,11 @@ describe("UnsavedChangesModal", () => {
     expect(mockOnLeave).not.toHaveBeenCalled();
   });
 
-  it("should call onLeave when 'Sair Sem Salvar' button clicked", () => {
+  it("should call onLeave when Leave Without Saving button clicked", () => {
     render(<UnsavedChangesModal {...defaultProps} />);
 
     const leaveButton = screen.getByRole("button", {
-      name: /sair sem salvar/i,
+      name: /leave without saving/i,
     });
     fireEvent.click(leaveButton);
 
@@ -69,11 +75,11 @@ describe("UnsavedChangesModal", () => {
     expect(mockOnStay).not.toHaveBeenCalled();
   });
 
-  it("should autofocus on 'Continuar Editando' button", () => {
+  it("should autofocus on Continue Editing button", () => {
     render(<UnsavedChangesModal {...defaultProps} />);
 
     const stayButton = screen.getByRole("button", {
-      name: /continuar editando/i,
+      name: /continue editing/i,
     });
     expect(stayButton).toHaveFocus();
   });
@@ -86,10 +92,14 @@ describe("UnsavedChangesModal", () => {
     // Should have exactly 2 buttons
     expect(buttons).toHaveLength(2);
     expect(
-      screen.getByRole("button", { name: /continuar editando/i }),
+      screen.getByRole("button", {
+        name: /continue editing/i,
+      }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /sair sem salvar/i }),
+      screen.getByRole("button", {
+        name: /leave without saving/i,
+      }),
     ).toBeInTheDocument();
   });
 
@@ -97,7 +107,7 @@ describe("UnsavedChangesModal", () => {
     render(<UnsavedChangesModal {...defaultProps} />);
 
     const stayButton = screen.getByRole("button", {
-      name: /continuar editando/i,
+      name: /continue editing/i,
     });
     expect(stayButton).toHaveClass("bg-blue-700", "text-white");
     expect(stayButton).not.toHaveClass("ds-button-primary");
@@ -107,7 +117,7 @@ describe("UnsavedChangesModal", () => {
     render(<UnsavedChangesModal {...defaultProps} />);
 
     const leaveButton = screen.getByRole("button", {
-      name: /sair sem salvar/i,
+      name: /leave without saving/i,
     });
     expect(leaveButton).toHaveClass("border", "border-gray-300", "bg-white");
     expect(leaveButton).not.toHaveClass("ds-button-outline");
@@ -118,7 +128,7 @@ describe("UnsavedChangesModal", () => {
 
     // BaseModal's close button should not be rendered (showCloseButton={false})
     const closeButtons = container.querySelectorAll(
-      'button[aria-label="Fechar"]',
+      'button[aria-label="Close"]',
     );
     expect(closeButtons).toHaveLength(0);
   });

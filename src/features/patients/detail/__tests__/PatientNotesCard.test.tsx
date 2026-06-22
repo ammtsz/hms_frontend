@@ -18,11 +18,11 @@ jest.mock("@/api/patients", () => ({
 
 jest.mock("@/api/query/hooks/useNoteCategoriesQueries");
 
-// Mock the formatDateBR utility
+// Mock the formatDisplayDate utility
 jest.mock("@/utils/dateUtils", () => ({
-  formatDateBR: jest.fn((date: string) => {
+  formatDisplayDate: jest.fn((date: string) => {
     const mockDate = new Date(date);
-    return mockDate.toLocaleDateString("pt-BR");
+    return mockDate.toLocaleDateString("en-US");
   }),
 }));
 
@@ -108,7 +108,7 @@ describe("PatientNotesCard", () => {
       id: 1,
       type: SystemOptionType.NOTE_CATEGORY,
       value: "general",
-      label: "Geral",
+      label: "General",
       sortOrder: 1,
       isActive: true,
       createdAt: "2026-01-01",
@@ -118,7 +118,7 @@ describe("PatientNotesCard", () => {
       id: 2,
       type: SystemOptionType.NOTE_CATEGORY,
       value: "treatment",
-      label: "Tratamento",
+      label: "Treatment",
       sortOrder: 2,
       isActive: true,
       createdAt: "2026-01-01",
@@ -128,7 +128,7 @@ describe("PatientNotesCard", () => {
       id: 3,
       type: SystemOptionType.NOTE_CATEGORY,
       value: "observation",
-      label: "Observação",
+      label: "Observation",
       sortOrder: 3,
       isActive: true,
       createdAt: "2026-01-01",
@@ -138,7 +138,7 @@ describe("PatientNotesCard", () => {
       id: 4,
       type: SystemOptionType.NOTE_CATEGORY,
       value: "emergency",
-      label: "Emergência",
+      label: "Emergency",
       sortOrder: 4,
       isActive: true,
       createdAt: "2026-01-01",
@@ -148,7 +148,7 @@ describe("PatientNotesCard", () => {
       id: 5,
       type: SystemOptionType.NOTE_CATEGORY,
       value: "family",
-      label: "Família",
+      label: "Family",
       sortOrder: 5,
       isActive: true,
       createdAt: "2026-01-01",
@@ -172,15 +172,11 @@ describe("PatientNotesCard", () => {
     renderWithQueryClient(<PatientNotesCard {...defaultProps} />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText("Nenhuma nota adicionada ainda."),
-      ).toBeInTheDocument();
+      expect(screen.getByText("No notes added yet.")).toBeInTheDocument();
     });
 
     expect(
-      screen.getByText(
-        'Clique em "+ Adicionar" para adicionar observações importantes.',
-      ),
+      screen.getByText('Click "+ Add" to add important notes.'),
     ).toBeInTheDocument();
   });
 
@@ -202,20 +198,20 @@ describe("PatientNotesCard", () => {
       expect(screen.getByText("Second note")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("TRATAMENTO")).toBeInTheDocument();
-    expect(screen.getByText("OBSERVAÇÃO")).toBeInTheDocument();
+    expect(screen.getByText("TREATMENT")).toBeInTheDocument();
+    expect(screen.getByText("OBSERVATION")).toBeInTheDocument();
   });
 
   it("handles API error when loading notes", async () => {
     mockGetPatientNotes.mockResolvedValue({
       success: false,
-      error: "Paciente não encontrado",
+      error: "Patient not found",
     });
 
     renderWithQueryClient(<PatientNotesCard {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText("Paciente não encontrado")).toBeInTheDocument();
+      expect(screen.getByText("Patient not found")).toBeInTheDocument();
     });
   });
 
@@ -231,28 +227,28 @@ describe("PatientNotesCard", () => {
     renderWithQueryClient(<PatientNotesCard {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText("+ Adicionar")).toBeInTheDocument();
+      expect(screen.getByText("+ Add")).toBeInTheDocument();
     });
 
-    // Click "+ Adicionar" button
-    fireEvent.click(screen.getByText("+ Adicionar"));
+    // Click "+ Add" button
+    fireEvent.click(screen.getByText("+ Add"));
 
     // Form should appear
-    expect(screen.getByPlaceholderText("Digite a nota...")).toBeInTheDocument();
-    expect(screen.getByText("Categoria")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Type the note...")).toBeInTheDocument();
+    expect(screen.getByText("Category")).toBeInTheDocument();
 
     // Fill form
-    fireEvent.change(screen.getByPlaceholderText("Digite a nota..."), {
+    fireEvent.change(screen.getByPlaceholderText("Type the note..."), {
       target: { value: "New test note" },
     });
 
     // Submit form
-    fireEvent.click(screen.getByText("Salvar Nota"));
+    fireEvent.click(screen.getByText("Save Note"));
 
     await waitFor(() => {
       expect(mockCreatePatientNote).toHaveBeenCalledWith("123", {
         noteContent: "New test note",
-        category: "geral",
+        category: "general",
       });
     });
 
@@ -288,7 +284,7 @@ describe("PatientNotesCard", () => {
     });
 
     // Click edit button
-    fireEvent.click(screen.getByText("Editar"));
+    fireEvent.click(screen.getByText("Edit"));
 
     // Edit form should appear
     const textarea = screen.getByDisplayValue("Original note");
@@ -297,8 +293,8 @@ describe("PatientNotesCard", () => {
     // Update content
     fireEvent.change(textarea, { target: { value: "Updated note" } });
 
-    // Save changes (edit form uses "Salvar", add form uses "Salvar Nota")
-    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    // Save changes (edit form uses "Save", add form uses "Save Note")
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
     await waitFor(() => {
       expect(mockUpdatePatientNote).toHaveBeenCalledWith("123", "1", {
@@ -331,15 +327,15 @@ describe("PatientNotesCard", () => {
     });
 
     // Click delete button
-    fireEvent.click(screen.getByText("Excluir"));
+    fireEvent.click(screen.getByText("Delete"));
 
     // Confirmation should appear
     expect(
-      screen.getByText("Tem certeza que deseja excluir esta nota?"),
+      screen.getByText("Are you sure you want to delete this note?"),
     ).toBeInTheDocument();
 
     // Confirm deletion (select the confirmation button, not the initial delete button)
-    const confirmButtons = screen.getAllByText("Excluir");
+    const confirmButtons = screen.getAllByText("Delete");
     fireEvent.click(confirmButtons[1]); // The confirmation button
 
     await waitFor(() => {
@@ -363,19 +359,19 @@ describe("PatientNotesCard", () => {
     });
 
     // Click delete button
-    fireEvent.click(screen.getByText("Excluir"));
+    fireEvent.click(screen.getByText("Delete"));
 
     // Confirmation should appear
     expect(
-      screen.getByText("Tem certeza que deseja excluir esta nota?"),
+      screen.getByText("Are you sure you want to delete this note?"),
     ).toBeInTheDocument();
 
     // Cancel deletion
-    fireEvent.click(screen.getByText("Cancelar"));
+    fireEvent.click(screen.getByText("Cancel"));
 
     // Confirmation should disappear
     expect(
-      screen.queryByText("Tem certeza que deseja excluir esta nota?"),
+      screen.queryByText("Are you sure you want to delete this note?"),
     ).not.toBeInTheDocument();
 
     // Note should still be there
@@ -388,18 +384,18 @@ describe("PatientNotesCard", () => {
     renderWithQueryClient(<PatientNotesCard {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText("+ Adicionar")).toBeInTheDocument();
+      expect(screen.getByText("+ Add")).toBeInTheDocument();
     });
 
-    // Click "+ Adicionar" button
-    fireEvent.click(screen.getByText("+ Adicionar"));
+    // Click "+ Add" button
+    fireEvent.click(screen.getByText("+ Add"));
 
     // Submit button should be disabled when content is empty
-    const submitButton = screen.getByText("Salvar Nota");
+    const submitButton = screen.getByText("Save Note");
     expect(submitButton).toBeDisabled();
 
     // Add content
-    fireEvent.change(screen.getByPlaceholderText("Digite a nota..."), {
+    fireEvent.change(screen.getByPlaceholderText("Type the note..."), {
       target: { value: "Test content" },
     });
 
@@ -413,24 +409,24 @@ describe("PatientNotesCard", () => {
     renderWithQueryClient(<PatientNotesCard {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText("+ Adicionar")).toBeInTheDocument();
+      expect(screen.getByText("+ Add")).toBeInTheDocument();
     });
 
-    // Click "+ Adicionar" button
-    fireEvent.click(screen.getByText("+ Adicionar"));
+    // Click "+ Add" button
+    fireEvent.click(screen.getByText("+ Add"));
 
     // Character count should start at 0
-    expect(screen.getByText("0/2000 caracteres")).toBeInTheDocument();
+    expect(screen.getByText("0/2000 characters")).toBeInTheDocument();
 
     // Add content
     const testContent = "Test note content";
-    fireEvent.change(screen.getByPlaceholderText("Digite a nota..."), {
+    fireEvent.change(screen.getByPlaceholderText("Type the note..."), {
       target: { value: testContent },
     });
 
     // Character count should update
     expect(
-      screen.getByText(`${testContent.length}/2000 caracteres`),
+      screen.getByText(`${testContent.length}/2000 characters`),
     ).toBeInTheDocument();
   });
 
@@ -446,9 +442,9 @@ describe("PatientNotesCard", () => {
     renderWithQueryClient(<PatientNotesCard {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText("TRATAMENTO")).toBeInTheDocument();
-      expect(screen.getByText("EMERGÊNCIA")).toBeInTheDocument();
-      expect(screen.getByText("FAMÍLIA")).toBeInTheDocument();
+      expect(screen.getByText("TREATMENT")).toBeInTheDocument();
+      expect(screen.getByText("EMERGENCY")).toBeInTheDocument();
+      expect(screen.getByText("FAMILY")).toBeInTheDocument();
     });
   });
 });

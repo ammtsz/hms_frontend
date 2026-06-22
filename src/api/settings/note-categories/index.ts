@@ -17,7 +17,7 @@ export async function getNoteCategories(
       success: false,
       error: getResponseMessageOrFallback(
         error,
-        "Erro ao carregar categorias de notas",
+        "Failed to load note categories",
       ),
     };
   }
@@ -39,7 +39,7 @@ export async function createNoteCategory(params: {
       success: false,
       error: getResponseMessageOrFallback(
         error,
-        "Erro ao criar categoria de notas",
+        "Failed to create note category",
       ),
     };
   }
@@ -62,7 +62,7 @@ export async function updateNoteCategory(
       success: false,
       error: getResponseMessageOrFallback(
         error,
-        "Erro ao atualizar categoria de notas",
+        "Failed to update note category",
       ),
     };
   }
@@ -79,7 +79,7 @@ export async function deleteNoteCategory(
       success: false,
       error: getResponseMessageOrFallback(
         error,
-        "Erro ao excluir categoria de notas",
+        "Failed to delete note category",
       ),
     };
   }

@@ -80,7 +80,7 @@ export const AttendanceSections: React.FC<AttendanceSectionsProps> = ({
           onClick={() => toggleCollapsed("assessment")}
         >
           {collapsed.assessment ? "▶ " : "▼ "}
-          Consultas ({assessmentCount})
+          Consultation ({assessmentCount})
         </Button>
         {!collapsed.assessment && (
           <div className={COLUMN_GRID_CLASS}>
@@ -143,7 +143,7 @@ export const AttendanceSections: React.FC<AttendanceSectionsProps> = ({
           }}
         >
           {collapsed.physiotherapy && collapsed.tens ? "▶ " : "▼ "}
-          Fisioterapia e TENS ({mixedCount})
+          Physiotherapy and TENS ({mixedCount})
         </Button>
 
         {!(collapsed.physiotherapy && collapsed.tens) && (
@@ -152,7 +152,7 @@ export const AttendanceSections: React.FC<AttendanceSectionsProps> = ({
             <div className="my-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-800">
               <span className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-yellow-400 rounded"></div>
-                Fisioterapia
+                Physiotherapy
               </span>
               <span className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-blue-500 rounded"></div>
@@ -160,7 +160,7 @@ export const AttendanceSections: React.FC<AttendanceSectionsProps> = ({
               </span>
               <span className="flex items-center gap-1">
                 <div className="w-3 h-3 bg-green-500 rounded"></div>
-                Fisioterapia e TENS
+                Physiotherapy and TENS
               </span>
             </div>
             <div className={COLUMN_GRID_CLASS}>

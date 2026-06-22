@@ -2,6 +2,7 @@ import {
   getTypeBasedStyles,
   getStatusColor,
   getStatusLabel,
+  ATTENDANCE_BOARD_STATUS_LABELS,
 } from "../styles/cardStyles";
 
 describe("cardStyles utilities", () => {
@@ -30,10 +31,18 @@ describe("cardStyles utilities", () => {
 
   describe("getStatusLabel", () => {
     it("should return correct labels for each status", () => {
-      expect(getStatusLabel("scheduled")).toBe("Agendados");
-      expect(getStatusLabel("checkedIn")).toBe("Sala de Espera");
-      expect(getStatusLabel("onGoing")).toBe("Em Atendimento");
-      expect(getStatusLabel("completed")).toBe("Finalizados");
+      expect(getStatusLabel("scheduled")).toBe(
+        ATTENDANCE_BOARD_STATUS_LABELS.scheduled,
+      );
+      expect(getStatusLabel("checkedIn")).toBe(
+        ATTENDANCE_BOARD_STATUS_LABELS.checkedIn,
+      );
+      expect(getStatusLabel("onGoing")).toBe(
+        ATTENDANCE_BOARD_STATUS_LABELS.onGoing,
+      );
+      expect(getStatusLabel("completed")).toBe(
+        ATTENDANCE_BOARD_STATUS_LABELS.completed,
+      );
     });
   });
 });

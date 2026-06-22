@@ -16,11 +16,11 @@ describe("DetailCardCollapsibleHeader", () => {
       <DetailCardCollapsibleHeader
         isCollapsed={true}
         onToggle={onToggle}
-        title="Anotações"
+        title="Notes"
       />,
     );
 
-    await user.click(screen.getByRole("heading", { name: /anotações/i }));
+    await user.click(screen.getByRole("heading", { name: /notes/i }));
 
     expect(onToggle).toHaveBeenCalledTimes(1);
   });
@@ -32,16 +32,16 @@ describe("DetailCardCollapsibleHeader", () => {
       <DetailCardCollapsibleHeader
         isCollapsed={false}
         onToggle={onToggle}
-        title="Seção"
+        title="Section"
         actions={
           <button type="button" onClick={onAction}>
-            Ação
+            Action
           </button>
         }
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: /ação/i }));
+    await user.click(screen.getByRole("button", { name: /action/i }));
 
     expect(onAction).toHaveBeenCalledTimes(1);
     expect(onToggle).not.toHaveBeenCalled();
@@ -52,7 +52,7 @@ describe("DetailCardCollapsibleHeader", () => {
       <DetailCardCollapsibleHeader
         isCollapsed={false}
         onToggle={onToggle}
-        title="Seção"
+        title="Section"
       />,
     );
 
@@ -64,7 +64,7 @@ describe("DetailCardCollapsibleHeader", () => {
       <DetailCardCollapsibleHeader
         isCollapsed={false}
         onToggle={onToggle}
-        title="Seção"
+        title="Section"
       />,
     );
 

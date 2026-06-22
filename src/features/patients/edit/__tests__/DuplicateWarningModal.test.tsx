@@ -8,14 +8,14 @@ describe("DuplicateWarningModal", () => {
   const mockDuplicates = [
     {
       id: "1",
-      name: "João Silva",
+      name: "John Smith",
       phone: "(11) 98765-4321",
       priority: "3",
       status: "T",
     },
     {
       id: "2",
-      name: "João da Silva",
+      name: "John Williams",
       phone: "(11) 98765-4321",
       priority: "2",
       status: "N",
@@ -38,11 +38,11 @@ describe("DuplicateWarningModal", () => {
     render(<DuplicateWarningModal {...defaultProps} />);
 
     expect(
-      screen.getByText("Paciente com informações similares"),
+      screen.getByText("Patient with similar information"),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Verifique se já existe um cadastro para este paciente antes de salvar.",
+        "Check if a record for this patient already exists before saving.",
       ),
     ).toBeInTheDocument();
   });
@@ -51,15 +51,15 @@ describe("DuplicateWarningModal", () => {
     render(<DuplicateWarningModal {...defaultProps} isOpen={false} />);
 
     expect(
-      screen.queryByText("Paciente com informações similares"),
+      screen.queryByText("Patient with similar information"),
     ).not.toBeInTheDocument();
   });
 
   it("should display all duplicate patients", () => {
     render(<DuplicateWarningModal {...defaultProps} />);
 
-    expect(screen.getByText("João Silva")).toBeInTheDocument();
-    expect(screen.getByText("João da Silva")).toBeInTheDocument();
+    expect(screen.getByText("John Smith")).toBeInTheDocument();
+    expect(screen.getByText("John Williams")).toBeInTheDocument();
     expect(screen.getAllByText("(11) 98765-4321")).toHaveLength(2);
   });
 
@@ -73,15 +73,15 @@ describe("DuplicateWarningModal", () => {
   it("should show patient status labels", () => {
     render(<DuplicateWarningModal {...defaultProps} />);
 
-    expect(screen.getByText("Em Tratamento")).toBeInTheDocument();
-    expect(screen.getByText("Paciente Novo")).toBeInTheDocument();
+    expect(screen.getByText("In Treatment")).toBeInTheDocument();
+    expect(screen.getByText("New patient")).toBeInTheDocument();
   });
 
-  it("should show 'Sem telefone' for patients without phone", () => {
+  it("should show 'No phone' for patients without phone", () => {
     const duplicatesWithoutPhone = [
       {
         id: "3",
-        name: "Maria Santos",
+        name: "Emily Williams",
         phone: "",
         priority: "3",
         status: "T",
@@ -95,13 +95,13 @@ describe("DuplicateWarningModal", () => {
       />,
     );
 
-    expect(screen.getByText("Sem telefone")).toBeInTheDocument();
+    expect(screen.getByText("No phone")).toBeInTheDocument();
   });
 
   it("should render links to view patient profiles", () => {
     render(<DuplicateWarningModal {...defaultProps} />);
 
-    const links = screen.getAllByText("Ver Perfil →");
+    const links = screen.getAllByText("View Profile →");
     expect(links).toHaveLength(2);
     expect(links[0]).toHaveAttribute("href", "/patients/1");
     expect(links[1]).toHaveAttribute("href", "/patients/2");
@@ -113,7 +113,7 @@ describe("DuplicateWarningModal", () => {
     render(<DuplicateWarningModal {...defaultProps} />);
 
     const cancelButton = screen.getByRole("button", {
-      name: /cancelar e revisar/i,
+      name: /cancel and review/i,
     });
     fireEvent.click(cancelButton);
 
@@ -124,7 +124,7 @@ describe("DuplicateWarningModal", () => {
     render(<DuplicateWarningModal {...defaultProps} />);
 
     const saveButton = screen.getByRole("button", {
-      name: /salvar mesmo assim/i,
+      name: /save anyway/i,
     });
     fireEvent.click(saveButton);
 
@@ -134,16 +134,16 @@ describe("DuplicateWarningModal", () => {
   it("should show loading state when saving", () => {
     render(<DuplicateWarningModal {...defaultProps} isSaving={true} />);
 
-    expect(screen.getByText("Salvando...")).toBeInTheDocument();
+    expect(screen.getByText("Saving...")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /cancelar e revisar/i }),
+      screen.getByRole("button", { name: /cancel and review/i }),
     ).toBeDisabled();
   });
 
   it("should handle empty duplicates array", () => {
     render(<DuplicateWarningModal {...defaultProps} duplicatePatients={[]} />);
 
-    expect(screen.getByText("Pacientes Similares:")).toBeInTheDocument();
+    expect(screen.getByText("Similar Patients:")).toBeInTheDocument();
     // Should not crash with empty array
   });
 
@@ -162,10 +162,10 @@ describe("DuplicateWarningModal", () => {
       />,
     );
 
-    expect(screen.getByText("Paciente Novo")).toBeInTheDocument();
-    expect(screen.getByText("Em Tratamento")).toBeInTheDocument();
-    expect(screen.getByText("Alta do tratamento")).toBeInTheDocument();
-    expect(screen.getByText("Faltas Consecutivas")).toBeInTheDocument();
+    expect(screen.getByText("New patient")).toBeInTheDocument();
+    expect(screen.getByText("In Treatment")).toBeInTheDocument();
+    expect(screen.getByText("Discharged")).toBeInTheDocument();
+    expect(screen.getByText("Missed — consecutive")).toBeInTheDocument();
   });
 
   it("should scroll when many duplicates are present", () => {
@@ -185,7 +185,7 @@ describe("DuplicateWarningModal", () => {
     );
 
     const scrollableContainer = screen
-      .getByText("Pacientes Similares:")
+      .getByText("Similar Patients:")
       .closest("div");
     expect(scrollableContainer).toHaveClass("max-h-64", "overflow-y-auto");
   });

@@ -39,7 +39,7 @@ const renderWithQueryClient = (component: React.ReactElement) => {
 // Card starts collapsed; use this after load to see session content
 const expandCard = async () => {
   const user = userEvent.setup();
-  await user.click(screen.getByTitle("Expandir"));
+  await user.click(screen.getByTitle("Expand"));
 };
 
 const mockGetSessionsByPatient =
@@ -55,7 +55,7 @@ const mockPatient: Patient = {
   status: "T",
   phone: "",
   priority: "2",
-  mainComplaint: "",
+  mainConcern: "",
   dischargeDate: null,
   nextAttendanceDates: [],
   currentRecommendations: {
@@ -82,15 +82,15 @@ describe("SessionBreakdownCard", () => {
       startTime: "14:00:00",
       endTime: "14:15:00",
       status: "completed",
-      notes: "Sessão concluída com sucesso",
+      notes: "Session completed successfully",
       createdDate: "2026-02-01",
       createdTime: "00:00:00",
       updatedDate: "2026-02-10",
       updatedTime: "14:15:00",
       treatmentType: "physiotherapy",
-      bodyLocation: "Cabeça",
+      bodyLocation: "Head",
       plannedSessions: 10,
-      color: "Azul",
+      color: "Blue",
     },
     {
       id: 2,
@@ -99,15 +99,15 @@ describe("SessionBreakdownCard", () => {
       scheduledDate: "2026-02-12T00:00:00.000Z",
       startTime: "15:00:00",
       status: "missed",
-      missedReason: "Paciente não compareceu",
+      missedReason: "Patient did not show up",
       createdDate: "2026-02-01",
       createdTime: "00:00:00",
       updatedDate: "2026-02-12",
       updatedTime: "00:00:00",
       treatmentType: "physiotherapy",
-      bodyLocation: "Cabeça",
+      bodyLocation: "Head",
       plannedSessions: 10,
-      color: "Azul",
+      color: "Blue",
     },
     {
       id: 3,
@@ -121,7 +121,7 @@ describe("SessionBreakdownCard", () => {
       updatedDate: "2026-02-01",
       updatedTime: "00:00:00",
       treatmentType: "tens",
-      bodyLocation: "Pernas",
+      bodyLocation: "Legs",
       plannedSessions: 5,
     },
   ];
@@ -139,7 +139,7 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText("Histórico dos Tratamentos")).toBeInTheDocument();
+      expect(screen.getByText("Treatment History")).toBeInTheDocument();
       expect(screen.getByText("(0/0)")).toBeInTheDocument();
     });
   });
@@ -153,7 +153,7 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
       // 0 completed treatments out of 2 total treatment groups (physiotherapy and tens)
       expect(screen.getByText(/\(0\/2\)/)).toBeInTheDocument();
     });
@@ -175,7 +175,7 @@ describe("SessionBreakdownCard", () => {
 
     // Wait for component to load
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
       // All sessions in one treatment group, all completed = 1/1
       expect(screen.getByText(/\(1\/1\)/)).toBeInTheDocument();
     });
@@ -183,9 +183,9 @@ describe("SessionBreakdownCard", () => {
     await expandCard();
 
     // Shows treatment group with all sessions
-    expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
-    expect(screen.getByText(/Sessão 1\/10/)).toBeInTheDocument();
-    expect(screen.getByText(/Sessão 5\/10/)).toBeInTheDocument();
+    expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
+    expect(screen.getByText(/Session 1\/10/)).toBeInTheDocument();
+    expect(screen.getByText(/Session 5\/10/)).toBeInTheDocument();
   });
 
   it("should expand to show more treatment groups when show more is clicked", async () => {
@@ -209,7 +209,7 @@ describe("SessionBreakdownCard", () => {
         id: 5,
         sessionNumber: 1,
         treatmentId: 3,
-        color: "Verde",
+        color: "Green",
       },
     ];
 
@@ -222,24 +222,24 @@ describe("SessionBreakdownCard", () => {
 
     // Wait for component to load - initially shows 2 groups
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
 
     await expandCard();
 
     // Should show first 2 treatment groups
-    expect(screen.getByText(/AZUL/)).toBeInTheDocument();
+    expect(screen.getByText(/BLUE/)).toBeInTheDocument();
 
-    // Third group (Verde) should not be visible yet
-    expect(screen.queryByText(/VERDE/)).not.toBeInTheDocument();
+    // Third group (Green) should not be visible yet
+    expect(screen.queryByText(/GREEN/)).not.toBeInTheDocument();
 
-    // Click "Ver mais" button
-    const showMoreButton = screen.getByRole("button", { name: /Ver mais/i });
+    // Click "View more" button
+    const showMoreButton = screen.getByRole("button", { name: /View more/i });
     await user.click(showMoreButton);
 
     // Should now show all treatment groups including the third one
     await waitFor(() => {
-      expect(screen.getByText(/VERDE/)).toBeInTheDocument();
+      expect(screen.getByText(/GREEN/)).toBeInTheDocument();
     });
   });
 
@@ -254,15 +254,15 @@ describe("SessionBreakdownCard", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
-      expect(screen.getByText(/Sessão 1\/10/)).toBeInTheDocument();
-      // Use getAllByText since "Concluída" appears twice (status + completion time)
-      expect(screen.getAllByText(/Concluída/)[0]).toBeInTheDocument();
+      expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
+      expect(screen.getByText(/Session 1\/10/)).toBeInTheDocument();
+      // Use getAllByText since "Completed" appears twice (status + completion time)
+      expect(screen.getAllByText(/Completed/)[0]).toBeInTheDocument();
     });
 
     // Completed sessions have green left border
@@ -281,15 +281,15 @@ describe("SessionBreakdownCard", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
-      expect(screen.getByText(/Sessão 2\/10/)).toBeInTheDocument();
-      expect(screen.getByText(/Faltou/)).toBeInTheDocument();
-      expect(screen.getByText("Paciente não compareceu")).toBeInTheDocument();
+      expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
+      expect(screen.getByText(/Session 2\/10/)).toBeInTheDocument();
+      expect(screen.getByText(/Missed/)).toBeInTheDocument();
+      expect(screen.getByText("Patient did not show up")).toBeInTheDocument();
     });
 
     // Missed sessions have red left border
@@ -308,14 +308,14 @@ describe("SessionBreakdownCard", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
       expect(screen.getByText(/TENS/)).toBeInTheDocument();
-      expect(screen.getByText(/Sessão 3\/5/)).toBeInTheDocument();
-      expect(screen.getByText(/Agendada/)).toBeInTheDocument();
+      expect(screen.getByText(/Session 3\/5/)).toBeInTheDocument();
+      expect(screen.getAllByText(/Scheduled/)[0]).toBeInTheDocument();
     });
 
     // Scheduled sessions have gray left border
@@ -332,7 +332,7 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
@@ -350,14 +350,14 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
       expect(screen.getByText(/💬/)).toBeInTheDocument();
       expect(
-        screen.getByText("Sessão concluída com sucesso"),
+        screen.getByText("Session completed successfully"),
       ).toBeInTheDocument();
     });
   });
@@ -373,13 +373,13 @@ describe("SessionBreakdownCard", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Motivo:/)).toBeInTheDocument();
-      expect(screen.getByText("Paciente não compareceu")).toBeInTheDocument();
+      expect(screen.getByText(/Reason:/)).toBeInTheDocument();
+      expect(screen.getByText("Patient did not show up")).toBeInTheDocument();
     });
 
     // Check for AlertTriangle icon (rendered as svg)
@@ -396,12 +396,12 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Concluída às 14:15/)).toBeInTheDocument();
+      expect(screen.getByText(/Completed at 14:15/)).toBeInTheDocument();
     });
   });
 
@@ -414,15 +414,15 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Sessão 3/)).toBeInTheDocument();
+      expect(screen.getByText(/Session 3/)).toBeInTheDocument();
     });
 
-    expect(screen.queryByText(/Concluída às/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Completed at/)).not.toBeInTheDocument();
   });
 
   it("should toggle between collapsed and expanded states", async () => {
@@ -436,32 +436,32 @@ describe("SessionBreakdownCard", () => {
 
     // Wait for component to load - card starts collapsed
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
       expect(screen.getByText(/\(0\/2\)/)).toBeInTheDocument();
     });
 
     // Expand to see sessions
-    await user.click(screen.getByTitle("Expandir"));
+    await user.click(screen.getByTitle("Expand"));
     await waitFor(() => {
-      expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
+      expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
     });
 
     // Click header to collapse
-    const collapseButton = screen.getByTitle("Recolher");
+    const collapseButton = screen.getByTitle("Collapse");
     await user.click(collapseButton);
 
     // Sessions should no longer be visible
     await waitFor(() => {
-      expect(screen.queryByText(/Sessão 1/)).not.toBeInTheDocument();
+      expect(screen.queryByText(/Session 1/)).not.toBeInTheDocument();
     });
 
     // Click header again to expand
-    const expandButton = screen.getByTitle("Expandir");
+    const expandButton = screen.getByTitle("Expand");
     await user.click(expandButton);
 
     // Sessions should be visible again
     await waitFor(() => {
-      expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
+      expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
     });
   });
 
@@ -479,7 +479,7 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
@@ -513,13 +513,13 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
       expect(screen.getByText(/✨/)).toBeInTheDocument(); // ✨ sparkles icon
-      expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
+      expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
     });
   });
 
@@ -532,13 +532,13 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
       // Location is displayed in uppercase in the group header
-      expect(screen.getByText(/CABEÇA/)).toBeInTheDocument();
+      expect(screen.getByText(/HEAD/)).toBeInTheDocument();
     });
   });
 
@@ -551,13 +551,13 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
       // Color is displayed in uppercase in the group header
-      expect(screen.getByText(/AZUL/)).toBeInTheDocument();
+      expect(screen.getByText(/BLUE/)).toBeInTheDocument();
     });
   });
 
@@ -570,12 +570,12 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Sessão 1\/10/)).toBeInTheDocument();
+      expect(screen.getByText(/Session 1\/10/)).toBeInTheDocument();
     });
   });
 
@@ -588,7 +588,7 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
@@ -607,17 +607,17 @@ describe("SessionBreakdownCard", () => {
     renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Histórico dos Tratamentos/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
     });
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/Sessão 3/)).toBeInTheDocument();
+      expect(screen.getByText(/Session 3/)).toBeInTheDocument();
     });
 
     // TENS session has no color, so uppercase text check won't find color badges
-    expect(screen.queryByText(/VERDE/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/VERMELHO/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/GREEN/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/RED/)).not.toBeInTheDocument();
   });
 
   describe("Status Badges", () => {
@@ -636,13 +636,13 @@ describe("SessionBreakdownCard", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Histórico dos Tratamentos/),
+          screen.getByText(/Treatment History/),
         ).toBeInTheDocument();
       });
       await expandCard();
 
       await waitFor(() => {
-        expect(screen.getByText(/Em Andamento/)).toBeInTheDocument();
+        expect(screen.getByText(/In Progress/)).toBeInTheDocument();
         expect(screen.getByText(/▶️/)).toBeInTheDocument(); // in-progress icon
       });
     });
@@ -667,13 +667,13 @@ describe("SessionBreakdownCard", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Histórico dos Tratamentos/),
+          screen.getByText(/Treatment History/),
         ).toBeInTheDocument();
       });
       await expandCard();
 
       await waitFor(() => {
-        expect(screen.getByText(/Concluído/)).toBeInTheDocument();
+        expect(screen.getAllByText(/Completed/)[0]).toBeInTheDocument();
         expect(screen.getByText(/✅/)).toBeInTheDocument(); // completed icon
       });
     });
@@ -692,13 +692,13 @@ describe("SessionBreakdownCard", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Histórico dos Tratamentos/),
+          screen.getByText(/Treatment History/),
         ).toBeInTheDocument();
       });
       await expandCard();
 
       await waitFor(() => {
-        expect(screen.getByText(/Cancelado/)).toBeInTheDocument();
+        expect(screen.getAllByText(/Cancelled/)[0]).toBeInTheDocument();
         expect(screen.getByText(/❌/)).toBeInTheDocument(); // cancelled icon
       });
     });
@@ -747,9 +747,9 @@ describe("SessionBreakdownCard", () => {
           updatedDate: "2026-02-18",
           updatedTime: "00:00:00",
           treatmentType: "physiotherapy",
-          bodyLocation: "Braços",
+          bodyLocation: "Arms",
           plannedSessions: 5,
-          color: "Verde",
+          color: "Green",
         },
       ];
 
@@ -762,26 +762,26 @@ describe("SessionBreakdownCard", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Histórico dos Tratamentos/),
+          screen.getByText(/Treatment History/),
         ).toBeInTheDocument();
       });
       await expandCard();
 
       // First two groups should show their badges
       await waitFor(() => {
-        expect(screen.getByText(/Em Andamento/)).toBeInTheDocument();
-        expect(screen.getByText(/Cancelado/)).toBeInTheDocument();
+        expect(screen.getByText(/In Progress/)).toBeInTheDocument();
+        expect(screen.getAllByText(/Cancelled/)[0]).toBeInTheDocument();
       });
 
-      // Click "Ver mais" to show the completed group
-      const showMoreButton = screen.getByRole("button", { name: /Ver mais/i });
+      // Click "View more" to show the completed group
+      const showMoreButton = screen.getByRole("button", { name: /View more/i });
       await user.click(showMoreButton);
 
       // Now all three badge types should be visible
       await waitFor(() => {
-        expect(screen.getByText(/Concluído/)).toBeInTheDocument();
-        expect(screen.getByText(/Em Andamento/)).toBeInTheDocument();
-        expect(screen.getByText(/Cancelado/)).toBeInTheDocument();
+        expect(screen.getAllByText(/Completed/)[0]).toBeInTheDocument();
+        expect(screen.getByText(/In Progress/)).toBeInTheDocument();
+        expect(screen.getAllByText(/Cancelled/)[0]).toBeInTheDocument();
       });
     });
 
@@ -799,14 +799,14 @@ describe("SessionBreakdownCard", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Histórico dos Tratamentos/),
+          screen.getByText(/Treatment History/),
         ).toBeInTheDocument();
       });
       await expandCard();
 
       await waitFor(() => {
-        // Should show "Agendado" badge for scheduled-only treatment
-        expect(screen.getByText(/Agendado/)).toBeInTheDocument();
+        // Should show "Scheduled" badge for scheduled-only treatment
+        expect(screen.getAllByText(/Scheduled/)[0]).toBeInTheDocument();
         expect(screen.getByText(/📅/)).toBeInTheDocument(); // scheduled icon
       });
     });
@@ -832,18 +832,18 @@ describe("SessionBreakdownCard", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Histórico dos Tratamentos/),
+          screen.getByText(/Treatment History/),
         ).toBeInTheDocument();
       });
       await expandCard();
 
-      // Group has mixed statuses (not all cancelled) so badge is "Em Andamento"
+      // Group has mixed statuses (not all cancelled) so badge is "In Progress"
       await waitFor(() => {
-        expect(screen.getByText(/Em Andamento/)).toBeInTheDocument();
+        expect(screen.getByText(/In Progress/)).toBeInTheDocument();
       });
 
-      // Individual session shows "Cancelada" for the cancelled one
-      expect(screen.getByText(/Cancelada/)).toBeInTheDocument();
+      // Individual session shows "Cancelled" for the cancelled one
+      expect(screen.getAllByText(/Cancelled/)[0]).toBeInTheDocument();
     });
   });
 });

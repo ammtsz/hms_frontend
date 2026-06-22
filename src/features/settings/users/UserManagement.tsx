@@ -76,26 +76,26 @@ export default function UserManagement() {
   };
 
   const handleToggleActive = async (user: UserType) => {
-    const actionText = user.isActive ? "desativado" : "reativado";
+    const actionText = user.isActive ? "deactivated" : "reactivated";
     try {
       if (user.isActive) {
         await deactivateUserMutation.mutateAsync(user.id);
       } else {
         await reactivateUserMutation.mutateAsync(user.id);
       }
-      showToast(`Usuário ${actionText} com sucesso`, "success");
+      showToast(`User ${actionText} successfully`, "success");
     } catch (err) {
       const msg =
         err instanceof Error
           ? err.message
-          : `Falha ao ${user.isActive ? "desativar" : "reativar"} usuário`;
+          : `Failed to ${user.isActive ? "deactivate" : "reactivate"} user`;
       showToast(msg, "error");
     }
   };
 
   const formatDate = (date: Date | null) => {
-    if (!date) return "Nunca";
-    return new Date(date).toLocaleDateString("pt-BR");
+    if (!date) return "Never";
+    return new Date(date).toLocaleDateString();
   };
 
   const filteredUsers =
@@ -107,7 +107,7 @@ export default function UserManagement() {
   if (authLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-600">Carregando...</div>
+        <div className="text-gray-600">Loading...</div>
       </div>
     );
   }
@@ -120,7 +120,7 @@ export default function UserManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-600">Carregando usuários...</div>
+        <div className="text-gray-600">Loading users...</div>
       </div>
     );
   }
@@ -129,19 +129,14 @@ export default function UserManagement() {
     <div className="container mx-auto max-w-6xl px-3 py-6 sm:px-4 sm:py-8">
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Gerenciar Usuários
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900">Manage Users</h1>
           <p className="text-gray-600 mt-1">
-            Gerencie contas de usuários e permissões
+            Manage user accounts and permissions
           </p>
         </div>
-        <Button
-          onClick={handleCreateUser}
-          className="w-full sm:w-auto"
-        >
+        <Button onClick={handleCreateUser} className="w-full sm:w-auto">
           <Plus className="h-5 w-5" />
-          Novo Usuário
+          New User
         </Button>
       </div>
 
@@ -153,8 +148,11 @@ export default function UserManagement() {
 
       {/* Filters */}
       <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
-        <label htmlFor="role-filter" className="text-sm font-medium text-gray-700">
-          Filtrar por função:
+        <label
+          htmlFor="role-filter"
+          className="text-sm font-medium text-gray-700"
+        >
+          Filter by role:
         </label>
         <Select
           id="role-filter"
@@ -162,22 +160,19 @@ export default function UserManagement() {
           onChange={(e) => setRoleFilter(e.target.value as UserRole | "all")}
           className="sm:w-56"
         >
-          <option value="all">Todos</option>
-          <option value={UserRole.ADMIN}>Administrador</option>
-          <option value={UserRole.STAFF}>Colaborador</option>
+          <option value="all">All</option>
+          <option value={UserRole.ADMIN}>Administrator</option>
+          <option value={UserRole.STAFF}>Staff</option>
         </Select>
       </div>
 
       {filteredUsers.length === 0 ? (
         <p className="rounded-lg border border-gray-200 bg-white py-8 text-center text-gray-500 shadow-sm">
-          Nenhum usuário encontrado
+          No users found
         </p>
       ) : (
         <>
-          <div
-            className="space-y-3 md:hidden"
-            data-testid="user-list-cards"
-          >
+          <div className="space-y-3 md:hidden" data-testid="user-list-cards">
             {filteredUsers.map((user) => (
               <UserListCard
                 key={user.id}
@@ -199,17 +194,17 @@ export default function UserManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Nome</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead className="hidden lg:table-cell">
-                    Nome de Exibição
+                    Display Name
                   </TableHead>
                   <TableHead>Email</TableHead>
-                  <TableHead>Função</TableHead>
+                  <TableHead>Role</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="hidden lg:table-cell">
-                    Último Login
+                    Last Login
                   </TableHead>
-                  <TableHead>Ações</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -234,7 +229,7 @@ export default function UserManagement() {
                     </TableCell>
                     <TableCell className="whitespace-nowrap">
                       <Badge variant={user.isActive ? "success" : "neutral"}>
-                        {user.isActive ? "Ativo" : "Inativo"}
+                        {user.isActive ? "Active" : "Inactive"}
                       </Badge>
                     </TableCell>
                     <TableCell className="hidden whitespace-nowrap text-gray-500 lg:table-cell">
@@ -245,21 +240,21 @@ export default function UserManagement() {
                         <IconButton
                           onClick={() => handleEditUser(user)}
                           tone="primary"
-                          title="Editar"
+                          title="Edit"
                         >
                           <Edit className="h-4 w-4" />
                         </IconButton>
                         <IconButton
                           onClick={() => handleResetPasswordClick(user)}
                           tone="purple"
-                          title="Redefinir Senha"
+                          title="Reset password"
                         >
                           <Key className="h-4 w-4" />
                         </IconButton>
                         <IconButton
                           onClick={() => handleToggleActive(user)}
                           tone={user.isActive ? "warning" : "success"}
-                          title={user.isActive ? "Desativar" : "Reativar"}
+                          title={user.isActive ? "Deactivate" : "Reactivate"}
                           disabled={user.id === currentUser?.id}
                         >
                           {user.isActive ? (
@@ -271,7 +266,7 @@ export default function UserManagement() {
                         <IconButton
                           onClick={() => handleDeleteClick(user)}
                           tone="danger"
-                          title="Excluir"
+                          title="Delete"
                           disabled={user.id === currentUser?.id}
                         >
                           <Trash2 className="h-4 w-4" />

@@ -3,6 +3,10 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AttendanceColumn from "../AttendanceColumn";
 import {
+  ATTENDANCE_BOARD_STATUS_LABELS,
+  getStatusColor,
+} from "../../../styles/cardStyles";
+import {
   AttendanceProgression,
   AttendanceType,
   Priority,
@@ -57,20 +61,6 @@ jest.mock("../../cards/AttendanceCard", () => {
   };
 });
 
-// Mock the cardStyles utilities
-jest.mock("../../../styles/cardStyles", () => ({
-  getStatusColor: jest.fn((status) => `color-${status}`),
-  getStatusLabel: jest.fn((status) => {
-    const labels = {
-      scheduled: "Agendado",
-      checkedIn: "Chegaram",
-      onGoing: "Atendimento",
-      completed: "Finalizados",
-    };
-    return labels[status as keyof typeof labels] || status;
-  }),
-}));
-
 describe("AttendanceColumn", () => {
   const mockHandleDragStart = jest.fn();
   const mockHandleDragEnd = jest.fn();
@@ -80,21 +70,21 @@ describe("AttendanceColumn", () => {
   const mockPatients: PatientWithType[] = [
     {
       attendanceId: 1,
-      name: "João Silva",
+      name: "John Smith",
       priority: "1" as Priority,
       originalType: "assessment" as AttendanceType,
       patientId: 101,
     },
     {
       attendanceId: 2,
-      name: "Maria Santos",
+      name: "Mary Jones",
       priority: "2" as Priority,
       originalType: "physiotherapy" as AttendanceType,
       patientId: 102,
     },
     {
       attendanceId: 3,
-      name: "Pedro Oliveira",
+      name: "Peter Pan",
       priority: "3" as Priority,
       originalType: "tens" as AttendanceType,
       patientId: 103,
@@ -120,31 +110,35 @@ describe("AttendanceColumn", () => {
     it("renders column title with correct status", () => {
       render(<AttendanceColumn {...defaultProps} />);
 
-      expect(screen.getByText("Agendado")).toBeInTheDocument();
-      expect(screen.getByText("Agendado")).toHaveClass("color-scheduled");
+      expect(
+        screen.getByText(ATTENDANCE_BOARD_STATUS_LABELS.scheduled),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(ATTENDANCE_BOARD_STATUS_LABELS.scheduled),
+      ).toHaveClass(getStatusColor("scheduled"));
     });
 
     it("renders all patients as cards", () => {
       render(<AttendanceColumn {...defaultProps} />);
 
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
-      expect(screen.getByText("Maria Santos")).toBeInTheDocument();
-      expect(screen.getByText("Pedro Oliveira")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
+      expect(screen.getByText("Mary Jones")).toBeInTheDocument();
+      expect(screen.getByText("Peter Pan")).toBeInTheDocument();
     });
 
     it("renders empty state when no patients", () => {
       render(<AttendanceColumn {...defaultProps} patients={[]} />);
 
-      expect(screen.getByText("Arraste para mover")).toBeInTheDocument();
+      expect(screen.getByText("Drag to move")).toBeInTheDocument();
     });
   });
 
   describe("Patient Sorting", () => {
     it("sorts patients by priority (1 = highest)", () => {
       const unsortedPatients: PatientWithType[] = [
-        { ...mockPatients[2], priority: "3" as Priority }, // Pedro - priority 3
-        { ...mockPatients[0], priority: "1" as Priority }, // João - priority 1
-        { ...mockPatients[1], priority: "2" as Priority }, // Maria - priority 2
+        { ...mockPatients[2], priority: "3" as Priority }, // Peter - priority 3
+        { ...mockPatients[0], priority: "1" as Priority }, // John - priority 1
+        { ...mockPatients[1], priority: "2" as Priority }, // Mary - priority 2
       ];
 
       render(
@@ -152,9 +146,9 @@ describe("AttendanceColumn", () => {
       );
 
       const cards = screen.getAllByTestId(/attendance-card-/);
-      expect(cards[0]).toHaveAttribute("data-patient-name", "João Silva");
-      expect(cards[1]).toHaveAttribute("data-patient-name", "Maria Santos");
-      expect(cards[2]).toHaveAttribute("data-patient-name", "Pedro Oliveira");
+      expect(cards[0]).toHaveAttribute("data-patient-name", "John Smith");
+      expect(cards[1]).toHaveAttribute("data-patient-name", "Mary Jones");
+      expect(cards[2]).toHaveAttribute("data-patient-name", "Peter Pan");
     });
 
     it("sorts by check-in time when priorities are equal in checkedIn status", () => {
@@ -186,12 +180,12 @@ describe("AttendanceColumn", () => {
 
       const cards = screen.getAllByTestId(/attendance-card-/);
       // Should be sorted by checkedInTime: 14:15:00, 14:45:00, 15:30:00
-      expect(cards[0]).toHaveAttribute("data-patient-name", "Maria Santos");
-      expect(cards[1]).toHaveAttribute("data-patient-name", "Pedro Oliveira");
-      expect(cards[2]).toHaveAttribute("data-patient-name", "João Silva");
+      expect(cards[0]).toHaveAttribute("data-patient-name", "Mary Jones");
+      expect(cards[1]).toHaveAttribute("data-patient-name", "Peter Pan");
+      expect(cards[2]).toHaveAttribute("data-patient-name", "John Smith");
     });
 
-    it("does not mutate original patients array", () => {
+    it("Does not mutate original patients array", () => {
       const originalPatients: PatientWithType[] = [
         { ...mockPatients[2], priority: "3" as Priority },
         { ...mockPatients[0], priority: "1" as Priority },
@@ -293,7 +287,7 @@ describe("AttendanceColumn", () => {
       const manageButton = screen.getByTestId("manage-button-0");
       fireEvent.click(manageButton);
 
-      expect(mockOnCompletedClick).toHaveBeenCalledWith(1, 101, "João Silva");
+      expect(mockOnCompletedClick).toHaveBeenCalledWith(1, 101, "John Smith");
     });
   });
 
@@ -303,7 +297,7 @@ describe("AttendanceColumn", () => {
 
       // Cards should receive isDayFinalized prop (we can't directly test this with our mock,
       // but we can verify the component renders when finalized)
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
     });
   });
 
@@ -320,7 +314,7 @@ describe("AttendanceColumn", () => {
       render(<AttendanceColumn {...defaultProps} />);
 
       // Treatment info click functionality would be tested at the card level
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
     });
   });
 
@@ -342,30 +336,36 @@ describe("AttendanceColumn", () => {
     it("handles checkedIn status correctly", () => {
       render(<AttendanceColumn {...defaultProps} status="checkedIn" />);
 
-      expect(screen.getByText("Chegaram")).toBeInTheDocument();
+      expect(
+        screen.getByText(ATTENDANCE_BOARD_STATUS_LABELS.checkedIn),
+      ).toBeInTheDocument();
     });
 
     it("handles onGoing status correctly", () => {
       render(<AttendanceColumn {...defaultProps} status="onGoing" />);
 
-      expect(screen.getByText("Atendimento")).toBeInTheDocument();
+      expect(
+        screen.getByText(ATTENDANCE_BOARD_STATUS_LABELS.onGoing),
+      ).toBeInTheDocument();
     });
 
     it("handles completed status correctly", () => {
       render(<AttendanceColumn {...defaultProps} status="completed" />);
 
-      expect(screen.getByText("Finalizados")).toBeInTheDocument();
+      expect(
+        screen.getByText(ATTENDANCE_BOARD_STATUS_LABELS.completed),
+      ).toBeInTheDocument();
     });
   });
 
   describe("Memoization", () => {
     it("component is memoized", () => {
       const { rerender } = render(<AttendanceColumn {...defaultProps} />);
-      const firstRender = screen.getByText("João Silva");
+      const firstRender = screen.getByText("John Smith");
 
       // Rerender with same props
       rerender(<AttendanceColumn {...defaultProps} />);
-      const secondRender = screen.getByText("João Silva");
+      const secondRender = screen.getByText("John Smith");
 
       // Component should be memoized
       expect(firstRender).toBeInTheDocument();
@@ -386,7 +386,7 @@ describe("AttendanceColumn", () => {
         <AttendanceColumn {...defaultProps} patients={patientsWithoutId} />,
       );
 
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
     });
 
     it("handles patients without attendanceId", () => {
@@ -404,7 +404,7 @@ describe("AttendanceColumn", () => {
         />,
       );
 
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
     });
 
     it("handles different treatment types correctly", () => {
@@ -416,8 +416,8 @@ describe("AttendanceColumn", () => {
       render(<AttendanceColumn {...defaultProps} patients={mixedPatients} />);
 
       // Should still render both patients
-      expect(screen.getByText("João Silva")).toBeInTheDocument();
-      expect(screen.getByText("Maria Santos")).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
+      expect(screen.getByText("Mary Jones")).toBeInTheDocument();
     });
   });
 });

@@ -34,7 +34,7 @@ describe('Patients API', () => {
     priority: PatientPriority.LEVEL_3,
     treatment_status: 'IN_TREATMENT',
     birthDate: '1990-01-01',
-    mainComplaint: 'Regular checkup',
+    mainConcern: 'Regular checkup',
     startDate: '2024-01-01',
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
@@ -62,7 +62,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
 
@@ -74,7 +74,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
   });
@@ -101,7 +101,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Paciente não encontrado'
+        error: 'Patient not found'
       });
     });
 
@@ -113,7 +113,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
 
@@ -125,7 +125,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
   });
@@ -170,7 +170,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Requisição inválida'
+        error: 'Invalid request'
       });
     });
   });
@@ -199,7 +199,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
   });
@@ -224,7 +224,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
 
@@ -236,7 +236,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
 
@@ -292,7 +292,7 @@ describe('Patients API', () => {
 
         expect(result).toEqual({
           success: false,
-          error: 'Paciente não encontrado'
+          error: 'Patient not found'
         });
       });
 
@@ -304,7 +304,7 @@ describe('Patients API', () => {
 
         expect(result).toEqual({
           success: false,
-          error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+          error: 'Internal server error, please try again later'
         });
       });
     });
@@ -337,7 +337,7 @@ describe('Patients API', () => {
 
         expect(result).toEqual({
           success: false,
-          error: 'Paciente não encontrado'
+          error: 'Patient not found'
         });
       });
 
@@ -352,7 +352,7 @@ describe('Patients API', () => {
 
         expect(result).toEqual({
           success: false,
-          error: 'Requisição inválida'
+          error: 'Invalid request'
         });
       });
     });
@@ -381,7 +381,7 @@ describe('Patients API', () => {
 
         expect(result).toEqual({
           success: false,
-          error: 'Nota não encontrada'
+          error: 'Note not found'
         });
       });
 
@@ -394,7 +394,7 @@ describe('Patients API', () => {
 
         expect(result).toEqual({
           success: false,
-          error: 'Requisição inválida'
+          error: 'Invalid request'
         });
       });
     });
@@ -419,7 +419,7 @@ describe('Patients API', () => {
 
         expect(result).toEqual({
           success: false,
-          error: 'Nota não encontrada'
+          error: 'Note not found'
         });
       });
 
@@ -431,7 +431,7 @@ describe('Patients API', () => {
 
         expect(result).toEqual({
           success: false,
-          error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+          error: 'Internal server error, please try again later'
         });
       });
     });

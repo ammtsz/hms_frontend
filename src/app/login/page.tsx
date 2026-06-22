@@ -7,7 +7,7 @@ function LoginPageFallback() {
   return (
     <div className="flex min-h-[calc(100vh-110px)] items-center justify-center px-3 py-6">
       <div className="text-gray-500" aria-busy="true">
-        Carregando…
+        Loading…
       </div>
     </div>
   );

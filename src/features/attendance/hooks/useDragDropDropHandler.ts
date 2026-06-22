@@ -98,7 +98,7 @@ export function useDragDropDropHandler({
           const inTens = findPatient('tens', 'onGoing', patientId);
           if (inPhysiotherapy || inTens) {
             showToast(
-              'Paciente já está em atendimento na outra seção.',
+              'Patient is already in attendance in another section.',
               'warning',
             );
             setDragged(null);
@@ -108,7 +108,7 @@ export function useDragDropDropHandler({
           const inAssessment = findPatient('assessment', 'onGoing', patientId);
           if (inAssessment) {
             showToast(
-              'Paciente já está em atendimento na outra seção.',
+              'Patient is already in attendance in another section.',
               'warning',
             );
             setDragged(null);

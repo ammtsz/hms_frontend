@@ -27,7 +27,7 @@ describe("PatientSelector", () => {
     render(<PatientSelector {...mockProps} />);
 
     expect(
-      screen.getByPlaceholderText("Buscar paciente pelo nome...")
+      screen.getByPlaceholderText("Search patient by name...")
     ).toBeInTheDocument();
   });
 
@@ -35,14 +35,14 @@ describe("PatientSelector", () => {
     render(<PatientSelector {...mockProps} isNewPatient={true} />);
 
     expect(
-      screen.getByPlaceholderText("Nome do novo paciente...")
+      screen.getByPlaceholderText("Name of new patient...")
     ).toBeInTheDocument();
   });
 
   it("should call onNewPatientToggle when switch is toggled", () => {
     render(<PatientSelector {...mockProps} />);
 
-    const switchInput = screen.getByLabelText("Novo paciente");
+    const switchInput = screen.getByLabelText(/New patient/i);
     fireEvent.click(switchInput);
 
     expect(mockProps.onNewPatientToggle).toHaveBeenCalledWith(true);
@@ -51,7 +51,7 @@ describe("PatientSelector", () => {
   it("should call onNameChange when name input changes", () => {
     render(<PatientSelector {...mockProps} />);
 
-    const input = screen.getByPlaceholderText("Buscar paciente pelo nome...");
+    const input = screen.getByPlaceholderText("Search patient by name...");
     fireEvent.change(input, { target: { value: "John" } });
 
     expect(mockProps.onNameChange).toHaveBeenCalledWith("John");
@@ -82,7 +82,7 @@ describe("PatientSelector", () => {
   it("should disable inputs when submitting", () => {
     render(<PatientSelector {...mockProps} isSubmitting={true} />);
 
-    const input = screen.getByPlaceholderText("Buscar paciente pelo nome...");
+    const input = screen.getByPlaceholderText("Search patient by name...");
     expect(input).toBeDisabled();
   });
 });

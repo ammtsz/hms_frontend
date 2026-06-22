@@ -46,7 +46,7 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
         birthDate: patient.birthDate || null,
         priority: patient.priority,
         status: patient.status,
-        mainComplaint: patient.mainComplaint || "",
+        mainConcern: patient.mainConcern || "",
         dischargeDate: patient.dischargeDate || null,
         nextAttendanceDates: [],
       };
@@ -88,19 +88,19 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
       birthDate: null,
       priority: "3",
       status: "T",
-      mainComplaint: "",
+      mainConcern: "",
       dischargeDate: null,
       nextAttendanceDates: [],
     },
     minDischargeDate,
     openAttendancesCount: patient?.openAttendancesCount ?? 0,
     onClose: () => {
-      showToast("Paciente atualizado com sucesso!", "success", 5000);
+      showToast("Patient updated successfully!", "success", 5000);
       router.push(`/patients/${patientId}`);
     },
     onDeleteSuccess: () => {
       setShowDeleteModal(false);
-      showToast("Paciente excluído com sucesso!", "success", 5000);
+      showToast("Patient deleted successfully!", "success", 5000);
       router.push("/patients");
     },
     onError: (error) => {
@@ -181,8 +181,8 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb
             items={[
-              { label: "Pacientes", href: "/patients" },
-              { label: "Carregando...", isActive: true },
+              { label: "Patients", href: "/patients" },
+              { label: "Loading...", isActive: true },
             ]}
           />
           <PatientDetailSkeleton />
@@ -198,14 +198,14 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
         <div className="max-w-4xl mx-auto px-4 py-8">
           <Breadcrumb
             items={[
-              { label: "Pacientes", href: "/patients" },
-              { label: "Erro", isActive: true },
+              { label: "Patients", href: "/patients" },
+              { label: "Error", isActive: true },
             ]}
           />
           <PageError
-            error={error?.message || "Paciente não encontrado"}
+            error={error?.message || "Patient not found"}
             reset={refetch}
-            title="Erro ao carregar paciente"
+            title="Error loading patient"
             showBackButton={true}
           />
         </div>
@@ -220,9 +220,9 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
           {/* Breadcrumb */}
           <Breadcrumb
             items={[
-              { label: "Pacientes", href: "/patients" },
+              { label: "Patients", href: "/patients" },
               { label: patient.name, href: `/patients/${patientId}` },
-              { label: "Editar", isActive: true },
+              { label: "Edit", isActive: true },
             ]}
           />
 
@@ -230,7 +230,7 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
           <div className="mb-6">
             <div className="flex justify-between items-center">
               <h1 className="text-3xl font-bold text-gray-900">
-                Editar Paciente: {patient.name}
+                Edit Patient: {patient.name}
               </h1>
               <Button
                 type="button"
@@ -240,14 +240,14 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
                 disabled={isSaving || isDeleting || hasKnownAttendanceHistory}
                 title={
                   hasKnownAttendanceHistory
-                    ? "É permitida a exclusão apenas de pacientes sem histórico de atendimento ou com apenas atendimentos cancelados ou perdidos."
+                    ? "Deletion is only allowed for patients without attendance history or with only canceled or missed appointments."
                     : undefined
                 }
               >
-                Excluir
+                Delete
               </Button>
             </div>
-            <p className="text-sm text-gray-600 mt-1">Registro #{patientId}</p>
+            <p className="text-sm text-gray-600 mt-1">ID #{patientId}</p>
           </div>
 
           {/* Form */}
@@ -278,7 +278,9 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
             <Card>
               <CardBody>
                 {/* Basic Information Card */}
-                <h2 className="mb-6 text-lg font-semibold text-gray-900">Informações Básicas</h2>
+                <h2 className="mb-6 text-lg font-semibold text-gray-900">
+                  Basic Information
+                </h2>
                 <PatientFormFields
                   patient={formPatient}
                   handleChange={handleChange}
@@ -304,15 +306,15 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
                     className="flex-1 sm:flex-none"
                     disabled={isSaving}
                   >
-                    Cancelar
+                    Cancel
                   </Button>
                   <Button
                     type="submit"
                     isLoading={isSaving}
-                    loadingText="Salvando..."
+                    loadingText="Saving..."
                     className="flex-1 sm:flex-none"
                   >
-                    Salvar Alterações
+                    Save Changes
                   </Button>
                 </div>
               </CardBody>
@@ -346,7 +348,7 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
         onStay={handleStayOnPage}
       />
 
-      {/* Confirm status change (Alta/Faltas) – cancels open attendances */}
+      {/* Confirm status change (Discharged (A) / Missed (F)) – cancels open attendances */}
       <ConfirmStatusChangeModal
         isOpen={pendingStatusChange !== null}
         onClose={cancelStatusChange}

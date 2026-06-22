@@ -29,7 +29,7 @@ export function usePatientWithAttendances(patientId: string) {
       ]);
 
       if (!patientResult.success || !patientResult.value) {
-        throw new Error(patientResult.error || 'Paciente não encontrado');
+        throw new Error(patientResult.error || 'Patient not found');
       }
 
       let transformedPatient: Patient;
@@ -69,7 +69,7 @@ export function usePatient(patientId: string) {
       const result = await getPatientById(patientId);
 
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Paciente não encontrado');
+        throw new Error(result.error || 'Patient not found');
       }
 
       return transformSinglePatientFromApi(result.value);
@@ -91,7 +91,7 @@ export function usePatientAttendances(patientId: string) {
       const result = await getAttendancesByPatient(patientId);
 
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao carregar atendimentos');
+        throw new Error(result.error || 'Error loading attendances');
       }
 
       return result.value || [];
@@ -124,7 +124,7 @@ export function useNewlyScheduledAttendances(patientId: string | undefined, enab
       });
 
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao carregar agendamentos');
+        throw new Error(result.error || 'Error loading scheduled attendances');
       }
 
       return result.value || [];
@@ -147,7 +147,7 @@ export function usePatients() {
       const result = await getPatients();
 
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao carregar pacientes');
+        throw new Error(result.error || 'Error loading patients');
       }
 
       // Transform API response to internal format
@@ -172,7 +172,7 @@ export function useCreatePatient() {
       const result = await createPatient(data);
 
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao criar paciente');
+        throw new Error(result.error || 'Error creating patient');
       }
 
       return result.value;
@@ -199,7 +199,7 @@ export function useUpdatePatient() {
       const result = await updatePatient(patientId, data);
 
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao atualizar paciente');
+        throw new Error(result.error || 'Error updating patient');
       }
 
       return result.value;
@@ -233,7 +233,7 @@ export function useDeletePatient() {
       const result = await deletePatient(patientId);
 
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao excluir paciente');
+        throw new Error(result.error || 'Error deleting patient');
       }
 
       return result.value;
@@ -265,7 +265,7 @@ export function usePrefetchPatient() {
         ]);
 
         if (!patientResult.success || !patientResult.value) {
-          throw new Error(patientResult.error || 'Paciente não encontrado');
+          throw new Error(patientResult.error || 'Patient not found');
         }
 
         if (attendancesResult.success && attendancesResult.value) {
@@ -287,11 +287,11 @@ export function usePrefetchPatient() {
  * Useful for manual cache refresh after external updates
  */
 /**
- * Loads patient data for displaying main complaint (e.g. expanded assessment card).
+ * Loads patient data for displaying main concern (e.g. expanded assessment card).
  */
 export function usePatientComplaint(patientId: number | null) {
   const query = useQuery({
-    queryKey: patientKeys.mainComplaint(patientId ?? 0),
+    queryKey: patientKeys.mainConcern(patientId ?? 0),
     queryFn: async () => {
       if (!patientId) return null;
 

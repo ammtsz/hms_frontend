@@ -27,7 +27,7 @@ export function useUsers({ enabled = true }: { enabled?: boolean } = {}) {
     queryFn: async (): Promise<User[]> => {
       const result = await fetchUsers();
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao carregar usuários');
+        throw new Error(result.error || 'Error loading users');
       }
       return result.value;
     },
@@ -44,7 +44,7 @@ export function useCreateUser() {
     mutationFn: async (data: CreateUserRequest): Promise<User> => {
       const result = await createUser(data);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao criar usuário');
+        throw new Error(result.error || 'Error creating user');
       }
       return result.value;
     },
@@ -61,7 +61,7 @@ export function useUpdateUser() {
     mutationFn: async ({ id, data }: { id: number; data: UpdateUserRequest }): Promise<User> => {
       const result = await updateUser(id, data);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao atualizar usuário');
+        throw new Error(result.error || 'Error updating user');
       }
       return result.value;
     },
@@ -78,7 +78,7 @@ export function useDeleteUser() {
     mutationFn: async (id: number): Promise<void> => {
       const result = await deleteUser(id);
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao excluir usuário');
+        throw new Error(result.error || 'Error deleting user');
       }
     },
     onSuccess: () => {
@@ -94,7 +94,7 @@ export function useDeactivateUser() {
     mutationFn: async (id: number): Promise<User> => {
       const result = await deactivateUser(id);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao desativar usuário');
+        throw new Error(result.error || 'Error deactivating user');
       }
       return result.value;
     },
@@ -113,7 +113,7 @@ export function useReactivateUser() {
     mutationFn: async (id: number): Promise<User> => {
       const result = await reactivateUser(id);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao reativar usuário');
+        throw new Error(result.error || 'Error reactivating user');
       }
       return result.value;
     },
@@ -130,7 +130,7 @@ export function useResetUserPassword() {
     mutationFn: async (data: ResetPasswordRequest): Promise<void> => {
       const result = await resetUserPassword(data);
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao redefinir senha');
+        throw new Error(result.error || 'Failed to reset password');
       }
     },
   });
@@ -141,7 +141,7 @@ export function useChangeOwnPassword() {
     mutationFn: async (data: ChangePasswordRequest): Promise<void> => {
       const result = await changeOwnPassword(data);
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao alterar senha');
+        throw new Error(result.error || 'Failed to change password');
       }
     },
   });
@@ -152,7 +152,7 @@ export function useUpdateOwnProfile() {
     mutationFn: async (data: UpdateOwnProfileRequest): Promise<User> => {
       const result = await updateOwnProfile(data);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao atualizar perfil');
+        throw new Error(result.error || 'Failed to update profile');
       }
       return result.value;
     },

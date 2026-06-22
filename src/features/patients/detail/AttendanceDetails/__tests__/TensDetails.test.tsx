@@ -4,7 +4,7 @@ import { TensDetails } from "../TensDetails";
 
 describe("TensDetails", () => {
   const defaultProps = {
-    bodyLocations: ["Pé direito", "Joelho esquerdo"],
+    bodyLocations: ["Right Foot", "Left Knee"],
   };
 
   it("should render tens title", () => {
@@ -16,15 +16,15 @@ describe("TensDetails", () => {
   it("should display body locations correctly", () => {
     render(<TensDetails {...defaultProps} />);
 
-    expect(screen.getByText(/Locais:/)).toBeInTheDocument();
-    expect(screen.getByText(/Pé direito, Joelho esquerdo/)).toBeInTheDocument();
+    expect(screen.getByText(/Locations:/)).toBeInTheDocument();
+    expect(screen.getByText(/Right Foot, Left Knee/)).toBeInTheDocument();
   });
 
   it("should display single body location with singular label", () => {
-    render(<TensDetails bodyLocations={["Pé direito"]} />);
+    render(<TensDetails bodyLocations={["Right Foot"]} />);
 
-    expect(screen.getByText(/Local:/)).toBeInTheDocument();
-    expect(screen.getByText("Pé direito")).toBeInTheDocument();
+    expect(screen.getByText(/Location:/)).toBeInTheDocument();
+    expect(screen.getByText("Right Foot")).toBeInTheDocument();
   });
 
   it("should display sessions when showSessions is true", () => {
@@ -32,7 +32,7 @@ describe("TensDetails", () => {
       <TensDetails {...defaultProps} sessionNumber="3/5" showSessions={true} />,
     );
 
-    expect(screen.getByText(/Sessões:/)).toBeInTheDocument();
+    expect(screen.getByText(/Sessions:/)).toBeInTheDocument();
     expect(screen.getByText(/3\/5/)).toBeInTheDocument();
   });
 
@@ -42,11 +42,11 @@ describe("TensDetails", () => {
         {...defaultProps}
         sessionNumber="2/4"
         showSessions={true}
-        sessionLabel="Aplicações"
+        sessionLabel="Applications"
       />,
     );
 
-    expect(screen.getByText(/Aplicações:/)).toBeInTheDocument();
+    expect(screen.getByText(/Applications:/)).toBeInTheDocument();
   });
 
   it("should not display sessions when showSessions is false", () => {
@@ -58,27 +58,27 @@ describe("TensDetails", () => {
       />,
     );
 
-    expect(screen.queryByText(/Sessões:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Sessions:/)).not.toBeInTheDocument();
   });
 
   it("should display notes when provided", () => {
     render(
       <TensDetails
         {...defaultProps}
-        notes="Paciente sentiu melhora no joelho"
+        notes="Patient felt improvement in the knee"
       />,
     );
 
-    expect(screen.getByText(/Notas do tratamento:/)).toBeInTheDocument();
+    expect(screen.getByText(/Treatment notes:/)).toBeInTheDocument();
     expect(
-      screen.getByText("Paciente sentiu melhora no joelho"),
+      screen.getByText("Patient felt improvement in the knee"),
     ).toBeInTheDocument();
   });
 
   it("should not display notes when not provided", () => {
     render(<TensDetails {...defaultProps} />);
 
-    expect(screen.queryByText(/Notas do tratamento:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Treatment notes:/)).not.toBeInTheDocument();
   });
 
   it("should apply disabled styling when isAbsent is true", () => {
@@ -102,21 +102,21 @@ describe("TensDetails", () => {
   it("should render all properties together", () => {
     render(
       <TensDetails
-        bodyLocations={["Pé direito", "Joelho", "Coluna"]}
+        bodyLocations={["Right Foot", "Knee", "Back"]}
         sessionNumber="4/6"
         showSessions={true}
-        sessionLabel="Tratamentos"
-        notes="Paciente apresenta evolução positiva"
+        sessionLabel="Treatments"
+        notes="Patient shows positive progress"
         isAbsent={false}
       />,
     );
 
     expect(screen.getByText(/TENS/)).toBeInTheDocument();
-    expect(screen.getByText(/Pé direito, Joelho, Coluna/)).toBeInTheDocument();
-    expect(screen.getByText(/Tratamentos:/)).toBeInTheDocument();
+    expect(screen.getByText(/Right Foot, Knee, Back/)).toBeInTheDocument();
+    expect(screen.getByText(/Treatments:/)).toBeInTheDocument();
     expect(screen.getByText(/4\/6/)).toBeInTheDocument();
     expect(
-      screen.getByText("Paciente apresenta evolução positiva"),
+      screen.getByText("Patient shows positive progress"),
     ).toBeInTheDocument();
   });
 

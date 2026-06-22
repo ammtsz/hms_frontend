@@ -81,7 +81,7 @@ export const SessionBreakdownCard: React.FC<SessionBreakdownCardProps> = ({
             {error && (
               <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p className="text-sm text-red-600">
-                  Erro ao carregar sessões: {error.message}
+                  Error loading sessions: {error.message}
                 </p>
               </div>
             )}
@@ -89,7 +89,7 @@ export const SessionBreakdownCard: React.FC<SessionBreakdownCardProps> = ({
             {/* Empty State */}
             {stats.totalTreatmentGroups === 0 && (
               <p className="text-sm text-gray-600">
-                Nenhum tratamento registrado até o momento.
+                No treatment recorded yet.
               </p>
             )}
 
@@ -115,7 +115,7 @@ export const SessionBreakdownCard: React.FC<SessionBreakdownCardProps> = ({
                     onClick={showMore}
                     className="w-full text-blue-600 hover:bg-blue-50 hover:text-blue-800"
                   >
-                    Ver mais ({visibleCount} de {totalItems} tratamentos)
+                    View more ({visibleCount} of {totalItems} treatments)
                   </Button>
                 )}
               </div>

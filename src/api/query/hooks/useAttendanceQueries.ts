@@ -112,7 +112,7 @@ const attendanceDetailQueryFn = async (attendanceId: number) => {
   const result = await getAttendanceById(String(attendanceId));
   if (!result.success || !result.value) {
     throw new Error(
-      result.error || "Falha ao carregar dados do atendimento selecionado.",
+      result.error || "Failed to load selected attendance data.",
     );
   }
   return result.value;
@@ -579,7 +579,7 @@ export function useBulkPostponeAttendances() {
       );
 
       if (!response.success) {
-        throw new Error(response.error || "Erro ao reagendar os atendimentos");
+        throw new Error(response.error || "Failed to reschedule attendances");
       }
 
       return response.value;
@@ -634,7 +634,7 @@ export function useRescheduleAttendances() {
         params.newScheduledDate,
       );
       if (!response.success) {
-        throw new Error(response.error ?? 'Falha ao reagendar');
+        throw new Error(response.error ?? 'Failed to reschedule');
       }
       return response.value;
     },
@@ -662,7 +662,7 @@ export function useRecomputeReturnForEpisode() {
     mutationFn: async (attendanceId: number): Promise<RecomputeReturnResult> => {
       const response = await recomputeReturnForEpisode(attendanceId);
       if (!response.success) {
-        throw new Error(response.error ?? 'Falha ao recomputar data de retorno');
+        throw new Error(response.error ?? 'Failed to recompute return date');
       }
       return response.value ?? { rescheduled: false };
     },

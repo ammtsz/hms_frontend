@@ -1,4 +1,5 @@
 import React from "react";
+import { formatDisplayDate } from "@/utils/dateUtils";
 
 interface AttendanceMetadataProps {
   createdDate: string; // YYYY-MM-DD format
@@ -25,27 +26,24 @@ export const AttendanceMetadata: React.FC<AttendanceMetadataProps> = ({
   const showUpdated =
     createdDate !== updatedDate && updatedDate !== cancelledDate;
 
-  // Format date as DD/MM/YYYY for display
-  const formatDate = (dateStr: string): string => {
-    const [year, month, day] = dateStr.split("-");
-    return `${day}/${month}/${year}`;
-  };
+  // Format date as MM/DD/YYYY for display
+  const formatDate = (dateStr: string): string => formatDisplayDate(dateStr);
 
   return (
     <div className="mt-3 pt-3 border-t border-gray-200 text-xs text-gray-600 space-y-1">
       <div>
-        <span className="font-medium">Criado em:</span>{" "}
+        <span className="font-medium">Created on:</span>{" "}
         {formatDate(createdDate)}
       </div>
       {showUpdated && (
         <div>
-          <span className="font-medium">Atualizado em:</span>{" "}
+          <span className="font-medium">Updated on:</span>{" "}
           {formatDate(updatedDate)}
         </div>
       )}
       {cancelledDate && (
         <div>
-          <span className="font-medium">Cancelado em:</span>{" "}
+          <span className="font-medium">Cancelled on:</span>{" "}
           {formatDate(cancelledDate)}
         </div>
       )}

@@ -94,14 +94,14 @@ export const AttendanceHistoryCard: React.FC<AttendanceHistoryCardProps> = ({
             {loading && (
               <LoadingSpinner
                 size="medium"
-                message="Carregando histórico de atendimentos..."
+                message="Loading attendance history..."
               />
             )}
 
             {/* Error State */}
             {error && (
               <ErrorState
-                title="Erro ao carregar histórico"
+                title="Error loading history"
                 message={error}
                 onRetry={() => {
                   refetchAttendances();
@@ -133,7 +133,7 @@ export const AttendanceHistoryCard: React.FC<AttendanceHistoryCardProps> = ({
                     onClick={showMore}
                     totalItems={totalItems}
                     visibleCount={visibleCount}
-                    itemLabel="atendimentos"
+                    itemLabel="attendances"
                     disabled={loading}
                   />
                 )}

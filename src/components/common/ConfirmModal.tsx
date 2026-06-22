@@ -17,8 +17,8 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   open,
   title,
   message,
-  confirmLabel = "Confirmar",
-  cancelLabel = "Cancelar",
+  confirmLabel = "Confirm",
+  cancelLabel = "Cancel",
   confirmDisabled = false,
   onConfirm,
   onCancel,
@@ -40,16 +40,12 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
         <div className="mb-4 text-[color:var(--primary-dark)]">{message}</div>
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           {cancelLabel ? (
-            <Button
-              variant="secondary"
-              onClick={handleClose}
-              type="button"
-            >
+            <Button variant="secondary" onClick={handleClose} type="button">
               {cancelLabel}
             </Button>
           ) : null}
           <Button
-            variant={confirmLabel === "Remover" ? "danger" : "primary"}
+            variant={confirmLabel === "Remove" ? "danger" : "primary"}
             onClick={onConfirm}
             type="button"
             disabled={confirmDisabled}

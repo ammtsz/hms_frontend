@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import SystemSettings from "../SystemSettings";
+import { SYSTEM_SETTINGS_LABELS } from "../systemSettingsLabels";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { UserRole } from "@/types/auth";
@@ -82,23 +83,23 @@ describe("SystemSettings", () => {
   it("renders main title and section headers", () => {
     render(<SystemSettings />);
 
-    expect(screen.getByText(/Configurações de Sistema/)).toBeInTheDocument();
-    expect(screen.getByText("Limite de faltas")).toBeInTheDocument();
-    expect(screen.getByText("Prioridades")).toBeInTheDocument();
-    expect(screen.getByText("Categorias das Anotações")).toBeInTheDocument();
-    expect(screen.getByText("Locais do Corpo")).toBeInTheDocument();
-    expect(screen.getByText("Cores (Fisioterapia)")).toBeInTheDocument();
+    expect(screen.getByText(/System Settings/)).toBeInTheDocument();
+    expect(screen.getByText(SYSTEM_SETTINGS_LABELS.missingAppointmentsThreshold)).toBeInTheDocument();
+    expect(screen.getByText(SYSTEM_SETTINGS_LABELS.priorities)).toBeInTheDocument();
+    expect(screen.getByText(SYSTEM_SETTINGS_LABELS.noteCategories)).toBeInTheDocument();
+    expect(screen.getByText(SYSTEM_SETTINGS_LABELS.bodyLocations)).toBeInTheDocument();
+    expect(screen.getByText(SYSTEM_SETTINGS_LABELS.colorsPhysiotherapy)).toBeInTheDocument();
   });
 
-  it("expands Limite de faltas and shows input when data loaded", () => {
+  it("expands Absence limit and shows input when data loaded", () => {
     render(<SystemSettings />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Limite de faltas/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Missing Appointments Threshold/i }));
 
     expect(
-      screen.getByRole("spinbutton", { name: /Limite de faltas \(1 a 10\)/i }),
+      screen.getByRole("spinbutton", { name: /Missing Appointments Threshold \(1 to 10\)/i }),
     ).toHaveValue(3);
-    expect(screen.getByRole("button", { name: "Salvar" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
   });
 
   it("shows loading skeleton when threshold is loading", () => {
@@ -108,10 +109,10 @@ describe("SystemSettings", () => {
     });
 
     render(<SystemSettings />);
-    fireEvent.click(screen.getByRole("button", { name: /Limite de faltas/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Missing Appointments Threshold/i }));
 
     expect(
-      screen.queryByRole("spinbutton", { name: /Limite de faltas/i }),
+      screen.queryByRole("spinbutton", { name: /Missing Appointments Threshold/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -134,30 +135,30 @@ describe("SystemSettings", () => {
     });
 
     render(<SystemSettings />);
-    fireEvent.click(screen.getByRole("button", { name: /Limite de faltas/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Missing Appointments Threshold/i }));
 
     const input = screen.getByRole("spinbutton", {
-      name: /Limite de faltas \(1 a 10\)/i,
+      name: /Missing Appointments Threshold \(1 to 10\)/i,
     });
     expect(input).toBeDisabled();
     expect(
-      screen.getByText("Apenas administradores podem alterar este valor."),
+      screen.getByText(SYSTEM_SETTINGS_LABELS.adminOnlyThreshold),
     ).toBeInTheDocument();
   });
 
   it("shows validation error when value is out of range", () => {
     render(<SystemSettings />);
-    fireEvent.click(screen.getByRole("button", { name: /Limite de faltas/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Missing Appointments Threshold/i }));
 
     const input = screen.getByRole("spinbutton", {
-      name: /Limite de faltas \(1 a 10\)/i,
+      name: /Missing Appointments Threshold \(1 to 10\)/i,
     });
     fireEvent.change(input, { target: { value: "15" } });
 
     expect(
-      screen.getByText(/Informe um valor entre 1 e 10/),
+      screen.getByText(SYSTEM_SETTINGS_LABELS.thresholdValidation),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Salvar" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
   });
 
   it("calls update mutation and shows success toast on save", () => {
@@ -168,13 +169,13 @@ describe("SystemSettings", () => {
     });
 
     render(<SystemSettings />);
-    fireEvent.click(screen.getByRole("button", { name: /Limite de faltas/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Missing Appointments Threshold/i }));
 
     const input = screen.getByRole("spinbutton", {
-      name: /Limite de faltas \(1 a 10\)/i,
+      name: /Missing Appointments Threshold \(1 to 10\)/i,
     });
     fireEvent.change(input, { target: { value: "5" } });
-    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
     expect(mockMutate).toHaveBeenCalledWith(
       5,
@@ -188,7 +189,7 @@ describe("SystemSettings", () => {
     const onSuccess = call[1].onSuccess;
     onSuccess();
     expect(mockShowToast).toHaveBeenCalledWith(
-      "Configuração atualizada com sucesso.",
+      SYSTEM_SETTINGS_LABELS.configUpdatedToast,
       "success",
     );
   });
@@ -201,13 +202,13 @@ describe("SystemSettings", () => {
     });
 
     render(<SystemSettings />);
-    fireEvent.click(screen.getByRole("button", { name: /Limite de faltas/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Missing Appointments Threshold/i }));
 
     const input = screen.getByRole("spinbutton", {
-      name: /Limite de faltas \(1 a 10\)/i,
+      name: /Missing Appointments Threshold \(1 to 10\)/i,
     });
     fireEvent.change(input, { target: { value: "5" } });
-    fireEvent.click(screen.getByRole("button", { name: "Salvar" }));
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
     const call = mockMutate.mock.calls[0];
     const onError = call[1].onError;
@@ -218,11 +219,11 @@ describe("SystemSettings", () => {
   it("renders TreatmentOptionsList when body locations and colors sections are expanded", () => {
     render(<SystemSettings />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Locais do Corpo/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Body Locations/i }));
     expect(screen.getAllByTestId("treatment-options-list")).toHaveLength(1);
 
     fireEvent.click(
-      screen.getByRole("button", { name: /Cores \(Fisioterapia\)/i }),
+      screen.getByRole("button", { name: /Colors \(Physiotherapy\)/i }),
     );
     expect(screen.getAllByTestId("treatment-options-list")).toHaveLength(2);
   });
@@ -230,11 +231,11 @@ describe("SystemSettings", () => {
   it("renders PriorityManagementList and NoteCategoriesManagementList when expanded", () => {
     render(<SystemSettings />);
 
-    fireEvent.click(screen.getByRole("button", { name: /^Prioridades$/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Priorities$/i }));
     expect(screen.getByTestId("priority-management-list")).toBeInTheDocument();
 
     fireEvent.click(
-      screen.getByRole("button", { name: /Categorias das Anotações/i }),
+      screen.getByRole("button", { name: /Note Categories/i }),
     );
     expect(
       screen.getByTestId("note-categories-management-list"),

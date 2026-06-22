@@ -11,7 +11,7 @@ import PostAttendanceModal from "../PostAttendanceModal";
 // Mock the custom hooks
 const mockUsePostAttendanceForm = {
   formData: {
-    mainComplaint: "",
+    mainConcern: "",
     patientStatus: "N" as const,
     startDate: "2025-11-26",
     returnWeeks: 1,
@@ -98,16 +98,16 @@ jest.mock("../components/tabs", () => ({
     formData,
     onFormDataChange,
   }: {
-    formData: { mainComplaint: string };
+    formData: { mainConcern: string };
     onFormDataChange: (field: string, value: string) => void;
   }) => (
     <div data-testid="basic-info-tab">
       <h3>Basic Info</h3>
       <input
         data-testid="main-complaint-input"
-        value={formData.mainComplaint}
-        onChange={(e) => onFormDataChange("mainComplaint", e.target.value)}
-        placeholder="Main complaint"
+        value={formData.mainConcern}
+        onChange={(e) => onFormDataChange("mainConcern", e.target.value)}
+        placeholder="Main concern"
       />
     </div>
   ),
@@ -304,7 +304,7 @@ describe("PostAttendanceModal", () => {
     // Reset mocks to default state
     Object.assign(mockUsePostAttendanceForm, {
       formData: {
-        mainComplaint: "",
+        mainConcern: "",
         patientStatus: "N" as const,
         startDate: "2025-11-26",
         returnWeeks: 1,
@@ -373,10 +373,10 @@ describe("PostAttendanceModal", () => {
       renderComponent();
 
       expect(screen.getByTestId("modal-title")).toHaveTextContent(
-        "Formulário de Consulta de Avaliação - Test Patient",
+        "Assessment Consultation Form - Test Patient",
       );
       expect(screen.getByTestId("modal-subtitle")).toHaveTextContent(
-        "Atendimento #attendance-123 • Paciente #patient-123",
+        "Attendance #attendance-123 • Patient #patient-123",
       );
     });
 
@@ -385,10 +385,10 @@ describe("PostAttendanceModal", () => {
       renderComponent();
 
       expect(screen.getByTestId("modal-title")).toHaveTextContent(
-        "Consulta Finalizada - Test Patient",
+        "Consultation Completed - Test Patient",
       );
       expect(screen.getByTestId("modal-subtitle")).toHaveTextContent(
-        "Agendamentos criados automaticamente",
+        "Appointments created automatically",
       );
     });
 
@@ -397,10 +397,10 @@ describe("PostAttendanceModal", () => {
       renderComponent();
 
       expect(screen.getByTestId("modal-title")).toHaveTextContent(
-        "Problemas no Tratamento - Test Patient",
+        "Problems with Treatment - Test Patient",
       );
       expect(screen.getByTestId("modal-subtitle")).toHaveTextContent(
-        "Alguns agendamentos não puderam ser criados",
+        "Some appointments could not be created",
       );
     });
   });
@@ -471,7 +471,7 @@ describe("PostAttendanceModal", () => {
       Object.assign(mockUsePostAttendanceForm, {
         formData: {
           ...mockUsePostAttendanceForm.formData,
-          mainComplaint: "Test complaint",
+          mainConcern: "Test complaint",
         },
       });
       renderComponent();
@@ -622,7 +622,7 @@ describe("PostAttendanceModal", () => {
     it("should render cancel and submit buttons in normal mode", () => {
       renderComponent();
 
-      expect(screen.getByText("Cancelar")).toBeInTheDocument();
+      expect(screen.getByText("Cancel")).toBeInTheDocument();
       expect(screen.getByTestId("loading-button")).toBeInTheDocument();
     });
 
@@ -648,7 +648,7 @@ describe("PostAttendanceModal", () => {
       const user = userEvent.setup();
       renderComponent();
 
-      await user.click(screen.getByText("Cancelar"));
+      await user.click(screen.getByText("Cancel"));
 
       expect(mockCloseModal).toHaveBeenCalledWith("postAttendance");
     });
@@ -657,7 +657,7 @@ describe("PostAttendanceModal", () => {
       Object.assign(mockUsePostAttendanceForm, {
         formData: {
           ...mockUsePostAttendanceForm.formData,
-          mainComplaint: "Test complaint",
+          mainConcern: "Test complaint",
           noGeneralRecommendations: true,
           noTreatmentRecommendations: true,
         },
@@ -674,10 +674,10 @@ describe("PostAttendanceModal", () => {
       Object.assign(mockUsePostAttendanceForm, { isLoading: true });
       renderComponent();
 
-      expect(screen.getByText("Cancelar")).toBeDisabled();
+      expect(screen.getByText("Cancel")).toBeDisabled();
       expect(screen.getByTestId("loading-button")).toBeDisabled();
       expect(screen.getByTestId("loading-button")).toHaveTextContent(
-        "Salvando...",
+        "Saving...",
       );
     });
   });
@@ -806,7 +806,7 @@ describe("PostAttendanceModal", () => {
       Object.assign(mockUsePostAttendanceForm, {
         formData: {
           ...mockUsePostAttendanceForm.formData,
-          mainComplaint: "Test complaint",
+          mainConcern: "Test complaint",
         },
       });
       renderComponent();

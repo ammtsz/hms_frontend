@@ -124,9 +124,9 @@ describe("PatientWalkInPanel", () => {
     it("should render the panel header", () => {
       renderComponent();
 
-      expect(screen.getByText("Pacientes não Agendados")).toBeInTheDocument();
+      expect(screen.getByText("Walk-In Patients")).toBeInTheDocument();
       expect(
-        screen.getByText(/Registro de pacientes não agendados para/i),
+        screen.getByText(/Unscheduled patient registration for/i),
       ).toBeInTheDocument();
     });
 
@@ -172,7 +172,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       await user.click(header!);
 
@@ -185,7 +185,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
 
       // Expand first
@@ -206,7 +206,7 @@ describe("PatientWalkInPanel", () => {
 
       const chevronIcon = screen.getByTestId("chevron-down");
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
 
       // Initially not rotated
@@ -227,7 +227,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       expect(header).toHaveClass(
         "hover:bg-gray-50",
@@ -263,7 +263,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       await user.click(header!);
 
@@ -280,7 +280,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       await user.click(header!);
 
@@ -293,7 +293,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       await user.click(header!);
 
@@ -308,7 +308,7 @@ describe("PatientWalkInPanel", () => {
 
       // Expand the panel
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       await user.click(header!);
 
@@ -330,7 +330,7 @@ describe("PatientWalkInPanel", () => {
 
       // Expand the panel
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       await user.click(header!);
 
@@ -354,7 +354,7 @@ describe("PatientWalkInPanel", () => {
 
       // Expand the panel
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       await user.click(header!);
 
@@ -375,7 +375,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       expect(header).toBeInTheDocument();
       expect(header).toHaveClass("cursor-pointer");
@@ -385,7 +385,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       expect(header).toHaveClass("cursor-pointer");
     });
@@ -394,7 +394,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       expect(header).toHaveClass("hover:bg-gray-50");
     });
@@ -406,7 +406,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
 
       // Rapidly click multiple times
@@ -427,7 +427,7 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       const header = screen
-        .getByText("Pacientes não Agendados")
+        .getByText("Walk-In Patients")
         .closest('div[class*="cursor-pointer"]');
       const expandableContent = screen.getByTestId(
         "patient-walk-in-form",
@@ -451,13 +451,14 @@ describe("PatientWalkInPanel", () => {
       renderComponent();
 
       // Check header structure
-      expect(screen.getByText("Pacientes não Agendados")).toHaveClass(
+      expect(screen.getByText("Walk-In Patients")).toHaveClass(
         "text-lg",
         "font-semibold",
       );
-      expect(
-        screen.getByText(/Registro de pacientes não agendados/),
-      ).toHaveClass("text-sm", "text-gray-600");
+      expect(screen.getByText(/Unscheduled patient registration/)).toHaveClass(
+        "text-sm",
+        "text-gray-600",
+      );
     });
 
     it("should render icons with correct styling", () => {

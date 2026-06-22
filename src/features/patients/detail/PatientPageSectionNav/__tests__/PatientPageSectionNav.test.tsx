@@ -37,7 +37,7 @@ describe("PatientPageSectionNav", () => {
     render(<PatientPageSectionNav />);
     expect(
       screen.getByRole("navigation", {
-        name: "Navegação por seções da página do paciente",
+        name: "Patient page section navigation",
       }),
     ).toBeInTheDocument();
   });
@@ -45,7 +45,7 @@ describe("PatientPageSectionNav", () => {
   it("renders all section buttons in the nav", () => {
     render(<PatientPageSectionNav />);
     const nav = screen.getByRole("navigation", {
-      name: "Navegação por seções da página do paciente",
+      name: "Patient page section navigation",
     });
     const buttons = within(nav).getAllByRole("button");
     expect(buttons).toHaveLength(6);
@@ -55,7 +55,7 @@ describe("PatientPageSectionNav", () => {
     const user = userEvent.setup();
     render(<PatientPageSectionNav />);
     const nav = screen.getByRole("navigation", {
-      name: "Navegação por seções da página do paciente",
+      name: "Patient page section navigation",
     });
     const buttons = within(nav).getAllByRole("button");
     const firstButton = buttons[0];
@@ -73,7 +73,7 @@ describe("PatientPageSectionNav", () => {
   it("renders small-screen trigger with accessible label", () => {
     render(<PatientPageSectionNav />);
     const trigger = screen.getByRole("button", {
-      name: "Abrir menu de seções",
+      name: "Open section menu",
     });
     expect(trigger).toBeInTheDocument();
   });
@@ -82,15 +82,15 @@ describe("PatientPageSectionNav", () => {
     const user = userEvent.setup();
     render(<PatientPageSectionNav />);
     const trigger = screen.getByRole("button", {
-      name: "Abrir menu de seções",
+      name: "Open section menu",
     });
 
     await user.click(trigger);
     expect(trigger).toHaveAttribute("aria-expanded", "true");
-    const dialog = screen.getByRole("dialog", { name: "Seções da página" });
+    const dialog = screen.getByRole("dialog", { name: "Page sections" });
     expect(dialog).toBeInTheDocument();
     expect(
-      within(dialog).getByRole("button", { name: "Perfil" }),
+      within(dialog).getByRole("button", { name: "Profile" }),
     ).toBeInTheDocument();
 
     await user.click(trigger);
@@ -101,13 +101,13 @@ describe("PatientPageSectionNav", () => {
     const user = userEvent.setup();
     render(<PatientPageSectionNav />);
     await user.click(
-      screen.getByRole("button", { name: "Abrir menu de seções" }),
+      screen.getByRole("button", { name: "Open section menu" }),
     );
-    const dialog = screen.getByRole("dialog", { name: "Seções da página" });
-    await user.click(within(dialog).getByRole("button", { name: "Anotações" }));
+    const dialog = screen.getByRole("dialog", { name: "Page sections" });
+    await user.click(within(dialog).getByRole("button", { name: "Notes" }));
 
     expect(
-      screen.queryByRole("dialog", { name: "Seções da página" }),
+      screen.queryByRole("dialog", { name: "Page sections" }),
     ).not.toBeInTheDocument();
   });
 });

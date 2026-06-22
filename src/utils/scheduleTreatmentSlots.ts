@@ -1,5 +1,5 @@
 /**
- * Shared utilities for validating treatment (Fisioterapia / TENS) slot availability
+ * Shared utilities for validating treatment (Physiotherapy / TENS) slot availability
  * by date using schedule settings. Used for inline validation and pre-submit checks.
  */
 
@@ -12,11 +12,11 @@ export interface ScheduleSettingForSlots {
 
 /** User-facing message when a selected date has no treatment slots. */
 export const TREATMENT_SLOTS_UNAVAILABLE_MESSAGE =
-  "Esta data não possui agenda para tratamentos (Fisioterapia / TENS). Escolha uma data válida.";
+  "This date has no treatment schedule (Physiotherapy / TENS). Choose a valid date.";
 
 /** User-facing message when a selected date has no assessment consultation slots. */
 export const ASSESSMENT_SLOTS_UNAVAILABLE_MESSAGE =
-  "Esta data não possui agenda para consulta de avaliação. Escolha uma data válida.";
+  "This date has no assessment consultation schedule. Choose a valid date.";
 
 /**
  * Returns the day of week (0 = Sunday, 6 = Saturday) for a YYYY-MM-DD date string.
@@ -58,7 +58,7 @@ export function hasSlotsForTreatmentOnDate(
 
 /** Message when selected date has no slots for any of the selected types. */
 export const ALL_TYPES_SLOTS_UNAVAILABLE_MESSAGE =
-  "Esta data não possui agenda para os tipos de atendimento selecionados. Escolha uma data válida.";
+  "This date has no schedule for the selected appointment types. Choose a valid date.";
 
 /**
  * Returns the date slot error message when the selected date has no slots for the

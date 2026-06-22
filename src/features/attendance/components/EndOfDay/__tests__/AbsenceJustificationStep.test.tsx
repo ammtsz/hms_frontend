@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AbsenceJustificationStep from "../components/steps/AbsenceJustificationStep";
+import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
 import type { AbsenceJustification, ScheduledAbsence } from "../types";
 
 // Mock data factories
@@ -42,17 +43,17 @@ describe("AbsenceJustificationStep", () => {
     render(<AbsenceJustificationStep {...defaultProps} />);
 
     expect(
-      screen.getByText("Todas as presenças confirmadas!"),
+      screen.getByText("All attendances confirmed!"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Não há faltas agendadas para justificar."),
+      screen.getByText("There are no scheduled absences to justify."),
     ).toBeInTheDocument();
   });
 
   it("displays formatted date correctly", () => {
     render(<AbsenceJustificationStep {...defaultProps} />);
 
-    expect(screen.getByText(/15\/01\/2024/)).toBeInTheDocument();
+    expect(screen.getByText(/01\/15\/2024/)).toBeInTheDocument();
   });
 
   it("shows warning when there are scheduled absences", () => {
@@ -65,8 +66,8 @@ describe("AbsenceJustificationStep", () => {
       />,
     );
 
-    expect(screen.getByText("Faltas")).toBeInTheDocument();
-    expect(screen.getByText(/Há 1 paciente/)).toBeInTheDocument();
+    expect(screen.getByText("Absences")).toBeInTheDocument();
+    expect(screen.getByText(/There is 1 patient/)).toBeInTheDocument();
   });
 
   it("renders absence details", () => {
@@ -86,7 +87,57 @@ describe("AbsenceJustificationStep", () => {
     );
 
     expect(screen.getByText("Jane Doe")).toBeInTheDocument();
-    expect(screen.getByText("Consulta de Avaliação")).toBeInTheDocument();
+    expect(
+      screen.getByText(getAttendanceTypeLabel("assessment")),
+    ).toBeInTheDocument();
+  });
+
+  it("shows separate assessment section label when patient has multiple absence types", () => {
+    const scheduledAbsences = [
+      createMockScheduledAbsence({
+        patientName: "Jane Doe",
+        patientId: 123,
+        attendanceType: "assessment",
+      }),
+      createMockScheduledAbsence({
+        patientName: "Jane Doe",
+        patientId: 123,
+        attendanceType: "physiotherapy",
+      }),
+    ];
+    const absenceJustifications = [
+      createMockJustification({
+        patientId: 123,
+        patientName: "Jane Doe",
+        attendanceType: "assessment",
+      }),
+      createMockJustification({
+        patientId: 123,
+        patientName: "Jane Doe",
+        attendanceType: "physiotherapy",
+      }),
+    ];
+
+    render(
+      <AbsenceJustificationStep
+        {...defaultProps}
+        scheduledAbsences={scheduledAbsences}
+        absenceJustifications={absenceJustifications}
+      />,
+    );
+
+    fireEvent.click(
+      screen.getByLabelText("Apply justification to all attendances"),
+    );
+
+    expect(
+      screen.getByRole("heading", {
+        name: getAttendanceTypeLabel("assessment"),
+      }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: getAttendanceTypeLabel("physiotherapy") }),
+    ).toBeInTheDocument();
   });
 
   it("handles justified radio button selection", () => {
@@ -101,7 +152,7 @@ describe("AbsenceJustificationStep", () => {
       />,
     );
 
-    const justifiedRadio = screen.getByLabelText("Falta justificada");
+    const justifiedRadio = screen.getByLabelText("Justified absence");
     fireEvent.click(justifiedRadio);
 
     expect(defaultProps.onJustificationChange).toHaveBeenCalledWith(
@@ -124,7 +175,7 @@ describe("AbsenceJustificationStep", () => {
       />,
     );
 
-    const unjustifiedRadio = screen.getByLabelText("Falta não justificada");
+    const unjustifiedRadio = screen.getByLabelText("Unjustified absence");
     fireEvent.click(unjustifiedRadio);
 
     expect(defaultProps.onJustificationChange).toHaveBeenCalledWith(
@@ -149,7 +200,7 @@ describe("AbsenceJustificationStep", () => {
       />,
     );
 
-    expect(screen.getByLabelText("Justificativa")).toBeInTheDocument();
+    expect(screen.getByLabelText("Justification")).toBeInTheDocument();
   });
 
   it("handles justification text input", () => {
@@ -166,7 +217,7 @@ describe("AbsenceJustificationStep", () => {
       />,
     );
 
-    const textarea = screen.getByLabelText("Justificativa");
+    const textarea = screen.getByLabelText("Justification");
     fireEvent.change(textarea, { target: { value: "Patient was sick" } });
 
     expect(defaultProps.onJustificationChange).toHaveBeenCalledWith(
@@ -191,7 +242,7 @@ describe("AbsenceJustificationStep", () => {
       />,
     );
 
-    const nextButton = screen.getByText("Próximo");
+    const nextButton = screen.getByText("Next");
     expect(nextButton).not.toBeDisabled();
   });
 
@@ -210,14 +261,14 @@ describe("AbsenceJustificationStep", () => {
       />,
     );
 
-    const nextButton = screen.getByText("Próximo");
+    const nextButton = screen.getByText("Next");
     expect(nextButton).toBeDisabled();
   });
 
   it("calls onBack when Back button is clicked", () => {
     render(<AbsenceJustificationStep {...defaultProps} />);
 
-    fireEvent.click(screen.getByText("Voltar"));
+    fireEvent.click(screen.getByText("Back"));
 
     expect(defaultProps.onBack).toHaveBeenCalled();
   });
@@ -225,7 +276,7 @@ describe("AbsenceJustificationStep", () => {
   it("enables Next button when no scheduled absences", () => {
     render(<AbsenceJustificationStep {...defaultProps} />);
 
-    const nextButton = screen.getByText("Próximo");
+    const nextButton = screen.getByText("Next");
     expect(nextButton).not.toBeDisabled();
 
     fireEvent.click(nextButton);

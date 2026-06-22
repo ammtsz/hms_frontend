@@ -109,7 +109,7 @@ export const useModalManagement = ({
         // Build the create-consultation request
         const consultationRequest: CreateConsultationRequest = {
           attendanceId: selectedAttendanceForTreatment.id,
-          mainComplaint: data.mainComplaint,
+          mainConcern: data.mainConcern,
           patientStatus: data.patientStatus,
           food: data.food,
           water: data.water,

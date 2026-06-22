@@ -14,7 +14,7 @@ export const ShowMoreButton: React.FC<ShowMoreButtonProps> = ({
   onClick,
   totalItems,
   visibleCount,
-  itemLabel = "itens",
+  itemLabel = "items",
   className = "",
   disabled = false,
 }) => {
@@ -35,7 +35,7 @@ export const ShowMoreButton: React.FC<ShowMoreButtonProps> = ({
       >
         <span>📄</span>
         <span>
-          Mostrar mais {Math.min(10, remainingItems)} {itemLabel}
+          Show more {Math.min(10, remainingItems)} {itemLabel}
         </span>
         <span className="text-xs text-blue-500 bg-blue-200 px-2 py-0.5 rounded-full">
           +{remainingItems}

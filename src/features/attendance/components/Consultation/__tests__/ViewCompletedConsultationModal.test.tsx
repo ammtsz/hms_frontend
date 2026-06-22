@@ -82,7 +82,7 @@ describe("ViewCompletedConsultationModal", () => {
         isOpen: true,
         attendanceId: 123,
         patientId: 456,
-        patientName: "João Silva",
+        patientName: "John Smith",
       });
 
       const { getByTestId } = renderModal();
@@ -112,7 +112,7 @@ describe("ViewCompletedConsultationModal", () => {
         isOpen: true,
         attendanceId: 123,
         patientId: 456,
-        patientName: "João Silva",
+        patientName: "John Smith",
       });
 
       renderModal();

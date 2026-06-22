@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { TreatmentCompletionBadge } from "../TreatmentCompletionBadge";
+import { ATTENDANCE_HISTORY_STATUS_LABELS } from "@/utils/attendanceStatusLabels";
 
 describe("TreatmentCompletionBadge", () => {
   describe("Status Display", () => {
@@ -14,7 +15,9 @@ describe("TreatmentCompletionBadge", () => {
         />,
       );
 
-      expect(screen.getByText("Concluído")).toBeInTheDocument();
+      expect(
+        screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.completed),
+      ).toBeInTheDocument();
       expect(screen.getByText("✅")).toBeInTheDocument();
       expect(screen.getByText("(100%)")).toBeInTheDocument();
     });
@@ -28,7 +31,9 @@ describe("TreatmentCompletionBadge", () => {
         />,
       );
 
-      expect(screen.getByText("Agendado")).toBeInTheDocument();
+      expect(
+        screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.scheduled),
+      ).toBeInTheDocument();
       expect(screen.getByText("📅")).toBeInTheDocument();
       expect(screen.getByText("(30%)")).toBeInTheDocument();
     });
@@ -45,7 +50,7 @@ describe("TreatmentCompletionBadge", () => {
       );
 
       expect(screen.getByText("🔄")).toBeInTheDocument();
-      expect(screen.getByText("Progredindo")).toBeInTheDocument();
+      expect(screen.getByText("Making Progress")).toBeInTheDocument();
     });
   });
 

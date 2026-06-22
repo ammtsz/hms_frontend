@@ -122,13 +122,13 @@ const defaultSessions = [
     attendanceId: 20,
     patientId: 1,
     treatmentType: "physiotherapy" as const,
-    bodyLocation: "Cabeça",
+    bodyLocation: "Head",
     startDate: "2025-01-01",
     plannedSessions: 10,
     completedSessions: 0,
     status: "active",
     durationMinutes: 30,
-    color: "azul",
+    color: "blue",
     notes: undefined,
     createdDate: "2025-01-01",
     createdTime: "10:00:00",
@@ -167,14 +167,14 @@ describe("EditTreatmentModal", () => {
         treatmentType="physiotherapy"
         treatmentPlans={defaultSessions}
         patientId={1}
-        patientName="Maria"
+        patientName="Emily"
       />,
       { wrapper: TestWrapper },
     );
-    expect(screen.getByText("Editar Fisioterapia")).toBeInTheDocument();
-    expect(screen.getByText(/Maria/)).toBeInTheDocument();
+    expect(screen.getByText("Edit Physiotherapy")).toBeInTheDocument();
+    expect(screen.getByText(/Emily/)).toBeInTheDocument();
     expect(
-      screen.getByText(/local do corpo.*cor e o tempo/),
+      screen.getByText(/body location.*color and duration/),
     ).toBeInTheDocument();
   });
 
@@ -194,12 +194,12 @@ describe("EditTreatmentModal", () => {
           },
         ]}
         patientId={1}
-        patientName="João"
+        patientName="John"
       />,
       { wrapper: TestWrapper },
     );
-    expect(screen.getByText("Editar TENS")).toBeInTheDocument();
-    expect(screen.getByText(/João/)).toBeInTheDocument();
+    expect(screen.getByText("Edit TENS")).toBeInTheDocument();
+    expect(screen.getByText(/John/)).toBeInTheDocument();
   });
 
   it("shows validation error when submitting with empty locations", async () => {
@@ -210,17 +210,17 @@ describe("EditTreatmentModal", () => {
         treatmentType="physiotherapy"
         treatmentPlans={[{ ...defaultSessions[0], bodyLocation: "" }]}
         patientId={1}
-        patientName="Maria"
+        patientName="Emily"
       />,
       { wrapper: TestWrapper },
     );
     const saveButton = screen.getByRole("button", {
-      name: /Salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(saveButton);
     await waitFor(() => {
       expect(
-        screen.getByText(/Preencha o local do corpo em todas as linhas/i),
+        screen.getByText(/Fill in the body location for all rows/i),
       ).toBeInTheDocument();
     });
     expect(mockUpdateTreatment).not.toHaveBeenCalled();
@@ -234,21 +234,21 @@ describe("EditTreatmentModal", () => {
         treatmentType="physiotherapy"
         treatmentPlans={defaultSessions}
         patientId={1}
-        patientName="Maria"
+        patientName="Emily"
         onSuccess={onSuccess}
       />,
       { wrapper: TestWrapper },
     );
     const saveButton = screen.getByRole("button", {
-      name: /Salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(saveButton);
     await waitFor(() => {
       expect(mockUpdateTreatment).toHaveBeenCalledWith(
         "1",
         expect.objectContaining({
-          bodyLocation: "Cabeça",
-          color: "azul",
+          bodyLocation: "Head",
+          color: "blue",
           durationMinutes: 30,
         }),
       );
@@ -275,14 +275,14 @@ describe("EditTreatmentModal", () => {
         treatmentType="physiotherapy"
         treatmentPlans={defaultSessions}
         patientId={1}
-        patientName="Maria"
+        patientName="Emily"
       />,
       { wrapper: TestWrapper },
     );
-    fireEvent.click(screen.getByRole("button", { name: /Salvar alterações/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Save Changes/i }));
     await waitFor(() => {
       expect(
-        screen.getByText(/Network error|Erro ao atualizar/i),
+        screen.getByText(/Network error|Error updating/i),
       ).toBeInTheDocument();
     });
     expect(onClose).not.toHaveBeenCalled();
@@ -296,11 +296,11 @@ describe("EditTreatmentModal", () => {
         treatmentType="physiotherapy"
         treatmentPlans={defaultSessions}
         patientId={1}
-        patientName="Maria"
+        patientName="Emily"
       />,
       { wrapper: TestWrapper },
     );
-    expect(screen.queryByText("Editar Fisioterapia")).not.toBeInTheDocument();
+    expect(screen.queryByText("Edit Physiotherapy")).not.toBeInTheDocument();
   });
 
   describe("add treatment row feature flag", () => {
@@ -313,7 +313,7 @@ describe("EditTreatmentModal", () => {
           treatmentType="physiotherapy"
           treatmentPlans={defaultSessions}
           patientId={1}
-          patientName="Maria"
+          patientName="Emily"
         />,
         { wrapper: TestWrapper },
       );
@@ -321,7 +321,7 @@ describe("EditTreatmentModal", () => {
         screen.queryByTestId("edit-treatment-modal-add-row"),
       ).not.toBeInTheDocument();
       expect(
-        screen.queryByRole("button", { name: /Adicionar novo tratamento/i }),
+        screen.queryByRole("button", { name: /Add new treatment/i }),
       ).not.toBeInTheDocument();
     });
   });

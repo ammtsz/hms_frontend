@@ -1,6 +1,7 @@
 import React from "react";
 import { cn } from "@/utils/cn";
 import { StatusFilter } from "./hooks/useAttendanceHistory";
+import { ATTENDANCE_HISTORY_STATUS_LABELS } from "./utils";
 
 interface StatusFilterButtonsProps {
   statusFilter: StatusFilter;
@@ -14,16 +15,20 @@ interface FilterButton {
 }
 
 const FILTER_BUTTONS: FilterButton[] = [
-  { value: "all", label: "Todos", activeClass: "bg-blue-600 text-white" },
+  { value: "all", label: "All", activeClass: "bg-blue-600 text-white" },
   {
     value: "completed",
-    label: "Concluídos",
+    label: ATTENDANCE_HISTORY_STATUS_LABELS.completed,
     activeClass: "bg-green-600 text-white",
   },
-  { value: "missed", label: "Faltas", activeClass: "bg-red-600 text-white" },
+  {
+    value: "missed",
+    label: ATTENDANCE_HISTORY_STATUS_LABELS.missed,
+    activeClass: "bg-red-600 text-white",
+  },
   {
     value: "cancelled",
-    label: "Cancelados",
+    label: ATTENDANCE_HISTORY_STATUS_LABELS.cancelled,
     activeClass: "bg-orange-600 text-white",
   },
 ];
@@ -46,7 +51,7 @@ export const StatusFilterButtons: React.FC<StatusFilterButtonsProps> = ({
     <div
       className="mb-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap"
       role="group"
-      aria-label="Filtrar histórico por status"
+      aria-label="Filter history by status"
     >
       {FILTER_BUTTONS.map((button) => {
         const isActive = statusFilter === button.value;

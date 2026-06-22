@@ -7,13 +7,13 @@ describe("ParentAttendanceSelector", () => {
     {
       id: 1,
       date: "2024-01-01",
-      mainComplaint: "Headache",
+      mainConcern: "Headache",
       label: "2024-01-01 - Headache",
     },
     {
       id: 2,
       date: "2024-01-15",
-      mainComplaint: "Back pain",
+      mainConcern: "Back pain",
       label: "2024-01-15 - Back pain",
     },
   ];
@@ -35,7 +35,7 @@ describe("ParentAttendanceSelector", () => {
     render(<ParentAttendanceSelector {...mockPropsWithStatusT} />);
 
     expect(
-      screen.getByText("Esta consulta está relacionada a qual queixa? *"),
+      screen.getByText("Which complaint is this consultation related to? *"),
     ).toBeInTheDocument();
     expect(screen.getByText("2024-01-01 - Headache")).toBeInTheDocument();
     expect(screen.getByText("2024-01-15 - Back pain")).toBeInTheDocument();
@@ -47,7 +47,7 @@ describe("ParentAttendanceSelector", () => {
     );
 
     expect(
-      screen.getByText("Carregando consultas anteriores..."),
+      screen.getByText("Loading previous consultations..."),
     ).toBeInTheDocument();
   });
 
@@ -57,7 +57,7 @@ describe("ParentAttendanceSelector", () => {
     );
 
     expect(
-      screen.getByText("Primeira consulta de avaliação"),
+      screen.getByText("First assessment consultation"),
     ).toBeInTheDocument();
   });
 
@@ -65,20 +65,20 @@ describe("ParentAttendanceSelector", () => {
     render(<ParentAttendanceSelector {...mockPropsWithStatusT} />);
 
     const select = screen.getByLabelText(
-      "Esta consulta está relacionada a qual queixa? *",
+      "Which complaint is this consultation related to? *",
     );
     fireEvent.change(select, { target: { value: "1" } });
 
     expect(mockProps.onParentAttendanceChange).toHaveBeenCalledWith("1");
   });
 
-  it("should show 'Primeira consulta' option when no parent options", () => {
+  it("should show 'First assessment consultation' option when no parent options", () => {
     render(
       <ParentAttendanceSelector {...mockProps} parentAttendanceOptions={[]} />,
     );
 
     expect(
-      screen.getByText("Primeira consulta de avaliação"),
+      screen.getByText("First assessment consultation"),
     ).toBeInTheDocument();
   });
 
@@ -91,13 +91,13 @@ describe("ParentAttendanceSelector", () => {
     );
 
     const select = screen.getByLabelText(
-      "Esta consulta está relacionada a qual queixa? *",
+      "Which complaint is this consultation related to? *",
     );
 
     expect(select).toBeDisabled();
   });
 
-  it("should show 'Nova queixa' when patient status is A and no options", () => {
+  it("should show 'New concern' when patient status is A and no options", () => {
     render(
       <ParentAttendanceSelector
         {...mockProps}
@@ -106,10 +106,10 @@ describe("ParentAttendanceSelector", () => {
       />,
     );
 
-    expect(screen.getByText("Nova queixa")).toBeInTheDocument();
+    expect(screen.getByText("New complaint")).toBeInTheDocument();
   });
 
-  it("should show 'Nova queixa' when patient status is T and options empty", () => {
+  it("should show 'New concern' when patient status is T and options empty", () => {
     render(
       <ParentAttendanceSelector
         {...mockProps}
@@ -118,6 +118,6 @@ describe("ParentAttendanceSelector", () => {
       />,
     );
 
-    expect(screen.getByText("Nova queixa")).toBeInTheDocument();
+    expect(screen.getByText("New complaint")).toBeInTheDocument();
   });
 });

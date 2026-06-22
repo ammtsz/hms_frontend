@@ -1,13 +1,14 @@
 import React from "react";
 import { render, screen } from "@/utils/testUtils";
 import { TreatmentRecommendationsDisplay } from "../TreatmentRecommendationsDisplay";
+import { CONSULTATION_NOTES_HEADING } from "@/utils/attendanceStatusLabels";
 import { Recommendations } from "@/types/types";
 
 const mockRecommendations = {
   date: "2024-12-20",
-  food: "Dieta leve",
-  water: "2L/dia",
-  ointment: "Aplicar 2x/dia",
+  food: "Light meals",
+  water: "2L/day",
+  ointment: "Apply 2x daily",
   returnWeeks: 4,
 };
 
@@ -15,10 +16,10 @@ const mockPhysiotherapySessions = [
   {
     id: 1,
     treatmentType: "physiotherapy" as const,
-    bodyLocation: "Cabeça",
+    bodyLocation: "Head",
     plannedSessions: 3,
     completedSessions: 1,
-    color: "Azul",
+    color: "Blue",
     status: "active",
   },
 ];
@@ -27,7 +28,7 @@ const mockTensSessions = [
   {
     id: 2,
     treatmentType: "tens" as const,
-    bodyLocation: "Coluna",
+    bodyLocation: "Back",
     plannedSessions: 5,
     completedSessions: 2,
     status: "active",
@@ -44,17 +45,17 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(screen.getByText(/Últimas Recomendações/)).toBeInTheDocument();
-    expect(screen.getByText("🍎 Alimentação:")).toBeInTheDocument();
-    expect(screen.getByText("💧 Água:")).toBeInTheDocument();
-    expect(screen.getByText("🧴 Pomada:")).toBeInTheDocument();
+    expect(screen.getByText(/Latest Recommendations/)).toBeInTheDocument();
+    expect(screen.getByText("🍎 Food:")).toBeInTheDocument();
+    expect(screen.getByText("💧 Water:")).toBeInTheDocument();
+    expect(screen.getByText("🧴 Ointment:")).toBeInTheDocument();
     expect(
-      screen.getByText(/✨ Fisioterapia \(1 tratamento ativo\):/),
+      screen.getByText(/✨ Physiotherapy \(1 active treatment\):/),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/🪄 TENS \(1 tratamento ativo\):/),
+      screen.getByText(/🪄 TENS \(1 active treatment\):/),
     ).toBeInTheDocument();
-    expect(screen.getByText("📅 Retorno:")).toBeInTheDocument();
+    expect(screen.getByText("📅 Return:")).toBeInTheDocument();
   });
 
   it("displays recommendation values correctly", () => {
@@ -66,10 +67,10 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(screen.getByText("Dieta leve")).toBeInTheDocument();
-    expect(screen.getByText("2L/dia")).toBeInTheDocument();
-    expect(screen.getByText("Aplicar 2x/dia")).toBeInTheDocument();
-    expect(screen.getByText("4 semanas")).toBeInTheDocument();
+    expect(screen.getByText("Light meals")).toBeInTheDocument();
+    expect(screen.getByText("2L/day")).toBeInTheDocument();
+    expect(screen.getByText("Apply 2x daily")).toBeInTheDocument();
+    expect(screen.getByText("4 weeks")).toBeInTheDocument();
   });
 
   it("displays treatment session details correctly", () => {
@@ -83,11 +84,11 @@ describe("TreatmentRecommendationsDisplay", () => {
 
     // Physiotherapy details
     expect(
-      screen.getByText(/3 sessões: Cabeça \(cor: Azul\)/),
+      screen.getByText(/3 sessions: Head \(color: Blue\)/),
     ).toBeInTheDocument();
 
     // TENS details
-    expect(screen.getByText(/5 sessões: Coluna/)).toBeInTheDocument();
+    expect(screen.getByText(/5 sessions: Back/)).toBeInTheDocument();
   });
 
   it("shows 'no recommendations' message when all fields are empty", () => {
@@ -104,9 +105,7 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(
-      screen.getByText("Nenhuma recomendação registrada"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No recommendations recorded")).toBeInTheDocument();
   });
 
   it("renders only treatment sessions without other recommendations", () => {
@@ -121,14 +120,14 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(screen.getByText(/Últimas Recomendações/)).toBeInTheDocument();
+    expect(screen.getByText(/Latest Recommendations/)).toBeInTheDocument();
     expect(
-      screen.getByText(/✨ Fisioterapia \(1 tratamento ativo\):/),
+      screen.getByText(/✨ Physiotherapy \(1 active treatment\):/),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/3 sessões: Cabeça \(cor: Azul\)/),
+      screen.getByText(/3 sessions: Head \(color: Blue\)/),
     ).toBeInTheDocument();
-    expect(screen.queryByText("🍎 Alimentação:")).not.toBeInTheDocument();
+    expect(screen.queryByText("🍎 Food:")).not.toBeInTheDocument();
   });
 
   it("handles undefined date gracefully", () => {
@@ -148,7 +147,7 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(screen.getByText(/Data não disponível/)).toBeInTheDocument();
+    expect(screen.getByText(/Date not available/)).toBeInTheDocument();
   });
 
   it("formats multiple sessions of the same treatment type", () => {
@@ -156,16 +155,16 @@ describe("TreatmentRecommendationsDisplay", () => {
       {
         id: 1,
         treatmentType: "physiotherapy" as const,
-        bodyLocation: "Cabeça",
+        bodyLocation: "Head",
         plannedSessions: 3,
         completedSessions: 1,
-        color: "Azul",
+        color: "Blue",
         status: "active",
       },
       {
         id: 2,
         treatmentType: "physiotherapy" as const,
-        bodyLocation: "Mão direita",
+        bodyLocation: "Right Hand",
         plannedSessions: 1,
         completedSessions: 0,
         status: "active",
@@ -180,15 +179,15 @@ describe("TreatmentRecommendationsDisplay", () => {
     );
 
     expect(
-      screen.getByText(/3 sessões: Cabeça \(cor: Azul\)/),
+      screen.getByText(/3 sessions: Head \(color: Blue\)/),
     ).toBeInTheDocument();
-    expect(screen.getByText(/1 sessão: Mão direita/)).toBeInTheDocument();
+    expect(screen.getByText(/1 session: Right Hand/)).toBeInTheDocument();
   });
 
   it("displays consultation notes when present", () => {
     const recommendationsWithNotes = {
       ...mockRecommendations,
-      notes: "Paciente apresentou melhora significativa nos sintomas.",
+      notes: "Patient showed significant symptom improvement.",
     };
 
     render(
@@ -197,11 +196,9 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(screen.getByText("📝 Observações da Consulta:")).toBeInTheDocument();
+    expect(screen.getByText(CONSULTATION_NOTES_HEADING)).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Paciente apresentou melhora significativa nos sintomas.",
-      ),
+      screen.getByText("Patient showed significant symptom improvement."),
     ).toBeInTheDocument();
   });
 
@@ -211,14 +208,14 @@ describe("TreatmentRecommendationsDisplay", () => {
     );
 
     expect(
-      screen.queryByText("📝 Observações da Consulta:"),
+      screen.queryByText(CONSULTATION_NOTES_HEADING),
     ).not.toBeInTheDocument();
   });
 
   it("includes notes in hasRecommendations check", () => {
     const onlyNotesRecommendations = {
       date: "2024-12-20",
-      notes: "Observações importantes sobre o paciente.",
+      notes: "Important notes about the patient.",
     };
 
     render(
@@ -229,12 +226,12 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(screen.getByText(/Últimas Recomendações/)).toBeInTheDocument();
+    expect(screen.getByText(/Latest Recommendations/)).toBeInTheDocument();
     expect(
-      screen.getByText("Observações importantes sobre o paciente."),
+      screen.getByText("Important notes about the patient."),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText("Nenhuma recomendação registrada"),
+      screen.queryByText("No recommendations recorded"),
     ).not.toBeInTheDocument();
   });
 });

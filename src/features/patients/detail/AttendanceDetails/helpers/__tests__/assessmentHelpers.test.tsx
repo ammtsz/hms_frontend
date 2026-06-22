@@ -19,7 +19,7 @@ describe("assessmentHelpers", () => {
         {
           id: 1,
           treatmentType: "physiotherapy",
-          bodyLocation: "Cabeça",
+          bodyLocation: "Head",
           plannedSessions: 3,
           completedSessions: 0,
           status: "scheduled",
@@ -28,7 +28,7 @@ describe("assessmentHelpers", () => {
 
       const result = formatActiveTreatmentRows(sessions);
 
-      expect(result).toEqual(["3 sessões - Cabeça"]);
+      expect(result).toEqual(["3 sessions - Head"]);
     });
 
     it("should format single session (1 session)", () => {
@@ -36,7 +36,7 @@ describe("assessmentHelpers", () => {
         {
           id: 1,
           treatmentType: "tens",
-          bodyLocation: "Pé direito",
+          bodyLocation: "Right Foot",
           plannedSessions: 1,
           completedSessions: 0,
           status: "scheduled",
@@ -45,7 +45,7 @@ describe("assessmentHelpers", () => {
 
       const result = formatActiveTreatmentRows(sessions);
 
-      expect(result).toEqual(["1 sessão - Pé direito"]);
+      expect(result).toEqual(["1 session - Right Foot"]);
     });
 
     it("should include color when present", () => {
@@ -53,17 +53,17 @@ describe("assessmentHelpers", () => {
         {
           id: 1,
           treatmentType: "physiotherapy",
-          bodyLocation: "Peito",
+          bodyLocation: "Chest",
           plannedSessions: 5,
           completedSessions: 0,
-          color: "Azul",
+          color: "Blue",
           status: "scheduled",
         },
       ];
 
       const result = formatActiveTreatmentRows(sessions);
 
-      expect(result).toEqual(["5 sessões - Peito (cor: Azul)"]);
+      expect(result).toEqual(["5 sessions - Chest (color: Blue)"]);
     });
 
     it("should format multiple sessions", () => {
@@ -71,19 +71,19 @@ describe("assessmentHelpers", () => {
         {
           id: 1,
           treatmentType: "physiotherapy",
-          bodyLocation: "Cabeça",
+          bodyLocation: "Head",
           plannedSessions: 3,
           completedSessions: 0,
-          color: "Azul",
+          color: "Blue",
           status: "scheduled",
         },
         {
           id: 2,
           treatmentType: "physiotherapy",
-          bodyLocation: "Peito",
+          bodyLocation: "Chest",
           plannedSessions: 2,
           completedSessions: 0,
-          color: "Verde",
+          color: "Green",
           status: "scheduled",
         },
       ];
@@ -91,8 +91,8 @@ describe("assessmentHelpers", () => {
       const result = formatActiveTreatmentRows(sessions);
 
       expect(result).toEqual([
-        "3 sessões - Cabeça (cor: Azul)",
-        "2 sessões - Peito (cor: Verde)",
+        "3 sessions - Head (color: Blue)",
+        "2 sessions - Chest (color: Green)",
       ]);
     });
 
@@ -110,7 +110,7 @@ describe("assessmentHelpers", () => {
 
       const result = formatActiveTreatmentRows(sessions);
 
-      expect(result).toEqual(["4 sessões - não especificado"]);
+      expect(result).toEqual(["4 sessions - not specified"]);
     });
   });
 
@@ -119,27 +119,27 @@ describe("assessmentHelpers", () => {
       render(
         <RecommendationItem
           icon="🍎"
-          label="Alimentação"
-          value="Evitar carnes"
+          label="Food"
+          value="Avoid red meat"
         />,
       );
 
       expect(screen.getByText(/🍎/)).toBeInTheDocument();
-      expect(screen.getByText(/Alimentação:/)).toBeInTheDocument();
-      expect(screen.getByText("Evitar carnes")).toBeInTheDocument();
+      expect(screen.getByText(/Food:/)).toBeInTheDocument();
+      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
     });
 
     it("should render with string value", () => {
-      render(<RecommendationItem icon="💧" label="Água" value="3x ao dia" />);
+      render(<RecommendationItem icon="💧" label="Water" value="3x daily" />);
 
-      expect(screen.getByText("3x ao dia")).toBeInTheDocument();
+      expect(screen.getByText("3x daily")).toBeInTheDocument();
     });
 
     it("should render with React element value", () => {
       render(
         <RecommendationItem
           icon="✨"
-          label="Fisioterapia"
+          label="Physiotherapy"
           value={<span>Custom element</span>}
         />,
       );
@@ -151,8 +151,8 @@ describe("assessmentHelpers", () => {
       const { container } = render(
         <RecommendationItem
           icon="📅"
-          label="Retorno"
-          value="3 semanas"
+          label="Return"
+          value="3 weeks"
           fullWidth={true}
         />,
       );
@@ -165,8 +165,8 @@ describe("assessmentHelpers", () => {
       const { container } = render(
         <RecommendationItem
           icon="🧴"
-          label="Pomada"
-          value="Aplicar 2x ao dia"
+          label="Ointment"
+          value="Apply 2x daily"
         />,
       );
 
@@ -193,9 +193,9 @@ describe("assessmentHelpers", () => {
     });
 
     it("should render label with text-nowrap", () => {
-      render(<RecommendationItem icon="💧" label="Água" value="Test" />);
+      render(<RecommendationItem icon="💧" label="Water" value="Test" />);
 
-      const label = screen.getByText(/Água:/);
+      const label = screen.getByText(/Water:/);
       expect(label).toHaveClass("text-nowrap");
     });
 
@@ -203,18 +203,18 @@ describe("assessmentHelpers", () => {
       render(
         <RecommendationItem
           icon="✨"
-          label="Tratamentos"
+          label="Treatments"
           value={
             <ul>
-              <li>Sessão 1</li>
-              <li>Sessão 2</li>
+              <li>Session 1</li>
+              <li>Session 2</li>
             </ul>
           }
         />,
       );
 
-      expect(screen.getByText("Sessão 1")).toBeInTheDocument();
-      expect(screen.getByText("Sessão 2")).toBeInTheDocument();
+      expect(screen.getByText("Session 1")).toBeInTheDocument();
+      expect(screen.getByText("Session 2")).toBeInTheDocument();
     });
   });
 });

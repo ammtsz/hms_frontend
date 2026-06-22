@@ -5,33 +5,33 @@ describe("Card, Badge, and SectionDisclosure", () => {
   it("renders card regions", () => {
     render(
       <Card>
-        <CardHeader>Cabeçalho</CardHeader>
-        <CardBody>Conteúdo</CardBody>
+        <CardHeader>Header</CardHeader>
+        <CardBody>Content</CardBody>
       </Card>,
     );
 
-    expect(screen.getByText("Cabeçalho")).toBeInTheDocument();
-    expect(screen.getByText("Conteúdo")).toBeInTheDocument();
+    expect(screen.getByText("Header")).toBeInTheDocument();
+    expect(screen.getByText("Content")).toBeInTheDocument();
   });
 
   it("renders badge variants", () => {
-    render(<Badge variant="success">Ativo</Badge>);
+    render(<Badge variant="success">Active</Badge>);
 
-    expect(screen.getByText("Ativo")).toHaveClass("bg-green-50");
+    expect(screen.getByText("Active")).toHaveClass("bg-green-50");
   });
 
   it("toggles a disclosure section", () => {
     const onToggle = jest.fn();
 
     render(
-      <SectionDisclosure title="Prioridades" isOpen={false} onToggle={onToggle}>
-        Conteúdo interno
+      <SectionDisclosure title="Priorities" isOpen={false} onToggle={onToggle}>
+        Internal content
       </SectionDisclosure>,
     );
 
-    const button = screen.getByRole("button", { name: "Prioridades" });
+    const button = screen.getByRole("button", { name: "Priorities" });
     expect(button).toHaveAttribute("aria-expanded", "false");
-    expect(screen.queryByText("Conteúdo interno")).not.toBeInTheDocument();
+    expect(screen.queryByText("Internal content")).not.toBeInTheDocument();
 
     fireEvent.click(button);
     expect(onToggle).toHaveBeenCalledTimes(1);

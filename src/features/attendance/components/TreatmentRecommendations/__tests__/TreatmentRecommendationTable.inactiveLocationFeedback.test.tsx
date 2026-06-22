@@ -10,12 +10,12 @@ const mockCreateBodyLocation = jest.fn();
 const mockBodyLocationsData = {
   active: [
     { id: 1, value: "Head", isActive: true, usageCount: 5 },
-    { id: 3, value: "Arm", isActive: true, usageCount: 2 },
+    { id: 3, value: "Left Arm", isActive: true, usageCount: 2 },
   ],
   all: [
     { id: 1, value: "Head", isActive: true, usageCount: 5 },
     { id: 2, value: "Chest", isActive: false, usageCount: 10 },
-    { id: 3, value: "Arm", isActive: true, usageCount: 2 },
+    { id: 3, value: "Left Arm", isActive: true, usageCount: 2 },
     { id: 4, value: "Leg", isActive: false, usageCount: 0 },
   ],
 };
@@ -182,7 +182,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     );
 
     // Click on the table row to start editing
-    const row = screen.getByText(/nenhum local selecionado/i).closest("tr");
+    const row = screen.getByText(/no body locations selected/i).closest("tr");
     expect(row).toBeInTheDocument();
     await user.click(row!);
 
@@ -196,7 +196,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     await user.type(input, "Chest");
 
     // Mock the API to reject with conflict error
-    const error = new Error("Este nome já existe para este tipo de opção");
+    const error = new Error("This name already exists for this option type");
     mockCreateBodyLocation.mockRejectedValue(error);
 
     // Click create button
@@ -207,7 +207,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     await waitFor(() => {
       expect(
         screen.getByText(
-          /O local "Chest" já existe, mas está inativo\. Ative-o nas configurações de tratamentos para utilizá-lo\./i,
+          /The location "Chest" already exists, but is inactive\. Activate it in the treatment settings to use it\./i,
         ),
       ).toBeInTheDocument();
     });
@@ -236,7 +236,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
       },
     );
 
-    const row = screen.getByText(/nenhum local selecionado/i).closest("tr");
+    const row = screen.getByText(/no body locations selected/i).closest("tr");
     await user.click(row!);
 
     await waitFor(() => {
@@ -246,7 +246,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const input = screen.getByTestId("location-input");
     await user.type(input, "leg"); // Case insensitive match for "Leg"
 
-    const error = new Error("Este nome já existe para este tipo de opção");
+    const error = new Error("This name already exists for this option type");
     mockCreateBodyLocation.mockRejectedValue(error);
 
     const createButton = screen.getByTestId("create-new-location");
@@ -256,7 +256,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     await waitFor(() => {
       expect(
         screen.getByText(
-          'O local "Leg" já existe, mas está inativo. Ative-o nas configurações de tratamentos para utilizá-lo.',
+          'The location "Leg" already exists, but is inactive. Activate it in the treatment settings to use it.',
         ),
       ).toBeInTheDocument();
     });
@@ -285,7 +285,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
       },
     );
 
-    const row = screen.getByText(/nenhum local selecionado/i).closest("tr");
+    const row = screen.getByText(/no body locations selected/i).closest("tr");
     await user.click(row!);
 
     await waitFor(() => {
@@ -330,7 +330,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     );
 
     // Click on the row to start editing
-    const row = screen.getByText(/nenhum local selecionado/i).closest("tr");
+    const row = screen.getByText(/no body locations selected/i).closest("tr");
     if (row) await user.click(row);
 
     await waitFor(() => {
@@ -341,7 +341,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const input = screen.getByTestId("location-input");
     await user.type(input, "Chest");
 
-    const error = new Error("Este nome já existe para este tipo de opção");
+    const error = new Error("This name already exists for this option type");
     mockCreateBodyLocation.mockRejectedValue(error);
 
     const createButton = screen.getByTestId("create-new-location");
@@ -350,7 +350,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     // Verify error appears
     await waitFor(() => {
       expect(
-        screen.getByText(/O local "Chest" já existe, mas está inativo/i),
+        screen.getByText(/The location "Chest" already exists, but is inactive/i),
       ).toBeInTheDocument();
     });
 
@@ -362,7 +362,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     // Error should be cleared
     await waitFor(() => {
       expect(
-        screen.queryByText(/O local "Chest" já existe, mas está inativo/i),
+        screen.queryByText(/The location "Chest" already exists, but is inactive/i),
       ).not.toBeInTheDocument();
     });
   });
@@ -390,7 +390,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
       },
     );
 
-    const row = screen.getByText(/nenhum local selecionado/i).closest("tr");
+    const row = screen.getByText(/no body locations selected/i).closest("tr");
     await user.click(row!);
 
     await waitFor(() => {
@@ -401,7 +401,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const input = screen.getByTestId("location-input");
     await user.type(input, "Chest");
 
-    const error = new Error("Este nome já existe para este tipo de opção");
+    const error = new Error("This name already exists for this option type");
     mockCreateBodyLocation.mockRejectedValue(error);
 
     const createButton = screen.getByTestId("create-new-location");
@@ -410,18 +410,18 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     // Verify error appears
     await waitFor(() => {
       expect(
-        screen.getByText(/O local "Chest" já existe, mas está inativo/i),
+        screen.getByText(/The location "Chest" already exists, but is inactive/i),
       ).toBeInTheDocument();
     });
 
     // Remove the row
-    const removeButton = screen.getByTitle(/remover tratamento/i);
+    const removeButton = screen.getByTitle(/Remove treatment/i);
     await user.click(removeButton);
 
     // Error should be gone (row is removed)
     await waitFor(() => {
       expect(
-        screen.queryByText(/O local "Chest" já existe, mas está inativo/i),
+        screen.queryByText(/The location "Chest" already exists, but is inactive/i),
       ).not.toBeInTheDocument();
     });
   });
@@ -448,7 +448,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     );
 
     // Click row to edit
-    const row = screen.getByText(/nenhum local selecionado/i).closest("tr");
+    const row = screen.getByText(/no body locations selected/i).closest("tr");
     if (row) await user.click(row);
 
     await waitFor(() => {
@@ -459,7 +459,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const input = screen.getByTestId("location-input");
     await user.type(input, "Chest");
 
-    const error = new Error("Este nome já existe para este tipo de opção");
+    const error = new Error("This name already exists for this option type");
     mockCreateBodyLocation.mockRejectedValue(error);
 
     const createButton = screen.getByTestId("create-new-location");
@@ -468,7 +468,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     // Verify error appears
     await waitFor(() => {
       expect(
-        screen.getByText(/O local "Chest" já existe, mas está inativo/i),
+        screen.getByText(/The location "Chest" already exists, but is inactive/i),
       ).toBeInTheDocument();
     });
 
@@ -478,7 +478,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     // Error should be cleared
     await waitFor(() => {
       expect(
-        screen.queryByText(/O local "Chest" já existe, mas está inativo/i),
+        screen.queryByText(/The location "Chest" already exists, but is inactive/i),
       ).not.toBeInTheDocument();
     });
   });
@@ -506,7 +506,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
       },
     );
 
-    const row = screen.getByText(/nenhum local selecionado/i).closest("tr");
+    const row = screen.getByText(/no body locations selected/i).closest("tr");
     await user.click(row!);
 
     await waitFor(() => {
@@ -521,7 +521,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
       await user.clear(input);
       await user.type(input, testCase);
 
-      const error = new Error("Este nome já existe para este tipo de opção");
+      const error = new Error("This name already exists for this option type");
       mockCreateBodyLocation.mockRejectedValue(error);
 
       const createButton = screen.getByTestId("create-new-location");
@@ -531,7 +531,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
       await waitFor(() => {
         expect(
           screen.getByText(
-            'O local "Chest" já existe, mas está inativo. Ative-o nas configurações de tratamentos para utilizá-lo.',
+            'The location "Chest" already exists, but is inactive. Activate it in the treatment settings to use it.',
           ),
         ).toBeInTheDocument();
       });
@@ -542,7 +542,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
         await user.click(startDateInput);
         await waitFor(() => {
           expect(
-            screen.queryByText('O local "Chest" já existe, mas está inativo.'),
+            screen.queryByText('The location "Chest" already exists, but is inactive.'),
           ).not.toBeInTheDocument();
         });
       }
@@ -572,7 +572,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
       },
     );
 
-    const row = screen.getByText(/nenhum local selecionado/i).closest("tr");
+    const row = screen.getByText(/no body locations selected/i).closest("tr");
     await user.click(row!);
 
     await waitFor(() => {
@@ -583,7 +583,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const input = screen.getByTestId("location-input");
     await user.type(input, "Head");
 
-    const error = new Error("Este nome já existe para este tipo de opção");
+    const error = new Error("This name already exists for this option type");
     mockCreateBodyLocation.mockRejectedValue(error);
 
     const createButton = screen.getByTestId("create-new-location");
@@ -592,13 +592,13 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     // Should show generic error, not the inactive-specific message
     await waitFor(() => {
       const errorMessage = screen.queryByText(
-        /O local ".*" já existe, mas está inativo/i,
+        /The location ".*" already exists, but is inactive/i,
       );
       expect(errorMessage).not.toBeInTheDocument();
 
       // Should show the generic error message
       expect(
-        screen.getByText(/Este nome já existe para este tipo de opção/i),
+        screen.getByText(/This name already exists for this option type/i),
       ).toBeInTheDocument();
     });
   });

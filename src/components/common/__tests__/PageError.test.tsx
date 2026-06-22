@@ -17,27 +17,27 @@ jest.mock("next/link", () => {
 
 describe("PageError", () => {
   const defaultProps = {
-    error: "Erro de teste",
+    error: "Test error",
   };
 
   it("renders error message", () => {
     render(<PageError {...defaultProps} />);
 
-    expect(screen.getByText("Erro de teste")).toBeInTheDocument();
-    expect(screen.getByText("Ops! Algo deu errado")).toBeInTheDocument();
+    expect(screen.getByText("Test error")).toBeInTheDocument();
+    expect(screen.getByText("Oops! Something went wrong")).toBeInTheDocument();
   });
 
   it("renders custom title", () => {
-    render(<PageError {...defaultProps} title="Título personalizado" />);
+    render(<PageError {...defaultProps} title="Custom Title" />);
 
-    expect(screen.getByText("Título personalizado")).toBeInTheDocument();
+    expect(screen.getByText("Custom Title")).toBeInTheDocument();
   });
 
   it("shows retry button when reset function is provided", () => {
     const mockReset = jest.fn();
     render(<PageError {...defaultProps} reset={mockReset} />);
 
-    const retryButton = screen.getByText("Tentar Novamente");
+    const retryButton = screen.getByText("Try Again");
     expect(retryButton).toBeInTheDocument();
 
     fireEvent.click(retryButton);
@@ -47,7 +47,7 @@ describe("PageError", () => {
   it("shows back button with default props", () => {
     render(<PageError {...defaultProps} />);
 
-    const backButton = screen.getByText("Voltar para Pacientes");
+    const backButton = screen.getByText("Back to Patients");
     expect(backButton).toBeInTheDocument();
     expect(backButton.closest("a")).toHaveAttribute("href", "/patients");
   });
@@ -57,11 +57,11 @@ describe("PageError", () => {
       <PageError
         {...defaultProps}
         backHref="/custom"
-        backLabel="Voltar Customizado"
-      />
+        backLabel="Custom go back"
+      />,
     );
 
-    const backButton = screen.getByText("Voltar Customizado");
+    const backButton = screen.getByText("Custom go back");
     expect(backButton).toBeInTheDocument();
     expect(backButton.closest("a")).toHaveAttribute("href", "/custom");
   });
@@ -69,14 +69,14 @@ describe("PageError", () => {
   it("hides back button when showBackButton is false", () => {
     render(<PageError {...defaultProps} showBackButton={false} />);
 
-    expect(screen.queryByText("Voltar para Pacientes")).not.toBeInTheDocument();
+    expect(screen.queryByText("Back to Patients")).not.toBeInTheDocument();
   });
 
   it("shows both retry and back buttons when both are enabled", () => {
     const mockReset = jest.fn();
     render(<PageError {...defaultProps} reset={mockReset} />);
 
-    expect(screen.getByText("Tentar Novamente")).toBeInTheDocument();
-    expect(screen.getByText("Voltar para Pacientes")).toBeInTheDocument();
+    expect(screen.getByText("Try Again")).toBeInTheDocument();
+    expect(screen.getByText("Back to Patients")).toBeInTheDocument();
   });
 });

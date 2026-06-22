@@ -4,62 +4,62 @@ import { PhysiotherapyDetails } from "../PhysiotherapyDetails";
 
 describe("PhysiotherapyDetails", () => {
   const defaultProps = {
-    bodyLocations: ["Cabeça", "Peito"],
+    bodyLocations: ["Head", "Chest"],
   };
 
   it("should render physiotherapy title", () => {
     render(<PhysiotherapyDetails {...defaultProps} />);
 
-    expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
+    expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
   });
 
   it("should display body locations correctly", () => {
     render(<PhysiotherapyDetails {...defaultProps} />);
 
-    expect(screen.getByText(/Locais:/)).toBeInTheDocument();
-    expect(screen.getByText(/Cabeça, Peito/)).toBeInTheDocument();
+    expect(screen.getByText(/Locations:/)).toBeInTheDocument();
+    expect(screen.getByText(/Head, Chest/)).toBeInTheDocument();
   });
 
   it("should display single body location without plural", () => {
-    render(<PhysiotherapyDetails bodyLocations={["Cabeça"]} />);
+    render(<PhysiotherapyDetails bodyLocations={["Head"]} />);
 
-    expect(screen.getByText(/Local:/)).toBeInTheDocument();
-    expect(screen.getByText("Cabeça")).toBeInTheDocument();
+    expect(screen.getByText(/Location:/)).toBeInTheDocument();
+    expect(screen.getByText("Head")).toBeInTheDocument();
   });
 
   it("should display color when provided", () => {
-    render(<PhysiotherapyDetails {...defaultProps} color="Azul" />);
+    render(<PhysiotherapyDetails {...defaultProps} color="Blue" />);
 
-    expect(screen.getByText("Azul")).toBeInTheDocument();
+    expect(screen.getByText("Blue")).toBeInTheDocument();
   });
 
   it("should show distinct color badges and per-location lowercase colors when multiple colors", () => {
     render(
       <PhysiotherapyDetails
         bodyLocationsWithColors={[
-          { bodyLocation: "Coronário", color: "Branco" },
-          { bodyLocation: "Abdômen", color: "Azul" },
+          { bodyLocation: "Head", color: "White" },
+          { bodyLocation: "Lumbar", color: "Blue" },
         ]}
       />,
     );
 
-    expect(screen.getByText("Branco")).toBeInTheDocument();
-    expect(screen.getByText("Azul")).toBeInTheDocument();
+    expect(screen.getByText("White")).toBeInTheDocument();
+    expect(screen.getByText("Blue")).toBeInTheDocument();
     expect(
-      screen.getByText(/Coronário \(branco\), Abdômen \(azul\)/),
+      screen.getByText(/Head \(white\), Lumbar \(blue\)/),
     ).toBeInTheDocument();
   });
 
   it("should display duration in singular when 1 unit", () => {
     render(<PhysiotherapyDetails {...defaultProps} duration={1} />);
 
-    expect(screen.getByText(/1 unidade/)).toBeInTheDocument();
+    expect(screen.getByText(/1 unit/)).toBeInTheDocument();
   });
 
   it("should display duration in plural when multiple units", () => {
     render(<PhysiotherapyDetails {...defaultProps} duration={15} />);
 
-    expect(screen.getByText(/15 unidades/)).toBeInTheDocument();
+    expect(screen.getByText(/15 units/)).toBeInTheDocument();
   });
 
   it("should display sessions when showSessions is true", () => {
@@ -71,7 +71,7 @@ describe("PhysiotherapyDetails", () => {
       />,
     );
 
-    expect(screen.getByText(/Sessão:/)).toBeInTheDocument();
+    expect(screen.getByText(/Session:/)).toBeInTheDocument();
     expect(screen.getByText(/2\/5/)).toBeInTheDocument();
   });
 
@@ -81,11 +81,11 @@ describe("PhysiotherapyDetails", () => {
         {...defaultProps}
         sessionNumber="3/10"
         showSessions={true}
-        sessionLabel="Sessões programadas"
+        sessionLabel="Scheduled sessions"
       />,
     );
 
-    expect(screen.getByText(/Sessões programadas:/)).toBeInTheDocument();
+    expect(screen.getByText(/Scheduled sessions:/)).toBeInTheDocument();
   });
 
   it("should not display sessions when showSessions is false", () => {
@@ -97,27 +97,27 @@ describe("PhysiotherapyDetails", () => {
       />,
     );
 
-    expect(screen.queryByText(/Sessão:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Session:/)).not.toBeInTheDocument();
   });
 
   it("should display notes when provided", () => {
     render(
       <PhysiotherapyDetails
         {...defaultProps}
-        notes="Paciente reagiu bem ao tratamento"
+        notes="Patient responded well to treatment"
       />,
     );
 
-    expect(screen.getByText(/Notas do tratamento:/)).toBeInTheDocument();
+    expect(screen.getByText(/Treatment notes:/)).toBeInTheDocument();
     expect(
-      screen.getByText("Paciente reagiu bem ao tratamento"),
+      screen.getByText("Patient responded well to treatment"),
     ).toBeInTheDocument();
   });
 
   it("should not display notes when not provided", () => {
     render(<PhysiotherapyDetails {...defaultProps} />);
 
-    expect(screen.queryByText(/Notas do tratamento:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Treatment notes:/)).not.toBeInTheDocument();
   });
 
   it("should apply disabled styling when isAbsent is true", () => {
@@ -141,21 +141,21 @@ describe("PhysiotherapyDetails", () => {
   it("should render all properties together", () => {
     render(
       <PhysiotherapyDetails
-        bodyLocations={["Cabeça", "Peito", "Pernas"]}
-        color="Azul"
+        bodyLocations={["Head", "Chest", "Legs"]}
+        color="Blue"
         duration={20}
         sessionNumber="3/5"
         showSessions={true}
-        notes="Tratamento progredindo bem"
+        notes="Treatment progressing well"
         isAbsent={false}
       />,
     );
 
-    expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
-    expect(screen.getByText("Azul")).toBeInTheDocument();
-    expect(screen.getByText(/Cabeça, Peito, Pernas/)).toBeInTheDocument();
-    expect(screen.getByText(/20 unidades/)).toBeInTheDocument();
+    expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
+    expect(screen.getByText("Blue")).toBeInTheDocument();
+    expect(screen.getByText(/Head, Chest, Legs/)).toBeInTheDocument();
+    expect(screen.getByText(/20 units/)).toBeInTheDocument();
     expect(screen.getByText(/3\/5/)).toBeInTheDocument();
-    expect(screen.getByText("Tratamento progredindo bem")).toBeInTheDocument();
+    expect(screen.getByText("Treatment progressing well")).toBeInTheDocument();
   });
 });

@@ -55,7 +55,7 @@ export const PostTreatmentModalFooter: React.FC<
             onClick={onClose}
             disabled={isSubmitting}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
@@ -63,9 +63,9 @@ export const PostTreatmentModalFooter: React.FC<
             onClick={onSubmit}
             disabled={isSubmitDisabled}
             isLoading={isSubmitting}
-            loadingText="Registrando..."
+            loadingText="Registering..."
           >
-            Registrar Sessão
+            Register Session
           </Button>
         </div>
       </div>

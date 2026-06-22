@@ -40,7 +40,7 @@ export interface PatientResponseDto {
   priority: PatientPriority;
   patientStatus: PatientStatus;
   birthDate?: string; // ISO date string
-  mainComplaint?: string;
+  mainConcern?: string;
   dischargeDate?: string; // ISO date string
   startDate: string; // ISO date string
   missingAppointmentsStreak: number;
@@ -87,7 +87,7 @@ export interface NextAttendanceDateDto {
 export interface ConsultationResponseDto {
   id: number;
   attendanceId: number;
-  mainComplaint?: string;
+  mainConcern?: string;
   patientStatus?: string; // N, T, A, or F
   food?: string;
   water?: string;
@@ -125,7 +125,7 @@ export interface TreatmentsResultDto {
 export interface UpdateConsultationResponseDto {
   consultation: ConsultationResponseDto;
   treatments?: TreatmentsResultDto;
-  /** Present when treatment status was set to A (Alta) or F (Faltas consecutivas) */
+  /** Present when treatment status was set to Discharged (A) or Missed (F) */
   cancelledAttendances?: CancelledAttendanceItemDto[];
 }
 
@@ -148,7 +148,7 @@ export interface CreatePatientRequest {
   priority?: PatientPriority;
   patientStatus?: PatientStatus;
   birthDate?: string; // ISO date string
-  mainComplaint?: string;
+  mainConcern?: string;
   timezone?: string;
 }
 
@@ -159,7 +159,7 @@ export interface UpdatePatientRequest {
   patientStatus?: PatientStatus;
   birthDate?: string; // ISO date string
   timezone?: string;
-  mainComplaint?: string;
+  mainConcern?: string;
   dischargeDate?: string; // ISO date string
   cancellationReason?: string;
 }
@@ -195,7 +195,7 @@ export interface UpdateAttendanceRequest {
 
 export interface CreateConsultationRequest {
   attendanceId: number;
-  mainComplaint?: string;
+  mainConcern?: string;
   patientStatus?: string; // N, T, A, or F - Stored on consultation and used for patient update
   food?: string;
   water?: string;
@@ -211,7 +211,7 @@ export interface CreateConsultationRequest {
 
 export interface UpdateConsultationRequest {
   attendanceId?: number;
-  mainComplaint?: string;
+  mainConcern?: string;
   patientStatus?: string; // N, T, A, or F - Stored on consultation and used for patient update
   food?: string;
   water?: string;

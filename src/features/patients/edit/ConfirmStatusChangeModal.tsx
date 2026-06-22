@@ -12,8 +12,8 @@ interface ConfirmStatusChangeModalProps {
 }
 
 const STATUS_LABELS: Record<"A" | "F", string> = {
-  A: "Alta do tratamento",
-  F: "Faltas Consecutivas",
+  A: "Discharged",
+  F: "Missed — consecutive",
 };
 
 const ConfirmStatusChangeModal: React.FC<ConfirmStatusChangeModalProps> = ({
@@ -32,20 +32,20 @@ const ConfirmStatusChangeModal: React.FC<ConfirmStatusChangeModalProps> = ({
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      title={`Confirmar alteração para ${label}`}
+      title={`Confirm change to ${label}`}
       maxWidth="md"
     >
       <div className="p-6">
         <p className="text-gray-700 mb-4">
-          Ao alterar para <strong>{label}</strong>, todos os atendimentos em
-          aberto (agendados, check-in ou em andamento) serão cancelados.
+          When changing to <strong>{label}</strong>, all open appointments
+          (scheduled, checked in, or in progress) will be cancelled.
         </p>
         <p className="text-gray-700 mb-4">
-          Este paciente possui <strong>{openCount}</strong>{" "}
-          {openCount === 1 ? "atendimento" : "atendimentos"} em aberto que{" "}
-          {openCount === 1 ? "será cancelado" : "serão cancelados"}.
+          This patient has <strong>{openCount}</strong>{" "}
+          {openCount === 1 ? "open appointment" : "open appointments"} that{" "}
+          {openCount === 1 ? "will be cancelled" : "will be cancelled"}.
         </p>
-        <p className="text-gray-700 mb-6">Deseja continuar com esta ação?</p>
+        <p className="text-gray-700 mb-6">Do you want to continue?</p>
         <div className="flex gap-3 justify-end">
           <Button
             type="button"
@@ -53,16 +53,16 @@ const ConfirmStatusChangeModal: React.FC<ConfirmStatusChangeModalProps> = ({
             onClick={onClose}
             disabled={isSaving}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
             onClick={onConfirm}
             isLoading={isSaving}
-            loadingText="Salvando..."
+            loadingText="Saving..."
             disabled={isSaving}
           >
-            Sim, alterar status
+            Yes, change status
           </Button>
         </div>
       </div>

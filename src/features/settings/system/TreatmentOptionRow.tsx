@@ -66,12 +66,12 @@ export default function TreatmentOptionRow({
 
   const handleSave = async () => {
     if (!editValue.trim()) {
-      setError("Nome é obrigatório");
+      setError("Name is required");
       return;
     }
 
     if (editValue.length > 50) {
-      setError("Nome deve ter no máximo 50 caracteres");
+      setError("Name must be at most 50 characters");
       return;
     }
 
@@ -123,7 +123,7 @@ export default function TreatmentOptionRow({
       <TableRow className={stackedTableClasses.row}>
         {/* Name */}
         <TableCell className={stackedTableClasses.cell}>
-          <TableMobileLabel>Nome</TableMobileLabel>
+          <TableMobileLabel>Name</TableMobileLabel>
           {isEditing ? (
             <div>
               <Input
@@ -152,8 +152,8 @@ export default function TreatmentOptionRow({
         <TableCell
           className={`${stackedTableClasses.cell} hidden text-gray-600 md:table-cell`}
         >
-          <TableMobileLabel>Uso</TableMobileLabel>
-          {option.usageCount ? `${option.usageCount} sessões` : "-"}
+          <TableMobileLabel>Usage</TableMobileLabel>
+          {option.usageCount ? `${option.usageCount} sessions` : "-"}
         </TableCell>
 
         {/* Active Status Toggle */}
@@ -171,11 +171,11 @@ export default function TreatmentOptionRow({
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               } disabled:opacity-50 cursor-pointer`}
             >
-              {editIsActive ? "● Ativo" : "○ Inativo"}
+              {editIsActive ? "● Active" : "○ Inactive"}
             </Button>
           ) : (
             <Badge variant={option.isActive ? "success" : "neutral"}>
-              {option.isActive ? "● Ativo" : "○ Inativo"}
+              {option.isActive ? "● Active" : "○ Inactive"}
             </Badge>
           )}
         </TableCell>
@@ -184,7 +184,7 @@ export default function TreatmentOptionRow({
         <TableCell
           className={`${stackedTableClasses.actionsCell} md:text-center`}
         >
-          <TableMobileLabel>Ações</TableMobileLabel>
+          <TableMobileLabel>Actions</TableMobileLabel>
           <div className="flex justify-end gap-2 md:justify-center">
             {isEditing ? (
               <>
@@ -192,7 +192,7 @@ export default function TreatmentOptionRow({
                   onClick={handleSave}
                   disabled={updateMutation.isPending}
                   tone="success"
-                  title="Salvar"
+                  title="Save"
                 >
                   <Check className="w-5 h-5" />
                 </IconButton>
@@ -200,7 +200,7 @@ export default function TreatmentOptionRow({
                   onClick={handleCancel}
                   disabled={updateMutation.isPending}
                   tone="neutral"
-                  title="Cancelar"
+                  title="Cancel"
                 >
                   <X className="w-5 h-5" />
                 </IconButton>
@@ -211,9 +211,7 @@ export default function TreatmentOptionRow({
                   onClick={handleEdit}
                   disabled={!isAdmin}
                   tone="primary"
-                  title={
-                    isAdmin ? "Editar" : "Somente administradores podem editar"
-                  }
+                  title={isAdmin ? "Edit" : "Only administrators can edit"}
                 >
                   <Pencil className="w-4 h-4" />
                 </IconButton>
@@ -221,11 +219,7 @@ export default function TreatmentOptionRow({
                   onClick={() => setShowDeleteConfirm(true)}
                   disabled={!isAdmin}
                   tone="danger"
-                  title={
-                    isAdmin
-                      ? "Excluir"
-                      : "Somente administradores podem excluir"
-                  }
+                  title={isAdmin ? "Delete" : "Only administrators can delete"}
                 >
                   <Trash2 className="w-4 h-4" />
                 </IconButton>
@@ -241,19 +235,19 @@ export default function TreatmentOptionRow({
           <BaseModal
             isOpen
             onClose={() => setShowDeleteConfirm(false)}
-            title="Confirmar Exclusão"
+            title="Confirm Deletion"
             maxWidth="md"
           >
             <div className="p-4 sm:p-6">
               <p className="mb-4 text-sm text-gray-600">
-                Tem certeza que deseja excluir &ldquo;{option.value}&rdquo;?
+                Are you sure you want to delete &ldquo;{option.value}&rdquo;?
               </p>
               {option.usageCount && option.usageCount > 0 ? (
                 <p className="mb-4 rounded border border-blue-200 bg-blue-50 p-3 text-sm text-blue-600">
-                  ℹ️ Esta opção foi usada em {option.usageCount} sessão(ões)
-                  completada(s). Os dados históricos permanecerão inalterados,
-                  mas esta opção não aparecerá mais nas listas de seleção. Você
-                  pode desativar ao invés de excluir se preferir.
+                  ℹ️ This option was used in {option.usageCount} completed
+                  session(s). Historical data will remain unchanged, but this
+                  option will no longer appear in selection lists. You may
+                  deactivate instead of deleting if you prefer.
                 </p>
               ) : null}
               {error ? (
@@ -267,17 +261,17 @@ export default function TreatmentOptionRow({
                   onClick={() => setShowDeleteConfirm(false)}
                   className="bg-gray-100 text-gray-700 hover:bg-gray-200 sm:flex-1"
                 >
-                  Cancelar
+                  Cancel
                 </Button>
                 <Button
                   variant="danger"
                   onClick={handleDelete}
                   disabled={deleteMutation.isPending}
                   isLoading={deleteMutation.isPending}
-                  loadingText="Excluindo..."
+                  loadingText="Deleting..."
                   className="sm:flex-1"
                 >
-                  Excluir
+                  Delete
                 </Button>
               </div>
             </div>

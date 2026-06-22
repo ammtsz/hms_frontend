@@ -51,10 +51,10 @@ export const ScheduledAttendanceItem: React.FC<
 
   const daysText =
     daysUntil === 0
-      ? "hoje"
+      ? "today"
       : daysUntil === 1
-        ? "amanhã"
-        : `em ${daysUntil} dias`;
+        ? "tomorrow"
+        : `in ${daysUntil} days`;
 
   const treatmentTypeLabel = getTreatmentTypesLabel(
     groupedScheduled.treatments,
@@ -83,10 +83,10 @@ export const ScheduledAttendanceItem: React.FC<
               size="sm"
               onClick={() => setShowRescheduleModal(true)}
               className="gap-1.5 shadow-sm"
-              aria-label="Reagendar atendimento"
+              aria-label="Reschedule attendance"
             >
               <CalendarClock className="h-4 w-4" aria-hidden />
-              Reagendar
+              Reschedule
             </Button>
           )}
         </div>

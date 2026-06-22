@@ -12,7 +12,7 @@ const mockNoteCategories = [
     id: 1,
     type: SystemOptionType.NOTE_CATEGORY,
     value: "general",
-    label: "Geral",
+    label: "General",
     sortOrder: 1,
     isActive: true,
     createdAt: "2026-01-01",
@@ -59,7 +59,7 @@ describe("useNoteCategoriesQueries", () => {
   it("handles fetch error", async () => {
     (noteCategoriesApi.getNoteCategories as jest.Mock).mockResolvedValue({
       success: false,
-      error: "Falha ao carregar categorias",
+      error: "Failed to load note categories",
     });
 
     const { result } = renderHook(() => useNoteCategories(false), {

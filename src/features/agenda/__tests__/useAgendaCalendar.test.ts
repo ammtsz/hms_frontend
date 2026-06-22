@@ -154,7 +154,7 @@ describe('useAgendaCalendar', () => {
         AttendanceStatus.SCHEDULED,
       ]);
       expect(result.current.filteredAgenda.assessment).toHaveLength(2);
-      expect(result.current.rangeSummaryText).toContain('Período:');
+      expect(result.current.rangeSummaryText).toContain('Period:');
     });
 
     it('calls useAgenda with date range and statuses', () => {
@@ -182,7 +182,7 @@ describe('useAgendaCalendar', () => {
 
   describe('Patient filter', () => {
     it('filters patients accent-insensitively', () => {
-      (usePatientFilter as jest.Mock).mockReturnValue('joao');
+      (usePatientFilter as jest.Mock).mockReturnValue('john');
 
       (useAgenda as jest.Mock).mockReturnValue({
         agenda: {
@@ -192,7 +192,7 @@ describe('useAgendaCalendar', () => {
               patients: [
                 {
                   id: '1',
-                  name: 'João Silva',
+                  name: 'John Smith',
                   attendanceId: 100,
                   attendanceType: 'assessment' as const,
                   priority: '1' as const,
@@ -212,7 +212,7 @@ describe('useAgendaCalendar', () => {
       expect(result.current.filteredAgenda.assessment).toHaveLength(1);
       expect(
         result.current.filteredAgenda.assessment[0]?.patients[0]?.name,
-      ).toBe('João Silva');
+      ).toBe('John Smith');
     });
   });
 

@@ -84,7 +84,7 @@ export function useFormHandler<T>({
       try {
         await onSubmit(formData);
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Erro inesperado";
+        const errorMessage = err instanceof Error ? err.message : "Unexpected error occurred";
         setError(errorMessage);
       } finally {
         setIsLoading(false);

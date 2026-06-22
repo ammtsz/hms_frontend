@@ -36,8 +36,8 @@ export const TemplateApplicationResultModal: React.FC<
       onClose={onClose}
       title={
         isFullSuccess
-          ? "Modelo Aplicado com Sucesso"
-          : "Aplicação Parcial do Modelo"
+          ? "Template Applied Successfully"
+          : "Partial Template Application"
       }
       maxWidth="2xl"
       preventOverflow
@@ -56,10 +56,10 @@ export const TemplateApplicationResultModal: React.FC<
         </div>
 
         <p className="mb-2 text-gray-700">
-          <strong>Modelo:</strong> {templateName}
+          <strong>Template:</strong> {templateName}
         </p>
         <p className="mb-4 text-gray-700">
-          <strong>Ano:</strong> {year}
+          <strong>Year:</strong> {year}
         </p>
 
         {successCount > 0 ? (
@@ -67,13 +67,14 @@ export const TemplateApplicationResultModal: React.FC<
             <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
             <div>
               <p className="font-medium text-green-900">
-                {successCount} feriado{successCount !== 1 ? "s" : ""} criado
-                {successCount !== 1 ? "s" : ""} com sucesso
+                {successCount}
+                {successCount !== 1 ? " holidays were" : " holiday was"} created
+                successfully
               </p>
               <p className="mt-1 text-sm text-green-700">
                 {isFullSuccess
-                  ? "Todos os feriados do modelo foram adicionados ao calendário."
-                  : "Estes feriados foram adicionados ao calendário com sucesso."}
+                  ? "All holidays from the template were added to the calendar."
+                  : "These holidays were successfully added to the calendar."}
               </p>
             </div>
           </div>
@@ -84,12 +85,12 @@ export const TemplateApplicationResultModal: React.FC<
             <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
             <div className="flex-1">
               <p className="font-medium text-amber-900">
-                {failureCount} feriado
-                {failureCount !== 1 ? "s não puderam" : " não pôde"} ser criado
+                {failureCount} holiday
+                {failureCount !== 1 ? "s could not" : " could not"} be created
                 {failureCount !== 1 ? "s" : ""}
               </p>
               <p className="mt-1 text-sm text-amber-700">
-                Veja os detalhes abaixo para entender o motivo.
+                See details below to understand why.
               </p>
             </div>
           </div>
@@ -98,7 +99,7 @@ export const TemplateApplicationResultModal: React.FC<
         {errors.length > 0 ? (
           <div className="mb-6">
             <h3 className="mb-3 text-sm font-medium text-gray-700">
-              Detalhes dos Erros:
+              Error Details:
             </h3>
             <div className="space-y-2">
               {errors.map((error, index) => (
@@ -118,7 +119,7 @@ export const TemplateApplicationResultModal: React.FC<
 
         <div className="flex justify-end border-t border-gray-200 pt-4">
           <Button type="button" onClick={onClose}>
-            Fechar
+            Close
           </Button>
         </div>
       </div>

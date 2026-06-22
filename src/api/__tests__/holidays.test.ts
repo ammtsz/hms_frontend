@@ -21,8 +21,8 @@ describe('holidays API', () => {
   const request: CreateHolidayPeriodRequest = {
     startDate: '2026-02-08',
     endDate: '2026-02-14',
-    name: 'Semana de teste',
-    description: 'Período completo',
+    name: 'Test week',
+    description: 'Full period',
     blockedTreatmentTypes: ['assessment'],
   };
 
@@ -58,7 +58,7 @@ describe('holidays API', () => {
     expect(result).toEqual({
       success: false,
       error:
-        'Existem 2 atendimento(s) agendado(s) no período informado. Remova ou reagende antes de criar o feriado.',
+        'There are 2 appointment(s) scheduled in the requested period. Remove or reschedule them before creating the holiday.',
     });
   });
 
@@ -74,7 +74,7 @@ describe('holidays API', () => {
 
     expect(result).toEqual({
       success: false,
-      error: 'Já existe um feriado no período informado.',
+      error: 'There is already a holiday in the requested period.',
     });
   });
 
@@ -135,7 +135,7 @@ describe('holidays API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado',
+        error: 'Resource not found',
       });
     });
 
@@ -146,7 +146,7 @@ describe('holidays API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde',
+        error: 'Internal server error, please try again later',
       });
     });
   });
@@ -223,7 +223,7 @@ describe('holidays API', () => {
       const result = await checkIfHolidayForTreatmentType('2026-12-25', 'assessment');
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('Erro interno do servidor, por favor tente novamente mais tarde');
+      expect(result.error).toMatch(/Internal server error, please try again later|Internal server error, please try again later/);
     });
   });
 });

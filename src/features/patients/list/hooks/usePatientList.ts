@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { PatientBasic } from "@/types/types";
 import { usePatients } from "@/api/query/hooks/usePatientQueries";
 import { usePriorities } from "@/api/query/hooks/usePriorityOptionsQueries";
+import { TREATMENT_STATUS_LABELS } from "@/utils/patientUtils";
 
 export function usePatientList() {
   const {
@@ -77,12 +78,7 @@ export function usePatientList() {
   }, [visibleCount, sorted.length]);
 
   // Legend maps
-  const statusLegend: Record<string, string> = {
-    N: "Novo Paciente",
-    T: "Em Tratamento",
-    A: "Alta do tratamento",
-    F: "Faltas Consecutivas",
-  };
+  const statusLegend: Record<string, string> = { ...TREATMENT_STATUS_LABELS };
 
   const priorityLegend: Record<string, string> = Object.fromEntries(
     (prioritiesData ?? [])

@@ -62,9 +62,9 @@ describe('useAttendanceForm', () => {
   const ELIGIBLE_PARENT_ATTENDANCE_ID = '99';
 
   const mockPatients: PatientBasic[] = [
-    { id: '1', name: 'João Silva', phone: '11999999999', priority: '2', status: 'T' },
-    { id: '2', name: 'Maria Santos', phone: '11888888888', priority: '1', status: 'N' },
-    { id: '3', name: 'Pedro Costa', phone: '11777777777', priority: '3', status: 'A' }
+    { id: '1', name: 'John Smith', phone: '11999999999', priority: '2', status: 'T' },
+    { id: '2', name: 'Emily Williams', phone: '11888888888', priority: '1', status: 'N' },
+    { id: '3', name: 'Michael Miller', phone: '11777777777', priority: '3', status: 'A' }
   ];
 
   const mockQueryClient = {
@@ -169,21 +169,21 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSearch('João');
+        result.current.setSearch('John');
       });
 
-      expect(result.current.search).toBe('João');
+      expect(result.current.search).toBe('John');
     });
 
     it('should filter patients based on search', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSearch('João');
+        result.current.setSearch('John');
       });
 
       expect(result.current.filteredPatients).toEqual([
-        expect.objectContaining({ name: 'João Silva' })
+        expect.objectContaining({ name: 'John Smith' })
       ]);
     });
 
@@ -191,11 +191,11 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSearch('MARIA');
+        result.current.setSearch('EMILY');
       });
 
       expect(result.current.filteredPatients).toEqual([
-        expect.objectContaining({ name: 'Maria Santos' })
+        expect.objectContaining({ name: 'Emily Williams' })
       ]);
     });
 
@@ -203,10 +203,10 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
       });
 
-      expect(result.current.selectedPatient).toBe('João Silva');
+      expect(result.current.selectedPatient).toBe('John Smith');
     });
 
     it('should toggle new patient state', () => {
@@ -281,7 +281,7 @@ describe('useAttendanceForm', () => {
         expect(success).toBe(false);
       });
 
-      expect(result.current.error).toContain('Por favor, preencha o nome do paciente');
+      expect(result.current.error).toContain('Please enter the patient name');
     });
 
     it('should validate required fields - missing types', async () => {
@@ -300,7 +300,7 @@ describe('useAttendanceForm', () => {
         expect(success).toBe(false);
       });
 
-      expect(result.current.error).toContain('selecione pelo menos um tipo de atendimento');
+      expect(result.current.error).toContain('select at least one attendance type');
     });
 
     it('should validate duplicate patient scheduling', async () => {
@@ -309,7 +309,7 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
       });
 
@@ -320,14 +320,14 @@ describe('useAttendanceForm', () => {
         expect(success).toBe(false);
       });
 
-      expect(result.current.error).toContain('já possui consulta agendada');
+      expect(result.current.error).toContain('already has a scheduled consultation');
     });
 
     it('should prevent creating existing patient as new', async () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSearch('João Silva'); // Existing patient name
+        result.current.setSearch('John Smith'); // Existing patient name
         result.current.setIsNewPatient(true);
         result.current.setSelectedTypes(['assessment']);
       });
@@ -339,7 +339,7 @@ describe('useAttendanceForm', () => {
         expect(success).toBe(false);
       });
 
-      expect(result.current.error).toContain('Paciente já cadastrado');
+      expect(result.current.error).toContain('Patient already registered');
     });
 
     it('should set dateSlotError when selected date has no slots for selected types', () => {
@@ -352,7 +352,7 @@ describe('useAttendanceForm', () => {
         useAttendanceForm({ showDateField: true, selectedDate: '2024-01-06' })
       );
 
-      expect(result.current.dateSlotError).toContain('consulta');
+      expect(result.current.dateSlotError).toContain('assessment consultation');
 
       (useScheduleSettings as jest.Mock).mockReturnValue({ data: [] });
     });
@@ -365,7 +365,7 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
         result.current.setSelectedParentAttendance(ELIGIBLE_PARENT_ATTENDANCE_ID);
       });
@@ -397,13 +397,13 @@ describe('useAttendanceForm', () => {
       });
     });
 
-    it('should create assessment for NEW_PATIENT without parentAttendanceId (primeira consulta)', async () => {
+    it('should create assessment for NEW_PATIENT without parentAttendanceId (first consultation)', async () => {
       mockCreateAttendanceMutation.mutateAsync.mockResolvedValue({ id: 200 });
 
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('Maria Santos');
+        result.current.setSelectedPatient('Emily Williams');
         result.current.setSelectedTypes(['assessment']);
       });
 
@@ -427,13 +427,13 @@ describe('useAttendanceForm', () => {
       expect(payload.parentAttendanceId).toBeUndefined();
     });
 
-    it('should create assessment for DISCHARGED patient without parentAttendanceId (Nova Queixa)', async () => {
+    it('should create assessment for DISCHARGED patient without parentAttendanceId (New Complaint)', async () => {
       mockCreateAttendanceMutation.mutateAsync.mockResolvedValue({ id: 201 });
 
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('Pedro Costa');
+        result.current.setSelectedPatient('Michael Miller');
         result.current.setSelectedTypes(['assessment']);
         result.current.setSelectedParentAttendance('new');
       });
@@ -482,7 +482,7 @@ describe('useAttendanceForm', () => {
       expect(mockCreatePatientMutation.mutateAsync).toHaveBeenCalledWith({
         name: 'New Patient Name',
         priority: '2',
-        mainComplaint: 'Test complaint'
+        mainConcern: 'Test complaint'
       });
 
       expect(mockCreateAttendanceMutation.mutateAsync).toHaveBeenCalledWith({
@@ -498,7 +498,7 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment', 'physiotherapy', 'tens']);
         result.current.setSelectedParentAttendance(ELIGIBLE_PARENT_ATTENDANCE_ID);
       });
@@ -553,7 +553,7 @@ describe('useAttendanceForm', () => {
         expect(success).toBe(false);
       });
 
-      expect(result.current.error).toContain('Erro inesperado');
+      expect(result.current.error).toContain('Unexpected error occurred');
     });
 
     it('should handle attendance creation failure', async () => {
@@ -562,7 +562,7 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
       });
 
@@ -578,13 +578,13 @@ describe('useAttendanceForm', () => {
 
     it('should display backend validation message when creation fails (e.g. parent attendance required)', async () => {
       const backendMessage =
-        'Selecione a queixa principal (consulta anterior) relacionada a este agendamento. Se a lista não aparecer, atualize a página e tente novamente.';
+        'Select the main complaint (previous consultation) related to this appointment. If the list does not appear, refresh the page and try again.';
       mockCreateAttendanceMutation.mutateAsync.mockRejectedValue(new Error(backendMessage));
 
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
       });
 
@@ -595,7 +595,7 @@ describe('useAttendanceForm', () => {
         expect(success).toBe(false);
       });
 
-      expect(result.current.error).toContain('Selecione a queixa principal');
+      expect(result.current.error).toContain('Select the main complaint');
     });
 
     it('should handle conflict errors specifically', async () => {
@@ -604,7 +604,7 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
       });
 
@@ -615,7 +615,7 @@ describe('useAttendanceForm', () => {
         expect(success).toBe(false);
       });
 
-      expect(result.current.error).toContain('Conflito de horário detectado');
+      expect(result.current.error).toContain('Scheduling conflict detected');
     });
   });
 
@@ -629,7 +629,7 @@ describe('useAttendanceForm', () => {
       );
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
         result.current.setPriority('1');
         result.current.setSelectedParentAttendance(ELIGIBLE_PARENT_ATTENDANCE_ID);
@@ -642,7 +642,7 @@ describe('useAttendanceForm', () => {
       });
 
       expect(mockCallback).toHaveBeenCalledWith(
-        'João Silva',
+        'John Smith',
         ['assessment'],
         false, // isNew
         '1', // priority
@@ -659,7 +659,7 @@ describe('useAttendanceForm', () => {
       );
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
         result.current.setSelectedParentAttendance(ELIGIBLE_PARENT_ATTENDANCE_ID);
       });
@@ -686,7 +686,7 @@ describe('useAttendanceForm', () => {
       );
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
       });
 
@@ -708,7 +708,7 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
         result.current.setSelectedParentAttendance(ELIGIBLE_PARENT_ATTENDANCE_ID);
       });
@@ -736,7 +736,7 @@ describe('useAttendanceForm', () => {
       const { result } = renderHook(() => useAttendanceForm());
 
       act(() => {
-        result.current.setSelectedPatient('João Silva');
+        result.current.setSelectedPatient('John Smith');
         result.current.setSelectedTypes(['assessment']);
         result.current.setSelectedParentAttendance(ELIGIBLE_PARENT_ATTENDANCE_ID);
       });

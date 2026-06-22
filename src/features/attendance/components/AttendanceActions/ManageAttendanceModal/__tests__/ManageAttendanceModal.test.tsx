@@ -52,8 +52,8 @@ const mockSession = {
   },
   treatment: {
     treatmentType: "physiotherapy",
-    bodyLocation: "Cabeça",
-    color: "Azul",
+    bodyLocation: "Head",
+    color: "Blue",
   },
 };
 
@@ -68,7 +68,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [],
-      patientName: "João Silva",
+      patientName: "John Doe",
       isLoading: false,
     });
     mockUseCloseModal.mockReturnValue(mockCloseModalFn);
@@ -120,7 +120,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [10],
-      patientName: "João Silva",
+      patientName: "John Doe",
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
     mockUseSetCancellationLoading.mockReturnValue(jest.fn());
@@ -132,9 +132,9 @@ describe("ManageAttendanceModal", () => {
     renderWithProvider(<ManageAttendanceModal onRefresh={mockOnRefresh} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Gerenciar Agendamento/i)).toBeInTheDocument();
-      expect(screen.getByText(/João Silva/i)).toBeInTheDocument();
-      expect(screen.getByText(/Fisioterapia: Cabeça/i)).toBeInTheDocument();
+      expect(screen.getByText(/Manage Attendance/i)).toBeInTheDocument();
+      expect(screen.getByText(/John Doe/i)).toBeInTheDocument();
+      expect(screen.getByText(/Physiotherapy: Head/i)).toBeInTheDocument();
     });
   });
 
@@ -142,7 +142,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [],
-      patientName: "João Silva",
+      patientName: "John Doe",
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
     mockUseSetCancellationLoading.mockReturnValue(jest.fn());
@@ -168,7 +168,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [],
-      patientName: "João Silva",
+      patientName: "John Doe",
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
     mockUseSetCancellationLoading.mockReturnValue(jest.fn());
@@ -179,13 +179,13 @@ describe("ManageAttendanceModal", () => {
 
     renderWithProvider(<ManageAttendanceModal onRefresh={mockOnRefresh} />);
 
-    const reagendarBtn = screen.getByRole("button", { name: /Reagendar/i });
-    const cancelarBtn = screen.getByRole("button", {
-      name: /Cancelar Atendimento/i,
+    const rescheduleBtn = screen.getByRole("button", { name: /Reschedule/i });
+    const cancelBtn = screen.getByRole("button", {
+      name: /Cancel Attendance/i,
     });
 
-    expect(reagendarBtn).toBeDisabled();
-    expect(cancelarBtn).toBeDisabled();
+    expect(rescheduleBtn).toBeDisabled();
+    expect(cancelBtn).toBeDisabled();
   });
 
   it("should call onRefresh callback after successful operation", async () => {
@@ -196,7 +196,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [10],
-      patientName: "João Silva",
+      patientName: "John Doe",
       isLoading: false,
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
@@ -219,22 +219,22 @@ describe("ManageAttendanceModal", () => {
     await waitFor(() => {
       expect(
         screen.getByRole("button", {
-          name: /Cancelar Atendimento \(1\)/i,
+          name: /Cancel Attendance \(1\)/i,
         }),
       ).toBeInTheDocument();
     });
 
-    const cancelarBtn = screen.getByRole("button", {
-      name: /Cancelar Atendimento \(1\)/i,
+    const cancelBtn = screen.getByRole("button", {
+      name: /Cancel Attendance \(1\)/i,
     });
-    await userEvent.click(cancelarBtn);
+    await userEvent.click(cancelBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Cancelar Agendamento/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cancel Attendance/i)).toBeInTheDocument();
     });
 
     const confirmBtn = screen.getByRole("button", {
-      name: /Confirmar Cancelamento/i,
+      name: /Confirm Cancellation/i,
     });
     await userEvent.click(confirmBtn);
 
@@ -247,7 +247,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [10],
-      patientName: "João Silva",
+      patientName: "John Doe",
       isLoading: false,
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
@@ -265,30 +265,30 @@ describe("ManageAttendanceModal", () => {
     await waitFor(() => {
       expect(
         screen.getByRole("button", {
-          name: /Cancelar Atendimento \(1\)/i,
+          name: /Cancel Attendance \(1\)/i,
         }),
       ).toBeInTheDocument();
     });
 
-    const cancelarBtn = screen.getByRole("button", {
-      name: /Cancelar Atendimento \(1\)/i,
+    const cancelBtn = screen.getByRole("button", {
+      name: /Cancel Attendance \(1\)/i,
     });
-    await userEvent.click(cancelarBtn);
+    await userEvent.click(cancelBtn);
 
     const cancelAllRadio = await screen.findByRole("radio", {
-      name: /Cancelar todos os atendimentos em aberto deste paciente/i,
+      name: /Cancel all open attendances for this patient/i,
     });
     await userEvent.click(cancelAllRadio);
 
     const confirmBtn = screen.getByRole("button", {
-      name: /Confirmar Cancelamento/i,
+      name: /Confirm Cancellation/i,
     });
     await userEvent.click(confirmBtn);
 
     await waitFor(() => {
       expect(
         screen.getByText(
-          /Informe o motivo do cancelamento ao cancelar todos os atendimentos/i,
+          /Provide a cancellation reason when cancelling all attendances/i,
         ),
       ).toBeInTheDocument();
     });
@@ -298,7 +298,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [10],
-      patientName: "João Silva",
+      patientName: "John Doe",
       isLoading: false,
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
@@ -323,32 +323,30 @@ describe("ManageAttendanceModal", () => {
     await waitFor(() => {
       expect(
         screen.getByRole("button", {
-          name: /Cancelar Atendimento \(1\)/i,
+          name: /Cancel Attendance \(1\)/i,
         }),
       ).toBeInTheDocument();
     });
 
-    const cancelarBtn = screen.getByRole("button", {
-      name: /Cancelar Atendimento \(1\)/i,
+    const cancelBtn = screen.getByRole("button", {
+      name: /Cancel Attendance \(1\)/i,
     });
-    await userEvent.click(cancelarBtn);
+    await userEvent.click(cancelBtn);
 
     const cancelAllRadio = await screen.findByRole("radio", {
-      name: /Cancelar todos os atendimentos em aberto deste paciente/i,
+      name: /Cancel all open attendances for this patient/i,
     });
     await userEvent.click(cancelAllRadio);
 
     await waitFor(() => {
-      expect(
-        screen.getByLabelText(/Alteração de status para:/i),
-      ).toBeInTheDocument();
+      expect(screen.getByLabelText(/Change status to:/i)).toBeInTheDocument();
     });
 
-    const textarea = screen.getByLabelText(/Motivo do cancelamento/i);
-    fireEvent.change(textarea, { target: { value: "Motivo teste" } });
+    const textarea = screen.getByLabelText(/Cancellation reason/i);
+    fireEvent.change(textarea, { target: { value: "Reason test" } });
 
     const form = screen
-      .getByRole("button", { name: /Confirmar Cancelamento/i })
+      .getByRole("button", { name: /Confirm Cancellation/i })
       .closest("form");
     expect(form).not.toBeNull();
     fireEvent.submit(form!);
@@ -358,7 +356,7 @@ describe("ManageAttendanceModal", () => {
         patientId: "42",
         data: {
           patientStatus: "F",
-          cancellationReason: "Motivo teste",
+          cancellationReason: "Reason test",
         },
       });
     });
@@ -374,7 +372,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [10],
-      patientName: "João Silva",
+      patientName: "John Doe",
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
     mockUseSetCancellationLoading.mockReturnValue(jest.fn());
@@ -385,14 +383,14 @@ describe("ManageAttendanceModal", () => {
 
     renderWithProvider(<ManageAttendanceModal onRefresh={mockOnRefresh} />);
 
-    expect(screen.getByText(/Carregando sessões/i)).toBeInTheDocument();
+    expect(screen.getByText(/Loading sessions/i)).toBeInTheDocument();
   });
 
   it("should display action buttons when no treatment sessions found", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [10],
-      patientName: "João Silva",
+      patientName: "John Doe",
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
     mockUseSetCancellationLoading.mockReturnValue(jest.fn());
@@ -403,15 +401,15 @@ describe("ManageAttendanceModal", () => {
 
     renderWithProvider(<ManageAttendanceModal onRefresh={mockOnRefresh} />);
 
-    expect(screen.getByText(/Reagendar/i)).toBeInTheDocument();
-    expect(screen.getByText(/O que você deseja fazer/i)).toBeInTheDocument();
+    expect(screen.getByText(/Reschedule/i)).toBeInTheDocument();
+    expect(screen.getByText(/What would you like to do/i)).toBeInTheDocument();
   });
 
-  it("should display Nenhuma sessão encontrada when no selection is made", () => {
+  it("should display No sessions found when no selection is made", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [],
-      patientName: "João Silva",
+      patientName: "John Doe",
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
     mockUseSetCancellationLoading.mockReturnValue(jest.fn());
@@ -422,14 +420,14 @@ describe("ManageAttendanceModal", () => {
 
     renderWithProvider(<ManageAttendanceModal onRefresh={mockOnRefresh} />);
 
-    expect(screen.getByText(/Nenhuma sessão encontrada/i)).toBeInTheDocument();
+    expect(screen.getByText(/No sessions found/i)).toBeInTheDocument();
   });
 
   it("should transition to cancel view when cancel button is clicked", async () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [],
-      patientName: "João Silva",
+      patientName: "John Doe",
       isLoading: false,
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
@@ -444,14 +442,14 @@ describe("ManageAttendanceModal", () => {
     const checkbox = screen.getByRole("checkbox");
     await userEvent.click(checkbox);
 
-    const cancelarBtn = screen.getByRole("button", {
-      name: /Cancelar Atendimento \(1\)/i,
+    const cancelBtn = screen.getByRole("button", {
+      name: /Cancel Attendance \(1\)/i,
     });
-    await userEvent.click(cancelarBtn);
+    await userEvent.click(cancelBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Cancelar Agendamento/i)).toBeInTheDocument();
-      expect(screen.getByText(/Motivo do cancelamento/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cancel Attendance/i)).toBeInTheDocument();
+      expect(screen.getByText(/Cancellation reason/i)).toBeInTheDocument();
     });
   });
 
@@ -459,7 +457,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [],
-      patientName: "João Silva",
+      patientName: "John Doe",
       isLoading: false,
     });
     mockUseCloseModal.mockReturnValue(jest.fn());
@@ -474,15 +472,17 @@ describe("ManageAttendanceModal", () => {
     const checkbox = screen.getByRole("checkbox");
     await userEvent.click(checkbox);
 
-    const reagendarBtn = screen.getByRole("button", {
-      name: /Reagendar \(1\)/i,
+    const rescheduleBtn = screen.getByRole("button", {
+      name: /Reschedule \(1\)/i,
     });
-    await userEvent.click(reagendarBtn);
+    await userEvent.click(rescheduleBtn);
 
     await waitFor(() => {
-      expect(screen.getByText(/Reagendar Atendimento/i)).toBeInTheDocument();
-      expect(screen.getByText(/Próxima data disponível/i)).toBeInTheDocument();
-      expect(screen.getByText(/Por data específica/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Reschedule Attendance for/i),
+      ).toBeInTheDocument();
+      expect(screen.getByText(/Next available date/i)).toBeInTheDocument();
+      expect(screen.getByText(/Specific date/i)).toBeInTheDocument();
     });
   });
 
@@ -502,7 +502,7 @@ describe("ManageAttendanceModal", () => {
         {
           attendanceId: 99,
           patientId: 5,
-          patientName: "João Silva",
+          patientName: "John Doe",
           oldDate: "2026-03-17",
           newDate: "2026-03-24",
         },
@@ -513,7 +513,7 @@ describe("ManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [10],
-      patientName: "João Silva",
+      patientName: "John Doe",
       attendanceDate: "2025-07-01",
       isLoading: false,
     });
@@ -529,27 +529,27 @@ describe("ManageAttendanceModal", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("button", { name: /Reagendar \(1\)/i }),
+        screen.getByRole("button", { name: /Reschedule \(1\)/i }),
       ).toBeInTheDocument();
     });
 
     await userEvent.click(
-      screen.getByRole("button", { name: /Reagendar \(1\)/i }),
+      screen.getByRole("button", { name: /Reschedule \(1\)/i }),
     );
     await userEvent.click(
-      screen.getByRole("button", { name: /Confirmar Reagendamento/i }),
+      screen.getByRole("button", { name: /Confirm Reschedule/i }),
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/Resumo do Reagendamento/i)).toBeInTheDocument();
+      expect(screen.getByText(/Reschedule Summary/i)).toBeInTheDocument();
       expect(
-        screen.getByText(/Retornos de avaliação reagendados automaticamente/i),
+        screen.getByText(/Assessment returns auto-rescheduled/i),
       ).toBeInTheDocument();
     });
 
     expect(mockCloseModalFn).not.toHaveBeenCalled();
 
-    await userEvent.click(screen.getByRole("button", { name: /OK, entendi/i }));
+    await userEvent.click(screen.getByRole("button", { name: /OK, got it/i }));
 
     await waitFor(() => {
       expect(mockCloseModalFn).toHaveBeenCalledWith("cancellation");

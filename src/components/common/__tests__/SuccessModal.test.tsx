@@ -29,7 +29,7 @@ describe("SuccessModal", () => {
 
   it("should display default title", () => {
     render(<SuccessModal {...defaultProps} />);
-    expect(screen.getByText("Sucesso!")).toBeInTheDocument();
+    expect(screen.getByText("Success!")).toBeInTheDocument();
   });
 
   it("should display custom title when provided", () => {

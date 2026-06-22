@@ -92,7 +92,7 @@ export function TopNavigation() {
               Healthcare Management System
             </h1>
             <p className="hidden text-xs text-gray-500 sm:block">
-              Sistema de gestão de atendimentos e tratamentos fisioterapêuticos
+              Attendance and physiotherapy treatment management system
             </p>
           </div>
         </div>
@@ -101,7 +101,7 @@ export function TopNavigation() {
           {process.env.NODE_ENV === "development" && (
             <div
               className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600"
-              title="Fuso horário da clínica (configurado no ambiente)"
+              title="Clinic timezone (set in environment)"
             >
               <Globe size={16} className="text-gray-400" aria-hidden />
               <span className="hidden sm:inline">{clinicTimezoneDisplay}</span>
@@ -114,7 +114,7 @@ export function TopNavigation() {
                 variant="ghost"
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 className="min-h-[44px] space-x-2 rounded-lg px-3 py-2"
-                title="Menu do Usuário"
+                title="User Menu"
               >
                 <User size={18} className="text-gray-600" />
                 <span className="hidden sm:inline text-sm text-gray-700 font-medium">
@@ -133,7 +133,7 @@ export function TopNavigation() {
                     )}
                     <p className="text-xs text-gray-500">{user.email}</p>
                     <p className="text-xs text-gray-400 mt-1">
-                      {user.role === "admin" ? "Administrador" : "Colaborador"}
+                      {user.role === "admin" ? "Administrator" : "Staff"}
                     </p>
                   </div>
 
@@ -143,7 +143,7 @@ export function TopNavigation() {
                     className="w-full justify-start space-x-2 rounded-none px-4 py-2 text-gray-700 hover:bg-gray-50"
                   >
                     <User size={16} />
-                    <span>Meu Perfil</span>
+                    <span>My Profile</span>
                   </Button>
 
                   {user.role === "admin" && (
@@ -153,7 +153,7 @@ export function TopNavigation() {
                       className="w-full justify-start space-x-2 rounded-none px-4 py-2 text-gray-700 hover:bg-gray-50"
                     >
                       <Users size={16} />
-                      <span>Gerenciar Usuários</span>
+                      <span>Manage Users</span>
                     </Button>
                   )}
 
@@ -163,7 +163,7 @@ export function TopNavigation() {
                     className="w-full justify-start space-x-2 rounded-none px-4 py-2 text-gray-700 hover:bg-gray-50"
                   >
                     <Settings size={16} />
-                    <span>Configurações</span>
+                    <span>Settings</span>
                   </Button>
 
                   <Button
@@ -173,7 +173,7 @@ export function TopNavigation() {
                     className="w-full justify-start space-x-2 rounded-none px-4 py-2 text-red-600 hover:bg-red-50"
                   >
                     <LogOut size={16} />
-                    <span>{isPending ? "Saindo..." : "Sair"}</span>
+                    <span>{isPending ? "Signing out..." : "Sign out"}</span>
                   </Button>
                 </div>
               )}

@@ -25,11 +25,11 @@ export const AbsenceReasonBox: React.FC<AbsenceReasonBoxProps> = ({
   const label =
     status === "missed"
       ? isJustified
-        ? "Falta justificada:"
-        : "Motivo:"
+        ? "Justified absence:"
+        : "Reason:"
       : status === "cancelled"
-        ? "Motivo:"
-        : "Notas:";
+        ? "Reason:"
+        : "Notes:";
 
   return (
     <div
@@ -45,7 +45,7 @@ export const AbsenceReasonBox: React.FC<AbsenceReasonBoxProps> = ({
         <div className="text-sm">
           <span className="font-medium text-gray-900">{label}</span>
           <span className="text-gray-700 ml-1 whitespace-pre-line">
-            {formatNotes(reason) || "Não justificado"}
+            {formatNotes(reason) || "Not justified"}
           </span>
         </div>
       </div>

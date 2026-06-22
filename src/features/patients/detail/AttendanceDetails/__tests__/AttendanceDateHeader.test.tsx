@@ -4,10 +4,9 @@ import { AttendanceDateHeader } from "../AttendanceDateHeader";
 
 // Mock dateHelpers
 jest.mock("@/utils/dateUtils", () => ({
-  formatDateBR: jest.fn((date: string) => {
-    // Simple mock implementation
+  formatDisplayDate: jest.fn((date: string) => {
     const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
+    return `${month}/${day}/${year}`;
   }),
 }));
 
@@ -17,12 +16,12 @@ describe("AttendanceDateHeader", () => {
       <AttendanceDateHeader
         date="2026-01-15"
         status="completed"
-        treatmentTypeLabel="Consulta"
+        treatmentTypeLabel="Assessment Consultation"
       />,
     );
 
-    expect(screen.getByText("15/01/2026")).toBeInTheDocument();
-    expect(screen.getByText("Consulta")).toBeInTheDocument();
+    expect(screen.getByText("01/15/2026")).toBeInTheDocument();
+    expect(screen.getByText("Assessment Consultation")).toBeInTheDocument();
   });
 
   it("renders cancelled attendance with Ban icon and label", () => {
@@ -30,13 +29,13 @@ describe("AttendanceDateHeader", () => {
       <AttendanceDateHeader
         date="2026-01-20"
         status="cancelled"
-        treatmentTypeLabel="Fisioterapia"
+        treatmentTypeLabel="Physiotherapy"
       />,
     );
 
-    expect(screen.getByText("20/01/2026")).toBeInTheDocument();
-    expect(screen.getByText("(CANCELADO)")).toBeInTheDocument();
-    expect(screen.getByText("Fisioterapia")).toBeInTheDocument();
+    expect(screen.getByText("01/20/2026")).toBeInTheDocument();
+    expect(screen.getByText("(CANCELLED)")).toBeInTheDocument();
+    expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
 
     // Check for Ban icon (lucide-react renders as svg)
     const svg = container.querySelector("svg");
@@ -52,8 +51,8 @@ describe("AttendanceDateHeader", () => {
       />,
     );
 
-    expect(screen.getByText("25/01/2026")).toBeInTheDocument();
-    expect(screen.getByText("(FALTA)")).toBeInTheDocument();
+    expect(screen.getByText("01/25/2026")).toBeInTheDocument();
+    expect(screen.getByText("(MISSED)")).toBeInTheDocument();
     expect(screen.getByText("TENS")).toBeInTheDocument();
 
     // Check for AlertTriangle icon
@@ -66,13 +65,13 @@ describe("AttendanceDateHeader", () => {
       <AttendanceDateHeader
         date="2026-02-01"
         status="scheduled"
-        treatmentTypeLabel="Consulta"
-        daysUntilText="em 5 dias"
+        treatmentTypeLabel="Assessment Consultation"
+        daysUntilText="in 5 days"
       />,
     );
 
-    expect(screen.getByText("01/02/2026")).toBeInTheDocument();
-    expect(screen.getByText("(em 5 dias)")).toBeInTheDocument();
+    expect(screen.getByText("02/01/2026")).toBeInTheDocument();
+    expect(screen.getByText("(in 5 days)")).toBeInTheDocument();
   });
 
   it("does not render days until text for cancelled appointments", () => {
@@ -80,13 +79,13 @@ describe("AttendanceDateHeader", () => {
       <AttendanceDateHeader
         date="2026-02-05"
         status="cancelled"
-        treatmentTypeLabel="Fisioterapia"
-        daysUntilText="amanhã"
+        treatmentTypeLabel="Physiotherapy"
+        daysUntilText="tomorrow"
       />,
     );
 
-    expect(screen.queryByText("(amanhã)")).not.toBeInTheDocument();
-    expect(screen.getByText("(CANCELADO)")).toBeInTheDocument();
+    expect(screen.queryByText("(tomorrow)")).not.toBeInTheDocument();
+    expect(screen.getByText("(CANCELLED)")).toBeInTheDocument();
   });
 
   it("applies correct CSS classes for missed status", () => {
@@ -98,7 +97,7 @@ describe("AttendanceDateHeader", () => {
       />,
     );
 
-    const dateElement = screen.getByText("10/01/2026");
+    const dateElement = screen.getByText("01/10/2026");
     expect(dateElement.className).toContain("line-through");
     expect(dateElement.className).toContain("text-gray-500");
   });
@@ -112,7 +111,7 @@ describe("AttendanceDateHeader", () => {
       />,
     );
 
-    const dateElement = screen.getByText("15/01/2026");
+    const dateElement = screen.getByText("01/15/2026");
     expect(dateElement.className).toContain("line-through");
     expect(dateElement.className).toContain("text-gray-500");
   });
@@ -126,7 +125,7 @@ describe("AttendanceDateHeader", () => {
       />,
     );
 
-    const dateElement = screen.getByText("20/01/2026");
+    const dateElement = screen.getByText("01/20/2026");
     expect(dateElement.className).toContain("text-gray-900");
     expect(dateElement.className).not.toContain("line-through");
   });

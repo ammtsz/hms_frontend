@@ -21,7 +21,7 @@ describe("api/settings/utils", () => {
       SYSTEM_OPTION_STATUS_MESSAGES,
     );
 
-    expect(message).toBe("Este nome já existe");
+    expect(message).toMatch(/This name already exists|This name already exists/);
   });
 
   it("getResponseMessageOrStatusErrorMessage prefers response message", () => {

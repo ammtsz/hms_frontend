@@ -24,7 +24,7 @@ export function usePatientNotes(patientId: string) {
       const result = await getPatientNotes(patientId);
       
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao carregar notas');
+        throw new Error(result.error || 'Failed to load notes');
       }
 
       return result.value || [];
@@ -55,7 +55,7 @@ export function useCreatePatientNote() {
       const result = await createPatientNote(patientId, noteData);
       
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao criar nota');
+        throw new Error(result.error || 'Failed to create note');
       }
 
       return result.value;
@@ -99,7 +99,7 @@ export function useUpdatePatientNote() {
       const result = await updatePatientNote(patientId, noteId, noteData);
       
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao atualizar nota');
+        throw new Error(result.error || 'Failed to update note');
       }
 
       return result.value;
@@ -139,7 +139,7 @@ export function useDeletePatientNote() {
       const result = await deletePatientNote(patientId, noteId);
       
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao deletar nota');
+        throw new Error(result.error || 'Failed to delete note');
       }
     },
     onSuccess: (_, { patientId, noteId }) => {
@@ -171,7 +171,7 @@ export function usePrefetchPatientNotes() {
         const result = await getPatientNotes(patientId);
         
         if (!result.success) {
-          throw new Error(result.error || 'Erro ao carregar notas');
+          throw new Error(result.error || 'Failed to load notes');
         }
 
         return result.value || [];

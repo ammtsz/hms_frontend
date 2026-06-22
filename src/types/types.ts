@@ -106,7 +106,7 @@ export interface PatientBasic {
 
 export interface Patient extends PatientBasic {
   birthDate: string, // YYYY-MM-DD string format
-  mainComplaint: string,
+  mainConcern: string,
   startDate: string, // YYYY-MM-DD string format
   dischargeDate: string | null, // YYYY-MM-DD string format or null
   timezone?: string,

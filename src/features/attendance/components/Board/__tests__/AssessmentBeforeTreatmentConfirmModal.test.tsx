@@ -34,7 +34,7 @@ describe("AssessmentBeforeTreatmentConfirmModal", () => {
     it("renders when modal is open", () => {
       render(<AssessmentBeforeTreatmentConfirmModal />);
       expect(
-        screen.getByText("Tratamento de Fisioterapia/TENS pendente"),
+        screen.getByText("Pending Physiotherapy/TENS Treatment"),
       ).toBeInTheDocument();
     });
 
@@ -53,7 +53,7 @@ describe("AssessmentBeforeTreatmentConfirmModal", () => {
     it("displays the correct title", () => {
       render(<AssessmentBeforeTreatmentConfirmModal />);
       expect(
-        screen.getByText("Tratamento de Fisioterapia/TENS pendente"),
+        screen.getByText("Pending Physiotherapy/TENS Treatment"),
       ).toBeInTheDocument();
     });
 
@@ -61,33 +61,33 @@ describe("AssessmentBeforeTreatmentConfirmModal", () => {
       const { container } = render(<AssessmentBeforeTreatmentConfirmModal />);
       const paragraph = container.querySelector("p");
       expect(paragraph).toBeInTheDocument();
-      expect(paragraph?.textContent).toMatch(/Fisioterapia/);
-      expect(paragraph?.textContent).toMatch(/consulta/);
-      expect(paragraph?.textContent).toMatch(/Em andamento/);
+      expect(paragraph?.textContent).toMatch(/Physiotherapy/);
+      expect(paragraph?.textContent).toMatch(/consultation/i);
+      expect(paragraph?.textContent).toMatch(/In progress/);
     });
 
-    it("renders Cancelar and Continuar buttons", () => {
+    it("renders Cancel and Continue buttons", () => {
       render(<AssessmentBeforeTreatmentConfirmModal />);
       expect(
-        screen.getByRole("button", { name: "Cancelar" }),
+        screen.getByRole("button", { name: "Cancel" }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "Continuar" }),
+        screen.getByRole("button", { name: "Continue" }),
       ).toBeInTheDocument();
     });
 
     it("renders close button with proper aria-label", () => {
       render(<AssessmentBeforeTreatmentConfirmModal />);
-      expect(screen.getByLabelText("Fechar")).toBeInTheDocument();
+      expect(screen.getByLabelText("Close")).toBeInTheDocument();
     });
   });
 
   describe("Button interactions", () => {
-    it("calls onConfirm and closeModal when Continuar is clicked", async () => {
+    it("calls onConfirm and closeModal when Continue is clicked", async () => {
       const user = userEvent.setup();
       render(<AssessmentBeforeTreatmentConfirmModal />);
 
-      const confirmButton = screen.getByRole("button", { name: "Continuar" });
+      const confirmButton = screen.getByRole("button", { name: "Continue" });
       await user.click(confirmButton);
 
       expect(mockModalState.onConfirm).toHaveBeenCalledTimes(1);
@@ -96,11 +96,11 @@ describe("AssessmentBeforeTreatmentConfirmModal", () => {
       );
     });
 
-    it("calls onCancel and closeModal when Cancelar button is clicked", async () => {
+    it("calls onCancel and closeModal when Cancel button is clicked", async () => {
       const user = userEvent.setup();
       render(<AssessmentBeforeTreatmentConfirmModal />);
 
-      const cancelButton = screen.getByRole("button", { name: "Cancelar" });
+      const cancelButton = screen.getByRole("button", { name: "Cancel" });
       await user.click(cancelButton);
 
       expect(mockModalState.onCancel).toHaveBeenCalledTimes(1);
@@ -113,7 +113,7 @@ describe("AssessmentBeforeTreatmentConfirmModal", () => {
       const user = userEvent.setup();
       render(<AssessmentBeforeTreatmentConfirmModal />);
 
-      const closeButton = screen.getByLabelText("Fechar");
+      const closeButton = screen.getByLabelText("Close");
       await user.click(closeButton);
 
       expect(mockModalState.onCancel).toHaveBeenCalledTimes(1);
@@ -133,7 +133,7 @@ describe("AssessmentBeforeTreatmentConfirmModal", () => {
       const user = userEvent.setup();
       render(<AssessmentBeforeTreatmentConfirmModal />);
 
-      const confirmButton = screen.getByRole("button", { name: "Continuar" });
+      const confirmButton = screen.getByRole("button", { name: "Continue" });
       await user.click(confirmButton);
 
       expect(mockCloseModal).toHaveBeenCalledWith(
@@ -150,7 +150,7 @@ describe("AssessmentBeforeTreatmentConfirmModal", () => {
       const user = userEvent.setup();
       render(<AssessmentBeforeTreatmentConfirmModal />);
 
-      const cancelButton = screen.getByRole("button", { name: "Cancelar" });
+      const cancelButton = screen.getByRole("button", { name: "Cancel" });
       await user.click(cancelButton);
 
       expect(mockCloseModal).toHaveBeenCalledWith(

@@ -46,7 +46,7 @@ describe("useEditPatientForm", () => {
     birthDate: "1990-01-01",
     priority: "2",
     status: "A",
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     dischargeDate: null,
     nextAttendanceDates: [],
   };
@@ -291,7 +291,7 @@ describe("useEditPatientForm", () => {
         await result.current.handleSubmit(mockEvent);
       });
 
-      expect(result.current.error).toBe("Nome é obrigatório");
+      expect(result.current.error).toBe("Name is required");
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
@@ -313,7 +313,7 @@ describe("useEditPatientForm", () => {
         await result.current.handleSubmit(mockEvent);
       });
 
-      expect(result.current.error).toBe("Data de nascimento é obrigatória");
+      expect(result.current.error).toBe("Birth date is required");
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
@@ -338,7 +338,7 @@ describe("useEditPatientForm", () => {
       });
 
       expect(result.current.error).toContain(
-        "A data de alta não pode ser anterior à data do último atendimento concluído",
+        "The discharge date cannot be earlier than the date of the last completed attendance",
       );
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
@@ -385,7 +385,7 @@ describe("useEditPatientForm", () => {
       });
 
       expect(result.current.error).toBe(
-        "Telefone deve estar no formato (XX) XXXXX-XXXX",
+        "Phone must be in format (XX) XXXXX-XXXX",
       );
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
@@ -433,7 +433,7 @@ describe("useEditPatientForm", () => {
     });
   });
 
-  describe("Status change confirmation (Alta/Faltas)", () => {
+  describe("Status change confirmation (Discharged/Missed)", () => {
     it("should set pendingStatusChange when submitting with status A and openAttendancesCount > 0", async () => {
       const propsWithOpenAttendances = {
         ...defaultProps,
@@ -567,7 +567,7 @@ describe("useEditPatientForm", () => {
           name: "Test Patient",
           phone: "(11) 99999-9999",
           birthDate: "1990-01-01",
-          mainComplaint: "Test complaint",
+          mainConcern: "Test complaint",
         }),
       });
       expect(mockOnSuccess).toHaveBeenCalledWith(mockUpdatedPatient);
@@ -637,7 +637,7 @@ describe("useEditPatientForm", () => {
         await result.current.handleSubmit(mockEvent);
       });
 
-      expect(result.current.error).toBe("Erro interno do servidor");
+      expect(result.current.error).toBe("Internal server error");
       expect(result.current.isLoading).toBe(false);
       expect(mockOnSuccess).not.toHaveBeenCalled();
       expect(mockOnClose).not.toHaveBeenCalled();
@@ -689,12 +689,12 @@ describe("useEditPatientForm", () => {
       });
 
       expect(result.current.error).toBe(
-        "Não é possível excluir este paciente pois ele possui atendimentos em andamento ou concluídos. " +
-          "É permitida a exclusão apenas de pacientes sem histórico de atendimento ou com apenas atendimentos cancelados ou perdidos.",
+        "It is not possible to delete this patient because he has ongoing or completed appointments. " +
+          "Deletion is only allowed for patients without appointment history or with only canceled or missed appointments.",
       );
       expect(mockOnError).toHaveBeenCalledWith(
-        "Não é possível excluir este paciente pois ele possui atendimentos em andamento ou concluídos. " +
-          "É permitida a exclusão apenas de pacientes sem histórico de atendimento ou com apenas atendimentos cancelados ou perdidos.",
+        "It is not possible to delete this patient because he has ongoing or completed appointments. " +
+          "Deletion is only allowed for patients without appointment history or with only canceled or missed appointments.",
       );
 
       consoleErrorSpy.mockRestore();

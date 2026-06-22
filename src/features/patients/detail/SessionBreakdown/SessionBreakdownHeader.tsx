@@ -27,7 +27,7 @@ export const SessionBreakdownHeader: React.FC<SessionBreakdownHeaderProps> = ({
       title={
         <>
           <BarChart3 className="h-5 w-5 shrink-0 text-gray-600" aria-hidden />
-          Histórico dos Tratamentos
+          Treatment History
           <span className="text-sm font-normal text-gray-600">
             ({completedCount}/{totalCount})
           </span>
@@ -40,9 +40,9 @@ export const SessionBreakdownHeader: React.FC<SessionBreakdownHeaderProps> = ({
             size="xs"
             onClick={onRefresh}
             className="text-blue-600 hover:text-blue-800"
-            title="Atualizar histórico dos tratamentos"
+            title="Refresh treatment history"
           >
-            Atualizar
+            Refresh
           </Button>
         ) : null
       }

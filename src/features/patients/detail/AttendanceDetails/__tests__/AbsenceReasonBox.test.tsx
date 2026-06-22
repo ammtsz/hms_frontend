@@ -10,14 +10,14 @@ describe("AbsenceReasonBox", () => {
 
   it("renders notes when status is 'none' but reason has text", () => {
     render(<AbsenceReasonBox status="none" reason="Some observation" />);
-    expect(screen.getByText("Notas:")).toBeInTheDocument();
+    expect(screen.getByText("Notes:")).toBeInTheDocument();
     expect(screen.getByText("Some observation")).toBeInTheDocument();
   });
 
   it("renders fallback text when reason is empty", () => {
     render(<AbsenceReasonBox status="missed" reason="" />);
-    expect(screen.getByText("Motivo:")).toBeInTheDocument();
-    expect(screen.getByText("Não justificado")).toBeInTheDocument();
+    expect(screen.getByText("Reason:")).toBeInTheDocument();
+    expect(screen.getByText("Not justified")).toBeInTheDocument();
   });
 
   it("renders missed reason with correct styling", () => {
@@ -29,7 +29,7 @@ describe("AbsenceReasonBox", () => {
       />,
     );
 
-    expect(screen.getByText("Motivo:")).toBeInTheDocument();
+    expect(screen.getByText("Reason:")).toBeInTheDocument();
     expect(screen.getByText("Patient was sick")).toBeInTheDocument();
 
     const outerDiv = container.firstChild as HTMLElement;
@@ -46,7 +46,7 @@ describe("AbsenceReasonBox", () => {
       />,
     );
 
-    expect(screen.getByText("Falta justificada:")).toBeInTheDocument();
+    expect(screen.getByText("Justified absence:")).toBeInTheDocument();
     expect(screen.getByText("Medical emergency")).toBeInTheDocument();
   });
 
@@ -58,7 +58,7 @@ describe("AbsenceReasonBox", () => {
       />,
     );
 
-    expect(screen.getByText("Motivo:")).toBeInTheDocument();
+    expect(screen.getByText("Reason:")).toBeInTheDocument();
     expect(
       screen.getByText("Patient requested cancellation"),
     ).toBeInTheDocument();

@@ -7,7 +7,7 @@ jest.mock("@/utils/timezoneDate", () => ({
 
 describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () => {
   const futureDate = "2026-03-15"; // Future date for scheduled attendances
-  
+
   it("should merge assessment and treatment attendances on the same date", () => {
     // Simulate a assessment consultation and treatment sessions on the same date
     const scheduledAttendances = [
@@ -37,9 +37,9 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
         consultationId: 1,
         attendanceId: 100,
         treatmentType: "physiotherapy",
-        bodyLocation: "Cabeça",
+        bodyLocation: "Head",
         startDate: "2026-02-20",
-        color: "Azul",
+        color: "Blue",
         durationMinutes: 15,
         plannedSessions: 5,
         completedSessions: 0,
@@ -68,22 +68,24 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
 
     const result = groupScheduledAttendancesByDate(
       scheduledAttendances,
-      treatments
+      treatments,
     );
 
     expect(result).toHaveLength(1);
     expect(result[0].date).toBe(futureDate);
-    
+
     // Should have BOTH assessment and physiotherapy treatments
     expect(result[0].treatments.assessment).toBeDefined();
     expect(result[0].treatments.assessment?.isScheduled).toBe(true);
-    expect(result[0].treatments.assessment?.notes).toBe("Follow-up consultation");
-    
+    expect(result[0].treatments.assessment?.notes).toBe(
+      "Follow-up consultation",
+    );
+
     expect(result[0].treatments.physiotherapy).toBeDefined();
-    expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual([
-      { bodyLocation: "Cabeça", color: "Azul" },
-    ]);
-    expect(result[0].treatments.physiotherapy?.color).toBe("Azul");
+    expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual(
+      [{ bodyLocation: "Head", color: "Blue" }],
+    );
+    expect(result[0].treatments.physiotherapy?.color).toBe("Blue");
     expect(result[0].treatments.physiotherapy?.sessionNumber).toBe("1/5");
   });
 
@@ -121,9 +123,9 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
         consultationId: 1,
         attendanceId: 100,
         treatmentType: "physiotherapy",
-        bodyLocation: "Braço Esquerdo",
+        bodyLocation: "Left Arm",
         startDate: "2026-02-20",
-        color: "Verde",
+        color: "Green",
         durationMinutes: 10,
         plannedSessions: 3,
         completedSessions: 0,
@@ -153,7 +155,7 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
         consultationId: 1,
         attendanceId: 101,
         treatmentType: "tens",
-        bodyLocation: "Perna Direita",
+        bodyLocation: "Right Leg",
         startDate: "2026-02-20",
         durationMinutes: 0,
         plannedSessions: 7,
@@ -183,21 +185,21 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
 
     const result = groupScheduledAttendancesByDate(
       scheduledAttendances,
-      treatments
+      treatments,
     );
 
     expect(result).toHaveLength(1);
     expect(result[0].date).toBe(futureDate);
-    
+
     // Should have ALL THREE treatment types
     expect(result[0].treatments.assessment).toBeDefined();
     expect(result[0].treatments.physiotherapy).toBeDefined();
     expect(result[0].treatments.tens).toBeDefined();
-    
-    expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual([
-      { bodyLocation: "Braço Esquerdo", color: "Verde" },
-    ]);
-    expect(result[0].treatments.tens?.bodyLocations).toEqual(["Perna Direita"]);
+
+    expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual(
+      [{ bodyLocation: "Left Arm", color: "Green" }],
+    );
+    expect(result[0].treatments.tens?.bodyLocations).toEqual(["Right Leg"]);
   });
 
   it("should handle multiple body locations for same treatment type on same date", () => {
@@ -218,9 +220,9 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
         consultationId: 1,
         attendanceId: 100,
         treatmentType: "physiotherapy",
-        bodyLocation: "Cabeça",
+        bodyLocation: "Head",
         startDate: "2026-02-20",
-        color: "Azul",
+        color: "Blue",
         durationMinutes: 15,
         plannedSessions: 5,
         completedSessions: 1,
@@ -250,9 +252,9 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
         consultationId: 1,
         attendanceId: 101,
         treatmentType: "physiotherapy",
-        bodyLocation: "Braço Direito",
+        bodyLocation: "Right Arm",
         startDate: "2026-02-20",
-        color: "Azul",
+        color: "Blue",
         durationMinutes: 15,
         plannedSessions: 5,
         completedSessions: 1,
@@ -281,18 +283,20 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
 
     const result = groupScheduledAttendancesByDate(
       scheduledAttendances,
-      treatments
+      treatments,
     );
 
     expect(result).toHaveLength(1);
     expect(result[0].treatments.physiotherapy).toBeDefined();
-    expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toHaveLength(2);
+    expect(
+      result[0].treatments.physiotherapy?.bodyLocationsWithColors,
+    ).toHaveLength(2);
     const lbLocs =
       result[0].treatments.physiotherapy?.bodyLocationsWithColors?.map(
-        (e) => e.bodyLocation
+        (e) => e.bodyLocation,
       ) ?? [];
-    expect(lbLocs).toContain("Cabeça");
-    expect(lbLocs).toContain("Braço Direito");
+    expect(lbLocs).toContain("Head");
+    expect(lbLocs).toContain("Right Arm");
     expect(result[0].treatments.physiotherapy?.sessionNumber).toBe("2/5"); // Same session number
   });
 
@@ -322,7 +326,7 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
 
     const result = groupScheduledAttendancesByDate(
       scheduledAttendances,
-      treatments
+      treatments,
     );
 
     expect(result).toHaveLength(1);
@@ -353,7 +357,7 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
 
     const result = groupScheduledAttendancesByDate(
       scheduledAttendances,
-      treatments
+      treatments,
     );
 
     // With date+status key, same date with different statuses yield separate entries
@@ -365,7 +369,7 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
 
   it("should only show today's attendances with scheduled status", () => {
     const today = "2026-02-20"; // Current date
-    
+
     const scheduledAttendances = [
       {
         date: today,
@@ -389,7 +393,7 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
 
     const result = groupScheduledAttendancesByDate(
       scheduledAttendances,
-      treatments
+      treatments,
     );
 
     // With date+status key: scheduled and cancelled are separate entries; filter keeps only scheduled for today
@@ -426,14 +430,14 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
         consultationId: 1,
         attendanceId: 37,
         treatmentType: "physiotherapy",
-        bodyLocation: "Intestino",
+        bodyLocation: "Abdomen",
         startDate: "2026-02-20",
-        color: "Azul",
+        color: "Blue",
         durationMinutes: 15,
         plannedSessions: 2,
         completedSessions: 0,
         status: "scheduled",
-        notes: "Fisioterapia - Azul - 1 unidade(s)",
+        notes: "Physiotherapy - Blue - 1 units(s)",
         patientId: 1,
         createdDate: "2026-02-20",
         createdTime: "10:00:00",
@@ -470,7 +474,7 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
 
     const result = groupScheduledAttendancesByDate(
       scheduledAttendances,
-      treatments
+      treatments,
     );
 
     // Should have 2 grouped attendances, one for each date
@@ -481,17 +485,17 @@ describe("groupScheduledAttendancesByDate - Multiple Attendances Same Date", () 
     expect(firstDate).toBeDefined();
     expect(firstDate?.treatments.physiotherapy).toBeDefined();
     expect(firstDate?.treatments.physiotherapy?.sessionNumber).toBe("1/2");
-    expect(firstDate?.treatments.physiotherapy?.bodyLocationsWithColors).toEqual([
-      { bodyLocation: "Intestino", color: "Azul" },
-    ]);
+    expect(
+      firstDate?.treatments.physiotherapy?.bodyLocationsWithColors,
+    ).toEqual([{ bodyLocation: "Abdomen", color: "Blue" }]);
 
     // Second date (2026-03-06) should have session 2/2
     const secondDate = result.find((a) => a.date === "2026-03-06");
     expect(secondDate).toBeDefined();
     expect(secondDate?.treatments.physiotherapy).toBeDefined();
     expect(secondDate?.treatments.physiotherapy?.sessionNumber).toBe("2/2");
-    expect(secondDate?.treatments.physiotherapy?.bodyLocationsWithColors).toEqual([
-      { bodyLocation: "Intestino", color: "Azul" },
-    ]);
+    expect(
+      secondDate?.treatments.physiotherapy?.bodyLocationsWithColors,
+    ).toEqual([{ bodyLocation: "Abdomen", color: "Blue" }]);
   });
 });

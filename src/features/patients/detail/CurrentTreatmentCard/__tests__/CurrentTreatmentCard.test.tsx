@@ -85,10 +85,10 @@ jest.mock("@/api/query/hooks/useConsultationQueries", () => ({
 
 const mockPatient: Patient = {
   id: "1",
-  name: "João Silva",
+  name: "John Smith",
   phone: "(11) 99999-9999",
   birthDate: "1980-05-15",
-  mainComplaint: "Dores de cabeça frequentes",
+  mainConcern: "Frequent headaches",
   status: "A",
   priority: "2",
   startDate: "2024-01-15",
@@ -102,9 +102,9 @@ const mockPatient: Patient = {
   ],
   currentRecommendations: {
     date: "2024-12-20",
-    food: "Leve",
-    water: "2L/dia",
-    ointment: "Aplicar 2x/dia",
+    food: "Light meals",
+    water: "2L/day",
+    ointment: "Apply 2x daily",
     physiotherapy: true,
     tens: false,
     returnWeeks: 2,
@@ -119,14 +119,14 @@ const mockTreatmentPlan = {
   attendanceId: 1,
   patientId: 1,
   treatmentType: "physiotherapy" as const,
-  bodyLocation: "Cabeça",
+  bodyLocation: "Head",
   startDate: "2025-01-01",
   plannedSessions: 10,
   completedSessions: 3,
   status: "active" as const,
   durationMinutes: 30,
-  color: "azul",
-  notes: "Tratamento indo bem",
+  color: "blue",
+  notes: "Treatment going well",
   sessions: [],
   createdAt: "2025-01-01T10:00:00Z",
   updatedAt: "2025-01-01T10:00:00Z",
@@ -134,8 +134,8 @@ const mockTreatmentPlan = {
 
 // Mock dateHelpers (used by TreatmentStatusOverview and others)
 jest.mock("@/utils/dateUtils", () => ({
-  formatDateBR: (date: string) => {
-    return new Date(date).toLocaleDateString("pt-BR");
+  formatDisplayDate: (date: string) => {
+    return new Date(date).toLocaleDateString("en-US");
   },
   getDaysOverdue: () => 0,
 }));
@@ -174,52 +174,60 @@ describe("CurrentTreatmentCard", () => {
   it("renders treatment card with correct title", () => {
     renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
-    expect(screen.getByText("Status do Tratamento")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Treatment Status|Treatment Status/),
+    ).toBeInTheDocument();
   });
 
   it("displays treatment timeline information", () => {
     renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
-    expect(screen.getByText("Data de Cadastro")).toBeInTheDocument();
-    expect(screen.getByText("Próximo Atendimento")).toBeInTheDocument();
-    // Patient with status "A" shows "Alta recebida em"; others show "Alta Prevista"
-    expect(screen.getByText(/Alta/)).toBeInTheDocument();
+    expect(screen.getByText("Registration Date")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Next Appointment|Next Appointment/),
+    ).toBeInTheDocument();
+    // Patient with status "A" shows "Discharged on"; others show "Expected Discharge"
+    expect(screen.getByText(/Discharged on/)).toBeInTheDocument();
   });
 
   it("shows discharge date when available", () => {
     renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
     // Should show the formatted discharge date
-    expect(screen.queryByText("Não definida")).not.toBeInTheDocument();
+    expect(screen.queryByText("Not set")).not.toBeInTheDocument();
   });
 
-  it('shows "Não definida" when discharge date is null', () => {
+  it('shows "Not set" when discharge date is null', () => {
     const patientWithoutDischarge = { ...mockPatient, dischargeDate: null };
     renderWithClient(
       <CurrentTreatmentCard patient={patientWithoutDischarge} />,
     );
 
-    expect(screen.getByText("Não definida")).toBeInTheDocument();
+    expect(screen.getByText("Not set")).toBeInTheDocument();
   });
 
   it("displays current recommendations section", () => {
     renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
-    expect(screen.getByText(/Últimas Recomendações/)).toBeInTheDocument();
-    expect(screen.getByText("🍎 Alimentação:")).toBeInTheDocument();
-    expect(screen.getByText("💧 Água:")).toBeInTheDocument();
-    expect(screen.getByText("🧴 Pomada:")).toBeInTheDocument();
-    // Note: Treatment sections like "Fisioterapia" and "TENS" are only shown
+    expect(
+      screen.getByText(
+        /Latest Recommendations|Latest Recommendations|Recommendations/,
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByText("🍎 Food:")).toBeInTheDocument();
+    expect(screen.getByText("💧 Water:")).toBeInTheDocument();
+    expect(screen.getByText("🧴 Ointment:")).toBeInTheDocument();
+    // Note: Treatment sections like "Physiotherapy" and "TENS" are only shown
     // in recommendations when there are active treatment sessions
   });
 
   it("displays recommendation values correctly", () => {
     renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
-    expect(screen.getByText("Leve")).toBeInTheDocument();
-    expect(screen.getByText("2L/dia")).toBeInTheDocument();
-    expect(screen.getByText("Aplicar 2x/dia")).toBeInTheDocument();
-    expect(screen.getByText("2 semanas")).toBeInTheDocument();
+    expect(screen.getByText("Light meals")).toBeInTheDocument();
+    expect(screen.getByText("2L/day")).toBeInTheDocument();
+    expect(screen.getByText("Apply 2x daily")).toBeInTheDocument();
+    expect(screen.getByText(/2 weeks|2 weeks/)).toBeInTheDocument();
   });
 
   it("shows treatment status badges with correct active/inactive states", () => {
@@ -236,7 +244,7 @@ describe("CurrentTreatmentCard", () => {
     // The UI now displays treatments as lists in recommendations when there are active sessions
     // Verify the active treatment section shows up
     expect(
-      screen.getByText(/Progresso dos Tratamentos Ativos/),
+      screen.getByText(/Active Treatments Progress|Active Treatments Progress/),
     ).toBeInTheDocument();
   });
 
@@ -254,7 +262,9 @@ describe("CurrentTreatmentCard", () => {
     // The new format displays treatments as active treatment lists in recommendations section
     // when there are active treatment sessions
     expect(
-      screen.getByText(/Fisioterapia \(1 tratamento ativo\):/),
+      screen.getByText(
+        /Physiotherapy \(1 active treatment\):|Physiotherapy \(1 active treatment\):/,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -275,7 +285,7 @@ describe("CurrentTreatmentCard", () => {
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
       // Physiotherapy section is expanded by default; cancel buttons are visible
-      const cancelButtons = screen.getAllByTitle(/Cancelar tratamento/);
+      const cancelButtons = screen.getAllByTitle(/Cancel treatment/);
       expect(cancelButtons.length).toBeGreaterThan(0);
     });
 
@@ -294,20 +304,18 @@ describe("CurrentTreatmentCard", () => {
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
       // Physiotherapy section is expanded by default
-      const cancelButton = screen.getAllByTitle(/Cancelar tratamento/)[0];
+      const cancelButton = screen.getAllByTitle(/Cancel treatment/)[0];
       fireEvent.click(cancelButton);
 
       // Verify confirmation modal is shown with checkbox list
-      const modalTitles = screen.getAllByText("Cancelar Tratamento");
+      const modalTitles = screen.getAllByText(
+        /Cancel Treatment|Cancel Treatment/,
+      );
       expect(modalTitles.length).toBeGreaterThan(0);
       expect(
-        screen.getByText(
-          /Os tratamentos selecionados ficarão marcados como cancelados/,
-        ),
+        screen.getByText(/selected treatments will be marked as canceled/i),
       ).toBeInTheDocument();
-      expect(
-        screen.getByText(/Selecione os tratamentos de/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Select the treatments of/i)).toBeInTheDocument();
       // One checkbox per treatment (session), pre-selected
       const checkboxes = screen.getAllByRole("checkbox");
       expect(checkboxes).toHaveLength(1);
@@ -315,21 +323,21 @@ describe("CurrentTreatmentCard", () => {
 
       // Fill cancellation reason (required to enable confirm button)
       const reasonInput = screen.getByPlaceholderText(
-        /Digite o motivo do cancelamento/,
+        /Enter the reason for cancellation/,
       );
       fireEvent.change(reasonInput, { target: { value: "Test reason" } });
 
       // Click confirm button in modal (label shows count)
       const confirmButton = screen.getByRole("button", {
-        name: "Cancelar 1 tratamento",
+        name: /Cancel 1 treatment/i,
       });
       fireEvent.click(confirmButton);
 
-      // Wait for the cancellation to be called (component prefixes with "Tratamento cancelado - ")
+      // Wait for the cancellation to be called (component prefixes with "Treatment cancelled - ")
       await waitFor(() => {
         expect(mockMutateAsync).toHaveBeenCalledWith({
           treatmentIds: [1],
-          cancellationReason: "Tratamento cancelado - Test reason",
+          cancellationReason: "Treatment cancelled - Test reason",
         });
         expect(mockRefetch).toHaveBeenCalled();
       });
@@ -347,25 +355,23 @@ describe("CurrentTreatmentCard", () => {
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
       // Physiotherapy section is expanded by default
-      const cancelButton = screen.getAllByTitle(/Cancelar tratamento/)[0];
+      const cancelButton = screen.getAllByTitle(/Cancel treatment/)[0];
       fireEvent.click(cancelButton);
 
       // Verify confirmation modal is shown
-      const modalTitles = screen.getAllByText("Cancelar Tratamento");
+      const modalTitles = screen.getAllByText("Cancel Treatment");
       expect(modalTitles.length).toBeGreaterThan(0);
 
       // Click cancel button in modal
       const cancelConfirmButton = screen.getByRole("button", {
-        name: "Voltar",
+        name: "Back",
       });
       fireEvent.click(cancelConfirmButton);
 
       // Verify modal is closed - check that the text is no longer in the document
       await waitFor(() => {
         expect(
-          screen.queryByText(
-            /Os tratamentos selecionados ficarão marcados como cancelados/,
-          ),
+          screen.queryByText(/selected treatments will be marked as canceled/i),
         ).not.toBeInTheDocument();
       });
 
@@ -389,20 +395,20 @@ describe("CurrentTreatmentCard", () => {
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
       // Physiotherapy section is expanded by default
-      const cancelButton = screen.getAllByTitle(/Cancelar tratamento/)[0];
+      const cancelButton = screen.getAllByTitle(/Cancel treatment/)[0];
       fireEvent.click(cancelButton);
 
       // Find and fill the cancellation reason textarea
       const reasonTextarea = screen.getByPlaceholderText(
-        /Digite o motivo do cancelamento/,
+        /Enter the reason for cancellation/,
       );
       fireEvent.change(reasonTextarea, {
-        target: { value: "Paciente solicitou cancelamento" },
+        target: { value: "Patient requested cancellation" },
       });
 
       // Click confirm button in modal (label shows count)
       const confirmButton = screen.getByRole("button", {
-        name: "Cancelar 1 tratamento",
+        name: "Cancel 1 treatment",
       });
       fireEvent.click(confirmButton);
 
@@ -411,7 +417,7 @@ describe("CurrentTreatmentCard", () => {
         expect(mockMutateAsync).toHaveBeenCalledWith({
           treatmentIds: [1],
           cancellationReason:
-            "Tratamento cancelado - Paciente solicitou cancelamento",
+            "Treatment cancelled - Patient requested cancellation",
         });
         expect(mockRefetch).toHaveBeenCalled();
       });
@@ -421,7 +427,7 @@ describe("CurrentTreatmentCard", () => {
       // Mock the hook to return an error state
       (useCancelTreatments as jest.Mock).mockReturnValue({
         isPending: false,
-        error: { message: "Erro ao cancelar sessão" },
+        error: { message: "Error cancelling session" },
         mutateAsync: mockMutateAsync,
       });
 
@@ -430,7 +436,7 @@ describe("CurrentTreatmentCard", () => {
       // Should display the error message
       expect(
         screen.getByText(
-          "Erro ao cancelar tratamento: Erro ao cancelar sessão",
+          "Error cancelling treatment: Error cancelling session",
         ),
       ).toBeInTheDocument();
     });
@@ -454,7 +460,7 @@ describe("CurrentTreatmentCard", () => {
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
       // Physiotherapy section is expanded by default
-      const cancelButtons = screen.getAllByTitle(/Cancelar tratamento/);
+      const cancelButtons = screen.getAllByTitle(/Cancel treatment/);
       expect(cancelButtons[0]).toBeDisabled();
     });
 
@@ -473,7 +479,7 @@ describe("CurrentTreatmentCard", () => {
 
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
-      const cancelButton = screen.getAllByTitle(/Cancelar tratamento/)[0];
+      const cancelButton = screen.getAllByTitle(/Cancel treatment/)[0];
       fireEvent.click(cancelButton);
 
       const checkboxes = screen.getAllByRole("checkbox");
@@ -484,7 +490,7 @@ describe("CurrentTreatmentCard", () => {
       fireEvent.click(checkboxes[0]);
 
       const confirmButton = screen.getByRole("button", {
-        name: "Cancelar Tratamento",
+        name: "Cancel Treatment",
       });
       expect(confirmButton).toBeDisabled();
       expect(mockMutateAsync).not.toHaveBeenCalled();
@@ -496,7 +502,7 @@ describe("CurrentTreatmentCard", () => {
       const secondSession = {
         ...mockTreatmentPlan,
         id: 2,
-        bodyLocation: "Pescoço",
+        bodyLocation: "Neck",
       };
       (useTreatmentsByPatient as jest.Mock).mockReturnValue({
         treatments: [mockTreatmentPlan, secondSession],
@@ -512,9 +518,9 @@ describe("CurrentTreatmentCard", () => {
 
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
-      // Click cancel (grouped card shows "Cancelar tratamentos" button by text)
+      // Click cancel (grouped card shows "Cancel treatments" button by text)
       const cancelButtons = screen.getAllByRole("button", {
-        name: /Cancelar tratamento/,
+        name: /Cancel treatment/,
       });
       expect(cancelButtons.length).toBeGreaterThan(0);
       fireEvent.click(cancelButtons[0]);
@@ -529,12 +535,12 @@ describe("CurrentTreatmentCard", () => {
 
       // Fill cancellation reason (required to enable confirm button)
       const reasonInput = screen.getByPlaceholderText(
-        /Digite o motivo do cancelamento/,
+        /Enter the reason for cancellation/,
       );
       fireEvent.change(reasonInput, { target: { value: "Test reason" } });
 
       const confirmButton = screen.getByRole("button", {
-        name: /Cancelar \d+ tratamento/,
+        name: /Cancel \d+ treatment/,
       });
       fireEvent.click(confirmButton);
 
@@ -572,7 +578,7 @@ describe("CurrentTreatmentCard", () => {
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
       // Both Physiotherapy and TENS sections are expanded by default
-      const cancelButtons = screen.getAllByTitle(/Cancelar tratamento/);
+      const cancelButtons = screen.getAllByTitle(/Cancel treatment/);
       expect(cancelButtons.length).toBeGreaterThanOrEqual(1);
 
       // Verify cancel buttons are present and enabled
@@ -588,13 +594,13 @@ describe("CurrentTreatmentCard", () => {
       id: 1,
       attendanceId: 123, // This should match one of the patient's attendance IDs
       patientId: "1",
-      food: "Evitar carne vermelha",
-      water: "Beber água energizada",
-      ointments: "Aplicar pomada de arnica",
+      food: "Avoid red meat",
+      water: "Drink water",
+      ointments: "Apply arnica ointment",
       physiotherapy: true,
       tens: false,
       returnWeeks: 4,
-      notes: "Paciente respondendo bem ao tratamento",
+      notes: "Patient responding well to treatment",
       // createdDate is intentionally different from the attendance date (2024-10-25)
       // so the header uses the attendance date, not consultation `createdDate`
       createdDate: "2024-12-15",
@@ -620,7 +626,7 @@ describe("CurrentTreatmentCard", () => {
             attendanceId: "123", // Matches consultation.attendanceId
             date: "2024-10-25",
             type: "assessment",
-            notes: "Primeira consulta",
+            notes: "First consultation",
             recommendations: null,
             createdDate: "2024-10-25T10:00:00.000Z",
             updatedDate: "2024-10-25T10:00:00.000Z",
@@ -642,23 +648,23 @@ describe("CurrentTreatmentCard", () => {
       );
 
       // Recommendations come from persisted consultation (food / water / ointments)
-      expect(screen.getByText("Evitar carne vermelha")).toBeInTheDocument();
-      expect(screen.getByText("Beber água energizada")).toBeInTheDocument();
-      expect(screen.getByText("Aplicar pomada de arnica")).toBeInTheDocument();
+      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
+      expect(screen.getByText("Drink water")).toBeInTheDocument();
+      expect(screen.getByText("Apply arnica ointment")).toBeInTheDocument();
 
-      // The new format displays treatments as lists in "Últimas Recomendações"
+      // The new format displays treatments as lists in "Latest Recommendations"
       // Physiotherapy and tens treatments are shown as lists with details
       // Check for the treatment section headings
       expect(
-        screen.getByText(/Fisioterapia \(\d+ tratamento ativo\):/),
+        screen.getByText(/Physiotherapy \(\d+ active treatment\):/),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/TENS \(\d+ tratamento ativo\):/),
+        screen.getByText(/TENS \(\d+ active treatment\):/),
       ).toBeInTheDocument();
 
       // Notes from consultation
       expect(
-        screen.getByText("Paciente respondendo bem ao tratamento"),
+        screen.getByText("Patient responding well to treatment"),
       ).toBeInTheDocument();
 
       // Note: returnWeeks display behavior is tested separately
@@ -695,10 +701,9 @@ describe("CurrentTreatmentCard", () => {
         <CurrentTreatmentCard patient={patientWithAttendance} />,
       );
 
-      const header = screen.getByText(/Últimas Recomendações/);
-      // Header should contain the attendance date month (June = /06/)
+      const header = screen.getByText(/Latest Recommendations/);
       // Header shows attendance month (June), not consultation createdDate (December)
-      expect(header.textContent).toMatch(/\/06\//);
+      expect(header.textContent).toMatch(/Latest Recommendations \(0?6\//);
       expect(header.textContent).not.toMatch(/\/12\//);
     });
 
@@ -714,9 +719,9 @@ describe("CurrentTreatmentCard", () => {
         ...mockPatient,
         currentRecommendations: {
           date: "2024-10-25",
-          food: "Dieta leve",
-          water: "Água comum",
-          ointment: "Nenhuma pomada",
+          food: "Light meals",
+          water: "Regular water",
+          ointment: "No ointment",
           physiotherapy: false,
           tens: true,
           returnWeeks: 2,
@@ -728,10 +733,10 @@ describe("CurrentTreatmentCard", () => {
       );
 
       // Verify fallback to patient recommendations
-      expect(screen.getByText("Dieta leve")).toBeInTheDocument();
-      expect(screen.getByText("Água comum")).toBeInTheDocument();
-      expect(screen.getByText("Nenhuma pomada")).toBeInTheDocument();
-      expect(screen.getByText("2 semanas")).toBeInTheDocument();
+      expect(screen.getByText("Light meals")).toBeInTheDocument();
+      expect(screen.getByText("Regular water")).toBeInTheDocument();
+      expect(screen.getByText("No ointment")).toBeInTheDocument();
+      expect(screen.getByText("2 weeks")).toBeInTheDocument();
     });
 
     it("should handle loading state for consultations query", () => {
@@ -745,7 +750,7 @@ describe("CurrentTreatmentCard", () => {
       renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
       // Component should still render without errors during loading
-      expect(screen.getByText(/Status do Tratamento$/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment Status$/)).toBeInTheDocument();
     });
   });
 });

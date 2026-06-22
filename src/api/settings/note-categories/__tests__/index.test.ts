@@ -30,7 +30,7 @@ describe("Settings note categories API", () => {
             id: 1,
             isActive: true,
             value: "general",
-            label: "Geral",
+            label: "General",
             sortOrder: 1,
             type: "note_category",
             createdAt: "2026-01-01",
@@ -65,7 +65,7 @@ describe("Settings note categories API", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Erro ao carregar categorias de notas",
+        error: "Failed to load note categories",
       });
     });
   });
@@ -76,7 +76,7 @@ describe("Settings note categories API", () => {
         id: 1,
         isActive: true,
         value: "general",
-        label: "Geral",
+        label: "General",
         sortOrder: 1,
         type: "note_category",
         createdAt: "2026-01-01",
@@ -87,13 +87,13 @@ describe("Settings note categories API", () => {
 
       const result = await createNoteCategory({
         value: "general",
-        label: "Geral",
+        label: "General",
         sortOrder: 1,
       });
 
       expect(mockApi.post).toHaveBeenCalledWith("/settings/note-categories", {
         value: "general",
-        label: "Geral",
+        label: "General",
         sortOrder: 1,
       });
       expect(result).toEqual({ success: true, value: mockValue });
@@ -119,7 +119,7 @@ describe("Settings note categories API", () => {
         id: 1,
         isActive: true,
         value: "general2",
-        label: "Geral2",
+        label: "General2",
         sortOrder: 1,
         type: "note_category",
         createdAt: "2026-01-01",
@@ -130,12 +130,12 @@ describe("Settings note categories API", () => {
 
       const result = await updateNoteCategory(1, {
         value: "general2",
-        label: "Geral2",
+        label: "General2",
       });
 
       expect(mockApi.patch).toHaveBeenCalledWith(
         "/settings/note-categories/1",
-        { value: "general2", label: "Geral2" },
+        { value: "general2", label: "General2" },
       );
       expect(result).toEqual({ success: true, value: mockValue });
     });
@@ -147,7 +147,7 @@ describe("Settings note categories API", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Erro ao atualizar categoria de notas",
+        error: "Failed to update note category",
       });
     });
   });
@@ -171,7 +171,7 @@ describe("Settings note categories API", () => {
 
       expect(result).toEqual({
         success: false,
-        error: "Erro ao excluir categoria de notas",
+        error: "Failed to delete note category",
       });
     });
   });

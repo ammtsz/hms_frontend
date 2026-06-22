@@ -2,6 +2,7 @@ import { BFF_SECRET_HEADER } from '../getBffSecretHeaders';
 
 describe('getBffSecretHeaders', () => {
   const originalEnv = process.env;
+  let restoreNodeEnv: (() => void) | undefined;
 
   beforeEach(() => {
     jest.resetModules();
@@ -9,13 +10,23 @@ describe('getBffSecretHeaders', () => {
     delete process.env.BFF_INTERNAL_SECRET;
   });
 
+  afterEach(() => {
+    restoreNodeEnv?.();
+    restoreNodeEnv = undefined;
+  });
+
   afterAll(() => {
     process.env = originalEnv;
   });
 
+  function setNodeEnv(value: 'development' | 'production' | 'test'): void {
+    restoreNodeEnv?.();
+    restoreNodeEnv = jest.replaceProperty(process.env, 'NODE_ENV', value).restore;
+  }
+
   it('returns the secret header when BFF_INTERNAL_SECRET is set', async () => {
     process.env.BFF_INTERNAL_SECRET = 'test-secret';
-    process.env.NODE_ENV = 'development';
+    setNodeEnv('development');
     const { getBffSecretHeaders } = await import('../getBffSecretHeaders');
     expect(getBffSecretHeaders()).toEqual({
       [BFF_SECRET_HEADER]: 'test-secret',
@@ -23,13 +34,13 @@ describe('getBffSecretHeaders', () => {
   });
 
   it('returns empty object in development when secret is absent', async () => {
-    process.env.NODE_ENV = 'development';
+    setNodeEnv('development');
     const { getBffSecretHeaders } = await import('../getBffSecretHeaders');
     expect(getBffSecretHeaders()).toEqual({});
   });
 
   it('throws in production when secret is absent', async () => {
-    process.env.NODE_ENV = 'production';
+    setNodeEnv('production');
     const { getBffSecretHeaders } = await import('../getBffSecretHeaders');
     expect(() => getBffSecretHeaders()).toThrow(
       'BFF_INTERNAL_SECRET environment variable must be set in production',

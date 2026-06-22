@@ -1,6 +1,6 @@
 import React from "react";
 import { Ban, AlertTriangle } from "lucide-react";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import {
   getAbsenceStyles,
   getAbsenceStatus,
@@ -11,7 +11,7 @@ interface AttendanceDateHeaderProps {
   date: string;
   status: string;
   treatmentTypeLabel: string;
-  daysUntilText?: string; // Optional: "hoje", "amanhã", "em 5 dias"
+  daysUntilText?: string; // Optional: "today", "tomorrow", "in 5 days"
 }
 
 /**
@@ -40,7 +40,7 @@ export const AttendanceDateHeader: React.FC<AttendanceDateHeaderProps> = ({
               className={`inline mr-1 ${styles.iconColor}`}
             />
           )}
-          {formatDateBR(date)}
+          {formatDisplayDate(date)}
           {daysUntilText && absenceStatus === "none" && (
             <span className="ml-2 text-sm font-normal text-gray-600">
               ({daysUntilText})
@@ -48,12 +48,12 @@ export const AttendanceDateHeader: React.FC<AttendanceDateHeaderProps> = ({
           )}
           {absenceStatus === "cancelled" && (
             <span className={`ml-2 text-sm font-normal ${styles.labelColor}`}>
-              (CANCELADO)
+              (CANCELLED)
             </span>
           )}
           {absenceStatus === "missed" && (
             <span className={`ml-2 text-sm font-normal ${styles.labelColor}`}>
-              (FALTA)
+              (MISSED)
             </span>
           )}
         </div>

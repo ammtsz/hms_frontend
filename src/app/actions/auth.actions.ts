@@ -19,6 +19,7 @@ import {
   resolveClientErrorMessage,
   type ClientErrorBody,
 } from '@/api/utils/functions';
+import { AUTH_ERROR_MESSAGES } from '@/utils/authFormLabels';
 
 // Server-only backend URL (H3): uses private API_URL, never exposes NEXT_PUBLIC_API_URL
 const BACKEND_URL = getBackendUrl();
@@ -48,7 +49,7 @@ export async function loginAction(
       return {
         success: false,
         error: resolveClientErrorMessage(response.status, errorData, {
-          fallback401: 'Email ou senha inválidos',
+          fallback401: AUTH_ERROR_MESSAGES.invalidCredentials,
         }),
       };
     }
@@ -76,7 +77,7 @@ export async function loginAction(
     console.error('Login error:', error);
     return {
       success: false,
-      error: 'Erro ao fazer login. Tente novamente.',
+      error: AUTH_ERROR_MESSAGES.loginFailedGeneric,
     };
   }
 }

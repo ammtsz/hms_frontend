@@ -36,7 +36,7 @@ export function useHolidayManagement() {
       },
       onError: (error) => {
         console.error("Error deleting holiday:", error);
-        alert("Erro ao excluir feriado. Por favor, tente novamente.");
+        alert("Error deleting holiday. Please try again.");
         setDeletingHoliday(null);
       },
     });

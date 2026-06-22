@@ -1,5 +1,5 @@
 import { AxiosError } from 'axios';
-import { ERROR_MESSAGE } from './messages';
+import { ERROR_MESSAGE, CLIENT_ERROR_MESSAGE } from './messages';
 
 export const getErrorMessage = (status?: number): string => {
   if (status) {
@@ -24,11 +24,9 @@ export const getErrorMessage = (status?: number): string => {
   }
 };
 
-const VALIDATION_ERROR_MESSAGE =
-  'Verifique os dados informados e tente novamente.';
+const VALIDATION_ERROR_MESSAGE = CLIENT_ERROR_MESSAGE.VALIDATION;
 
-const RATE_LIMIT_MESSAGE =
-  'Muitas tentativas de login. Por favor, aguarde alguns minutos e tente novamente.';
+const RATE_LIMIT_MESSAGE = CLIENT_ERROR_MESSAGE.RATE_LIMIT;
 
 export type ClientErrorBody = {
   message?: string | string[];

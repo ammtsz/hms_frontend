@@ -9,6 +9,7 @@ import ForcePasswordChangePage from "../page";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import * as usersApi from "@/api/users";
+import { PASSWORD_CHANGE_ERROR_MESSAGES } from "@/utils/passwordChangeErrorMessages";
 
 // Mock dependencies
 jest.mock("next/navigation");
@@ -16,10 +17,15 @@ jest.mock("@/contexts/AuthContext");
 jest.mock("@/api/users");
 jest.mock("@/api/query/hooks/useUserQueries", () => ({
   useChangeOwnPassword: () => ({
-    mutateAsync: async (data: Parameters<typeof import("@/api/users").changeOwnPassword>[0]) => {
-      const { changeOwnPassword } = jest.requireMock("@/api/users") as typeof import("@/api/users");
+    mutateAsync: async (
+      data: Parameters<typeof import("@/api/users").changeOwnPassword>[0],
+    ) => {
+      const { changeOwnPassword } = jest.requireMock(
+        "@/api/users",
+      ) as typeof import("@/api/users");
       const result = await changeOwnPassword(data);
-      if (!result.success) throw new Error(result.error ?? "Erro ao alterar senha");
+      if (!result.success)
+        throw new Error(result.error ?? "Error changing password");
     },
     isPending: false,
   }),
@@ -83,16 +89,16 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       expect(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
       ).toBeInTheDocument();
       expect(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
       ).toBeInTheDocument();
       expect(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /Alterar Senha e Continuar/ }),
+        screen.getByRole("button", { name: /Change Password and Continue/ }),
       ).toBeInTheDocument();
     });
 
@@ -101,12 +107,14 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
-      expect(screen.getByText("Senha atual é obrigatória")).toBeInTheDocument();
-      expect(screen.getByText("Nova senha é obrigatória")).toBeInTheDocument();
+      expect(
+        screen.getByText("Current password is required"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("New password is required")).toBeInTheDocument();
     });
 
     it("should show error when new password is too short", async () => {
@@ -114,25 +122,25 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "current123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "short",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "short",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
       expect(
-        screen.getByText("Nova senha deve ter no mínimo 12 caracteres"),
+        screen.getByText("New password must be at least 12 characters long"),
       ).toBeInTheDocument();
     });
 
@@ -141,24 +149,24 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "current123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "ValidPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "DifferentPassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
-      expect(screen.getByText("As senhas não coincidem")).toBeInTheDocument();
+      expect(screen.getByText("Passwords do not match")).toBeInTheDocument();
     });
 
     it("should show error when new password is same as current", async () => {
@@ -166,25 +174,27 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "SamePassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "SamePassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "SamePassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
       expect(
-        screen.getByText("A nova senha deve ser diferente da atual"),
+        screen.getByText(
+          "The new password must be different from the current password",
+        ),
       ).toBeInTheDocument();
     });
   });
@@ -214,20 +224,20 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "WrongPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "NewValidPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "NewValidPassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
@@ -235,7 +245,7 @@ describe("ForcePasswordChangePage", () => {
       await waitFor(() => {
         expect(
           screen.getByText(
-            "Senha atual incorreta. 3 tentativa(s) restante(s).",
+            "Current password is incorrect. 3 attempt(s) remaining.",
           ),
         ).toBeInTheDocument();
       });
@@ -245,7 +255,7 @@ describe("ForcePasswordChangePage", () => {
 
       // Form should still be visible (not refreshed)
       expect(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
       ).toBeInTheDocument();
     });
 
@@ -260,20 +270,20 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "CorrectPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "NewValidPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "NewValidPassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
@@ -296,27 +306,25 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "SomePassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "NewValidPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "NewValidPassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(
-          screen.getByText("Network error"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("Network error")).toBeInTheDocument();
       });
 
       // Should not redirect
@@ -335,27 +343,29 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "WrongPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "NewValidPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "NewValidPassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
 
       // First submission
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(screen.getByText("Senha atual incorreta.")).toBeInTheDocument();
+        expect(
+          screen.getByText(PASSWORD_CHANGE_ERROR_MESSAGES.incorrectPassword),
+        ).toBeInTheDocument();
       });
 
       // Second submission with correct password
@@ -363,9 +373,11 @@ describe("ForcePasswordChangePage", () => {
         success: true,
       });
 
-      await user.clear(screen.getByPlaceholderText(/Digite sua senha atual/));
+      await user.clear(
+        screen.getByPlaceholderText(/Enter your current password/),
+      );
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "CorrectPassword123",
       );
 
@@ -396,13 +408,13 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       const currentPasswordInput = screen.getByPlaceholderText(
-        /Digite sua senha atual/,
+        /Enter your current password/,
       ) as HTMLInputElement;
       const newPasswordInput = screen.getByPlaceholderText(
-        /Mínimo 12 caracteres/,
+        /At least 12 characters/,
       ) as HTMLInputElement;
       const confirmPasswordInput = screen.getByPlaceholderText(
-        /Digite a senha novamente/,
+        /Enter the new password again/,
       ) as HTMLInputElement;
 
       // Initially all should be password type
@@ -411,7 +423,7 @@ describe("ForcePasswordChangePage", () => {
       expect(confirmPasswordInput.type).toBe("password");
 
       const currentToggleButton = screen.getByRole("button", {
-        name: "Mostrar senha atual",
+        name: "Show current password",
       });
 
       // Toggle current password visibility
@@ -420,7 +432,7 @@ describe("ForcePasswordChangePage", () => {
 
       // Toggle back
       await user.click(
-        screen.getByRole("button", { name: "Ocultar senha atual" }),
+        screen.getByRole("button", { name: "Hide current password" }),
       );
       expect(currentPasswordInput.type).toBe("password");
     });
@@ -439,40 +451,40 @@ describe("ForcePasswordChangePage", () => {
       });
     });
 
-    it("should show 'Fraca' for passwords shorter than 12 characters", async () => {
+    it("should show 'Weak' for passwords shorter than 12 characters", async () => {
       const user = userEvent.setup();
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "short",
       );
 
-      expect(screen.getByText(/Força: Fraca/)).toBeInTheDocument();
+      expect(screen.getByText(/Strength: Weak/)).toBeInTheDocument();
     });
 
-    it("should show 'Média' for passwords between 12-15 characters", async () => {
+    it("should show 'Medium' for passwords between 12-15 characters", async () => {
       const user = userEvent.setup();
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "Password1234",
       );
 
-      expect(screen.getByText(/Força: Média/)).toBeInTheDocument();
+      expect(screen.getByText(/Strength: Medium/)).toBeInTheDocument();
     });
 
-    it("should show 'Forte' for passwords 16+ characters", async () => {
+    it("should show 'Strong' for passwords 16+ characters", async () => {
       const user = userEvent.setup();
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "VeryStrongPassword123!",
       );
 
-      expect(screen.getByText(/Força: Forte/)).toBeInTheDocument();
+      expect(screen.getByText(/Strength: Strong/)).toBeInTheDocument();
     });
   });
 
@@ -501,27 +513,27 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "WrongPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "NewValidPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "NewValidPassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
       await waitFor(() => {
         expect(
           screen.getByText(
-            "Muitas tentativas de alteração de senha falharam. Sua conta foi bloqueada por 15 minutos.",
+            "Too many failed password change attempts. Your account has been locked for 15 minutes.",
           ),
         ).toBeInTheDocument();
       });
@@ -539,27 +551,27 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "WrongPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "NewValidPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "NewValidPassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
       await waitFor(() => {
         expect(
           screen.getByText(
-            "Muitas tentativas de alteração de senha falharam. Tente novamente em 10 minuto(s).",
+            "Too many failed password change attempts. Please try again in 10 minute(s).",
           ),
         ).toBeInTheDocument();
       });
@@ -576,28 +588,26 @@ describe("ForcePasswordChangePage", () => {
       render(<ForcePasswordChangePage />);
 
       await user.type(
-        screen.getByPlaceholderText(/Digite sua senha atual/),
+        screen.getByPlaceholderText(/Enter your current password/),
         "WrongPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Mínimo 12 caracteres/),
+        screen.getByPlaceholderText(/At least 12 characters/),
         "NewValidPassword123",
       );
       await user.type(
-        screen.getByPlaceholderText(/Digite a senha novamente/),
+        screen.getByPlaceholderText(/Enter the new password again/),
         "NewValidPassword123",
       );
 
       const submitButton = screen.getByRole("button", {
-        name: /Alterar Senha e Continuar/,
+        name: /Change Password and Continue/,
       });
       await user.click(submitButton);
 
       await waitFor(() => {
         expect(
-          screen.getByText(
-            "Senha atual incorreta. 2 tentativa(s) restante(s).",
-          ),
+          screen.getByText(PASSWORD_CHANGE_ERROR_MESSAGES.remainingAttempts(2)),
         ).toBeInTheDocument();
       });
     });

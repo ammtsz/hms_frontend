@@ -30,21 +30,21 @@ export const MultiSectionModal: React.FC = () => {
     <BaseModal
       isOpen={multiSection.isOpen}
       onClose={handleCancel}
-      title="Múltiplas Seções"
+      title="Multiple Sections"
       maxWidth="md"
     >
       <div className="p-5">
         <p className="text-sm text-gray-600 mb-6">
-          Este paciente está agendado nas duas consultas. Deseja mover para
-          &apos;Sala de Espera&apos; em ambas?
+          This patient is scheduled in both consultations. Do you want to move
+          them to &apos;Waiting Room&apos; in both?
         </p>
 
         <div className="flex flex-col-reverse justify-end gap-3 sm:flex-row">
           <Button type="button" variant="outline" onClick={handleCancel}>
-            Apenas nesta seção
+            Only in this section
           </Button>
           <Button type="button" onClick={handleConfirm}>
-            Mover em ambas
+            Move in both
           </Button>
         </div>
       </div>

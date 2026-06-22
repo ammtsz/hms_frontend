@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { PostTreatmentModalFooter } from "../PostTreatmentModalFooter";
+import { POST_TREATMENT_FOOTER_MESSAGES } from "../postTreatmentFooter.utils";
 
 const defaultProps = {
   submitError: null,
@@ -20,19 +21,21 @@ describe("PostTreatmentModalFooter", () => {
 
   it("renders ready to submit message when canSubmit is true", () => {
     render(<PostTreatmentModalFooter {...defaultProps} />);
-    expect(screen.getByText(/pronto para registrar/i)).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /registrar sessão/i }),
+      screen.getByText(POST_TREATMENT_FOOTER_MESSAGES.ready),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /cancelar/i }),
+      screen.getByRole("button", { name: /Register Session/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Cancel/i }),
     ).toBeInTheDocument();
   });
 
   it("renders mark at least one treatment message when canSubmit is false", () => {
     render(<PostTreatmentModalFooter {...defaultProps} canSubmit={false} />);
     expect(
-      screen.getByText(/marque ao menos um tratamento/i),
+      screen.getByText(POST_TREATMENT_FOOTER_MESSAGES.selectTreatment),
     ).toBeInTheDocument();
   });
 
@@ -45,10 +48,10 @@ describe("PostTreatmentModalFooter", () => {
       />,
     );
     expect(
-      screen.getByText(/justifique todos os tratamentos não realizados/i),
+      screen.getByText(POST_TREATMENT_FOOTER_MESSAGES.justifyUnperformed),
     ).toBeInTheDocument();
     expect(
-      screen.queryByText(/pronto para registrar/i),
+      screen.queryByText(POST_TREATMENT_FOOTER_MESSAGES.ready),
     ).not.toBeInTheDocument();
   });
 
@@ -56,23 +59,23 @@ describe("PostTreatmentModalFooter", () => {
     render(
       <PostTreatmentModalFooter
         {...defaultProps}
-        submitError="Erro ao enviar"
+        submitError="Error submitting"
       />,
     );
-    expect(screen.getByText("Erro ao enviar")).toBeInTheDocument();
+    expect(screen.getByText("Error submitting")).toBeInTheDocument();
   });
 
-  it("calls onClose when Cancelar is clicked", () => {
+  it("calls onClose when Cancel is clicked", () => {
     const onClose = jest.fn();
     render(<PostTreatmentModalFooter {...defaultProps} onClose={onClose} />);
-    fireEvent.click(screen.getByRole("button", { name: /cancelar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Cancel/i }));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("calls onSubmit when Registrar Sessão is clicked", () => {
+  it("calls onSubmit when Register Session is clicked", () => {
     const onSubmit = jest.fn();
     render(<PostTreatmentModalFooter {...defaultProps} onSubmit={onSubmit} />);
-    fireEvent.click(screen.getByRole("button", { name: /registrar sessão/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Register Session/i }));
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 
@@ -81,19 +84,19 @@ describe("PostTreatmentModalFooter", () => {
       <PostTreatmentModalFooter {...defaultProps} isSubmitDisabled={true} />,
     );
     expect(
-      screen.getByRole("button", { name: /registrar sessão/i }),
+      screen.getByRole("button", { name: /Register Session/i }),
     ).toBeDisabled();
   });
 
   it("disables cancel button when isSubmitting is true", () => {
     render(<PostTreatmentModalFooter {...defaultProps} isSubmitting={true} />);
-    expect(screen.getByRole("button", { name: /cancelar/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /Cancel/i })).toBeDisabled();
   });
 
-  it("shows Registrando... on submit button when isSubmitting is true", () => {
+  it("shows Registering... on submit button when isSubmitting is true", () => {
     render(<PostTreatmentModalFooter {...defaultProps} isSubmitting={true} />);
     expect(
-      screen.getByRole("button", { name: /registrando/i }),
+      screen.getByRole("button", { name: /registering/i }),
     ).toBeInTheDocument();
   });
 });

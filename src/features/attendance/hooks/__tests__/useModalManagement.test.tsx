@@ -86,7 +86,7 @@ describe("useModalManagement", () => {
   } as const;
 
   const mockTreatmentData: PostConsultationFormData = {
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     patientStatus: "T" as const,
     startDate: "2024-01-15",
     food: "Test food recommendation",
@@ -365,7 +365,7 @@ describe("useModalManagement", () => {
       // Check API calls
       expect(mockCreateMutation.mutateAsync).toHaveBeenCalledWith({
         attendanceId: 123,
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         food: "Test food recommendation",
         water: "Test water recommendation",
@@ -388,7 +388,7 @@ describe("useModalManagement", () => {
       expect(mockRefreshData).toHaveBeenCalled();
     });
 
-    it('should update patient status when treatment status is "A" (alta)', async () => {
+    it('should update patient status when treatment status is "A" (discharged)', async () => {
       const { result } = renderHook(
         () => useModalManagement({ refreshData: mockRefreshData }),
         { wrapper: createWrapper() },

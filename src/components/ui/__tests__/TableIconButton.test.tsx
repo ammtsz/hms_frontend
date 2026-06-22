@@ -17,14 +17,14 @@ describe("Table and IconButton", () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Nome</TableHead>
+              <TableHead>Name</TableHead>
               <TableHead align="center">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             <TableRow>
-              <TableCell>Paciente</TableCell>
-              <TableCell align="center">Ativo</TableCell>
+              <TableCell>Patient</TableCell>
+              <TableCell align="center">Active</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -32,8 +32,8 @@ describe("Table and IconButton", () => {
     );
 
     const table = screen.getByRole("table");
-    expect(within(table).getByText("Nome")).toBeInTheDocument();
-    expect(within(table).getByText("Paciente")).toBeInTheDocument();
+    expect(within(table).getByText("Name")).toBeInTheDocument();
+    expect(within(table).getByText("Patient")).toBeInTheDocument();
     expect(screen.getByText("Status")).toHaveClass("text-center");
   });
 
@@ -41,12 +41,12 @@ describe("Table and IconButton", () => {
     const onClick = jest.fn();
 
     render(
-      <IconButton aria-label="Editar" tone="primary" onClick={onClick}>
+      <IconButton aria-label="Edit" tone="primary" onClick={onClick}>
         E
       </IconButton>,
     );
 
-    const button = screen.getByRole("button", { name: "Editar" });
+    const button = screen.getByRole("button", { name: "Edit" });
     expect(button).toHaveClass("text-blue-600", "min-h-[44px]", "min-w-[44px]");
     fireEvent.click(button);
     expect(onClick).toHaveBeenCalledTimes(1);

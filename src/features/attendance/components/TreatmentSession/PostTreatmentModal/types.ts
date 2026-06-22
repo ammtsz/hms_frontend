@@ -22,7 +22,7 @@ export interface PostTreatmentRow {
 }
 
 export const getTreatmentTypeLabel = (type: "physiotherapy" | "tens"): string =>
-  type === "physiotherapy" ? "Fisioterapia" : "TENS";
+  type === "physiotherapy" ? "Physiotherapy" : "TENS";
 
 export const getBorderColor = (type: "physiotherapy" | "tens"): string =>
   type === "physiotherapy" ? "border-l-yellow-400" : "border-l-blue-400";

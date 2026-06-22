@@ -29,7 +29,7 @@ export interface WalkInFormData {
 export interface ParentAttendanceOption {
   id: number;
   date: string;
-  mainComplaint: string;
+  mainConcern: string;
   label: string;
 }
 
@@ -130,7 +130,7 @@ export const usePatientWalkInForm = ({
       : formData.selectedPatient;
 
     if (!name) {
-      setError("Nome do paciente é obrigatório");
+      setError("Patient name is required");
       return false;
     }
 
@@ -185,17 +185,17 @@ export const usePatientWalkInForm = ({
     }
 
     if (holidayLoading) {
-      setError("Verificando feriados. Por favor, tente novamente.");
+      setError("Checking holidays. Please try again.");
       return;
     }
 
     if (holidayError) {
-      setError("Erro ao verificar feriados. Por favor, tente novamente.");
+      setError("Error checking holidays. Please try again.");
       return;
     }
 
-    if (holidayBlockedLabels.includes("Consulta de Avaliação")) {
-      setError("Hoje é feriado e não é possível fazer check-in de Consultas de Avaliação.");
+    if (holidayBlockedLabels.includes("Assessment Consultation")) {
+      setError("Today is a holiday and check-in for Assessment Consultations is not allowed.");
       return;
     }
 
@@ -214,7 +214,7 @@ export const usePatientWalkInForm = ({
 
         if (existingPatient) {
           setError(
-            "Paciente já cadastrado. Desmarque 'Novo paciente' para selecioná-lo."
+            "Patient already registered. Uncheck 'New patient' to select them."
           );
           return;
         }
@@ -227,7 +227,7 @@ export const usePatientWalkInForm = ({
         });
 
         if (!createdPatient?.id) {
-          setError("Erro ao criar paciente: ID não retornado");
+          setError("Failed to create patient: ID not returned");
           return;
         }
 
@@ -236,7 +236,7 @@ export const usePatientWalkInForm = ({
       } else {
         const selectedPatientData = patients.find((p) => p.name === name);
         if (!selectedPatientData) {
-          setError("Paciente selecionado não encontrado.");
+          setError("Selected patient not found.");
           return;
         }
 
@@ -251,7 +251,7 @@ export const usePatientWalkInForm = ({
           ? formData.name
           : formData.selectedPatient;
         setError(
-          `Agendamento duplicado! O paciente ${patientName} já possui uma Consulta de Avaliação agendada para hoje.`
+          `Duplicate appointment! Patient ${patientName} already has an Assessment Consultation scheduled for today.`
         );
         return;
       }
@@ -274,7 +274,7 @@ export const usePatientWalkInForm = ({
       });
 
       if (!createdAttendance?.id) {
-        setError("Erro ao criar atendimento: ID não retornado");
+        setError("Failed to create attendance: ID not returned");
         await refreshCurrentDate();
         return false;
       }
@@ -284,7 +284,7 @@ export const usePatientWalkInForm = ({
         patientName: name,
       });
 
-      setSuccess("Check-in realizado com sucesso! Consulta de Avaliação agendada para hoje.");
+      setSuccess("Check-in completed successfully! Assessment Consultation scheduled for today.");
 
       await refreshCurrentDate();
 
@@ -301,7 +301,7 @@ export const usePatientWalkInForm = ({
       return true;
     } catch (error) {
       console.error("Error in handleSubmit:", error);
-      setError("Erro inesperado ao processar check-in. Tente novamente.");
+      setError("Unexpected error processing check-in. Please try again.");
       await refreshCurrentDate();
       return false;
     } finally {

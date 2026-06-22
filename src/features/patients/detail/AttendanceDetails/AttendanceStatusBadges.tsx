@@ -1,5 +1,6 @@
 import React from "react";
 import { type AbsenceStatus } from "@/utils/absenceStyles";
+import { ATTENDANCE_HISTORY_STATUS_LABELS } from "@/utils/attendanceStatusLabels";
 
 interface StatusBadge {
   label: string;
@@ -43,20 +44,20 @@ export const AttendanceStatusBadges: React.FC<AttendanceStatusBadgesProps> = ({
   if (attendanceStatus === "scheduled" || attendanceStatus === "checked_in") {
     if (isNextAppointment) {
       badges.push({
-        label: "Próximo",
+        label: ATTENDANCE_HISTORY_STATUS_LABELS.next,
         className: "bg-green-100 text-green-800 border border-green-200",
       });
     } else if (isUpcoming) {
       badges.push({
-        label: "Em breve",
+        label: ATTENDANCE_HISTORY_STATUS_LABELS.soon,
         className: "bg-orange-100 text-orange-800 border border-orange-200",
       });
     }
 
-    // Always show "Agendado" badge for scheduled status (unless cancelled)
+    // Always show "Scheduled" badge for scheduled status (unless cancelled)
     if (absenceStatus === "none") {
       badges.push({
-        label: "Agendado",
+        label: ATTENDANCE_HISTORY_STATUS_LABELS.scheduled,
         className: "bg-gray-200 text-gray-800 border border-gray-300",
       });
     }
@@ -65,12 +66,12 @@ export const AttendanceStatusBadges: React.FC<AttendanceStatusBadgesProps> = ({
   // Add absence badges
   if (absenceStatus === "cancelled") {
     badges.push({
-      label: "Cancelado",
+      label: ATTENDANCE_HISTORY_STATUS_LABELS.cancelled,
       className: "bg-orange-200 text-orange-900 border border-orange-400",
     });
   } else if (absenceStatus === "missed") {
     badges.push({
-      label: "Falta",
+      label: ATTENDANCE_HISTORY_STATUS_LABELS.missed,
       className: "bg-red-200 text-red-900 border border-red-400",
     });
   }

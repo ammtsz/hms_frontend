@@ -18,7 +18,7 @@ import {
 
 describe("BasicInfoTab", () => {
   const mockFormData: PostConsultationFormData = {
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     patientStatus: "T",
     startDate: "2024-01-01",
     returnWeeks: 4,
@@ -41,7 +41,7 @@ describe("BasicInfoTab", () => {
     priority: PatientPriority.LEVEL_3,
     patientStatus: ApiPatientStatus.NEW_PATIENT,
     birthDate: "1990-01-01",
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     startDate: "2024-01-01",
     missingAppointmentsStreak: 0,
     createdAt: "2024-01-01T00:00:00Z",
@@ -67,7 +67,7 @@ describe("BasicInfoTab", () => {
     );
 
     expect(
-      screen.getByText("Informações Básicas do Atendimento"),
+      screen.getByText("Basic Attendance Information"),
     ).toBeInTheDocument();
   });
 
@@ -82,19 +82,19 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    expect(screen.getByLabelText("Queixa / Motivo da Consulta *")).toHaveValue(
-      "Test complaint",
-    );
-    expect(screen.getByLabelText("Status do Tratamento *")).toHaveValue("T");
-    expect(screen.getByLabelText("Data de Cadastro *")).toHaveValue(
+    expect(
+      screen.getByLabelText("Main Concern / Reason for Consultation *"),
+    ).toHaveValue("Test complaint");
+    expect(screen.getByLabelText("Treatment Status *")).toHaveValue("T");
+    expect(screen.getByLabelText("Registration Date *")).toHaveValue(
       "2024-01-01",
     );
-    expect(screen.getByLabelText("Notas da Consulta")).toHaveValue(
+    expect(screen.getByLabelText("Consultation Notes")).toHaveValue(
       "Test notes",
     );
   });
 
-  it("should call onFormDataChange when main complaint changes", () => {
+  it("should call onFormDataChange when main concern changes", () => {
     render(
       <BasicInfoTab
         formData={mockFormData}
@@ -105,15 +105,15 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    const mainComplaintTextarea = screen.getByLabelText(
-      "Queixa / Motivo da Consulta *",
+    const mainConcernTextarea = screen.getByLabelText(
+      "Main Concern / Reason for Consultation *",
     );
-    fireEvent.change(mainComplaintTextarea, {
+    fireEvent.change(mainConcernTextarea, {
       target: { value: "New complaint" },
     });
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith(
-      "mainComplaint",
+      "mainConcern",
       "New complaint",
     );
   });
@@ -129,15 +129,13 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    const treatmentStatusSelect = screen.getByLabelText(
-      "Status do Tratamento *",
-    );
+    const treatmentStatusSelect = screen.getByLabelText("Treatment Status *");
     fireEvent.change(treatmentStatusSelect, { target: { value: "T" } });
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith("patientStatus", "T");
   });
 
-  it("should not display return weeks input (moved to Agendamentos Automáticos tab)", () => {
+  it("should not display return weeks input (moved to Automatic Scheduling tab)", () => {
     render(
       <BasicInfoTab
         formData={mockFormData}
@@ -150,10 +148,10 @@ describe("BasicInfoTab", () => {
 
     // ReturnWeeks field should not be in BasicInfoTab
     expect(
-      screen.queryByLabelText("Semanas para Retorno *"),
+      screen.queryByLabelText("Weeks until return *"),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByLabelText("Semanas para Retorno"),
+      screen.queryByLabelText("Weeks until return"),
     ).not.toBeInTheDocument();
   });
 
@@ -168,7 +166,7 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    const notesTextarea = screen.getByLabelText("Notas da Consulta");
+    const notesTextarea = screen.getByLabelText("Consultation Notes");
     fireEvent.change(notesTextarea, { target: { value: "New notes" } });
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith("notes", "New notes");
@@ -188,7 +186,7 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    const startDateInput = screen.getByLabelText("Data de Cadastro *");
+    const startDateInput = screen.getByLabelText("Registration Date *");
     fireEvent.change(startDateInput, { target: { value: "2024-02-01" } });
 
     expect(mockOnDateChange).toHaveBeenCalledWith("startDate");
@@ -211,12 +209,10 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    const startDateInput = screen.getByLabelText("Data de Cadastro *");
+    const startDateInput = screen.getByLabelText("Registration Date *");
     expect(startDateInput).toBeDisabled();
     expect(
-      screen.getByText(
-        "Data de cadastro não pode ser alterada (somente leitura)",
-      ),
+      screen.getByText("Registration date cannot be changed (read-only)"),
     ).toBeInTheDocument();
   });
 
@@ -231,7 +227,9 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    expect(screen.getByText("Status atual: Em Tratamento")).toBeInTheDocument();
+    expect(
+      screen.getByText("Current status: In Treatment"),
+    ).toBeInTheDocument();
   });
 
   it("should display all treatment status options", () => {
@@ -246,11 +244,11 @@ describe("BasicInfoTab", () => {
     );
 
     // Only T and A options are shown in the select dropdown
-    expect(screen.getByText("T - Em tratamento")).toBeInTheDocument();
-    expect(screen.getByText("A - Alta do tratamento")).toBeInTheDocument();
+    expect(screen.getByText("T - In treatment")).toBeInTheDocument();
+    expect(screen.getByText("A - Discharged")).toBeInTheDocument();
 
     // N and F are not shown in dropdown, but current status is displayed below the select
-    expect(screen.getByText("Status atual: Novo Paciente")).toBeInTheDocument();
+    expect(screen.getByText("Current status: New patient")).toBeInTheDocument();
   });
 
   it("should display discharge warning when appropriate", () => {
@@ -269,17 +267,15 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    expect(
-      screen.getByText(/ao selecionar "Alta do tratamento"/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Selecting "Discharged"/i)).toBeInTheDocument();
   });
 
   it("should handle different treatment statuses correctly", () => {
     const testCases: Array<{ status: PatientStatusValue; label: string }> = [
-      { status: "N", label: "Novo Paciente" },
-      { status: "T", label: "Em Tratamento" },
-      { status: "A", label: "Alta" },
-      { status: "F", label: "Ausente" },
+      { status: "N", label: "New patient" },
+      { status: "T", label: "In Treatment" },
+      { status: "A", label: "Discharged" },
+      { status: "F", label: "Missed — consecutive" },
     ];
 
     testCases.forEach(({ status, label }) => {
@@ -293,7 +289,7 @@ describe("BasicInfoTab", () => {
         />,
       );
 
-      expect(screen.getByText(`Status atual: ${label}`)).toBeInTheDocument();
+      expect(screen.getByText(`Current status: ${label}`)).toBeInTheDocument();
 
       // Clean up for next iteration
       rerender(<div />);

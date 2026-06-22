@@ -12,7 +12,7 @@ const mockPriorities = [
     id: 1,
     type: SystemOptionType.PRIORITY,
     value: "1",
-    label: "Exceção",
+    label: "Priority",
     sortOrder: 1,
     isActive: true,
     createdAt: "2026-01-01",
@@ -59,7 +59,7 @@ describe("usePriorityOptionsQueries", () => {
   it("handles fetch error", async () => {
     (prioritiesApi.getPriorities as jest.Mock).mockResolvedValue({
       success: false,
-      error: "Falha ao carregar prioridades",
+      error: "Failed to load priorities",
     });
 
     const { result } = renderHook(() => usePriorities(false), {

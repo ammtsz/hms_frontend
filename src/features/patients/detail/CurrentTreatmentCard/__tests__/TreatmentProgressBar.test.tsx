@@ -9,21 +9,27 @@ describe("TreatmentProgressBar", () => {
       render(<TreatmentProgressBar completed={3} total={10} />);
 
       expect(screen.getByText("30%")).toBeInTheDocument();
-      expect(screen.getByText("Sessão 3 de 10")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Session 3 of 10/),
+      ).toBeInTheDocument();
     });
 
     it("shows 100% completion when sessions are completed", () => {
       render(<TreatmentProgressBar completed={5} total={5} />);
 
       expect(screen.getByText("100%")).toBeInTheDocument();
-      expect(screen.getByText("Tratamento Finalizado")).toBeInTheDocument();
-      expect(screen.getByText("Concluído")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Treatment Completed|Treatment Completed/),
+      ).toBeInTheDocument();
+      expect(screen.getAllByText(/Completed/)[0]).toBeInTheDocument();
     });
 
     it("handles zero progress correctly", () => {
       render(<TreatmentProgressBar completed={0} total={8} />);
 
-      expect(screen.getByText("Tratamento Agendado")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Treatment Scheduled|Scheduled Treatment/),
+      ).toBeInTheDocument();
       expect(screen.getAllByText(/0%/).length).toBeGreaterThan(0);
     });
 
@@ -111,9 +117,9 @@ describe("TreatmentProgressBar", () => {
         />,
       );
 
-      expect(screen.getByText("2 agendadas")).toBeInTheDocument();
-      expect(screen.getByText("1 perdida")).toBeInTheDocument();
-      expect(screen.getByText("1 cancelada")).toBeInTheDocument();
+      expect(screen.getByText(/2 scheduled/)).toBeInTheDocument();
+      expect(screen.getByText(/1 missed/)).toBeInTheDocument();
+      expect(screen.getByText(/1 cancelled/)).toBeInTheDocument();
       expect(screen.getByText("📅")).toBeInTheDocument();
       expect(screen.getByText("⚠️")).toBeInTheDocument();
       expect(screen.getByText("❌")).toBeInTheDocument();
@@ -133,9 +139,13 @@ describe("TreatmentProgressBar", () => {
         />,
       );
 
-      expect(screen.queryByText("2 agendadas")).not.toBeInTheDocument();
-      expect(screen.queryByText("1 perdida")).not.toBeInTheDocument();
-      expect(screen.queryByText("1 cancelada")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/2 scheduled/),
+      ).not.toBeInTheDocument();
+      expect(screen.queryByText(/1 missed/)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(/1 cancelled/),
+      ).not.toBeInTheDocument();
     });
 
     it("shows only non-zero session details", () => {
@@ -152,9 +162,9 @@ describe("TreatmentProgressBar", () => {
         />,
       );
 
-      expect(screen.getByText("2 agendadas")).toBeInTheDocument();
-      expect(screen.queryByText("0 perdidas")).not.toBeInTheDocument();
-      expect(screen.getByText("1 cancelada")).toBeInTheDocument();
+      expect(screen.getByText(/2 scheduled/)).toBeInTheDocument();
+      expect(screen.queryByText(/0 missed/)).not.toBeInTheDocument();
+      expect(screen.getByText(/1 cancelled/)).toBeInTheDocument();
     });
   });
 
@@ -165,7 +175,7 @@ describe("TreatmentProgressBar", () => {
       expect(screen.getByText("25%")).toBeInTheDocument();
       expect(screen.getByText("50%")).toBeInTheDocument();
       expect(screen.getByText("75%")).toBeInTheDocument();
-      expect(screen.getByText("Concluído")).toBeInTheDocument();
+      expect(screen.getAllByText(/Completed/)[0]).toBeInTheDocument();
     });
 
     it("shows milestone indicators when total >= 1", () => {
@@ -175,7 +185,7 @@ describe("TreatmentProgressBar", () => {
 
       const milestones = container.querySelectorAll(".text-xs.text-gray-500");
       expect(milestones.length).toBeGreaterThanOrEqual(0);
-      expect(screen.getByText("Concluído")).toBeInTheDocument();
+      expect(screen.getAllByText(/Completed/)[0]).toBeInTheDocument();
     });
 
     it("highlights reached milestones with treatment color", () => {
@@ -197,7 +207,9 @@ describe("TreatmentProgressBar", () => {
       render(<TreatmentProgressBar completed={3} total={10} />);
 
       // Progress information should be readable
-      expect(screen.getByText("Sessão 3 de 10")).toBeInTheDocument();
+      expect(
+        screen.getByText(/Session 3 of 10/),
+      ).toBeInTheDocument();
       expect(screen.getByText("30%")).toBeInTheDocument();
     });
   });

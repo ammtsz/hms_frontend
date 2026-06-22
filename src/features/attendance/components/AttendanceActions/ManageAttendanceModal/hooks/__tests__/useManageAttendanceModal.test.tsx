@@ -54,7 +54,7 @@ describe("useManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [1, 2],
-      patientName: "Paciente Teste",
+      patientName: "Patient Test",
       attendanceDate: "2025-07-01",
       isLoading: false,
     });
@@ -77,10 +77,12 @@ describe("useManageAttendanceModal", () => {
     mockUseUpdatePatient.mockReturnValue({
       mutateAsync: jest.fn(),
     });
-    (attendanceQueries.useFetchAttendancePatientId as jest.Mock).mockReturnValue(
-      jest.fn().mockResolvedValue({ patientId: 42 }),
-    );
-    (attendanceQueries.useRecomputeReturnForEpisode as jest.Mock).mockReturnValue({
+    (
+      attendanceQueries.useFetchAttendancePatientId as jest.Mock
+    ).mockReturnValue(jest.fn().mockResolvedValue({ patientId: 42 }));
+    (
+      attendanceQueries.useRecomputeReturnForEpisode as jest.Mock
+    ).mockReturnValue({
       mutateAsync: jest.fn().mockResolvedValue({ rescheduled: false }),
     });
     (toastContext.useToast as jest.Mock).mockReturnValue({
@@ -95,7 +97,7 @@ describe("useManageAttendanceModal", () => {
     );
 
     expect(result.current.state.selectedAttendanceIds).toEqual([1, 2]);
-    expect(result.current.state.patientName).toBe("Paciente Teste");
+    expect(result.current.state.patientName).toBe("Patient Test");
   });
 
   it("toggles selection correctly", () => {
@@ -144,7 +146,7 @@ describe("useManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [],
-      patientName: "Paciente Teste",
+      patientName: "Patient Test",
       isLoading: false,
     });
 
@@ -165,7 +167,7 @@ describe("useManageAttendanceModal", () => {
     });
 
     expect(result.current.state.error).toContain(
-      "Selecione pelo menos um atendimento para cancelar",
+      "Select at least one attendance to cancel.",
     );
     expect(mockSetCancellationLoading).not.toHaveBeenCalled();
   });
@@ -201,7 +203,7 @@ describe("useManageAttendanceModal", () => {
     mockUseCancellationModal.mockReturnValue({
       isOpen: true,
       attendanceIds: [1],
-      patientName: "Paciente Teste",
+      patientName: "Patient Test",
       attendanceDate: "2025-07-01",
       isLoading: false,
     });
@@ -260,8 +262,14 @@ describe("useManageAttendanceModal", () => {
     mockBulkPostponeMutate.mockResolvedValue({
       successCount: 1,
       failureCount: 1,
-      failures: [{ attendanceId: 1, error: "erro" }],
-      successes: [{ attendanceId: 2, message: "Successfully postponed", newDate: "2026-03-24" }],
+      failures: [{ attendanceId: 1, error: "error" }],
+      successes: [
+        {
+          attendanceId: 2,
+          message: "Successfully postponed",
+          newDate: "2026-03-24",
+        },
+      ],
     });
 
     const { result } = renderHook(
@@ -286,9 +294,9 @@ describe("useManageAttendanceModal", () => {
       failureCount: 3,
       successes: [],
       failures: [
-        { attendanceId: 1, error: "Data indisponível" },
-        { attendanceId: 2, error: "Data indisponível" },
-        { attendanceId: 3, error: "Data indisponível" },
+        { attendanceId: 1, error: "Unavailable Date" },
+        { attendanceId: 2, error: "Unavailable Date" },
+        { attendanceId: 3, error: "Unavailable Date" },
       ],
     });
 
@@ -310,7 +318,13 @@ describe("useManageAttendanceModal", () => {
     mockBulkPostponeMutate.mockResolvedValue({
       successCount: 1,
       failureCount: 0,
-      successes: [{ attendanceId: 1, message: "Successfully postponed", newDate: "2026-03-24" }],
+      successes: [
+        {
+          attendanceId: 1,
+          message: "Successfully postponed",
+          newDate: "2026-03-24",
+        },
+      ],
       failures: [],
       autoRescheduledReturns: [],
       failedReturnReschedules: [],

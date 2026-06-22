@@ -18,7 +18,7 @@ export function usePriorities(includeInactive = false) {
     queryFn: async () => {
       const result = await getPriorities(includeInactive);
       if (!result.success || !result.value) {
-        throw new Error(result.error || "Falha ao carregar prioridades");
+        throw new Error(result.error || "Failed to load priorities");
       }
       return result.value;
     },
@@ -39,7 +39,7 @@ export function useUpdatePriorityOption() {
     }) => {
       const result = await updatePriorityOption(id, updates);
       if (!result.success || !result.value) {
-        throw new Error(result.error || "Falha ao atualizar prioridade");
+        throw new Error(result.error || "Failed to update priority");
       }
       return result.value;
     },
@@ -74,7 +74,7 @@ export function useBulkUpdatePatientsPriority() {
     }) => {
       const result = await bulkUpdatePatientsPriority(params);
       if (!result.success || !result.value) {
-        throw new Error(result.error || "Falha ao atualizar prioridades dos pacientes");
+        throw new Error(result.error || "Failed to update patient priorities");
       }
       return result.value;
     },

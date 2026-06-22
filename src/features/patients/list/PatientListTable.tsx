@@ -86,7 +86,7 @@ export function PatientListTable({
         <TableHeader className="bg-gray-50">
           <TableRow>
             <SortableHeader
-              label="Registro"
+              label="Record"
               columnKey="id"
               sortBy={sortBy}
               sortAsc={sortAsc}
@@ -95,14 +95,14 @@ export function PatientListTable({
               className="hidden sm:table-cell"
             />
             <SortableHeader
-              label="Nome"
+              label="Name"
               columnKey="name"
               sortBy={sortBy}
               sortAsc={sortAsc}
               onSort={handleSort}
             />
             <SortableHeader
-              label="Telefone"
+              label="Phone"
               columnKey="phone"
               sortBy={sortBy}
               sortAsc={sortAsc}
@@ -110,7 +110,7 @@ export function PatientListTable({
               align="center"
             />
             <SortableHeader
-              label="Prioridade"
+              label="Priority"
               columnKey="priority"
               sortBy={sortBy}
               sortAsc={sortAsc}
@@ -132,12 +132,12 @@ export function PatientListTable({
             <TableRow>
               <TableCell colSpan={5} align="center">
                 <div className="my-8 flex flex-col items-center justify-center gap-4">
-                  Nenhum paciente cadastrado
+                  No patients registered
                   <Link
                     href="/patients/new"
                     className="inline-flex min-h-[44px] items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 transition-colors hover:bg-gray-50"
                   >
-                    Cadastrar Paciente
+                    Register Patient
                   </Link>
                 </div>
               </TableCell>
@@ -165,9 +165,7 @@ export function PatientListTable({
                 <TableCell align="center">
                   <span className="group relative">
                     {p.status}
-                    <span className="legend-tag">
-                      {statusLegend[p.status]}
-                    </span>
+                    <span className="legend-tag">{statusLegend[p.status]}</span>
                   </span>
                 </TableCell>
               </TableRow>

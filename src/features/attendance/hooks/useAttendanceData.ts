@@ -67,7 +67,7 @@ export interface UseAttendanceDataReturn {
     phone?: string;
     priority: Priority;
     birthDate: string;
-    mainComplaint?: string;
+    mainConcern?: string;
   }) => Promise<PatientCreationResult>;
   
   deleteAttendance: (attendanceId: number, cancellationReason?: string) => Promise<boolean>;
@@ -186,7 +186,7 @@ export const useAttendanceData = ({
     phone?: string;
     priority: Priority;
     birthDate: string;
-    mainComplaint?: string;
+    mainConcern?: string;
   }) => {
     try {
       setProcessingAttendance(true);
@@ -210,7 +210,7 @@ export const useAttendanceData = ({
         phone: params.phone?.trim() || undefined,
         priority: transformPriorityToApi(params.priority),
         birthDate: params.birthDate, // Already in YYYY-MM-DD format
-        mainComplaint: params.mainComplaint?.trim() || undefined,
+        mainConcern: params.mainConcern?.trim() || undefined,
       });
 
       // React Query automatically refreshes patient lists, no manual refresh needed

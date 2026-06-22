@@ -4,6 +4,7 @@ import {
   groupAttendancesForDisplayWithBodyLocation,
   type AbsenceCard,
 } from "../confirmationStepUtils";
+import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
 import type { AbsenceJustification, ScheduledAbsence } from "../../types";
 import type { IAttendanceStatusDetailWithType } from "../../../../utils/attendanceDataUtils";
 
@@ -122,7 +123,7 @@ describe("confirmationStepUtils", () => {
   });
 
   describe("getAbsenceCardLabelParts", () => {
-    it("returns Consulta for assessment card", () => {
+    it("returns Assessment Consultation for assessment card", () => {
       const card: AbsenceCard = {
         patientId: 1,
         patientName: "John",
@@ -134,10 +135,10 @@ describe("confirmationStepUtils", () => {
 
       const result = getAbsenceCardLabelParts(card);
 
-      expect(result).toEqual(["Consulta de Avaliação"]);
+      expect(result).toEqual([getAttendanceTypeLabel("assessment")]);
     });
 
-    it("returns Fisioterapia with locais for physiotherapy-only card", () => {
+    it("returns Physiotherapy with locations for physiotherapy-only card", () => {
       const card: AbsenceCard = {
         patientId: 1,
         patientName: "John",
@@ -149,10 +150,12 @@ describe("confirmationStepUtils", () => {
 
       const result = getAbsenceCardLabelParts(card);
 
-      expect(result).toEqual(["Fisioterapia (1 local)"]);
+      expect(result).toEqual([
+        `${getAttendanceTypeLabel("physiotherapy")} (1 location)`,
+      ]);
     });
 
-    it("returns TENS with locais for tens-only card", () => {
+    it("returns TENS with locations for tens-only card", () => {
       const card: AbsenceCard = {
         patientId: 1,
         patientName: "John",
@@ -164,7 +167,9 @@ describe("confirmationStepUtils", () => {
 
       const result = getAbsenceCardLabelParts(card);
 
-      expect(result).toEqual(["TENS (2 locais)"]);
+      expect(result).toEqual([
+        `${getAttendanceTypeLabel("tens")} (2 locations)`,
+      ]);
     });
 
     it("returns both treatment labels for combined treatments", () => {
@@ -180,8 +185,10 @@ describe("confirmationStepUtils", () => {
       const result = getAbsenceCardLabelParts(card);
 
       expect(result).toHaveLength(2);
-      expect(result).toContain("Fisioterapia (1 local)");
-      expect(result).toContain("TENS (1 local)");
+      expect(result).toContain(
+        `${getAttendanceTypeLabel("physiotherapy")} (1 location)`,
+      );
+      expect(result).toContain(`${getAttendanceTypeLabel("tens")} (1 location)`);
     });
   });
 
@@ -196,11 +203,11 @@ describe("confirmationStepUtils", () => {
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
         patientName: "John",
-        label: "Consulta de Avaliação",
+        label: getAttendanceTypeLabel("assessment"),
       });
     });
 
-    it("groups physiotherapy attendance with locais count", () => {
+    it("groups physiotherapy attendance with locations count", () => {
       const attendances = [
         createAttendance({ name: "Jane", patientId: 2, attendanceType: "physiotherapy" }),
       ];
@@ -208,10 +215,12 @@ describe("confirmationStepUtils", () => {
       const result = groupAttendancesForDisplayWithBodyLocation(attendances);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe("Fisioterapia - 1 local");
+      expect(result[0].label).toBe(
+        `${getAttendanceTypeLabel("physiotherapy")} - 1 location`,
+      );
     });
 
-    it("groups tens attendance with locais count", () => {
+    it("groups tens attendance with locations count", () => {
       const attendances = [
         createAttendance({ name: "Bob", patientId: 3, attendanceType: "tens" }),
       ];
@@ -219,7 +228,7 @@ describe("confirmationStepUtils", () => {
       const result = groupAttendancesForDisplayWithBodyLocation(attendances);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe("TENS - 1 local");
+      expect(result[0].label).toBe(`${getAttendanceTypeLabel("tens")} - 1 location`);
     });
 
     it("groups patient with assessment and treatments as two entries", () => {
@@ -232,8 +241,10 @@ describe("confirmationStepUtils", () => {
       const result = groupAttendancesForDisplayWithBodyLocation(attendances);
 
       expect(result).toHaveLength(2);
-      expect(result[0].label).toBe("Consulta de Avaliação");
-      expect(result[1].label).toBe("Fisioterapia - 1 local e TENS - 1 local");
+      expect(result[0].label).toBe(getAttendanceTypeLabel("assessment"));
+      expect(result[1].label).toBe(
+        `${getAttendanceTypeLabel("physiotherapy")} - 1 location and ${getAttendanceTypeLabel("tens")} - 1 location`,
+      );
     });
 
     it("groups patient with both physiotherapy and tens as one entry", () => {
@@ -245,10 +256,12 @@ describe("confirmationStepUtils", () => {
       const result = groupAttendancesForDisplayWithBodyLocation(attendances);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe("Fisioterapia - 1 local e TENS - 1 local");
+      expect(result[0].label).toBe(
+        `${getAttendanceTypeLabel("physiotherapy")} - 1 location and ${getAttendanceTypeLabel("tens")} - 1 location`,
+      );
     });
 
-    it("uses plural locais for multiple treatments of same type", () => {
+    it("uses plural locations for multiple treatments of same type", () => {
       const attendances = [
         createAttendance({ name: "Patient", patientId: 5, attendanceType: "physiotherapy" }),
         createAttendance({ name: "Patient", patientId: 5, attendanceType: "physiotherapy" }),
@@ -257,7 +270,9 @@ describe("confirmationStepUtils", () => {
       const result = groupAttendancesForDisplayWithBodyLocation(attendances);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe("Fisioterapia - 2 locais");
+      expect(result[0].label).toBe(
+        `${getAttendanceTypeLabel("physiotherapy")} - 2 locations`,
+      );
     });
 
     it("handles attendances without patientId using name as key", () => {

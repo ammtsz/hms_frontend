@@ -3,9 +3,7 @@ import { useEndOfDayModal } from "@/stores/modalStore";
 import LoadingFallback from "@/components/common/LoadingFallback";
 
 // Lazy load the actual EndOfDayModal component
-const EndOfDayContainer = React.lazy(
-  () => import("./EndOfDayContainer"),
-);
+const EndOfDayContainer = React.lazy(() => import("./EndOfDayContainer"));
 
 /**
  * End of Day Modal - Combines store logic and lazy loading
@@ -22,10 +20,7 @@ export const EndOfDayModal: React.FC = () => {
   return (
     <Suspense
       fallback={
-        <LoadingFallback
-          message="Carregando finalizador do dia..."
-          size="small"
-        />
+        <LoadingFallback message="Loading day finalization..." size="small" />
       }
     >
       <EndOfDayContainer />

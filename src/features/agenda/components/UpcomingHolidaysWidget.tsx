@@ -8,12 +8,13 @@ import { useDateHelpers } from "@/hooks/useDateHelpers";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { UserRole } from "@/types/auth";
 import { Button, Card } from "@/components/ui";
+import { UPCOMING_HOLIDAYS_LABELS } from "../utils/agendaFilterConstants";
 
 const UpcomingHolidaysWidget: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { user } = useAuthContext();
   const { data: holidays } = useUpcomingHolidays(3);
-  const { formatDateToDDMMYYYY } = useDateHelpers();
+  const { formatDisplayDate } = useDateHelpers();
   const isAdmin = user?.role === UserRole.ADMIN;
 
   return (
@@ -28,7 +29,7 @@ const UpcomingHolidaysWidget: React.FC = () => {
             className="min-h-0 flex-1 justify-start px-0 py-0 text-xl text-gray-900 hover:bg-transparent hover:text-gray-700"
             aria-expanded={isExpanded}
           >
-            Próximos Feriados
+            {UPCOMING_HOLIDAYS_LABELS.title}
             {isExpanded ? (
               <ChevronUp className="w-4 h-4 ml-auto" />
             ) : (
@@ -40,7 +41,7 @@ const UpcomingHolidaysWidget: React.FC = () => {
               href="/agenda/holidays"
               className="ml-4 inline-flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             >
-              Gerenciar Feriados
+              {UPCOMING_HOLIDAYS_LABELS.manageLink}
             </Link>
           )}
         </div>
@@ -54,7 +55,7 @@ const UpcomingHolidaysWidget: React.FC = () => {
                   className="flex items-center gap-2 text-sm"
                 >
                   <span className="font-medium text-gray-900 min-w-[100px]">
-                    {formatDateToDDMMYYYY(holiday.holidayDate)}
+                    {formatDisplayDate(holiday.holidayDate)}
                   </span>
                   <span className="text-gray-700">{holiday.name}</span>
                   {holiday.description && (
@@ -66,7 +67,7 @@ const UpcomingHolidaysWidget: React.FC = () => {
               ))
             ) : (
               <div className="text-sm text-gray-500">
-                Nenhum feriado próximo encontrado.
+                {UPCOMING_HOLIDAYS_LABELS.empty}
               </div>
             )}
           </div>

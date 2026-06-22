@@ -1,5 +1,5 @@
 import { getTodayClinic } from "@/utils/timezoneDate";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { getDayFinalizationStatus } from "@/api/day-finalization";
 import { checkIfHolidayForTreatmentType } from "@/api/holidays";
 import { getAttendancesByDate } from "@/api/attendances";
@@ -10,8 +10,8 @@ import type { AttendanceByDate } from "@/types/types";
 
 /** Treatment type to display name mapping */
 const TREATMENT_NAMES: Record<string, string> = {
-  assessment: "Consulta de Avaliação",
-  physiotherapy: "Fisioterapia",
+  assessment: "Assessment Consultation",
+  physiotherapy: "Physiotherapy",
   tens: "TENS",
 };
 
@@ -33,7 +33,7 @@ export function validateBasicInputs(
   selectedTypes: string[]
 ): string | null {
   if (!name || selectedTypes.length === 0) {
-    return "Por favor, preencha o nome do paciente e selecione pelo menos um tipo de atendimento.";
+    return "Please enter the patient name and select at least one attendance type.";
   }
   return null;
 }
@@ -53,7 +53,7 @@ export async function validateDayNotFinalized(
 ): Promise<string | null> {
   const result = await getDayFinalizationStatus(targetDate);
   if (result.success && result.value?.isFinalized) {
-    return "Dia já finalizado. Não é mais possível agendar atendimentos para este dia.";
+    return "Day already finalized. No more attendances can be scheduled for this day.";
   }
   return null;
 }
@@ -71,7 +71,7 @@ export async function validateHolidayBlocking(
     const response = await checkIfHolidayForTreatmentType(targetDate, apiType);
 
     if (!response.success) {
-      return "Erro ao verificar feriados. Por favor, tente novamente.";
+      return "Error checking holidays. Please try again.";
     }
 
     const displayName = getTreatmentDisplayName(treatmentType);
@@ -85,11 +85,11 @@ export async function validateHolidayBlocking(
   if (blocked.length === 0) return null;
   if (allowed.length > 0) {
     return (
-      `Esta data é feriado e bloqueia: ${blocked.join(", ")}. ` +
-      `Você ainda pode agendar: ${allowed.join(", ")}.`
+      `This date is a holiday and blocks: ${blocked.join(", ")}. ` +
+      `You can still schedule: ${allowed.join(", ")}.`
     );
   }
-  return "Esta data é feriado, selecione uma nova data.";
+  return "This date is a holiday, select a new date.";
 }
 
 /** Fetch attendances for target date, or use context attendances if same date. */
@@ -112,11 +112,11 @@ function getDuplicateScheduleDateText(
   validationDate: string | undefined
 ): string {
   const currentContextDate = getTodayClinic();
-  if (targetDate !== currentContextDate) return `para ${formatDateBR(targetDate)}`;
+  if (targetDate !== currentContextDate) return `for ${formatDisplayDate(targetDate)}`;
   if (validationDate && validationDate !== getTodayClinic()) {
-    return `para ${formatDateBR(validationDate)}`;
+    return `for ${formatDisplayDate(validationDate)}`;
   }
-  return "para hoje";
+  return "for today";
 }
 
 /** BR-306: duplicate check for walkIn / manual registration (assessment only on FE). */
@@ -139,7 +139,7 @@ export function validateDuplicateSchedule(
     return null;
   }
   const dateText = getDuplicateScheduleDateText(targetDate, validationDate);
-  return `O paciente "${patientName}" já possui consulta agendada ${dateText}. Verifique a lista de atendimentos.`;
+  return `The patient "${patientName}" already has a scheduled consultation ${dateText}. Check the attendance list.`;
 }
 
 /** Build success message after registration */
@@ -148,8 +148,8 @@ export function buildSuccessMessage(
   nextAvailableDate: string
 ): string {
   const isToday = nextAvailableDate === getTodayClinic();
-  const dateMessage = isToday ? "hoje" : `para ${nextAvailableDate}`;
-  return `Agendamento criado com sucesso! ${selectedTypesCount} atendimento(s) agendado(s) ${dateMessage} às ${SCHEDULED_TIME}.`;
+  const dateMessage = isToday ? "today" : `for ${nextAvailableDate}`;
+  return `Schedule created successfully! ${selectedTypesCount} attendance(s) scheduled ${dateMessage} at ${SCHEDULED_TIME}.`;
 }
 
 /** Check if error indicates a conflict (slot/409/Conflict) */
@@ -166,7 +166,7 @@ export function isConflictError(error: string | undefined): boolean {
 export function buildNewPatientSchedulingFailureMessage(
   reason: string
 ): string {
-  return `PACIENTE CRIADO com sucesso, mas NÃO FOI POSSÍVEL AGENDAR o atendimento pois ${reason}. Desmarque a opção 'Novo paciente', selecione o paciente na lista e tente agendar novamente.`;
+  return `PATIENT CREATED successfully, but it was NOT POSSIBLE to schedule the attendance because ${reason}. Uncheck the 'New patient' option, select the patient from the list, and try scheduling again.`;
 }
 
 /** Build error message for generic scheduling failure (existing patient) */
@@ -176,8 +176,8 @@ export function buildSchedulingFailureMessage(
   firstError: string | undefined
 ): string {
   if (hasConflict) {
-    return "Conflito de horário detectado. Tente agendar para outro horário ou data.";
+    return "Scheduling conflict detected. Try scheduling for a different time or date.";
   }
   if (firstError) return firstError;
-  return `Erro ao criar ${failedCount} atendimento(s). Algumas podem ter sido criadas com sucesso.`;
+  return `Error creating ${failedCount} attendance(s). Some may have been created successfully.`;
 }

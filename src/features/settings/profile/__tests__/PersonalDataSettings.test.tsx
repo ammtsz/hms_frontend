@@ -135,14 +135,12 @@ describe("PersonalDataSettings", () => {
     fireEvent.change(nameInput, { target: { value: "" } });
 
     const submitButton = screen.getByRole("button", {
-      name: /salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(
-        screen.getByText("Nome completo é obrigatório"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Full name is required")).toBeInTheDocument();
     });
   });
 
@@ -171,12 +169,12 @@ describe("PersonalDataSettings", () => {
     fireEvent.change(emailInput, { target: { value: "john@notld" } });
 
     const submitButton = screen.getByRole("button", {
-      name: /salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText("Email inválido")).toBeInTheDocument();
+      expect(screen.getByText("Invalid email")).toBeInTheDocument();
     });
   });
 
@@ -201,20 +199,20 @@ describe("PersonalDataSettings", () => {
     render(<PersonalDataSettings />, { wrapper: createWrapper() });
 
     const displayNameInput = screen.getByPlaceholderText(
-      /como você deseja ser chamado/i,
+      /How you want to be addressed \(optional\)/i,
     );
     fireEvent.change(displayNameInput, {
       target: { value: "A".repeat(51) },
     });
 
     const submitButton = screen.getByRole("button", {
-      name: /salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(
-        screen.getByText("Nome de exibição deve ter no máximo 50 caracteres"),
+        screen.getByText("Display name must not exceed 50 characters"),
       ).toBeInTheDocument();
     });
   });
@@ -237,7 +235,20 @@ describe("PersonalDataSettings", () => {
       isAuthenticated: true,
     });
 
-    mockUpdateOwnProfile.mockResolvedValue({ success: true, value: { id: 1, name: "John Updated", email: "john@example.com", displayName: "Johnny", role: UserRole.ADMIN, isActive: true, mustChangePassword: false, lastLogin: null, createdAt: new Date("2024-01-01") } });
+    mockUpdateOwnProfile.mockResolvedValue({
+      success: true,
+      value: {
+        id: 1,
+        name: "John Updated",
+        email: "john@example.com",
+        displayName: "Johnny",
+        role: UserRole.ADMIN,
+        isActive: true,
+        mustChangePassword: false,
+        lastLogin: null,
+        createdAt: new Date("2024-01-01"),
+      },
+    });
 
     render(<PersonalDataSettings />, { wrapper: createWrapper() });
 
@@ -245,7 +256,7 @@ describe("PersonalDataSettings", () => {
     fireEvent.change(nameInput, { target: { value: "John Updated" } });
 
     const submitButton = screen.getByRole("button", {
-      name: /salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(submitButton);
 
@@ -263,7 +274,7 @@ describe("PersonalDataSettings", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText("Perfil atualizado com sucesso!"),
+        screen.getByText("Profile updated successfully!"),
       ).toBeInTheDocument();
     });
   });
@@ -286,17 +297,30 @@ describe("PersonalDataSettings", () => {
       isAuthenticated: true,
     });
 
-    mockUpdateOwnProfile.mockResolvedValue({ success: true, value: { id: 1, name: "John Updated", email: "john@example.com", displayName: "Johnny", role: UserRole.ADMIN, isActive: true, mustChangePassword: false, lastLogin: null, createdAt: new Date("2024-01-01") } });
+    mockUpdateOwnProfile.mockResolvedValue({
+      success: true,
+      value: {
+        id: 1,
+        name: "John Updated",
+        email: "john@example.com",
+        displayName: "Johnny",
+        role: UserRole.ADMIN,
+        isActive: true,
+        mustChangePassword: false,
+        lastLogin: null,
+        createdAt: new Date("2024-01-01"),
+      },
+    });
 
     render(<PersonalDataSettings />, { wrapper: createWrapper() });
 
     const displayNameInput = screen.getByPlaceholderText(
-      /como você deseja ser chamado/i,
+      /How you want to be addressed \(optional\)/i,
     );
     fireEvent.change(displayNameInput, { target: { value: "Staffy" } });
 
     const submitButton = screen.getByRole("button", {
-      name: /salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(submitButton);
 
@@ -333,7 +357,7 @@ describe("PersonalDataSettings", () => {
     render(<PersonalDataSettings />, { wrapper: createWrapper() });
 
     const submitButton = screen.getByRole("button", {
-      name: /salvar alterações/i,
+      name: /Save Changes/i,
     });
     fireEvent.click(submitButton);
 
@@ -350,7 +374,9 @@ describe("PersonalDataSettings", () => {
       isAuthenticated: false,
     });
 
-    const { container } = render(<PersonalDataSettings />, { wrapper: createWrapper() });
+    const { container } = render(<PersonalDataSettings />, {
+      wrapper: createWrapper(),
+    });
     expect(container.firstChild).toBeNull();
   });
 });

@@ -121,7 +121,7 @@ describe('Type System', () => {
         priority: "1",
         status: "T",
         birthDate: "1990-01-01",
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         startDate: "2025-01-01",
         dischargeDate: null,
         timezone: "America/Sao_Paulo",

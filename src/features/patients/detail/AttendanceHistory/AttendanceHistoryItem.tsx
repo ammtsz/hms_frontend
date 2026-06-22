@@ -98,10 +98,10 @@ export const AttendanceHistoryItem: React.FC<AttendanceHistoryItemProps> = ({
               size="sm"
               onClick={() => setShowRescheduleModal(true)}
               className="min-h-[44px] w-full gap-1.5 shadow-sm sm:w-auto"
-              aria-label="Reagendar atendimento"
+              aria-label="Reschedule attendance"
             >
               <CalendarClock className="h-4 w-4" aria-hidden />
-              Reagendar
+              Reschedule
             </Button>
           )}
         </div>

@@ -144,7 +144,7 @@ describe("TreatmentRecommendationTable", () => {
 
       expect(screen.queryByRole("table")).not.toBeInTheDocument();
       const addButton = screen.getByRole("button", {
-        name: /Adicionar Tratamento/i,
+        name: /Add Treatment/i,
       });
       expect(addButton).toBeInTheDocument();
       expect(addButton).toHaveClass("w-full");
@@ -171,25 +171,25 @@ describe("TreatmentRecommendationTable", () => {
 
       expect(screen.getByRole("table")).toBeInTheDocument();
       expect(
-        screen.getByRole("columnheader", { name: "Locais do Corpo" }),
+        screen.getByRole("columnheader", { name: "Body Locations" }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("columnheader", { name: "Cor" }),
+        screen.getByRole("columnheader", { name: "Color" }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("columnheader", { name: "Tempo" }),
+        screen.getByRole("columnheader", { name: "Duration" }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("columnheader", { name: "Quantidade" }),
+        screen.getByRole("columnheader", { name: "Quantity" }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("columnheader", { name: "Data Início" }),
+        screen.getByRole("columnheader", { name: "Start Date" }),
       ).toBeInTheDocument();
       expect(screen.getByText("Head")).toBeInTheDocument();
       expect(screen.getByText("Blue")).toBeInTheDocument();
       expect(screen.getByText("2")).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /Adicionar Tratamento/i }),
+        screen.getByRole("button", { name: /Add Treatment/i }),
       ).toBeInTheDocument();
     });
 
@@ -212,8 +212,8 @@ describe("TreatmentRecommendationTable", () => {
       );
 
       expect(screen.getByRole("table")).toBeInTheDocument();
-      expect(screen.queryByText("Cor")).not.toBeInTheDocument();
-      expect(screen.queryByText("Tempo")).not.toBeInTheDocument();
+      expect(screen.queryByText("Color")).not.toBeInTheDocument();
+      expect(screen.queryByText("Duration")).not.toBeInTheDocument();
       expect(screen.getByText("Chest")).toBeInTheDocument();
     });
   });
@@ -227,7 +227,7 @@ describe("TreatmentRecommendationTable", () => {
       });
 
       await user.click(
-        screen.getByRole("button", { name: /Adicionar Tratamento/i }),
+        screen.getByRole("button", { name: /Add Treatment/i }),
       );
 
       await waitFor(() => {
@@ -249,7 +249,7 @@ describe("TreatmentRecommendationTable", () => {
       });
 
       expect(
-        screen.queryByRole("button", { name: /Adicionar Tratamento/i }),
+        screen.queryByRole("button", { name: /Add Treatment/i }),
       ).not.toBeInTheDocument();
     });
 
@@ -260,7 +260,7 @@ describe("TreatmentRecommendationTable", () => {
       );
 
       expect(
-        screen.getByRole("button", { name: /Adicionar Tratamento/i }),
+        screen.getByRole("button", { name: /Add Treatment/i }),
       ).toBeDisabled();
     });
 
@@ -397,7 +397,7 @@ describe("TreatmentRecommendationTable", () => {
         { wrapper: TestWrapper },
       );
 
-      const removeButton = screen.getByTitle(/remover tratamento/i);
+      const removeButton = screen.getByTitle(/Remove treatment/i);
       await user.click(removeButton);
 
       expect(mockOnChange).toHaveBeenCalledWith([]);

@@ -9,10 +9,7 @@ export default function HolidaysPage() {
   return (
     <Suspense
       fallback={
-        <LoadingFallback
-          message="Carregando gerenciamento de feriados..."
-          size="large"
-        />
+        <LoadingFallback message="Loading holiday management..." size="large" />
       }
     >
       <HolidayManagement />

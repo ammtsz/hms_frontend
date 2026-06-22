@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { Button } from "@/components/ui";
 
 // Base Empty State Component
@@ -47,7 +47,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
   title,
   message,
   onRetry,
-  retryLabel = "Tentar novamente",
+  retryLabel = "Try again",
 }) => (
   <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
     <div className="flex items-center justify-between">
@@ -87,30 +87,30 @@ export const AttendanceHistoryEmpty: React.FC<AttendanceHistoryEmptyProps> = ({
     switch (statusFilter) {
       case "completed":
         return {
-          title: "Nenhum atendimento concluído",
+          title: "No completed attendances",
           description:
-            "Este paciente ainda não possui atendimentos concluídos. O histórico será exibido aqui após a conclusão dos atendimentos.",
+            "This patient has no completed attendances yet. The history will appear here after attendances are finished.",
           iconBgColor: "bg-green-50",
         };
       case "missed":
         return {
-          title: "Nenhuma falta registrada",
+          title: "No absences recorded",
           description:
-            "Este paciente não possui faltas registradas. As faltas aparecerão aqui quando o paciente não comparecer a um agendamento.",
+            "This patient has no recorded absences. Missed attendances will appear here when the patient does not show up.",
           iconBgColor: "bg-yellow-50",
         };
       case "cancelled":
         return {
-          title: "Nenhum atendimento cancelado",
+          title: "No cancelled attendances",
           description:
-            "Este paciente não possui atendimentos cancelados. Cancelamentos aparecerão aqui quando o paciente cancelar um agendamento.",
+            "This patient has no cancelled attendances. Cancellations will appear here when the patient cancels an appointment.",
           iconBgColor: "bg-red-50",
         };
       default:
         return {
-          title: "Nenhum atendimento registrado",
+          title: "No attendances recorded",
           description:
-            "Este é um novo paciente ou ainda não possui atendimentos registrados. O histórico será exibido aqui após os atendimentos serem concluídos.",
+            "This is a new patient or no attendances have been recorded yet. History will appear here after attendances are completed.",
           iconBgColor: "bg-green-50",
         };
     }
@@ -127,15 +127,13 @@ export const AttendanceHistoryEmpty: React.FC<AttendanceHistoryEmptyProps> = ({
       {statusFilter === "all" || statusFilter === "completed" ? (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
           <div className="text-sm">
-            <div className="font-medium text-blue-900 mb-1">
-              💡 Próximos passos:
-            </div>
+            <div className="font-medium text-blue-900 mb-1">💡 Next steps:</div>
             <div className="text-blue-800">
               {patient.nextAttendanceDates.length > 0
-                ? `Próximo atendimento agendado para ${formatDateBR(
+                ? `Next appointment scheduled for ${formatDisplayDate(
                     patient.nextAttendanceDates[0].date,
                   )}`
-                : "Agendar primeiro atendimento para iniciar o tratamento"}
+                : "Schedule the first appointment to start treatment"}
             </div>
           </div>
         </div>
@@ -154,8 +152,8 @@ export const ScheduledAttendancesEmpty: React.FC<
 > = ({ patientId }) => (
   <EmptyState
     // icon="📅"
-    title="Nenhum agendamento futuro"
-    description="Este paciente não possui agendamentos futuros no momento. Novos agendamentos aparecerão aqui quando criados."
+    title="No upcoming appointments"
+    description="This patient currently has no upcoming appointments. New Attendances will appear here when created."
     iconBgColor="bg-blue-50"
   >
     <div className="flex flex-col sm:flex-row gap-2 justify-center">
@@ -163,13 +161,13 @@ export const ScheduledAttendancesEmpty: React.FC<
         href={`/agenda?patient=${patientId}&action=schedule`}
         className="inline-flex items-center justify-center px-4 py-2 bg-blue-700 text-white hover:bg-blue-800 rounded-md text-sm font-semibold transition-colors min-h-[44px] flex-1 sm:flex-none text-center"
       >
-        📅 Agendar Consulta
+        📅 Schedule Appointment
       </Link>
       <Link
         href="/agenda"
         className="inline-flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md text-sm font-semibold transition-colors min-h-[44px] flex-1 sm:flex-none text-center"
       >
-        Ver Agenda
+        View Schedule
       </Link>
     </div>
   </EmptyState>
@@ -178,8 +176,8 @@ export const ScheduledAttendancesEmpty: React.FC<
 // Treatment Recommendations Empty State
 export const TreatmentRecommendationsEmpty: React.FC = () => (
   <EmptyState
-    title="Recomendações não disponíveis"
-    description="Este paciente ainda não possui recomendações de tratamento registradas."
+    title="Recommendations unavailable"
+    description="This patient does not yet have any treatment recommendations recorded."
     iconBgColor="bg-yellow-50"
   />
 );
@@ -188,8 +186,8 @@ export const TreatmentRecommendationsEmpty: React.FC = () => (
 export const CurrentTreatmentEmpty: React.FC = () => (
   <EmptyState
     icon="🗂️"
-    title="Nenhum tratamento ativo"
-    description="Este paciente não possui tratamentos em andamento no momento. Tratamentos ativos aparecerão aqui quando iniciados."
+    title="No active treatment"
+    description="This patient currently has no ongoing treatments. Active treatments will appear here when started."
     iconBgColor="bg-blue-50"
   />
 );

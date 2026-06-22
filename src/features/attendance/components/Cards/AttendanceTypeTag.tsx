@@ -23,21 +23,21 @@ const AttendanceTypeTag: React.FC<AttendanceTypeTagProps> = ({
         };
       case "physiotherapy":
         return {
-          label: "Fisioterapia",
+          label: "Physiotherapy",
           bgColor: "bg-yellow-100",
           textColor: "text-yellow-700",
           borderColor: "border-yellow-200",
         };
       case "assessment":
         return {
-          label: "Consulta de Avaliação",
+          label: "Assessment Consultation",
           bgColor: "bg-gray-100",
           textColor: "text-gray-700",
           borderColor: "border-gray-200",
         };
       default:
         return {
-          label: "Desconhecido",
+          label: "Unknown",
           bgColor: "bg-gray-100",
           textColor: "text-gray-500",
           borderColor: "border-gray-200",
@@ -56,7 +56,7 @@ const AttendanceTypeTag: React.FC<AttendanceTypeTagProps> = ({
         ${config.bgColor} ${config.textColor} ${config.borderColor}
         ${sizeClasses}
       `}
-      title={config.label + " " + (count > 1 ? `(${count} locais)` : "")}
+      title={config.label + " " + (count > 1 ? `(${count} locations)` : "")}
     >
       {count}
     </span>

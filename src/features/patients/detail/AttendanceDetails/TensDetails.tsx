@@ -20,7 +20,7 @@ export const TensDetails: React.FC<TensDetailsProps> = ({
   bodyLocations,
   sessionNumber,
   showSessions = false,
-  sessionLabel = "Sessões",
+  sessionLabel = "Sessions",
   notes,
   isAbsent,
   attendanceNotes,

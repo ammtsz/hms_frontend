@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import UpcomingHolidaysWidget from "../components/UpcomingHolidaysWidget";
+import { UPCOMING_HOLIDAYS_LABELS } from "../utils/agendaFilterConstants";
 import { useUpcomingHolidays } from "@/api/query/hooks/useHolidayQueries";
 import { useDateHelpers } from "@/hooks/useDateHelpers";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -13,15 +14,15 @@ const mockHolidays = [
   {
     id: 1,
     holidayDate: "2026-12-25",
-    name: "Natal",
-    description: "Feriado Nacional",
+    name: "Christmas",
+    description: "National Holiday",
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
   },
   {
     id: 2,
     holidayDate: "2026-01-01",
-    name: "Ano Novo",
+    name: "New Year",
     description: null,
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
@@ -29,15 +30,13 @@ const mockHolidays = [
 ];
 
 describe("UpcomingHolidaysWidget", () => {
-  const mockFormatDateToDDMMYYYY = jest.fn((date: string) => {
+  const mockFormatDisplayDate = jest.fn((date: string) => {
     const d = new Date(date + "T00:00:00");
-    return d.toLocaleDateString("pt-BR");
+    return d.toLocaleDateString("en-US");
   });
 
   function expandWidget() {
-    fireEvent.click(
-      screen.getByRole("button", { name: /Próximos Feriados/i }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: /Upcoming Holidays/i }));
   }
 
   beforeEach(() => {
@@ -60,7 +59,7 @@ describe("UpcomingHolidaysWidget", () => {
     });
 
     (useDateHelpers as jest.Mock).mockReturnValue({
-      formatDateToDDMMYYYY: mockFormatDateToDDMMYYYY,
+      formatDisplayDate: mockFormatDisplayDate,
     });
   });
 
@@ -73,8 +72,10 @@ describe("UpcomingHolidaysWidget", () => {
 
     render(<UpcomingHolidaysWidget />);
 
-    expect(screen.getByText("Próximos Feriados")).toBeInTheDocument();
-    expect(screen.queryByText("Nenhum feriado próximo encontrado.")).not.toBeInTheDocument();
+    expect(screen.getByText(UPCOMING_HOLIDAYS_LABELS.title)).toBeInTheDocument();
+    expect(
+      screen.queryByText(UPCOMING_HOLIDAYS_LABELS.empty),
+    ).not.toBeInTheDocument();
   });
 
   it("shows empty message when expanded and holidays is undefined", () => {
@@ -87,9 +88,7 @@ describe("UpcomingHolidaysWidget", () => {
     render(<UpcomingHolidaysWidget />);
     expandWidget();
 
-    expect(
-      screen.getByText("Nenhum feriado próximo encontrado."),
-    ).toBeInTheDocument();
+    expect(screen.getByText(UPCOMING_HOLIDAYS_LABELS.empty)).toBeInTheDocument();
   });
 
   it("shows empty message when expanded and loading", () => {
@@ -102,9 +101,7 @@ describe("UpcomingHolidaysWidget", () => {
     render(<UpcomingHolidaysWidget />);
     expandWidget();
 
-    expect(
-      screen.getByText("Nenhum feriado próximo encontrado."),
-    ).toBeInTheDocument();
+    expect(screen.getByText(UPCOMING_HOLIDAYS_LABELS.empty)).toBeInTheDocument();
   });
 
   it("shows empty message when expanded and error", () => {
@@ -117,9 +114,7 @@ describe("UpcomingHolidaysWidget", () => {
     render(<UpcomingHolidaysWidget />);
     expandWidget();
 
-    expect(
-      screen.getByText("Nenhum feriado próximo encontrado."),
-    ).toBeInTheDocument();
+    expect(screen.getByText(UPCOMING_HOLIDAYS_LABELS.empty)).toBeInTheDocument();
   });
 
   it("shows empty message when expanded and data is empty array", () => {
@@ -132,9 +127,7 @@ describe("UpcomingHolidaysWidget", () => {
     render(<UpcomingHolidaysWidget />);
     expandWidget();
 
-    expect(
-      screen.getByText("Nenhum feriado próximo encontrado."),
-    ).toBeInTheDocument();
+    expect(screen.getByText(UPCOMING_HOLIDAYS_LABELS.empty)).toBeInTheDocument();
   });
 
   it("does not list holiday names until expanded", () => {
@@ -146,13 +139,13 @@ describe("UpcomingHolidaysWidget", () => {
 
     render(<UpcomingHolidaysWidget />);
 
-    expect(screen.queryByText("Natal")).not.toBeInTheDocument();
+    expect(screen.queryByText("Christmas")).not.toBeInTheDocument();
     expandWidget();
-    expect(screen.getByText("Natal")).toBeInTheDocument();
-    expect(screen.getByText("Ano Novo")).toBeInTheDocument();
+    expect(screen.getByText("Christmas")).toBeInTheDocument();
+    expect(screen.getByText("New Year")).toBeInTheDocument();
   });
 
-  it("formats holiday dates using formatDateToDDMMYYYY when expanded", () => {
+  it("formats holiday dates using formatDisplayDate when expanded", () => {
     (useUpcomingHolidays as jest.Mock).mockReturnValue({
       data: mockHolidays,
       isLoading: false,
@@ -162,8 +155,8 @@ describe("UpcomingHolidaysWidget", () => {
     render(<UpcomingHolidaysWidget />);
     expandWidget();
 
-    expect(mockFormatDateToDDMMYYYY).toHaveBeenCalledWith("2026-12-25");
-    expect(mockFormatDateToDDMMYYYY).toHaveBeenCalledWith("2026-01-01");
+    expect(mockFormatDisplayDate).toHaveBeenCalledWith("2026-12-25");
+    expect(mockFormatDisplayDate).toHaveBeenCalledWith("2026-01-01");
   });
 
   it("displays holiday descriptions when expanded and available", () => {
@@ -176,7 +169,7 @@ describe("UpcomingHolidaysWidget", () => {
     render(<UpcomingHolidaysWidget />);
     expandWidget();
 
-    expect(screen.getByText(/Feriado Nacional/)).toBeInTheDocument();
+    expect(screen.getByText(/National Holiday/)).toBeInTheDocument();
   });
 
   it("does not render description span for holidays with null description", () => {
@@ -189,7 +182,7 @@ describe("UpcomingHolidaysWidget", () => {
     render(<UpcomingHolidaysWidget />);
     expandWidget();
 
-    const descriptions = screen.queryAllByText(/Feriado Nacional/);
+    const descriptions = screen.queryAllByText(/National Holiday/);
     expect(descriptions).toHaveLength(1);
   });
 
@@ -202,7 +195,7 @@ describe("UpcomingHolidaysWidget", () => {
 
     render(<UpcomingHolidaysWidget />);
 
-    const link = screen.getByText("Gerenciar Feriados");
+    const link = screen.getByText(UPCOMING_HOLIDAYS_LABELS.manageLink);
     expect(link).toBeInTheDocument();
     expect(link.closest("a")).toHaveAttribute("href", "/agenda/holidays");
   });
@@ -232,7 +225,7 @@ describe("UpcomingHolidaysWidget", () => {
 
     render(<UpcomingHolidaysWidget />);
 
-    expect(screen.queryByText("Gerenciar Feriados")).not.toBeInTheDocument();
+    expect(screen.queryByText(UPCOMING_HOLIDAYS_LABELS.manageLink)).not.toBeInTheDocument();
   });
 
   it("toggles chevron when expand button is clicked", () => {
@@ -291,7 +284,7 @@ describe("UpcomingHolidaysWidget", () => {
     render(<UpcomingHolidaysWidget />);
     expandWidget();
 
-    const names = screen.getAllByText(/Natal|Ano Novo/);
-    expect(names.map((n) => n.textContent)).toEqual(["Natal", "Ano Novo"]);
+    const names = screen.getAllByText(/Christmas|New Year/);
+    expect(names.map((n) => n.textContent)).toEqual(["Christmas", "New Year"]);
   });
 });

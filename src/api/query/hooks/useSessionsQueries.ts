@@ -19,7 +19,7 @@ export const useSessionsByTreatment = (treatmentId: number) => {
       const response = await getSessionsByTreatment(treatmentId.toString());
 
       if (!response.success) {
-        throw new Error(response.error || 'Erro ao carregar sessões');
+        throw new Error(response.error || 'Error loading sessions');
       }
 
       return response.value || [];
@@ -38,7 +38,7 @@ export const useSessionsByPatient = (patientId: string) => {
       const response = await getSessionsByPatient(patientId);
 
       if (!response.success) {
-        throw new Error(response.error || 'Erro ao carregar sessões');
+        throw new Error(response.error || 'Error loading sessions');
       }
 
       return response.value || [];
@@ -64,7 +64,7 @@ export const useSessionsByAttendances = (attendanceIds: number[]) => {
       queryFn: async () => {
         const response = await getSessionsByAttendance(attendanceId);
         if (!response.success) {
-          throw new Error(response.error || 'Erro ao carregar sessões');
+          throw new Error(response.error || 'Error loading sessions');
         }
         return { attendanceId, sessions: response.value || [] } as AttendanceSessionsInfo;
       },
@@ -117,7 +117,7 @@ export const useCompleteSession = () => {
       const sessionResponse = await completeSession(sessionRowId, completionData);
 
       if (!sessionResponse.success) {
-        throw new Error(sessionResponse.error || 'Erro ao completar sessão');
+        throw new Error(sessionResponse.error || 'Error completing session');
       }
 
       const treatmentResponse = await updateTreatment(treatmentId, {
@@ -224,7 +224,7 @@ export const useBulkCompleteSessions = () => {
 
       const failures = results.filter((r) => !r.success);
       if (failures.length > 0) {
-        throw new Error(`Falhou ao completar ${failures.length} sessão(ões)`);
+        throw new Error(`Failed to complete ${failures.length} session(s)`);
       }
 
       return results;

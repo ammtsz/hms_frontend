@@ -21,13 +21,13 @@ function createSession(
     attendanceId: 1,
     patientId: 1,
     treatmentType: "physiotherapy",
-    bodyLocation: "Cabeça",
+    bodyLocation: "Head",
     startDate: "2025-01-01",
     plannedSessions: 10,
     completedSessions: 0,
     status: "in_progress",
     durationMinutes: 30,
-    color: "azul",
+    color: "blue",
     notes: undefined,
     createdDate: "2025-01-01",
     createdTime: "10:00:00",
@@ -66,11 +66,7 @@ describe("ExpandedTreatmentDetails.utils", () => {
     it("returns unique treatment plans by id from treatmentsWithSessionRows", () => {
       const s1 = createSession({ id: 1 });
       const s2 = createSession({ id: 2 });
-      const items = [
-        withRecord(s1, 1),
-        withRecord(s1, 2),
-        withRecord(s2, 1),
-      ];
+      const items = [withRecord(s1, 1), withRecord(s1, 2), withRecord(s2, 1)];
       const result = getUniqueTreatmentPlans(items);
       expect(result).toHaveLength(2);
       expect(result.map((s) => s.id).sort()).toEqual([1, 2]);
@@ -87,21 +83,21 @@ describe("ExpandedTreatmentDetails.utils", () => {
         createSession({
           id: 1,
           treatmentType: "physiotherapy",
-          color: "azul",
+          color: "blue",
           plannedSessions: 10,
           durationMinutes: 30,
         }),
         createSession({
           id: 2,
           treatmentType: "physiotherapy",
-          color: "azul",
+          color: "blue",
           plannedSessions: 10,
           durationMinutes: 30,
         }),
         createSession({
           id: 3,
           treatmentType: "physiotherapy",
-          color: "vermelho",
+          color: "red",
           plannedSessions: 10,
           durationMinutes: 30,
         }),
@@ -140,51 +136,48 @@ describe("ExpandedTreatmentDetails.utils", () => {
       const s1 = createSession({
         id: 1,
         treatmentType: "physiotherapy",
-        color: "azul",
+        color: "blue",
         durationMinutes: 30,
         plannedSessions: 10,
-        bodyLocation: "Cabeça",
+        bodyLocation: "Head",
       });
       const s2 = createSession({
         id: 2,
         treatmentType: "physiotherapy",
-        color: "azul",
+        color: "blue",
         durationMinutes: 30,
         plannedSessions: 10,
-        bodyLocation: "Pescoço",
+        bodyLocation: "Neck",
       });
       const items = [withRecord(s1, 1), withRecord(s2, 2)];
       const result = groupByTypeColorDuration(items);
       expect(result).toHaveLength(2);
       expect(result[0].treatmentType).toBe("physiotherapy");
-      expect(result[0].color).toBe("azul");
+      expect(result[0].color).toBe("blue");
       expect(result[0].durationMinutes).toBe(30);
       expect(result[0].sessionNumber).toBe(1);
-      expect(result[0].bodyLocations).toEqual(["Cabeça"]);
-      expect(result[1].bodyLocations).toEqual(["Pescoço"]);
+      expect(result[0].bodyLocations).toEqual(["Head"]);
+      expect(result[1].bodyLocations).toEqual(["Neck"]);
     });
 
     it("merges body locations for same display group (same sessionNumber)", () => {
       const s1 = createSession({
         id: 1,
         treatmentType: "tens",
-        bodyLocation: "Braço",
+        bodyLocation: "Arm",
         plannedSessions: 5,
       });
       const s2 = createSession({
         id: 2,
         treatmentType: "tens",
-        bodyLocation: "Perna",
+        bodyLocation: "Leg",
         plannedSessions: 5,
       });
-      const items = [
-        withRecord(s1, 1),
-        withRecord(s2, 1),
-      ];
+      const items = [withRecord(s1, 1), withRecord(s2, 1)];
       const result = groupByTypeColorDuration(items);
       expect(result).toHaveLength(1);
-      expect(result[0].bodyLocations).toContain("Braço");
-      expect(result[0].bodyLocations).toContain("Perna");
+      expect(result[0].bodyLocations).toContain("Arm");
+      expect(result[0].bodyLocations).toContain("Leg");
     });
   });
 
@@ -206,7 +199,9 @@ describe("ExpandedTreatmentDetails.utils", () => {
           ],
         }),
       ];
-      expect(getEditEligibility(sessions, "2025-01-08")).toEqual({ canEdit: true });
+      expect(getEditEligibility(sessions, "2025-01-08")).toEqual({
+        canEdit: true,
+      });
     });
 
     it("disables edit when any session has completedSessions > 0", () => {
@@ -234,7 +229,9 @@ describe("ExpandedTreatmentDetails.utils", () => {
           sessions: [{ ...createRecord(1), scheduledDate: "2025-01-15" }],
         }),
       ];
-      expect(getEditEligibility(sessions, "2025-01-15")).toEqual({ canEdit: true });
+      expect(getEditEligibility(sessions, "2025-01-15")).toEqual({
+        canEdit: true,
+      });
     });
 
     it("uses chronological scheduledDate (reschedule scenario)", () => {
@@ -248,7 +245,9 @@ describe("ExpandedTreatmentDetails.utils", () => {
         ],
       });
 
-      expect(getEditEligibility([session], "2025-05-15")).toEqual({ canEdit: true });
+      expect(getEditEligibility([session], "2025-05-15")).toEqual({
+        canEdit: true,
+      });
       expect(getEditEligibility([session], "2025-05-29")).toEqual({
         canEdit: false,
         reason: "notEffectiveFirstDay",
@@ -260,11 +259,17 @@ describe("ExpandedTreatmentDetails.utils", () => {
         completedSessions: 0,
         sessions: [
           { ...createRecord(1), scheduledDate: "2025-05-08", status: "missed" },
-          { ...createRecord(2), scheduledDate: "2025-05-15", status: "scheduled" },
+          {
+            ...createRecord(2),
+            scheduledDate: "2025-05-15",
+            status: "scheduled",
+          },
         ],
       });
 
-      expect(getEditEligibility([session], "2025-05-15")).toEqual({ canEdit: true });
+      expect(getEditEligibility([session], "2025-05-15")).toEqual({
+        canEdit: true,
+      });
       expect(getEditEligibility([session], "2025-05-08")).toEqual({
         canEdit: false,
         reason: "notEffectiveFirstDay",
@@ -299,7 +304,11 @@ describe("ExpandedTreatmentDetails.utils", () => {
       const session = createSession({
         sessions: [
           { ...createRecord(1), scheduledDate: "2025-05-08", status: "missed" },
-          { ...createRecord(2), scheduledDate: "2025-05-15", status: "scheduled" },
+          {
+            ...createRecord(2),
+            scheduledDate: "2025-05-15",
+            status: "scheduled",
+          },
         ],
       });
       expect(canAddNewTreatmentRow([session])).toBe(true);
@@ -309,17 +318,25 @@ describe("ExpandedTreatmentDetails.utils", () => {
       const session = createSession({
         sessions: [
           { ...createRecord(1), scheduledDate: "2025-05-08", status: "missed" },
-          { ...createRecord(2), scheduledDate: "2025-05-15", status: "scheduled" },
-          { ...createRecord(3), scheduledDate: "2025-05-22", status: "scheduled" },
+          {
+            ...createRecord(2),
+            scheduledDate: "2025-05-15",
+            status: "scheduled",
+          },
+          {
+            ...createRecord(3),
+            scheduledDate: "2025-05-22",
+            status: "scheduled",
+          },
         ],
       });
       expect(canAddNewTreatmentRow([session])).toBe(true);
     });
 
     it("returns true when sessions are missing", () => {
-      expect(canAddNewTreatmentRow([createSession({ sessions: undefined })])).toBe(
-        true,
-      );
+      expect(
+        canAddNewTreatmentRow([createSession({ sessions: undefined })]),
+      ).toBe(true);
     });
   });
 });

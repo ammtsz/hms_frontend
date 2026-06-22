@@ -1,5 +1,5 @@
 import React from "react";
-import { formatDateBR, getWeeksUntil } from "@/utils/dateUtils";
+import { formatDisplayDate, getWeeksUntil } from "@/utils/dateUtils";
 import type { AttendanceResponseDto } from "@/api/types";
 
 interface NextConsultationCardProps {
@@ -33,10 +33,10 @@ export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
           </div>
           <div className="flex-1">
             <h4 className="text-lg font-semibold text-blue-900 mb-1">
-              Buscando agendamentos criados...
+              Searching for created appointments...
             </h4>
             <p className="text-sm text-blue-700">
-              Verificando os próximos atendimentos agendados automaticamente
+              Verifying the next scheduled appointments automatically
             </p>
           </div>
         </div>
@@ -55,15 +55,15 @@ export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
           </div>
           <div className="flex-1">
             <h4 className="text-lg font-semibold text-amber-900 mb-1">
-              Não foi possível carregar os agendamentos
+              Error fetching appointments
             </h4>
             <p className="text-sm text-amber-700 mb-2">
-              {attendancesError || "Erro ao buscar agendamentos criados"}
+              {attendancesError || "Error fetching created appointments"}
             </p>
             <p className="text-xs text-amber-600">
-              Os agendamentos foram criados com sucesso, mas não conseguimos
-              exibi-los no momento. Você pode ver todos os agendamentos na
-              agenda do paciente.
+              The appointments were created successfully, but we couldn&apos;t
+              display them at the moment. You can see all appointments in the
+              patient&apos;s schedule.
             </p>
           </div>
         </div>
@@ -88,7 +88,7 @@ export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
           <div className="flex-1">
             <div>
               <h4 className="text-lg font-semibold mb-1">
-                Retorno da Consulta de Avaliação
+                Return of Assessment Consultation
               </h4>
             </div>
           </div>
@@ -99,17 +99,17 @@ export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
           <div className="flex items-center space-x-3">
             <span className="text-2xl">📅</span>
             <div>
-              <div className="text-sm text-gray-600">Data</div>
+              <div className="text-sm text-gray-600">Date</div>
               <div className="text-lg font-bold text-gray-800">
-                {formatDateBR(nextAssessmentConsultation.scheduledDate)}
+                {formatDisplayDate(nextAssessmentConsultation.scheduledDate)}
               </div>
             </div>
           </div>
           {weeksUntil > 0 && (
             <div className="text-right">
-              <div className="text-sm text-gray-600">Retorno em</div>
+              <div className="text-sm text-gray-600">Return in</div>
               <div className="text-md font-semibold text-gray-800">
-                {weeksUntil} {weeksUntil === 1 ? "semana" : "semanas"}
+                {weeksUntil} {weeksUntil === 1 ? "week" : "weeks"}
               </div>
               {returnWhenTreatmentComplete &&
                 returnWeeks !== undefined &&
@@ -117,8 +117,8 @@ export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
                   <div className="text-xs text-gray-500 mt-1">
                     (
                     {returnWeeks === 0
-                      ? "no dia da última sessão do tratamento"
-                      : `${returnWeeks} ${returnWeeks === 1 ? "semana" : "semanas"} após término do tratamento`}
+                      ? "on the day of the treatment's last session"
+                      : `${returnWeeks} ${returnWeeks === 1 ? "week" : "weeks"} after treatment ends`}
                     )
                   </div>
                 )}

@@ -1,5 +1,5 @@
 import React from "react";
-import { formatDateWithDayOfWeekBR } from "@/utils/dateUtils";
+import { formatDisplayDateWithDayOfWeek } from "@/utils/dateUtils";
 import HolidayIndicator from "./HolidayIndicator";
 import { useHolidayForDate } from "../hooks/useHolidayForDate";
 
@@ -16,7 +16,7 @@ const AgendaDateHeader: React.FC<AgendaDateHeaderProps> = ({ date }) => {
   return (
     <div className="flex items-start gap-2">
       <div className="flex-1">
-        <div className="font-semibold">{formatDateWithDayOfWeekBR(date)}</div>
+        <div className="font-semibold">{formatDisplayDateWithDayOfWeek(date)}</div>
         {holiday && (
           <div className="mt-1">
             <HolidayIndicator

@@ -67,7 +67,7 @@ const PostAttendanceModal: React.FC = () => {
     }
   }, [postAttendance.isOpen, attendanceId]);
 
-  // When "Alta do tratamento" (A) is selected, leave treatment tab if active
+  // When treatment discharge (A) is selected, leave the treatment tab if active
   useEffect(() => {
     if (formData.patientStatus === "A" && activeTab === "treatment") {
       setActiveTab("basic");
@@ -97,20 +97,20 @@ const PostAttendanceModal: React.FC = () => {
   const tabs = [
     {
       id: "basic",
-      label: "Informações Básicas",
-      isValid: Boolean(formData.mainComplaint.trim()),
+      label: "Basic Information",
+      isValid: Boolean(formData.mainConcern.trim()),
     },
     {
       id: "general",
-      label: "Recomendações Gerais",
+      label: "General Recommendations",
       isValid: isGeneralTabValid,
     },
     {
       id: "treatment",
-      label: "Agendamentos Automáticos",
+      label: "Automatic Scheduling",
       isValid: isTreatmentTabValid,
-      disabled: formData.patientStatus === "A", // Not applicable for "Alta do tratamento"
-      disabledTitle: "Indisponível para Alta do tratamento",
+      disabled: formData.patientStatus === "A", // Not applicable for treatment discharge
+      disabledTitle: "Unavailable for treatment discharge",
     },
   ];
 
@@ -137,7 +137,7 @@ const PostAttendanceModal: React.FC = () => {
     // For now, we'll just reset the error state
   };
 
-  // When "Alta do tratamento" (A) is selected, set return weeks to 0 in both
+  // When treatment discharge (A) is selected, set return weeks to 0 in both
   // top-level and recommendations so the UI and submit logic both see 0
   const handleBasicInfoFormDataChange = useCallback(
     (field: keyof PostConsultationFormData, value: string | number | Date) => {
@@ -233,7 +233,7 @@ const PostAttendanceModal: React.FC = () => {
         onClick={() => closeModal("postAttendance")}
         disabled={isLoading}
       >
-        Cancelar
+        Cancel
       </Button>
       <Button
         type="button"
@@ -242,13 +242,13 @@ const PostAttendanceModal: React.FC = () => {
         isLoading={isLoading}
         disabled={
           isLoading ||
-          !formData.mainComplaint.trim() ||
+          !formData.mainConcern.trim() ||
           !isGeneralTabValid ||
           !isTreatmentTabValid
         }
-        loadingText="Salvando..."
+        loadingText="Saving..."
       >
-        Concluir atendimento
+        Complete appointment
       </Button>
     </div>
   );
@@ -264,17 +264,17 @@ const PostAttendanceModal: React.FC = () => {
       onClose={handleCancel}
       title={
         showConfirmation
-          ? `Consulta Finalizada - ${patientName}`
+          ? `Consultation Completed - ${patientName}`
           : showErrors
-            ? `Problemas no Tratamento - ${patientName}`
-            : `Formulário de Consulta de Avaliação - ${patientName}`
+            ? `Problems with Treatment - ${patientName}`
+            : `Assessment Consultation Form - ${patientName}`
       }
       subtitle={
         showConfirmation
-          ? "Agendamentos criados automaticamente"
+          ? "Appointments created automatically"
           : showErrors
-            ? "Alguns agendamentos não puderam ser criados"
-            : `Atendimento #${attendanceId} • Paciente #${patientId}`
+            ? "Some appointments could not be created"
+            : `Attendance #${attendanceId} • Patient #${patientId}`
       }
       tabs={showConfirmation || showErrors ? [] : tabs} // Hide tabs in confirmation/error view
       activeTab={activeTab}

@@ -205,7 +205,7 @@ jest.mock("@/api/query/hooks/usePatientQueries", () => {
         queryFn: async () => {
           const result = await getPatients();
           if (!result.success || !result.value) {
-            throw new Error(result.error || "Erro ao carregar pacientes");
+            throw new Error(result.error || "Error loading patients");
           }
           return transformPatientsFromApi(result.value);
         },
@@ -260,7 +260,7 @@ jest.mock("@/api/query/hooks/usePriorityOptionsQueries", () => {
       id: 2,
       type: SystemOptionType.PRIORITY,
       value: "2",
-      label: "Intermediário",
+      label: "Intermediate",
       isActive: true,
       sortOrder: 1,
       createdAt: "2025-01-01T00:00:00Z",
@@ -270,7 +270,7 @@ jest.mock("@/api/query/hooks/usePriorityOptionsQueries", () => {
       id: 3,
       type: SystemOptionType.PRIORITY,
       value: "3",
-      label: "Emergência",
+      label: "Emergency",
       isActive: true,
       sortOrder: 2,
       createdAt: "2025-01-01T00:00:00Z",
@@ -338,18 +338,18 @@ describe("EndOfDayModal Integration - Completed Count Fix", () => {
     await waitFor(
       () => {
         expect(
-          screen.getByText(/▼\s*Consultas\s*\(\d+\)/)
+          screen.getByText(/▼\s*Consultation\s*\(\d+\)/)
         ).toBeInTheDocument();
       },
       { timeout: 15000 }
     );
 
     // Verify the component structure is correct
-    expect(screen.getAllByText("Agendados")).toHaveLength(2); // Two sections have this
-    expect(screen.getAllByText("Finalizados")).toHaveLength(2); // Two sections have this
+    expect(screen.getAllByText("Scheduled")).toHaveLength(2); // Two sections have this
+    expect(screen.getAllByText("Completed")).toHaveLength(2); // Two sections have this
 
-    // Check that the Finalizar Dia button exists
-    expect(screen.getByText("Finalizar Dia")).toBeInTheDocument();
+    // Check that the End of Day button exists
+    expect(screen.getByText("End of Day")).toBeInTheDocument();
 
     // Verify there are completed attendances (text includes priority numbers)
     expect(screen.getByText(/Patient 1/)).toBeInTheDocument();

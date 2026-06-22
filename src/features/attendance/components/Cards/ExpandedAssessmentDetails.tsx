@@ -11,7 +11,7 @@ interface ExpandedAssessmentDetailsProps {
  * ExpandedAssessmentDetails - Shows assessment consultation details
  *
  * Displays:
- * - Main complaint (from patient record)
+ * - Main concern (from patient record)
  * - Attendance notes (if any)
  */
 const ExpandedAssessmentDetails: React.FC<ExpandedAssessmentDetailsProps> = ({
@@ -21,33 +21,30 @@ const ExpandedAssessmentDetails: React.FC<ExpandedAssessmentDetailsProps> = ({
   if (!patient) {
     return (
       <div className="p-3 bg-gray-50 rounded text-sm text-gray-500 italic">
-        Nenhum registro de paciente encontrado
+        No patient record found
       </div>
     );
   }
 
-  const hasMainComplaint =
-    patient.mainComplaint && patient.mainComplaint.trim();
+  const hasMainConcern = patient.mainConcern && patient.mainConcern.trim();
   const hasNotes = notes && notes.trim();
 
-  if (!hasMainComplaint && !hasNotes) {
+  if (!hasMainConcern && !hasNotes) {
     return (
       <div className="p-3 bg-gray-50 rounded text-sm text-gray-500 italic">
-        Nenhuma queixa ou observação registrada
+        No complaint or notes recorded
       </div>
     );
   }
 
   return (
     <div className="mt-3 space-y-2 border-t border-gray-200 pt-3">
-      {/* Main Complaint */}
-      {hasMainComplaint && (
+      {/* Main Concern */}
+      {hasMainConcern && (
         <div className="bg-gray-50 rounded-lg p-3 text-sm">
-          <div className="font-semibold text-gray-700 mb-1">
-            Queixa Principal
-          </div>
+          <div className="font-semibold text-gray-700 mb-1">Main complaint</div>
           <div className="text-gray-800 whitespace-pre-wrap font-normal leading-tight">
-            {patient.mainComplaint}
+            {patient.mainConcern}
           </div>
         </div>
       )}
@@ -55,7 +52,7 @@ const ExpandedAssessmentDetails: React.FC<ExpandedAssessmentDetailsProps> = ({
       {/* Attendance Notes */}
       {hasNotes && (
         <div className="bg-gray-50 rounded-lg p-3 text-sm">
-          <div className="font-semibold text-gray-700 mb-1">Observações</div>
+          <div className="font-semibold text-gray-700 mb-1">Notes</div>
           <div className="text-gray-800 whitespace-pre-wrap">{notes}</div>
         </div>
       )}

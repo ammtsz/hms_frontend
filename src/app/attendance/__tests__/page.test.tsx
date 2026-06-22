@@ -7,32 +7,29 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import AttendancePage from "../page";
 
 // Mock the PatientWalkInPanel component
-jest.mock(
-  "@/features/attendance/components/WalkIn",
-  () => ({
-    PatientWalkInPanel: ({
-      onRegisterNewAttendance,
-    }: {
-      onRegisterNewAttendance: (
-        name: string,
-        types: string[],
-        isNew: boolean,
-        priority: string
-      ) => void;
-    }) => (
-      <div data-testid="patient-walk-in-panel">
-        <button
-          data-testid="register-attendance-btn"
-          onClick={() =>
-            onRegisterNewAttendance("Test Patient", ["assessment"], true, "2")
-          }
-        >
-          Register New Attendance
-        </button>
-      </div>
-    ),
-  })
-);
+jest.mock("@/features/attendance/components/WalkIn", () => ({
+  PatientWalkInPanel: ({
+    onRegisterNewAttendance,
+  }: {
+    onRegisterNewAttendance: (
+      name: string,
+      types: string[],
+      isNew: boolean,
+      priority: string,
+    ) => void;
+  }) => (
+    <div data-testid="patient-walk-in-panel">
+      <button
+        data-testid="register-attendance-btn"
+        onClick={() =>
+          onRegisterNewAttendance("Test Patient", ["assessment"], true, "2")
+        }
+      >
+        Register New Attendance
+      </button>
+    </div>
+  ),
+}));
 
 // Mock the LoadingFallback component
 jest.mock("@/components/common/LoadingFallback", () => {
@@ -91,7 +88,7 @@ describe("AttendancePage", () => {
     render(<AttendancePage />);
 
     expect(screen.getByTestId("patient-walk-in-panel")).toBeInTheDocument();
-    expect(screen.getByText("Quadro de Atendimentos")).toBeInTheDocument();
+    expect(screen.getByText("Attendance Board")).toBeInTheDocument();
 
     // Should render either loading fallback or the actual component
     const hasLoadingFallback = screen.queryByTestId("loading-fallback");
@@ -103,13 +100,13 @@ describe("AttendancePage", () => {
     render(<AttendancePage />);
 
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-      "Quadro de Atendimentos"
+      "Attendance Board",
     );
 
-    const description = screen.getByText(/Gerencie o fluxo de atendimentos/);
+    const description = screen.getByText(/Manage attendance flow/);
     expect(description).toBeInTheDocument();
-    expect(description).toHaveTextContent(/arrastando e soltando/);
-    expect(description).toHaveTextContent(/de configurações/);
+    expect(description).toHaveTextContent(/dragging and dropping/);
+    expect(description).toHaveTextContent(/settings button/);
   });
 
   it("should have proper layout structure", () => {
@@ -136,7 +133,7 @@ describe("AttendancePage", () => {
 
     // Initially no unscheduled check-in
     expect(
-      screen.queryByTestId("unscheduled-check-in")
+      screen.queryByTestId("unscheduled-check-in"),
     ).not.toBeInTheDocument();
 
     // Trigger new attendance registration
@@ -164,7 +161,7 @@ describe("AttendancePage", () => {
 
     // Should be cleared
     expect(
-      screen.queryByTestId("unscheduled-check-in")
+      screen.queryByTestId("unscheduled-check-in"),
     ).not.toBeInTheDocument();
   });
 

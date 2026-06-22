@@ -7,7 +7,7 @@ describe("SuccessHeader", () => {
     render(<SuccessHeader />);
 
     expect(
-      screen.getByText(/Tratamento registrado com sucesso!/i),
+      screen.getByText(/Treatment registered successfully!/i),
     ).toBeInTheDocument();
   });
 

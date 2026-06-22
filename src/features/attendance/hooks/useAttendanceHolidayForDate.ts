@@ -2,8 +2,8 @@ import { useQueries } from "@tanstack/react-query";
 import { checkIfHolidayForTreatmentType } from "@/api/holidays";
 
 const TREATMENT_TYPES = [
-  { api: "assessment", label: "Consulta de Avaliação" },
-  { api: "physiotherapy", label: "Fisioterapia" },
+  { api: "assessment", label: "Assessment Consultation" },
+  { api: "physiotherapy", label: "Physiotherapy" },
   { api: "tens", label: "TENS" },
 ] as const;
 
@@ -11,7 +11,7 @@ type TreatmentLabel = (typeof TREATMENT_TYPES)[number]["label"];
 
 /**
  * Returns holiday status for a date across all attendance types (assessment, physiotherapy, tens).
- * Used to disable the day and show "Feriado para [treatment types]" in attendance management.
+ * Used to disable the day and show "Holiday for [treatment types]" in attendance management.
  */
 export function useAttendanceHolidayForDate(selectedDate: string | null) {
   const results = useQueries({
@@ -20,7 +20,7 @@ export function useAttendanceHolidayForDate(selectedDate: string | null) {
       queryFn: async () => {
         if (!selectedDate) return { isHoliday: false };
         const result = await checkIfHolidayForTreatmentType(selectedDate, api);
-        if (!result.success) throw new Error(result.error || 'Erro ao verificar feriado');
+        if (!result.success) throw new Error(result.error || 'Error checking holiday');
         return { isHoliday: result.value };
       },
       enabled: !!selectedDate,
@@ -42,10 +42,10 @@ export function useAttendanceHolidayForDate(selectedDate: string | null) {
     hasError,
     blockedLabels,
     isHolidayForAll,
-    /** Human-readable message: "Feriado para Consulta de Avaliação, Fisioterapia, TENS" (or subset) */
+    /** Human-readable message: "Holiday for Assessment Consultation, Physiotherapy, TENS" (or subset) */
     holidayMessage:
       blockedLabels.length > 0
-        ? `Feriado para ${blockedLabels.join(", ")}`
+        ? `Holiday for ${blockedLabels.join(", ")}`
         : null,
   };
 }

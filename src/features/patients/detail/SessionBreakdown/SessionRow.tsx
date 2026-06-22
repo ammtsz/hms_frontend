@@ -43,9 +43,10 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session }) => {
         {getStatusIcon(session.status)}
         <div className="flex-1 min-w-0">
           <div className="text-sm font-medium text-gray-900">
-            Sessão {session.sessionNumber}
+            Session {session.sessionNumber}
             {session.plannedSessions && `/${session.plannedSessions}`} (
-            {formatDate(session.scheduledDate)}): {getStatusLabel(session.status)}
+            {formatDate(session.scheduledDate)}):{" "}
+            {getStatusLabel(session.status)}
           </div>
 
           {session.notes && (
@@ -59,7 +60,7 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session }) => {
             <div className="mt-1 text-xs text-red-700 flex items-start gap-1">
               <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
               <span>
-                <span className="font-medium">Motivo:</span>{" "}
+                <span className="font-medium">Reason:</span>{" "}
                 {session.missedReason}
               </span>
             </div>
@@ -69,7 +70,7 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session }) => {
             <div className="mt-1 text-xs text-red-700 flex items-start gap-1">
               <AlertTriangle size={12} className="mt-0.5 flex-shrink-0" />
               <span>
-                <span className="font-medium">Motivo:</span>{" "}
+                <span className="font-medium">Reason:</span>{" "}
                 {session.cancellationReason}
               </span>
             </div>
@@ -77,7 +78,7 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session }) => {
 
           {session.status === "completed" && session.endTime && (
             <div className="mt-1 text-xs text-gray-600">
-              Concluída às {formatTime(session.endTime)}
+              Completed at {formatTime(session.endTime)}
             </div>
           )}
         </div>

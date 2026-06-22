@@ -81,17 +81,17 @@ const PatientWalkInPanel: React.FC<PatientWalkInPanelProps> = ({
             <Plus className="w-5 h-5 text-blue-600" />
             <div>
               <h2 className="text-lg font-semibold text-gray-800">
-                Pacientes não Agendados
+                Walk-In Patients
               </h2>
               <p className="text-sm text-gray-600 mt-1">
                 {noSlotsForDay ? (
-                  <>Não há vagas disponíveis para este dia.</>
+                  <>There are no available slots for this day.</>
                 ) : isNotToday ? (
-                  <>Disponível apenas para a data de hoje.</>
+                  <>Available only for today&apos;s date.</>
                 ) : (
                   <>
-                    Registro de pacientes não agendados para{" "}
-                    <strong>ATENDIMENTO IMEDIATO</strong>
+                    Unscheduled patient registration for{" "}
+                    <strong>WALK-IN</strong>
                   </>
                 )}
               </p>

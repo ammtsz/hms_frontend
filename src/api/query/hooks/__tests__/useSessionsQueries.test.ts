@@ -470,7 +470,7 @@ describe("useSessionsQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toContain("Falhou ao completar 1 sessão(ões)");
+      expect(result.current.error?.message).toContain("Failed to complete 1 session(s)");
     });
 
     test("should handle multiple treatment update failures", async () => {
@@ -565,7 +565,7 @@ describe("useSessionsQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toContain("Falhou ao completar 1 sessão(ões)");
+      expect(result.current.error?.message).toContain("Failed to complete 1 session(s)");
     });
   });
 

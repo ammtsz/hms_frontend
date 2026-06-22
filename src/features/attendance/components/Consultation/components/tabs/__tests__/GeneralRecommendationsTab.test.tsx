@@ -10,7 +10,7 @@ import type { PostConsultationFormData } from "../../../hooks/usePostAttendanceF
 
 describe("GeneralRecommendationsTab", () => {
   const mockFormData: PostConsultationFormData = {
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     patientStatus: "N",
     startDate: "2024-01-01",
     returnWeeks: 4,
@@ -40,7 +40,7 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    expect(screen.getByText("Recomendações Gerais")).toBeInTheDocument();
+    expect(screen.getByText("General Recommendations")).toBeInTheDocument();
   });
 
   it("should display the description text", () => {
@@ -53,7 +53,7 @@ describe("GeneralRecommendationsTab", () => {
 
     expect(
       screen.getByText(
-        "Forneça orientações gerais sobre alimentação, hidratação e cuidados complementares.",
+        "Provide general guidance on food, hydration, and complementary care.",
       ),
     ).toBeInTheDocument();
   });
@@ -66,11 +66,11 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    expect(screen.getByLabelText("Alimentação")).toHaveValue(
+    expect(screen.getByLabelText("Food")).toHaveValue(
       "Test food recommendations",
     );
-    expect(screen.getByLabelText("Água")).toHaveValue("2L per day");
-    expect(screen.getByLabelText("Pomadas")).toHaveValue("Test ointment");
+    expect(screen.getByLabelText("Water")).toHaveValue("2L per day");
+    expect(screen.getByLabelText("Ointments")).toHaveValue("Test ointment");
   });
 
   it("should call onFormDataChange when food textarea changes", () => {
@@ -81,7 +81,7 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const foodTextarea = screen.getByLabelText("Alimentação");
+    const foodTextarea = screen.getByLabelText("Food");
     fireEvent.change(foodTextarea, {
       target: { value: "New food recommendation" },
     });
@@ -100,7 +100,7 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const waterInput = screen.getByLabelText("Água");
+    const waterInput = screen.getByLabelText("Water");
     fireEvent.change(waterInput, { target: { value: "3L per day" } });
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith("water", "3L per day");
@@ -114,7 +114,7 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const ointmentsInput = screen.getByLabelText("Pomadas");
+    const ointmentsInput = screen.getByLabelText("Ointments");
     fireEvent.change(ointmentsInput, { target: { value: "New ointment" } });
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith(
@@ -133,14 +133,14 @@ describe("GeneralRecommendationsTab", () => {
 
     expect(
       screen.getByPlaceholderText(
-        "Recomendações alimentares (ex: evitar carnes vermelhas, priorizar vegetais, etc.)",
+        "Dietary recommendations (e.g. avoid red meat, prioritize vegetables, etc.)",
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("Ex: 2L de água por dia"),
+      screen.getByPlaceholderText("e.g. 2L of water per day"),
     ).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("Pomadas recomendadas..."),
+      screen.getByPlaceholderText("Recommended ointments..."),
     ).toBeInTheDocument();
   });
 
@@ -153,15 +153,13 @@ describe("GeneralRecommendationsTab", () => {
     );
 
     expect(
-      screen.getByText(
-        "Orientações específicas sobre dieta e alimentação durante o tratamento",
-      ),
+      screen.getByText("Specific guidance on diet and food during treatment"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Quantidade e tipo de água recomendada"),
+      screen.getByText("Recommended amount and type of water"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Produtos tópicos para aplicação externa"),
+      screen.getByText("Topical products for external application"),
     ).toBeInTheDocument();
   });
 
@@ -207,9 +205,9 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    expect(screen.getByLabelText("Alimentação")).toHaveValue("");
-    expect(screen.getByLabelText("Água")).toHaveValue("");
-    expect(screen.getByLabelText("Pomadas")).toHaveValue("");
+    expect(screen.getByLabelText("Food")).toHaveValue("");
+    expect(screen.getByLabelText("Water")).toHaveValue("");
+    expect(screen.getByLabelText("Ointments")).toHaveValue("");
   });
 
   it("should call onFormDataChange with correct field names", () => {
@@ -220,9 +218,9 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const foodTextarea = screen.getByLabelText("Alimentação");
-    const waterInput = screen.getByLabelText("Água");
-    const ointmentsInput = screen.getByLabelText("Pomadas");
+    const foodTextarea = screen.getByLabelText("Food");
+    const waterInput = screen.getByLabelText("Water");
+    const ointmentsInput = screen.getByLabelText("Ointments");
 
     fireEvent.change(foodTextarea, { target: { value: "test" } });
     fireEvent.change(waterInput, { target: { value: "test" } });
@@ -245,9 +243,9 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const foodTextarea = screen.getByLabelText("Alimentação");
-    const waterInput = screen.getByLabelText("Água");
-    const ointmentsInput = screen.getByLabelText("Pomadas");
+    const foodTextarea = screen.getByLabelText("Food");
+    const waterInput = screen.getByLabelText("Water");
+    const ointmentsInput = screen.getByLabelText("Ointments");
 
     expect(foodTextarea.tagName.toLowerCase()).toBe("textarea");
     expect(foodTextarea).toHaveAttribute("rows", "3");
@@ -285,7 +283,7 @@ describe("GeneralRecommendationsTab", () => {
     );
 
     const checkbox = screen.getByRole("checkbox", {
-      name: /nenhuma recomendação geral se aplica/i,
+      name: /No general recommendations apply/i,
     });
     expect(checkbox).toBeInTheDocument();
     expect(checkbox).not.toBeChecked();
@@ -312,9 +310,9 @@ describe("GeneralRecommendationsTab", () => {
         />,
       );
 
-      expect(screen.getByLabelText("Alimentação")).toBeDisabled();
-      expect(screen.getByLabelText("Água")).toBeDisabled();
-      expect(screen.getByLabelText("Pomadas")).toBeDisabled();
+      expect(screen.getByLabelText("Food")).toBeDisabled();
+      expect(screen.getByLabelText("Water")).toBeDisabled();
+      expect(screen.getByLabelText("Ointments")).toBeDisabled();
     });
 
     it("should apply lighter label styling when noGeneralRecommendations is true", () => {
@@ -330,9 +328,9 @@ describe("GeneralRecommendationsTab", () => {
         />,
       );
 
-      const foodLabel = screen.getByText("Alimentação");
-      const waterLabel = screen.getByText("Água");
-      const ointmentsLabel = screen.getByText("Pomadas");
+      const foodLabel = screen.getByText("Food");
+      const waterLabel = screen.getByText("Water");
+      const ointmentsLabel = screen.getByText("Ointments");
 
       expect(foodLabel).toHaveClass("text-gray-400");
       expect(waterLabel).toHaveClass("text-gray-400");

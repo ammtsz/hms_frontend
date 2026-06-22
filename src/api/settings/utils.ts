@@ -6,18 +6,18 @@ export function includeInactiveParams(includeInactive: boolean) {
 
 type StatusMessageMap = Record<number, string>;
 
-const DEFAULT_SYSTEM_OPTION_ERROR_MESSAGE = "Erro ao processar requisição";
+const DEFAULT_SYSTEM_OPTION_ERROR_MESSAGE = "Error processing request";
 
 export const SYSTEM_OPTION_STATUS_MESSAGES: StatusMessageMap = {
-  409: "Este nome já existe",
-  400: "Requisição inválida",
-  404: "Opção não encontrada",
+  409: "This name already exists",
+  400: "Invalid request",
+  404: "Option not found",
 };
 
 export const PRIORITY_STATUS_MESSAGES: StatusMessageMap = {
-  409: "Prioridade ainda está em uso",
-  400: "Requisição inválida",
-  404: "Prioridade não encontrada",
+  409: "Priority is still in use",
+  400: "Invalid request",
+  404: "Priority not found",
 };
 
 export function getStatusErrorMessage(

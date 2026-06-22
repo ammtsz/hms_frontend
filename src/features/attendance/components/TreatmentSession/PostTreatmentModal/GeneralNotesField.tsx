@@ -11,12 +11,12 @@ export const GeneralNotesField: React.FC<GeneralNotesFieldProps> = ({
   onChange,
 }) => (
   <div className="mt-4">
-    <Field label="Observações (opcional)" htmlFor="post-treatment-notes">
+    <Field label="Notes (optional)" htmlFor="post-treatment-notes">
       <Textarea
         id="post-treatment-notes"
         value={value}
         onChange={(e) => onChange(e.target.value.slice(0, 1000))}
-        placeholder="Observações da sessão"
+        placeholder="Session notes"
         rows={2}
       />
     </Field>

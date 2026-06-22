@@ -154,7 +154,7 @@ describe("usePostAttendanceForm", () => {
     // Mock form handler with complete return type
     mockUseFormHandler.mockReturnValue({
       formData: {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -184,7 +184,7 @@ describe("usePostAttendanceForm", () => {
         name: "Test Patient",
         email: "test@example.com",
         phone: "11999999999",
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         startDate: "2024-01-15",
         priority: 2,
         patientStatus: "T",
@@ -284,7 +284,7 @@ describe("usePostAttendanceForm", () => {
         wrapper: TestWrapper,
       });
 
-      expect(result.current.formData.mainComplaint).toBe("Test complaint");
+      expect(result.current.formData.mainConcern).toBe("Test complaint");
       expect(result.current.formData.patientStatus).toBe("T");
 
       // Wait for patient data to load
@@ -305,14 +305,14 @@ describe("usePostAttendanceForm", () => {
       expect(mockUsePatient).toHaveBeenCalledWith("1");
     });
 
-    it("should pre-fill mainComplaint from existing treatment record", async () => {
-      // Mock existing treatment record with mainComplaint
+    it("should pre-fill mainConcern from existing treatment record", async () => {
+      // Mock existing treatment record with mainConcern
       // Note: The hook uses useLatestTreatmentRecordByPatient, not useTreatmentRecordByAttendance
       mockUseLatestConsultationByPatient.mockReturnValue({
         data: {
           id: 1,
           patientId: 1,
-          mainComplaint: "Existing complaint from database",
+          mainConcern: "Existing complaint from database",
           food: "Light foods",
           water: "Drink plenty",
           ointments: "None",
@@ -327,7 +327,7 @@ describe("usePostAttendanceForm", () => {
       const mockSetFormData = jest.fn();
       mockUseFormHandler.mockReturnValue({
         formData: {
-          mainComplaint: "",
+          mainConcern: "",
           patientStatus: "T",
           startDate: "2024-01-15",
           returnWeeks: 1,
@@ -476,13 +476,11 @@ describe("usePostAttendanceForm", () => {
         wrapper: TestWrapper,
       });
 
-      expect(result.current.getTreatmentStatusLabel("N")).toBe("Novo paciente");
-      expect(result.current.getTreatmentStatusLabel("T")).toBe("Em tratamento");
-      expect(result.current.getTreatmentStatusLabel("A")).toBe(
-        "Alta do tratamento",
-      );
+      expect(result.current.getTreatmentStatusLabel("N")).toBe("New patient");
+      expect(result.current.getTreatmentStatusLabel("T")).toBe("In Treatment");
+      expect(result.current.getTreatmentStatusLabel("A")).toBe("Discharged");
       expect(result.current.getTreatmentStatusLabel("F")).toBe(
-        "Faltas consecutivas",
+        "Missed — consecutive",
       );
     });
   });
@@ -508,7 +506,7 @@ describe("usePostAttendanceForm", () => {
     it("should combine multiple loading states", () => {
       mockUseFormHandler.mockReturnValue({
         formData: {
-          mainComplaint: "Test complaint",
+          mainConcern: "Test complaint",
           patientStatus: "T",
           startDate: "2024-01-15",
           returnWeeks: 1,
@@ -587,7 +585,7 @@ describe("usePostAttendanceForm", () => {
       expect(mockUseFormHandler).toHaveBeenCalledWith(
         expect.objectContaining({
           initialState: expect.objectContaining({
-            mainComplaint: expect.any(String),
+            mainConcern: expect.any(String),
             patientStatus: expect.any(String),
             startDate: expect.any(String),
           }),
@@ -673,14 +671,14 @@ describe("usePostAttendanceForm", () => {
       return config.validate;
     };
 
-    it("should validate main complaint is required", () => {
+    it("should validate main concern is required", () => {
       renderHook(() => usePostAttendanceForm(), {
         wrapper: TestWrapper,
       });
 
       const validateFn = getValidateFn();
       const validationResult = validateFn({
-        mainComplaint: "",
+        mainConcern: "",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -696,7 +694,7 @@ describe("usePostAttendanceForm", () => {
         noTreatmentRecommendations: true,
       });
 
-      expect(validationResult).toBe("Principal queixa é obrigatória");
+      expect(validationResult).toBe("Main complaint is required");
     });
 
     it("should validate return weeks range", () => {
@@ -708,7 +706,7 @@ describe("usePostAttendanceForm", () => {
 
       // Test too low (below 0)
       const lowWeeksResult = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: -1,
@@ -723,13 +721,11 @@ describe("usePostAttendanceForm", () => {
         noGeneralRecommendations: true,
         noTreatmentRecommendations: true,
       });
-      expect(lowWeeksResult).toBe(
-        "Semanas para retorno deve estar entre 0 e 52",
-      );
+      expect(lowWeeksResult).toBe("Return weeks must be between 0 and 52");
 
       // Test too high
       const highWeeksResult = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 53,
@@ -744,9 +740,7 @@ describe("usePostAttendanceForm", () => {
         noGeneralRecommendations: true,
         noTreatmentRecommendations: true,
       });
-      expect(highWeeksResult).toBe(
-        "Semanas para retorno deve estar entre 0 e 52",
-      );
+      expect(highWeeksResult).toBe("Return weeks must be between 0 and 52");
     });
 
     it("should validate future start dates are not allowed", () => {
@@ -759,7 +753,7 @@ describe("usePostAttendanceForm", () => {
       const futureDateString = addCalendarDaysToLocalYmd(today, 1);
 
       const result = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: futureDateString,
         returnWeeks: 1,
@@ -775,7 +769,7 @@ describe("usePostAttendanceForm", () => {
         noTreatmentRecommendations: true,
       });
 
-      expect(result).toBe("Data de cadastro não pode ser futura");
+      expect(result).toBe("Registration date cannot be future");
     });
 
     it("should validate physiotherapy treatments", () => {
@@ -787,7 +781,7 @@ describe("usePostAttendanceForm", () => {
 
       // Test with physiotherapy object but no validation error (empty array is allowed)
       const missingTreatmentsResult = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -811,7 +805,7 @@ describe("usePostAttendanceForm", () => {
 
       // Test missing locations
       const missingLocationsResult = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -839,12 +833,12 @@ describe("usePostAttendanceForm", () => {
         noTreatmentRecommendations: false,
       });
       expect(missingLocationsResult).toBe(
-        "Todos os locais da fisioterapia devem ser especificados",
+        "All physiotherapy locations must be specified",
       );
 
       // Test missing color
       const missingColorResult = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -872,7 +866,7 @@ describe("usePostAttendanceForm", () => {
         noTreatmentRecommendations: false,
       });
       expect(missingColorResult).toBe(
-        "Cor da fisioterapia é obrigatória para todos os locais",
+        "Physiotherapy color is required for all locations",
       );
     });
 
@@ -885,7 +879,7 @@ describe("usePostAttendanceForm", () => {
 
       // Test with tens object but no validation error (empty array is allowed)
       const missingTreatmentsResult = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -909,7 +903,7 @@ describe("usePostAttendanceForm", () => {
 
       // Test invalid quantity
       const invalidQuantityResult = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -931,7 +925,7 @@ describe("usePostAttendanceForm", () => {
         noTreatmentRecommendations: false,
       });
       expect(invalidQuantityResult).toBe(
-        "Quantidade de tratamentos com TENS deve estar entre 1 e 20",
+        "TENS treatment quantity must be between 1 and 20",
       );
     });
 
@@ -943,7 +937,7 @@ describe("usePostAttendanceForm", () => {
       const validateFn = getValidateFn();
 
       const result = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -960,7 +954,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       expect(result).toBe(
-        "Adicione pelo menos uma recomendação geral (alimentação, água ou pomadas) ou marque que nenhuma se aplica",
+        "Add at least one general recommendation (food, water or ointments) or mark none apply",
       );
     });
 
@@ -972,7 +966,7 @@ describe("usePostAttendanceForm", () => {
       const validateFn = getValidateFn();
 
       const result = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T",
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -989,7 +983,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       expect(result).toBe(
-        "Adicione pelo menos um tratamento de fisioterapia ou TENS ou marque que nenhum se aplica",
+        "Add at least one physiotherapy or TENS treatment or mark none apply",
       );
     });
 
@@ -1001,7 +995,7 @@ describe("usePostAttendanceForm", () => {
       const validateFn = getValidateFn();
 
       const result = validateFn({
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "A",
         startDate: "2024-01-15",
         returnWeeks: 0,
@@ -1045,7 +1039,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1111,7 +1105,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1162,13 +1156,13 @@ describe("usePostAttendanceForm", () => {
       });
     });
 
-    it("should complete without creating sessions when treatmentStatus is Alta (A)", async () => {
+    it("should complete without creating sessions when treatmentStatus is Discharged (A)", async () => {
       renderHook(() => usePostAttendanceForm(), {
         wrapper: TestWrapper,
       });
 
       const altaData = {
-        mainComplaint: "Alta final",
+        mainConcern: "Discharged",
         patientStatus: "A" as const,
         startDate: "2024-01-15",
         returnWeeks: 0,
@@ -1203,7 +1197,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1252,7 +1246,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1286,7 +1280,7 @@ describe("usePostAttendanceForm", () => {
       expect(mockBulkCreateTreatments).not.toHaveBeenCalled();
       expect(result.current.showErrors).toBe(true);
       expect(result.current.treatmentCreationErrors[0].errors[0]).toContain(
-        "Tempo deve ser entre 1 e 10",
+        "Duration must be between 1 and 10",
       );
     });
 
@@ -1304,7 +1298,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1357,7 +1351,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1415,7 +1409,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1448,7 +1442,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       expect(result.current.treatmentCreationErrors[0].errors[0]).toContain(
-        "1 e 10",
+        "1 and 10",
       );
     });
   });
@@ -1529,7 +1523,7 @@ describe("usePostAttendanceForm", () => {
         name: "Test Patient",
         phone: "11999999999",
         birthDate: new Date("1990-01-01"),
-        mainComplaint: "Updated complaint",
+        mainConcern: "Updated complaint",
         startDate: new Date("2024-01-10"),
         priority: "3" as const,
         status: "T" as const,
@@ -1554,8 +1548,8 @@ describe("usePostAttendanceForm", () => {
         );
         expect(result.current.patientData?.name).toBe(mockPatientData.name);
         expect(result.current.patientData?.phone).toBe(mockPatientData.phone);
-        expect(result.current.patientData?.mainComplaint).toBe(
-          mockPatientData.mainComplaint,
+        expect(result.current.patientData?.mainConcern).toBe(
+          mockPatientData.mainConcern,
         );
         expect(result.current.patientData?.priority).toBe(
           mockPatientData.priority,
@@ -1588,7 +1582,7 @@ describe("usePostAttendanceForm", () => {
         name: "New Patient",
         email: "new@example.com",
         phone: "11999999999",
-        mainComplaint: "New complaint",
+        mainConcern: "New complaint",
         startDate: undefined, // New patient has no start date
         birthDate: new Date("1990-01-01"),
         priority: "2" as const,
@@ -1682,7 +1676,7 @@ describe("usePostAttendanceForm", () => {
 
           return {
             formData: {
-              mainComplaint: "",
+              mainConcern: "",
               patientStatus: "T",
               startDate: "2024-01-15",
               returnWeeks: 1,
@@ -1735,7 +1729,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1812,7 +1806,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -1921,7 +1915,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,
@@ -2019,7 +2013,7 @@ describe("usePostAttendanceForm", () => {
       });
 
       const testData = {
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         patientStatus: "T" as const,
         startDate: "2024-01-15",
         returnWeeks: 1,

@@ -157,7 +157,7 @@ describe('stores/index', () => {
         'useAttendanceStore',
         'useAgendaStore',
         
-        // Agenda selectors - state
+        // Calendar selectors - state
         'useSelectedDateString',
         'useAgendaDayWindowDays',
         'useAgendaStatusFilters',
@@ -167,7 +167,7 @@ describe('stores/index', () => {
         'useOpenAssessmentIdx',
         'useOpenPhysiotherapyIdx',
         
-        // Agenda selectors - actions
+        // Calendar selectors - actions
         'useSetSelectedDateString',
         'useSetAgendaDayWindowDays',
         'useSetAgendaStatusFilters',

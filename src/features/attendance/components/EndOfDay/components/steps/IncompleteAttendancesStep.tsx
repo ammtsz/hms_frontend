@@ -5,7 +5,7 @@ import {
   getAttendanceTypeLabel,
   getAttendanceStatusLabel,
 } from "@/utils/apiTransformers";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { Button } from "@/components/ui";
 
 interface IncompleteAttendancesStepProps {
@@ -24,7 +24,7 @@ const IncompleteAttendancesStep: React.FC<IncompleteAttendancesStepProps> = ({
   return (
     <div className="flex flex-col justify-between min-h-[400px]">
       <h3 className="text-lg font-semibold mb-4">
-        Atendimentos Incompletos - {formatDateBR(selectedDate)}
+        Incomplete Attendances - {formatDisplayDate(selectedDate)}
       </h3>
 
       {incompleteAttendances.length === 0 ? (
@@ -35,10 +35,10 @@ const IncompleteAttendancesStep: React.FC<IncompleteAttendancesStepProps> = ({
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-green-800">
-                Todos os atendimentos foram concluídos!
+                All attendances were completed!
               </h3>
               <div className="mt-2 text-sm text-green-700">
-                <p>Não há atendimentos incompletos para este dia.</p>
+                <p>There are no incomplete attendances for this day.</p>
               </div>
             </div>
           </div>
@@ -52,14 +52,14 @@ const IncompleteAttendancesStep: React.FC<IncompleteAttendancesStepProps> = ({
               </div>
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-yellow-800">
-                  Atendimentos não concluídos
+                  Incomplete attendances
                 </h3>
                 <div className="mt-2 text-sm text-yellow-700">
                   <p>
-                    {`Há ${incompleteAttendances.length} atendimento${incompleteAttendances.length === 1 ? "" : "s"} que não
-                    ${incompleteAttendances.length === 1 ? "foi" : "foram"} concluído${incompleteAttendances.length === 1 ? "" : "s"}. Volte para a página de atendimentos e
-                    arraste todos os pacientes para as colunas "Agendado" ou
-                    "Completo" antes de finalizar o dia.`}
+                    {`There ${incompleteAttendances.length === 1 ? "is" : "are"} ${incompleteAttendances.length} attendance${incompleteAttendances.length === 1 ? "" : "s"} that
+                    ${incompleteAttendances.length === 1 ? "was" : "were"} not completed. Go back to the attendances page and
+                    drag all patients to the "Scheduled" or
+                    "Completed" columns before finalizing the day.`}
                   </p>
                 </div>
               </div>
@@ -93,19 +93,15 @@ const IncompleteAttendancesStep: React.FC<IncompleteAttendancesStepProps> = ({
       )}
 
       <div className="flex flex-col-reverse justify-between gap-3 mt-6 sm:flex-row">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-        >
-          Cancelar
+        <Button type="button" variant="outline" onClick={onCancel}>
+          Cancel
         </Button>
         <Button
           type="button"
           onClick={onNext}
           disabled={incompleteAttendances.length > 0}
         >
-          Próximo
+          Next
         </Button>
       </div>
     </div>

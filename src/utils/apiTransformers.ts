@@ -110,7 +110,7 @@ export const transformSinglePatientFromApi = (apiPatient: PatientResponseDto): P
     status: transformStatus(apiPatient.patientStatus),
     // Required Patient properties with default values
     birthDate: apiPatient.birthDate || formatDateClinic(), // Keep as string: "YYYY-MM-DD"
-    mainComplaint: apiPatient.mainComplaint || '',
+    mainConcern: apiPatient.mainConcern || '',
     startDate: apiPatient.startDate, // Keep as string: "YYYY-MM-DD"
     dischargeDate: apiPatient.dischargeDate || null, // Keep as string or null
     missingAppointmentsStreak: apiPatient.missingAppointmentsStreak ?? 0,
@@ -384,13 +384,13 @@ export const transformConsultationResponse = (
 export const getAttendanceTypeLabel = (type: AttendanceType): string => {
   switch (type) {
     case "assessment":
-      return "Consulta de Avaliação";
+      return "Assessment Consultation";
     case "physiotherapy":
-      return "Fisioterapia";
+      return "Physiotherapy";
     case "tens":
       return "TENS";
     default:
-      return "Consulta de Avaliação";
+      return "Assessment Consultation";
   }
 };
 
@@ -399,9 +399,9 @@ export const getAttendanceStatusLabel = (
   onGoingTime?: string | null,
   completedTime?: string | null
 ): string => {
-  if (completedTime) return "Atendimento finalizado";
-  if (onGoingTime) return "Atendimento não finalizado";
-  if (checkedInTime) return "Check-in Realizado";
-  return "Agendado";
+  if (completedTime) return "Attendance completed";
+  if (onGoingTime) return "Attendance not completed";
+  if (checkedInTime) return "Checked in";
+  return "Scheduled";
 };
 

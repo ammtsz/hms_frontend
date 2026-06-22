@@ -97,7 +97,7 @@ describe("PatientDetailPage Error Handling", () => {
   it("shows patient not found error when patient does not exist", () => {
     mockUsePatientWithAttendances.mockReturnValue(
       createMockPatientQuery({
-        error: new Error("Paciente não encontrado"),
+        error: new Error("Patient not found"),
         isError: true,
         status: "error",
         refetch: mockRefetch,
@@ -106,19 +106,17 @@ describe("PatientDetailPage Error Handling", () => {
 
     renderWithQueryClient(<PatientDetailPage />);
 
-    expect(screen.queryByText("Carregando...")).not.toBeInTheDocument();
-    expect(screen.getAllByText("Paciente não encontrado")).toHaveLength(2);
-    expect(screen.getByText("Não encontrado")).toBeInTheDocument();
-    expect(screen.queryByText("Tentar Novamente")).not.toBeInTheDocument();
-    expect(screen.getByText("Voltar para Pacientes")).toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Patient not found")).toHaveLength(2);
+    expect(screen.getByText("Not found")).toBeInTheDocument();
+    expect(screen.queryByText("Try Again")).not.toBeInTheDocument();
+    expect(screen.getByText("Back to Patients")).toBeInTheDocument();
   });
 
   it("shows generic server error with retry option for other errors", () => {
     mockUsePatientWithAttendances.mockReturnValue(
       createMockPatientQuery({
-        error: new Error(
-          "Erro interno do servidor, por favor tente novamente mais tarde",
-        ),
+        error: new Error("Internal server error, please try again later"),
         isError: true,
         status: "error",
         refetch: mockRefetch,
@@ -127,21 +125,19 @@ describe("PatientDetailPage Error Handling", () => {
 
     renderWithQueryClient(<PatientDetailPage />);
 
-    expect(screen.queryByText("Carregando...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Erro interno do servidor, por favor tente novamente mais tarde",
-      ),
+      screen.getByText("Internal server error, please try again later"),
     ).toBeInTheDocument();
-    expect(screen.getByText("Erro")).toBeInTheDocument();
-    expect(screen.getByText("Tentar Novamente")).toBeInTheDocument();
-    expect(screen.getByText("Voltar para Pacientes")).toBeInTheDocument();
+    expect(screen.getByText("Error")).toBeInTheDocument();
+    expect(screen.getByText("Try Again")).toBeInTheDocument();
+    expect(screen.getByText("Back to Patients")).toBeInTheDocument();
   });
 
   it("handles network errors gracefully", () => {
     mockUsePatientWithAttendances.mockReturnValue(
       createMockPatientQuery({
-        error: new Error("Erro de rede"),
+        error: new Error("Network error"),
         isError: true,
         status: "error",
         refetch: mockRefetch,
@@ -150,9 +146,9 @@ describe("PatientDetailPage Error Handling", () => {
 
     renderWithQueryClient(<PatientDetailPage />);
 
-    expect(screen.queryByText("Carregando...")).not.toBeInTheDocument();
-    expect(screen.getByText("Erro de rede")).toBeInTheDocument();
-    expect(screen.getByText("Tentar Novamente")).toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.getByText("Network error")).toBeInTheDocument();
+    expect(screen.getByText("Try Again")).toBeInTheDocument();
   });
 
   it("shows patient not found error when patient is null", () => {
@@ -162,21 +158,21 @@ describe("PatientDetailPage Error Handling", () => {
 
     renderWithQueryClient(<PatientDetailPage />);
 
-    expect(screen.queryByText("Carregando...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Paciente não encontrado" }),
+      screen.getByRole("heading", { name: "Patient not found" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Paciente não encontrado.")).toBeInTheDocument();
-    expect(screen.getByText("Não encontrado")).toBeInTheDocument();
-    expect(screen.getByText("Voltar para Pacientes")).toBeInTheDocument();
+    expect(screen.getByText("Patient not found.")).toBeInTheDocument();
+    expect(screen.getByText("Not found")).toBeInTheDocument();
+    expect(screen.getByText("Back to Patients")).toBeInTheDocument();
 
     const container = screen
-      .getByText("Não encontrado")
+      .getByText("Not found")
       .closest(".flex.flex-col.gap-8.my-6.sm\\:my-16");
     expect(container).toBeInTheDocument();
 
     const innerContainer = screen
-      .getByText("Não encontrado")
+      .getByText("Not found")
       .closest(".max-w-4xl.mx-auto.w-full.px-4");
     expect(innerContainer).toBeInTheDocument();
   });
@@ -188,9 +184,9 @@ describe("PatientDetailPage Error Handling", () => {
 
     renderWithQueryClient(<PatientDetailPage />);
 
-    expect(screen.queryByText("Carregando...")).not.toBeInTheDocument();
-    expect(screen.getByText("Pacientes")).toBeInTheDocument();
-    expect(screen.getByText("Não encontrado")).toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
+    expect(screen.getByText("Patients")).toBeInTheDocument();
+    expect(screen.getByText("Not found")).toBeInTheDocument();
   });
 
   it("handles undefined patient data gracefully", () => {
@@ -200,11 +196,11 @@ describe("PatientDetailPage Error Handling", () => {
 
     renderWithQueryClient(<PatientDetailPage />);
 
-    expect(screen.queryByText("Carregando...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Paciente não encontrado" }),
+      screen.getByRole("heading", { name: "Patient not found" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Paciente não encontrado.")).toBeInTheDocument();
+    expect(screen.getByText("Patient not found.")).toBeInTheDocument();
   });
 
   it("shows PageError component with correct props for not found patient", () => {
@@ -214,11 +210,11 @@ describe("PatientDetailPage Error Handling", () => {
 
     renderWithQueryClient(<PatientDetailPage />);
 
-    expect(screen.queryByText("Carregando...")).not.toBeInTheDocument();
+    expect(screen.queryByText("Loading...")).not.toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: "Paciente não encontrado" }),
+      screen.getByRole("heading", { name: "Patient not found" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Paciente não encontrado.")).toBeInTheDocument();
-    expect(screen.getByText("Voltar para Pacientes")).toBeInTheDocument();
+    expect(screen.getByText("Patient not found.")).toBeInTheDocument();
+    expect(screen.getByText("Back to Patients")).toBeInTheDocument();
   });
 });

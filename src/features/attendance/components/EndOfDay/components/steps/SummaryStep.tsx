@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import type { AttendanceType } from "@/types/types";
 import type { ProcessEndOfDayResponse } from "@/api/day-finalization";
 import {
@@ -50,14 +50,13 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
     <div>
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
         <CheckCircle2 className="h-6 w-6 text-green-600" />
-        Dia finalizado - {formatDateBR(selectedDate)}
+        Day finalized - {formatDisplayDate(selectedDate)}
       </h3>
 
       {!hasAnyAction ? (
         <div className="bg-gray-50 border border-gray-200 rounded-md p-4 mb-6">
           <p className="text-gray-600">
-            O dia foi finalizado com sucesso. Nenhuma ação automática foi
-            necessária.
+            Day finalized successfully. No automatic action was needed.
           </p>
         </div>
       ) : (
@@ -65,7 +64,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
           {groupedRescheduled.length > 0 && (
             <div className="bg-green-50 border border-green-200 rounded-md p-4">
               <h4 className="text-md font-medium text-green-800 mb-3">
-                Reagendados
+                Rescheduled
               </h4>
               <ul className="space-y-4">
                 {groupedRescheduled.map(
@@ -82,11 +81,11 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
                             )}
                             {item.type !== "assessment"
                               ? ` (${item.count} ${
-                                  item.count === 1 ? "local" : "locais"
+                                  item.count === 1 ? "location" : "locations"
                                 })`
                               : ""}
-                            : {formatDateBR(item.oldDate)} →{" "}
-                            {formatDateBR(item.newDate)}
+                            : {formatDisplayDate(item.oldDate)} →{" "}
+                            {formatDisplayDate(item.newDate)}
                           </li>
                         ))}
                       </ul>
@@ -100,8 +99,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
           {result.statusChangedToF.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-md p-4">
               <h4 className="text-md font-medium text-amber-800 mb-3">
-                Pacientes com Status alterado para &quot;Faltas
-                Consecutivas&quot;
+                Patients with status changed to &quot;Missed — consecutive&quot;
               </h4>
               <ul className="space-y-2">
                 {result.statusChangedToF.map((item) => (
@@ -116,7 +114,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
           {groupedCancelled.length > 0 && (
             <div className="bg-red-50 border border-red-200 rounded-md p-4">
               <h4 className="text-md font-medium text-red-800 mb-3">
-                Atendimentos Cancelados devido a Faltas Consecutivas
+                Attendances canceled due to consecutive absences
               </h4>
               <ul className="space-y-3">
                 {groupedCancelled.map((item) => (
@@ -128,9 +126,9 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
                           <li key={`${att.type}|${att.scheduledDate}`}>
                             {getAttendanceTypeLabel(att.type as AttendanceType)}
                             {att.type !== "assessment" && att.count > 1
-                              ? ` (${att.count} locais)`
+                              ? ` (${att.count} locations)`
                               : ""}{" "}
-                            - {formatDateBR(att.scheduledDate)}
+                            - {formatDisplayDate(att.scheduledDate)}
                           </li>
                         ))}
                       </ul>
@@ -144,7 +142,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
           {groupedNotRescheduled.length > 0 && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-md p-4">
               <h4 className="text-md font-medium text-yellow-800 mb-3">
-                Não foi possível reagendar
+                Could not reschedule
               </h4>
               <ul className="space-y-4">
                 {groupedNotRescheduled.map(
@@ -161,7 +159,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
                               item.type as AttendanceType,
                             )}
                             {item.type !== "assessment" && item.count > 1
-                              ? ` (${item.count} locais)`
+                              ? ` (${item.count} locations)`
                               : ""}
                             : {item.reason}
                           </li>
@@ -177,11 +175,8 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
       )}
 
       <div className="flex justify-end">
-        <Button
-          type="button"
-          onClick={onConclude}
-        >
-          Concluir
+        <Button type="button" onClick={onConclude}>
+          Complete
         </Button>
       </div>
     </div>

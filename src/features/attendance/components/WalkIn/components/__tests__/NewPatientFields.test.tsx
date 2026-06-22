@@ -14,7 +14,7 @@ describe("NewPatientFields", () => {
       id: 1,
       type: SystemOptionType.PRIORITY,
       value: "3",
-      label: "Padrão",
+      label: "Priority 3",
       isActive: true,
       sortOrder: 3,
       createdAt: "",
@@ -24,7 +24,7 @@ describe("NewPatientFields", () => {
       id: 2,
       type: SystemOptionType.PRIORITY,
       value: "2",
-      label: "Idoso/crianças",
+      label: "Standard",
       isActive: true,
       sortOrder: 2,
       createdAt: "",
@@ -34,7 +34,7 @@ describe("NewPatientFields", () => {
       id: 3,
       type: SystemOptionType.PRIORITY,
       value: "1",
-      label: "Exceção",
+      label: "Priority",
       isActive: true,
       sortOrder: 1,
       createdAt: "",
@@ -65,16 +65,16 @@ describe("NewPatientFields", () => {
   it("should render all new patient fields", () => {
     render(<NewPatientFields {...mockProps} />);
 
-    expect(screen.getByLabelText("Telefone *")).toBeInTheDocument();
-    expect(screen.getByLabelText("Data de Nascimento *")).toBeInTheDocument();
-    expect(screen.getByLabelText("Prioridade")).toBeInTheDocument();
-    // Note: mainComplaint removed - should be documented during consultation, not at check-in
+    expect(screen.getByLabelText("Phone *")).toBeInTheDocument();
+    expect(screen.getByLabelText("Date of Birth *")).toBeInTheDocument();
+    expect(screen.getByLabelText("Priority")).toBeInTheDocument();
+    // Note: mainConcern removed - should be documented during consultation, not at check-in
   });
 
   it("should call onPhoneChange when phone input changes", () => {
     render(<NewPatientFields {...mockProps} />);
 
-    const phoneInput = screen.getByLabelText("Telefone *");
+    const phoneInput = screen.getByLabelText("Phone *");
     fireEvent.change(phoneInput, { target: { value: "1234567890" } });
 
     expect(mockProps.onPhoneChange).toHaveBeenCalled();
@@ -83,7 +83,7 @@ describe("NewPatientFields", () => {
   it("should call onBirthDateChange when date changes", () => {
     render(<NewPatientFields {...mockProps} />);
 
-    const dateInput = screen.getByLabelText("Data de Nascimento *");
+    const dateInput = screen.getByLabelText("Date of Birth *");
     fireEvent.change(dateInput, { target: { value: "2000-01-01" } });
 
     expect(mockProps.onBirthDateChange).toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe("NewPatientFields", () => {
   it("should call onPriorityChange when priority changes", () => {
     render(<NewPatientFields {...mockProps} />);
 
-    const select = screen.getByLabelText("Prioridade");
+    const select = screen.getByLabelText("Priority");
     fireEvent.change(select, { target: { value: "1" } });
 
     expect(mockProps.onPriorityChange).toHaveBeenCalledWith("1");
@@ -101,23 +101,23 @@ describe("NewPatientFields", () => {
   it("should display phone value correctly", () => {
     render(<NewPatientFields {...mockProps} phone="(11) 98765-4321" />);
 
-    const phoneInput = screen.getByLabelText("Telefone *") as HTMLInputElement;
+    const phoneInput = screen.getByLabelText("Phone *") as HTMLInputElement;
     expect(phoneInput.value).toBe("(11) 98765-4321");
   });
 
   it("should disable all inputs when submitting", () => {
     render(<NewPatientFields {...mockProps} isSubmitting={true} />);
 
-    expect(screen.getByLabelText("Telefone *")).toBeDisabled();
-    expect(screen.getByLabelText("Data de Nascimento *")).toBeDisabled();
-    expect(screen.getByLabelText("Prioridade")).toBeDisabled();
+    expect(screen.getByLabelText("Phone *")).toBeDisabled();
+    expect(screen.getByLabelText("Date of Birth *")).toBeDisabled();
+    expect(screen.getByLabelText("Priority")).toBeDisabled();
   });
 
   it("should show all priority options", () => {
     render(<NewPatientFields {...mockProps} />);
 
-    expect(screen.getByText("3 - Padrão")).toBeInTheDocument();
-    expect(screen.getByText("2 - Idoso/crianças")).toBeInTheDocument();
-    expect(screen.getByText("1 - Exceção")).toBeInTheDocument();
+    expect(screen.getByText("3 - Priority 3")).toBeInTheDocument();
+    expect(screen.getByText("2 - Standard")).toBeInTheDocument();
+    expect(screen.getByText("1 - Priority")).toBeInTheDocument();
   });
 });

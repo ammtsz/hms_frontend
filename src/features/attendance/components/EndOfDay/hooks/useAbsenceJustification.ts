@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import type { AbsenceJustification, ScheduledAbsence } from "../types";
 import type { AttendanceType } from "@/types/types";
+import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
 
 export interface GroupedAbsence {
   patientId: number;
@@ -119,7 +120,7 @@ export const useAbsenceJustification = ({
     const parts: string[] = [];
 
     if (group.assessment.length > 0) {
-      parts.push("Consulta de Avaliação");
+      parts.push(getAttendanceTypeLabel("assessment"));
     }
 
     if (group.treatments.length > 0) {
@@ -130,14 +131,14 @@ export const useAbsenceJustification = ({
 
       const treatmentParts: string[] = [];
       if (physiotherapy.length > 0) {
-        treatmentParts.push("Fisioterapia");
+        treatmentParts.push(getAttendanceTypeLabel("physiotherapy"));
       }
       if (tens.length > 0) {
-        treatmentParts.push("TENS");
+        treatmentParts.push(getAttendanceTypeLabel("tens"));
       }
 
       if (treatmentParts.length > 0) {
-        parts.push(treatmentParts.join(" e "));
+        parts.push(treatmentParts.join(" and "));
       }
     }
 

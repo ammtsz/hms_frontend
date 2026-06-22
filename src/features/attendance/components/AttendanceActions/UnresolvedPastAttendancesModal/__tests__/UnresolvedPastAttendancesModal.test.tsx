@@ -55,10 +55,8 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      expect(screen.getByText("Atendimentos Pendentes")).toBeInTheDocument();
-      expect(
-        screen.getByText("3 atendimentos não resolvidos"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Pending Attendances")).toBeInTheDocument();
+      expect(screen.getByText("3 unresolved attendances")).toBeInTheDocument();
     });
 
     it("should render singular text for single attendance", () => {
@@ -75,10 +73,8 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      expect(
-        screen.getByText("1 atendimento não resolvido"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("em 1 data passada")).toBeInTheDocument();
+      expect(screen.getByText("1 unresolved attendance")).toBeInTheDocument();
+      expect(screen.getByText("on 1 past date")).toBeInTheDocument();
     });
 
     it("should render plural text for multiple dates", () => {
@@ -100,10 +96,8 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      expect(
-        screen.getByText("3 atendimentos não resolvidos"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("em 2 datas passadas")).toBeInTheDocument();
+      expect(screen.getByText("3 unresolved attendances")).toBeInTheDocument();
+      expect(screen.getByText("on 2 past dates")).toBeInTheDocument();
     });
   });
 
@@ -128,16 +122,12 @@ describe("UnresolvedPastAttendancesModal", () => {
       render(<UnresolvedPastAttendancesModal />);
 
       // Check formatted dates (formatDateBR converts to DD/MM/YYYY)
-      expect(screen.getByText("30/01/2026")).toBeInTheDocument();
-      expect(screen.getByText("28/01/2026")).toBeInTheDocument();
+      expect(screen.getByText("01/30/2026")).toBeInTheDocument();
+      expect(screen.getByText("01/28/2026")).toBeInTheDocument();
 
       // Check counts
-      expect(
-        screen.getByText("3 atendimentos", { exact: false }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText("2 atendimentos", { exact: false }),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/3\s+3\s+attendances/)).toBeInTheDocument();
+      expect(screen.getByText(/2\s+2\s+attendances/)).toBeInTheDocument();
     });
 
     it("should translate statuses to Portuguese", () => {
@@ -154,9 +144,7 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      expect(
-        screen.getByText(/agendados \/ sala de espera/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/scheduled \/ waiting room/)).toBeInTheDocument();
     });
 
     it("should handle array format statuses", () => {
@@ -173,19 +161,17 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      expect(
-        screen.getByText(/agendados \/ em atendimento/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/scheduled \/ in progress/)).toBeInTheDocument();
     });
 
     it("should render all status translations correctly", () => {
       const statusTests = [
-        { statuses: "{scheduled}", expected: "agendados" },
-        { statuses: "{checked_in}", expected: "sala de espera" },
-        { statuses: "{in_progress}", expected: "em atendimento" },
-        { statuses: "{completed}", expected: "concluídos" },
-        { statuses: "{cancelled}", expected: "cancelados" },
-        { statuses: "{missed}", expected: "faltas" },
+        { statuses: "{scheduled}", expected: "scheduled" },
+        { statuses: "{checked_in}", expected: "waiting room" },
+        { statuses: "{in_progress}", expected: "in progress" },
+        { statuses: "{completed}", expected: "completed" },
+        { statuses: "{cancelled}", expected: "cancelled" },
+        { statuses: "{missed}", expected: "missed" },
       ];
 
       statusTests.forEach(({ statuses, expected }) => {
@@ -201,7 +187,9 @@ describe("UnresolvedPastAttendancesModal", () => {
         });
 
         const { unmount } = render(<UnresolvedPastAttendancesModal />);
-        expect(screen.getByText(new RegExp(expected))).toBeInTheDocument();
+        expect(
+          screen.getByText(new RegExp(`\\(${expected}\\)`)),
+        ).toBeInTheDocument();
         unmount();
       });
     });
@@ -222,13 +210,13 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      const closeButton = screen.getByText("Fechar");
+      const closeButton = screen.getByText("Close");
       fireEvent.click(closeButton);
 
       expect(mockCloseModal).toHaveBeenCalledWith("unresolvedPast");
     });
 
-    it("should navigate to selected date when 'Ver' button is clicked", () => {
+    it("should navigate to selected date when 'View' button is clicked", () => {
       (useUnresolvedPastModal as jest.Mock).mockReturnValue({
         isOpen: true,
         dates: [
@@ -242,7 +230,7 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      const viewButton = screen.getByText("Ver");
+      const viewButton = screen.getByText("View");
       fireEvent.click(viewButton);
 
       expect(mockSetSelectedDate).toHaveBeenCalledWith("2026-01-30");
@@ -263,7 +251,7 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      const viewButton = screen.getByText("Ver");
+      const viewButton = screen.getByText("View");
       fireEvent.click(viewButton);
 
       expect(mockSetSelectedDate).toHaveBeenCalledWith("2026-01-30");
@@ -288,7 +276,7 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      const viewButtons = screen.getAllByText("Ver");
+      const viewButtons = screen.getAllByText("View");
       expect(viewButtons).toHaveLength(2);
 
       // Click first date
@@ -327,10 +315,8 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       render(<UnresolvedPastAttendancesModal />);
 
-      expect(
-        screen.getByText("10 atendimentos não resolvidos"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("em 3 datas passadas")).toBeInTheDocument();
+      expect(screen.getByText("10 unresolved attendances")).toBeInTheDocument();
+      expect(screen.getByText("on 3 past dates")).toBeInTheDocument();
     });
   });
 
@@ -351,7 +337,7 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       expect(
         screen.getByText(
-          "Este atendimento precisa ser finalizado, cancelado ou marcado como falta.",
+          "This attendance needs to be completed, cancelled or marked as missed.",
         ),
       ).toBeInTheDocument();
     });
@@ -372,7 +358,7 @@ describe("UnresolvedPastAttendancesModal", () => {
 
       expect(
         screen.getByText(
-          "Estes atendimentos precisam ser finalizados, cancelados ou marcados como falta.",
+          "These attendances need to be completed, cancelled or marked as missed.",
         ),
       ).toBeInTheDocument();
     });

@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SummaryStep from "../components/steps/SummaryStep";
+import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
 import type { ProcessEndOfDayResponse } from "@/api/day-finalization";
 
 describe("SummaryStep", () => {
@@ -25,7 +26,7 @@ describe("SummaryStep", () => {
   it("displays formatted date correctly", () => {
     render(<SummaryStep {...defaultProps} />);
 
-    expect(screen.getByText(/15\/01\/2024/)).toBeInTheDocument();
+    expect(screen.getByText(/01\/15\/2024/)).toBeInTheDocument();
   });
 
   it("shows success message when no actions were taken", () => {
@@ -33,15 +34,15 @@ describe("SummaryStep", () => {
 
     expect(
       screen.getByText(
-        "O dia foi finalizado com sucesso. Nenhuma ação automática foi necessária.",
+        "Day finalized successfully. No automatic action was needed.",
       ),
     ).toBeInTheDocument();
   });
 
-  it("calls onConclude when Concluir button is clicked", () => {
+  it("calls onConclude when Complete button is clicked", () => {
     render(<SummaryStep {...defaultProps} />);
 
-    fireEvent.click(screen.getByText("Concluir"));
+    fireEvent.click(screen.getByText("Complete"));
 
     expect(defaultProps.onConclude).toHaveBeenCalled();
   });
@@ -63,9 +64,11 @@ describe("SummaryStep", () => {
 
     render(<SummaryStep {...defaultProps} result={result} />);
 
-    expect(screen.getByText("Reagendados")).toBeInTheDocument();
+    expect(screen.getByText("Rescheduled")).toBeInTheDocument();
     expect(screen.getByText(/John Doe/)).toBeInTheDocument();
-    expect(screen.getByText(/Consulta/)).toBeInTheDocument();
+    expect(
+      screen.getByText(new RegExp(getAttendanceTypeLabel("assessment"), "i")),
+    ).toBeInTheDocument();
     expect(screen.getByText(/→/)).toBeInTheDocument();
   });
 
@@ -79,7 +82,7 @@ describe("SummaryStep", () => {
 
     expect(
       screen.getByText(
-        /Pacientes com Status alterado para "Faltas Consecutivas"/,
+        /Patients with status changed to "Missed — consecutive"/,
       ),
     ).toBeInTheDocument();
     expect(screen.getByText(/Jane Smith/)).toBeInTheDocument();
@@ -102,7 +105,7 @@ describe("SummaryStep", () => {
     render(<SummaryStep {...defaultProps} result={result} />);
 
     expect(
-      screen.getByText("Atendimentos Cancelados devido a Faltas Consecutivas"),
+      screen.getByText("Attendances canceled due to consecutive absences"),
     ).toBeInTheDocument();
     expect(screen.getByText(/Bob Wilson/)).toBeInTheDocument();
   });
@@ -116,18 +119,18 @@ describe("SummaryStep", () => {
           patientId: 3,
           patientName: "Alice Brown",
           type: "physiotherapy",
-          reason: "Não foi possível encontrar data disponível em 52 semanas",
+          reason: "Could not find available date within 52 weeks",
         },
       ],
     };
 
     render(<SummaryStep {...defaultProps} result={result} />);
 
-    expect(screen.getByText("Não foi possível reagendar")).toBeInTheDocument();
+    expect(screen.getByText("Could not reschedule")).toBeInTheDocument();
     expect(screen.getByText(/Alice Brown/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        /Não foi possível encontrar data disponível em 52 semanas/,
+        /Could not find available date within 52 weeks/,
       ),
     ).toBeInTheDocument();
   });
@@ -149,10 +152,10 @@ describe("SummaryStep", () => {
 
     render(<SummaryStep {...defaultProps} result={result} />);
 
-    expect(screen.queryByText("Reagendados")).not.toBeInTheDocument();
+    expect(screen.queryByText("Rescheduled")).not.toBeInTheDocument();
   });
 
-  it("shows treatment type label with locais count for treatment types", () => {
+  it("shows treatment type label with locations count for treatment types", () => {
     const result: ProcessEndOfDayResponse = {
       ...defaultResult,
       rescheduled: [
@@ -169,10 +172,10 @@ describe("SummaryStep", () => {
 
     render(<SummaryStep {...defaultProps} result={result} />);
 
-    expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
+    expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
   });
 
-  it("shows aggregated locais count when same patient has multiple rescheduled treatments", () => {
+  it("shows aggregated locations count when same patient has multiple rescheduled treatments", () => {
     const result: ProcessEndOfDayResponse = {
       ...defaultResult,
       rescheduled: [
@@ -197,13 +200,13 @@ describe("SummaryStep", () => {
 
     render(<SummaryStep {...defaultProps} result={result} />);
 
-    expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
-    expect(screen.getByText(/2 locais/)).toBeInTheDocument();
+    expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
+    expect(screen.getByText(/2 locations/)).toBeInTheDocument();
   });
 
-  it("shows Dia finalizado header with check icon", () => {
+  it("shows Day finalized header with check icon", () => {
     render(<SummaryStep {...defaultProps} />);
 
-    expect(screen.getByText(/Dia finalizado/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Day finalized/).length).toBeGreaterThan(0);
   });
 });

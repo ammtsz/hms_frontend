@@ -27,16 +27,12 @@ export const TreatmentProgressBar: React.FC<TreatmentProgressBarProps> = ({
   size = "md",
   showDetails = false,
 }) => {
-  // Ensure non-negative values
   const safeCompleted = Math.max(0, completed);
   const safeTotal = Math.max(0, total);
-
-  // Calculate progress percentage
   const progressPercentage =
     safeTotal > 0 ? Math.round((safeCompleted / safeTotal) * 100) : 0;
 
-  // Determine colors based on treatment type
-  const getColors = () => {
+  const colors = (() => {
     switch (treatmentType) {
       case "physiotherapy":
         return {
@@ -54,58 +50,42 @@ export const TreatmentProgressBar: React.FC<TreatmentProgressBarProps> = ({
           text: "text-gray-700",
           border: "border-gray-200",
         };
-      default: // assessment
+      default:
         return {
           bg: "bg-gray-100",
           fill: "bg-gray-700",
+          fillBg: "bg-gray-100",
           text: "text-gray-700",
           border: "border-gray-200",
         };
     }
-  };
+  })();
 
-  const colors = getColors();
-
-  // Size configurations
   const sizeConfig = {
-    sm: {
-      height: "h-2",
-      text: "text-xs",
-      padding: "px-2 py-1",
-    },
-    md: {
-      height: "h-3",
-      text: "text-sm",
-      padding: "px-3 py-2",
-    },
-    lg: {
-      height: "h-4",
-      text: "text-base",
-      padding: "px-4 py-3",
-    },
-  };
+    sm: { height: "h-2", text: "text-xs", padding: "px-2 py-1" },
+    md: { height: "h-3", text: "text-sm", padding: "px-3 py-2" },
+    lg: { height: "h-4", text: "text-base", padding: "px-4 py-3" },
+  } as const;
 
   const config = sizeConfig[size];
 
-  // Status text based on progress
   const getStatusText = () => {
     if (safeCompleted === safeTotal && safeTotal > 0) {
-      return "Tratamento Finalizado";
+      return "Treatment Completed";
     }
     if (safeCompleted === 0) {
-      return "Tratamento Agendado";
+      return "Treatment Scheduled";
     }
-    return `Sessão ${safeCompleted} de ${safeTotal}`;
+    return `Session ${safeCompleted} of ${safeTotal}`;
   };
 
   return (
     <div
       className={`${colors.bg} ${colors.border} border rounded-lg ${config.padding}`}
     >
-      {/* Header with status */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <div
-          className={`font-medium ${colors.text} ${config.text} flex items-center gap-1`}
+          className={`flex items-center gap-1 font-medium ${colors.text} ${config.text}`}
         >
           <span>{getStatusText()}</span>
         </div>
@@ -114,9 +94,8 @@ export const TreatmentProgressBar: React.FC<TreatmentProgressBarProps> = ({
         </div>
       </div>
 
-      {/* Progress bar */}
       <div
-        className={`w-full ${colors.fillBg} rounded-full ${config.height} mb-2`}
+        className={`w-full ${colors.fillBg} ${config.height} mb-2 rounded-full`}
       >
         <div
           className={`${colors.fill} ${config.height} rounded-full transition-all duration-300 ease-in-out`}
@@ -124,9 +103,8 @@ export const TreatmentProgressBar: React.FC<TreatmentProgressBarProps> = ({
         />
       </div>
 
-      {/* Milestone indicators */}
       {safeTotal >= 1 && (
-        <div className="flex justify-between mt-2 text-xs text-gray-500">
+        <div className="mt-2 flex justify-between text-xs text-gray-500">
           <span
             className={
               safeCompleted >= Math.ceil(safeTotal * 0)
@@ -168,44 +146,45 @@ export const TreatmentProgressBar: React.FC<TreatmentProgressBarProps> = ({
               safeCompleted >= safeTotal ? colors.text : "text-gray-400"
             }
           >
-            Concluído
+            Completed
           </span>
         </div>
       )}
 
-      {/* Session details */}
       {showDetails && sessionDetails && (
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="mt-2 flex flex-wrap gap-2">
           {sessionDetails.upcoming > 0 ? (
             <div
-              className={`${config.text} text-gray-600 flex items-center gap-1`}
+              className={`${config.text} flex items-center gap-1 text-gray-600`}
             >
               <span>📅</span>
               <span>
                 {sessionDetails.upcoming}{" "}
-                {sessionDetails.upcoming > 1 ? "agendadas" : "agendada"}
+                {sessionDetails.upcoming > 1 ? "scheduled" : "scheduled"}
               </span>
             </div>
           ) : null}
+
           {sessionDetails.missed && sessionDetails.missed > 0 ? (
             <div
-              className={`${config.text} text-orange-600 flex items-center gap-1`}
+              className={`${config.text} flex items-center gap-1 text-orange-600`}
             >
               <span>⚠️</span>
               <span>
                 {sessionDetails.missed}{" "}
-                {sessionDetails.missed > 1 ? "perdidas" : "perdida"}
+                {sessionDetails.missed > 1 ? "missed" : "missed"}
               </span>
             </div>
           ) : null}
+
           {sessionDetails.cancelled && sessionDetails.cancelled > 0 ? (
             <div
-              className={`${config.text} text-red-600 flex items-center gap-1`}
+              className={`${config.text} flex items-center gap-1 text-red-600`}
             >
               <span>❌</span>
               <span>
                 {sessionDetails.cancelled}{" "}
-                {sessionDetails.cancelled > 1 ? "canceladas" : "cancelada"}
+                {sessionDetails.cancelled > 1 ? "cancelled" : "cancelled"}
               </span>
             </div>
           ) : null}

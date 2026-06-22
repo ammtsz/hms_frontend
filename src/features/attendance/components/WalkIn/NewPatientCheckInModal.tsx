@@ -16,7 +16,7 @@ const NewPatientCheckInModal: React.FC = () => {
   const patientForCheckIn: Patient = {
     ...(patient as PatientBasic),
     birthDate: patient?.birthDate || "", // Use birthDate from backend or empty string if not available
-    mainComplaint: "", // Default value since PatientBasic doesn't have mainComplaint
+    mainConcern: "", // Default value since PatientBasic doesn't have mainConcern
     startDate: getTodayClinic(), // Default value since PatientBasic doesn't have startDate
     dischargeDate: null, // Default value since PatientBasic doesn't have dischargeDate
     nextAttendanceDates: [], // Default empty array
@@ -53,7 +53,7 @@ const NewPatientCheckInModal: React.FC = () => {
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Check-in do Novo Paciente"
+      title="New Patient Check-in"
       maxWidth="md"
     >
       <NewPatientCheckInForm

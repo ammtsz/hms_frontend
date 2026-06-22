@@ -96,7 +96,7 @@ describe("ConfirmModal", () => {
     it("should display default confirm button", () => {
       render(<ConfirmModal {...defaultProps} />);
 
-      expect(screen.getByText("Confirmar")).toBeInTheDocument();
+      expect(screen.getByText("Confirm")).toBeInTheDocument();
     });
 
     it("should display custom confirm label", () => {
@@ -109,7 +109,7 @@ describe("ConfirmModal", () => {
       const user = userEvent.setup();
       render(<ConfirmModal {...defaultProps} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       await user.click(confirmButton);
 
       expect(mockOnConfirm).toHaveBeenCalledTimes(1);
@@ -118,15 +118,15 @@ describe("ConfirmModal", () => {
     it("should have proper confirm button styling", () => {
       render(<ConfirmModal {...defaultProps} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       expect(confirmButton).toHaveClass("bg-blue-700", "text-white");
       expect(confirmButton).not.toHaveClass("button", "button-primary");
     });
 
-    it('should have remove button styling when confirmLabel is "Remover"', () => {
-      render(<ConfirmModal {...defaultProps} confirmLabel="Remover" />);
+    it('should have remove button styling when confirmLabel is "Remove"', () => {
+      render(<ConfirmModal {...defaultProps} confirmLabel="Remove" />);
 
-      const confirmButton = screen.getByText("Remover");
+      const confirmButton = screen.getByText("Remove");
       expect(confirmButton).toHaveClass(
         "bg-red-600",
         "hover:bg-red-700",
@@ -138,21 +138,21 @@ describe("ConfirmModal", () => {
     it('should have button type="button"', () => {
       render(<ConfirmModal {...defaultProps} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       expect(confirmButton).toHaveAttribute("type", "button");
     });
 
     it("should be enabled when confirmDisabled is false", () => {
       render(<ConfirmModal {...defaultProps} confirmDisabled={false} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       expect(confirmButton).not.toBeDisabled();
     });
 
     it("should be disabled when confirmDisabled is true", () => {
       render(<ConfirmModal {...defaultProps} confirmDisabled={true} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       expect(confirmButton).toBeDisabled();
     });
 
@@ -160,7 +160,7 @@ describe("ConfirmModal", () => {
       const user = userEvent.setup();
       render(<ConfirmModal {...defaultProps} confirmDisabled={true} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       await user.click(confirmButton);
 
       expect(mockOnConfirm).not.toHaveBeenCalled();
@@ -171,7 +171,7 @@ describe("ConfirmModal", () => {
     it("should display default cancel button when onCancel is provided", () => {
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      expect(screen.getByText("Cancelar")).toBeInTheDocument();
+      expect(screen.getByText("Cancel")).toBeInTheDocument();
     });
 
     it("should display custom cancel label", () => {
@@ -195,7 +195,7 @@ describe("ConfirmModal", () => {
         />,
       );
 
-      expect(screen.queryByText("Cancelar")).not.toBeInTheDocument();
+      expect(screen.queryByText("Cancel")).not.toBeInTheDocument();
     });
 
     it("should display cancel button even when cancelLabel is undefined (shows default)", () => {
@@ -207,14 +207,14 @@ describe("ConfirmModal", () => {
         />,
       );
 
-      expect(screen.getByText("Cancelar")).toBeInTheDocument();
+      expect(screen.getByText("Cancel")).toBeInTheDocument();
     });
 
     it("should call onCancel when clicked", async () => {
       const user = userEvent.setup();
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      const cancelButton = screen.getByText("Cancelar");
+      const cancelButton = screen.getByText("Cancel");
       await user.click(cancelButton);
 
       expect(mockOnCancel).toHaveBeenCalledTimes(1);
@@ -234,7 +234,7 @@ describe("ConfirmModal", () => {
     it("should have proper cancel button styling", () => {
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      const cancelButton = screen.getByText("Cancelar");
+      const cancelButton = screen.getByText("Cancel");
       expect(cancelButton).toHaveClass("bg-blue-100", "text-blue-800");
       expect(cancelButton).not.toHaveClass("button", "button-secondary");
     });
@@ -242,7 +242,7 @@ describe("ConfirmModal", () => {
     it('should have button type="button"', () => {
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      const cancelButton = screen.getByText("Cancelar");
+      const cancelButton = screen.getByText("Cancel");
       expect(cancelButton).toHaveAttribute("type", "button");
     });
   });
@@ -268,7 +268,7 @@ describe("ConfirmModal", () => {
     it("should have proper button container styling", () => {
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      const buttonContainer = screen.getByText("Confirmar").closest("div");
+      const buttonContainer = screen.getByText("Confirm").closest("div");
       expect(buttonContainer).toHaveClass(
         "flex",
         "flex-col-reverse",
@@ -289,7 +289,7 @@ describe("ConfirmModal", () => {
     it("should handle Enter key on confirm button", () => {
       render(<ConfirmModal {...defaultProps} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       fireEvent.keyDown(confirmButton, { key: "Enter", code: "Enter" });
 
       // The button should be focused and clickable
@@ -299,7 +299,7 @@ describe("ConfirmModal", () => {
     it("should handle Space key on confirm button", () => {
       render(<ConfirmModal {...defaultProps} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       fireEvent.keyDown(confirmButton, { key: " ", code: "Space" });
 
       expect(confirmButton).toBeInTheDocument();
@@ -308,7 +308,7 @@ describe("ConfirmModal", () => {
     it("should handle Enter key on cancel button", () => {
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      const cancelButton = screen.getByText("Cancelar");
+      const cancelButton = screen.getByText("Cancel");
       fireEvent.keyDown(cancelButton, { key: "Enter", code: "Enter" });
 
       expect(cancelButton).toBeInTheDocument();
@@ -319,8 +319,8 @@ describe("ConfirmModal", () => {
     it("should have focusable buttons", () => {
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      const confirmButton = screen.getByText("Confirmar");
-      const cancelButton = screen.getByText("Cancelar");
+      const confirmButton = screen.getByText("Confirm");
+      const cancelButton = screen.getByText("Cancel");
 
       confirmButton.focus();
       expect(confirmButton).toHaveFocus();
@@ -332,8 +332,8 @@ describe("ConfirmModal", () => {
     it("should have proper button roles", () => {
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      const confirmButton = screen.getByText("Confirmar");
-      const cancelButton = screen.getByText("Cancelar");
+      const confirmButton = screen.getByText("Confirm");
+      const cancelButton = screen.getByText("Cancel");
 
       expect(confirmButton).toHaveAttribute("type", "button");
       expect(cancelButton).toHaveAttribute("type", "button");
@@ -344,11 +344,11 @@ describe("ConfirmModal", () => {
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
       await user.tab();
-      const cancelButton = screen.getByRole("button", { name: "Cancelar" });
+      const cancelButton = screen.getByRole("button", { name: "Cancel" });
       expect(cancelButton).toHaveFocus();
 
       await user.tab();
-      const confirmButton = screen.getByRole("button", { name: "Confirmar" });
+      const confirmButton = screen.getByRole("button", { name: "Confirm" });
       expect(confirmButton).toHaveFocus();
     });
   });
@@ -366,7 +366,7 @@ describe("ConfirmModal", () => {
       render(<ConfirmModal {...defaultProps} message="" />);
 
       // Should still render the modal structure
-      expect(screen.getByText("Confirmar")).toBeInTheDocument();
+      expect(screen.getByText("Confirm")).toBeInTheDocument();
     });
 
     it("should handle complex React node messages", () => {
@@ -393,14 +393,14 @@ describe("ConfirmModal", () => {
       render(
         <ConfirmModal
           {...defaultProps}
-          confirmLabel="Confirmar ✓"
-          cancelLabel="Cancelar ✗"
+          confirmLabel="Confirm ✓"
+          cancelLabel="Cancel ✗"
           onCancel={mockOnCancel}
         />,
       );
 
-      expect(screen.getByText("Confirmar ✓")).toBeInTheDocument();
-      expect(screen.getByText("Cancelar ✗")).toBeInTheDocument();
+      expect(screen.getByText("Confirm ✓")).toBeInTheDocument();
+      expect(screen.getByText("Cancel ✗")).toBeInTheDocument();
     });
   });
 
@@ -409,7 +409,7 @@ describe("ConfirmModal", () => {
       const user = userEvent.setup();
       render(<ConfirmModal {...defaultProps} />);
 
-      const confirmButton = screen.getByText("Confirmar");
+      const confirmButton = screen.getByText("Confirm");
       await user.click(confirmButton);
       await user.click(confirmButton);
       await user.click(confirmButton);
@@ -421,7 +421,7 @@ describe("ConfirmModal", () => {
       const user = userEvent.setup();
       render(<ConfirmModal {...defaultProps} onCancel={mockOnCancel} />);
 
-      const cancelButton = screen.getByText("Cancelar");
+      const cancelButton = screen.getByText("Cancel");
       await user.click(cancelButton);
       await user.click(cancelButton);
       await user.click(cancelButton);
@@ -469,11 +469,10 @@ describe("ConfirmModal", () => {
         .getAllByRole("button")
         .filter(
           (button) =>
-            button.textContent === "Cancelar" ||
-            button.textContent === "Confirmar",
+            button.textContent === "Cancel" || button.textContent === "Confirm",
         );
-      expect(actionButtons[0]).toHaveTextContent("Cancelar");
-      expect(actionButtons[1]).toHaveTextContent("Confirmar");
+      expect(actionButtons[0]).toHaveTextContent("Cancel");
+      expect(actionButtons[1]).toHaveTextContent("Confirm");
     });
 
     it("should display both buttons when onCancel is provided by default behavior", () => {
@@ -483,12 +482,11 @@ describe("ConfirmModal", () => {
         .getAllByRole("button")
         .filter(
           (button) =>
-            button.textContent === "Cancelar" ||
-            button.textContent === "Confirmar",
+            button.textContent === "Cancel" || button.textContent === "Confirm",
         );
       expect(actionButtons).toHaveLength(2);
-      expect(actionButtons[0]).toHaveTextContent("Cancelar");
-      expect(actionButtons[1]).toHaveTextContent("Confirmar");
+      expect(actionButtons[0]).toHaveTextContent("Cancel");
+      expect(actionButtons[1]).toHaveTextContent("Confirm");
     });
   });
 });

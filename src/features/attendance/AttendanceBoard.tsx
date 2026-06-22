@@ -38,7 +38,8 @@ const AttendanceBoard: React.FC<{
   } | null;
   onCheckInProcessed?: () => void;
 }> = ({ unscheduledCheckIn, onCheckInProcessed }) => {
-  const { loading, error, refreshData, attendancesByDate } = useAttendanceData();
+  const { loading, error, refreshData, attendancesByDate } =
+    useAttendanceData();
 
   const { selectedDate, setSelectedDate } = useAttendanceBoardState();
 
@@ -81,8 +82,9 @@ const AttendanceBoard: React.FC<{
   } = useDragAndDrop();
 
   // Workflow management hook
-  const { collapsed, isDayFinalized, toggleCollapsed } =
-    useAttendanceWorkflow({ hasSlotsForDay: !noSlotsForDay });
+  const { collapsed, isDayFinalized, toggleCollapsed } = useAttendanceWorkflow({
+    hasSlotsForDay: !noSlotsForDay,
+  });
 
   const isDayDisabled =
     isDayFinalized || applyNoSlotsRestriction || applyHolidayRestriction;
@@ -147,7 +149,7 @@ const AttendanceBoard: React.FC<{
         <div className="border-b border-gray-200 mb-4 opacity-80">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pb-4">
             <span className="font-semibold text-gray-800">
-              Legenda de Prioridade:
+              Priority legend:
             </span>
             <div className="flex flex-wrap gap-4 text-sm">
               {priorityLegendEntries.map(([code, label]) => (

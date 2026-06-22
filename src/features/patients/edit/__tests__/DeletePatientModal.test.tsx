@@ -9,7 +9,7 @@ describe("DeletePatientModal", () => {
     isOpen: true,
     onClose: mockOnClose,
     onConfirm: mockOnConfirm,
-    patientName: "João Silva",
+    patientName: "John Smith",
     isDeleting: false,
   };
 
@@ -20,27 +20,27 @@ describe("DeletePatientModal", () => {
   it("should render modal when open", () => {
     render(<DeletePatientModal {...defaultProps} />);
 
-    expect(screen.getByText("Excluir Paciente")).toBeInTheDocument();
-    expect(screen.getByText("João Silva")).toBeInTheDocument();
+    expect(screen.getByText("Delete Patient")).toBeInTheDocument();
+    expect(screen.getByText("John Smith")).toBeInTheDocument();
     expect(
-      screen.getByText("Esta ação não pode ser desfeita!"),
+      screen.getByText("This action cannot be undone!"),
     ).toBeInTheDocument();
   });
 
   it("should not render modal when closed", () => {
     render(<DeletePatientModal {...defaultProps} isOpen={false} />);
 
-    expect(screen.queryByText("Excluir Paciente")).not.toBeInTheDocument();
+    expect(screen.queryByText("Delete Patient")).not.toBeInTheDocument();
   });
 
   it("should show warning messages", () => {
     render(<DeletePatientModal {...defaultProps} />);
 
     expect(
-      screen.getByText(/Todos os dados do paciente serão excluídos/),
+      screen.getByText(/All patient data will be deleted/),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Esta ação não poderá ser revertida"),
+      screen.getByText("This action cannot be undone"),
     ).toBeInTheDocument();
   });
 
@@ -48,12 +48,12 @@ describe("DeletePatientModal", () => {
     render(<DeletePatientModal {...defaultProps} />);
 
     const deleteButton = screen.getByRole("button", {
-      name: /excluir permanentemente/i,
+      name: /Delete Permanently/i,
     });
     expect(deleteButton).toBeDisabled();
 
-    const input = screen.getByPlaceholderText("Digite EXCLUIR");
-    fireEvent.change(input, { target: { value: "EXCLUIR" } });
+    const input = screen.getByPlaceholderText("Type DELETE");
+    fireEvent.change(input, { target: { value: "DELETE" } });
 
     expect(deleteButton).toBeEnabled();
   });
@@ -62,11 +62,11 @@ describe("DeletePatientModal", () => {
     render(<DeletePatientModal {...defaultProps} />);
 
     const deleteButton = screen.getByRole("button", {
-      name: /excluir permanentemente/i,
+      name: /Delete Permanently/i,
     });
-    const input = screen.getByPlaceholderText("Digite EXCLUIR");
+    const input = screen.getByPlaceholderText("Type DELETE");
 
-    fireEvent.change(input, { target: { value: "excluir" } });
+    fireEvent.change(input, { target: { value: "DELETE" } });
 
     expect(deleteButton).toBeEnabled();
   });
@@ -75,11 +75,11 @@ describe("DeletePatientModal", () => {
     render(<DeletePatientModal {...defaultProps} />);
 
     const deleteButton = screen.getByRole("button", {
-      name: /excluir permanentemente/i,
+      name: /Delete Permanently/i,
     });
-    const input = screen.getByPlaceholderText("Digite EXCLUIR");
+    const input = screen.getByPlaceholderText("Type DELETE");
 
-    fireEvent.change(input, { target: { value: "DELETE" } });
+    fireEvent.change(input, { target: { value: "WRONG" } });
 
     expect(deleteButton).toBeDisabled();
   });
@@ -87,11 +87,11 @@ describe("DeletePatientModal", () => {
   it("should call onConfirm when delete button clicked with correct confirmation", () => {
     render(<DeletePatientModal {...defaultProps} />);
 
-    const input = screen.getByPlaceholderText("Digite EXCLUIR");
-    fireEvent.change(input, { target: { value: "EXCLUIR" } });
+    const input = screen.getByPlaceholderText("Type DELETE");
+    fireEvent.change(input, { target: { value: "DELETE" } });
 
     const deleteButton = screen.getByRole("button", {
-      name: /excluir permanentemente/i,
+      name: /Delete Permanently/i,
     });
     fireEvent.click(deleteButton);
 
@@ -101,7 +101,7 @@ describe("DeletePatientModal", () => {
   it("should call onClose when cancel button clicked", () => {
     render(<DeletePatientModal {...defaultProps} />);
 
-    const cancelButton = screen.getByRole("button", { name: /cancelar/i });
+    const cancelButton = screen.getByRole("button", { name: /Cancel/i });
     fireEvent.click(cancelButton);
 
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -110,35 +110,35 @@ describe("DeletePatientModal", () => {
   it("should reset confirmation text when modal closes", () => {
     const { rerender } = render(<DeletePatientModal {...defaultProps} />);
 
-    const input = screen.getByPlaceholderText("Digite EXCLUIR");
-    fireEvent.change(input, { target: { value: "EXCLUIR" } });
+    const input = screen.getByPlaceholderText("Type DELETE");
+    fireEvent.change(input, { target: { value: "DELETE" } });
 
-    expect(input).toHaveValue("EXCLUIR");
+    expect(input).toHaveValue("DELETE");
 
     // Close modal
-    const cancelButton = screen.getByRole("button", { name: /cancelar/i });
+    const cancelButton = screen.getByRole("button", { name: /Cancel/i });
     fireEvent.click(cancelButton);
 
     // Reopen modal
     rerender(<DeletePatientModal {...defaultProps} />);
 
-    const newInput = screen.getByPlaceholderText("Digite EXCLUIR");
+    const newInput = screen.getByPlaceholderText("Type DELETE");
     expect(newInput).toHaveValue("");
   });
 
   it("should show loading state when deleting", () => {
     render(<DeletePatientModal {...defaultProps} isDeleting={true} />);
 
-    expect(screen.getByText("Excluindo...")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Digite EXCLUIR")).toBeDisabled();
-    expect(screen.getByRole("button", { name: /cancelar/i })).toBeDisabled();
+    expect(screen.getByText("Deleting...")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Type DELETE")).toBeDisabled();
+    expect(screen.getByRole("button", { name: /Cancel/i })).toBeDisabled();
   });
 
   it("should disable inputs and buttons during deletion", () => {
     render(<DeletePatientModal {...defaultProps} isDeleting={true} />);
 
-    const input = screen.getByPlaceholderText("Digite EXCLUIR");
-    const cancelButton = screen.getByRole("button", { name: /cancelar/i });
+    const input = screen.getByPlaceholderText("Type DELETE");
+    const cancelButton = screen.getByRole("button", { name: /Cancel/i });
 
     expect(input).toBeDisabled();
     expect(cancelButton).toBeDisabled();
@@ -147,7 +147,7 @@ describe("DeletePatientModal", () => {
   it("should autofocus confirmation input", () => {
     render(<DeletePatientModal {...defaultProps} />);
 
-    const input = screen.getByPlaceholderText("Digite EXCLUIR");
+    const input = screen.getByPlaceholderText("Type DELETE");
     expect(input).toHaveFocus();
   });
 });

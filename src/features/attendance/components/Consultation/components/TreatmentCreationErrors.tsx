@@ -35,7 +35,7 @@ const TreatmentCreationErrors: React.FC<TreatmentCreationErrorsProps> = ({
   };
 
   const getTreatmentName = (type: "physiotherapy" | "tens"): string => {
-    return type === "physiotherapy" ? "Fisioterapia" : "TENS";
+    return type === "physiotherapy" ? "Physiotherapy" : "TENS";
   };
 
   const totalErrors = errors.reduce(
@@ -50,14 +50,14 @@ const TreatmentCreationErrors: React.FC<TreatmentCreationErrorsProps> = ({
         <div className="flex justify-center items-center gap-2 mb-2">
           <span className="text-3xl">⚠️</span>
           <h2 className="text-2xl font-bold text-red-700">
-            Problemas ao Criar Sessões
+            Problems Creating Sessions
           </h2>
         </div>
         <p className="text-gray-600">
           {customMessage || (
             <>
-              Ocorreram problemas ao criar as sessões de tratamento e/ou
-              agendamentos automáticos para{" "}
+              There were problems creating treatment sessions and/or automatic
+              appointments for{" "}
               <span className="font-semibold text-gray-800">{patientName}</span>
               .
             </>
@@ -69,15 +69,15 @@ const TreatmentCreationErrors: React.FC<TreatmentCreationErrorsProps> = ({
       <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-lg">📊</span>
-          <h3 className="font-semibold text-red-800">Resumo dos Problemas</h3>
+          <h3 className="font-semibold text-red-800">Problem Summary</h3>
         </div>
         <div className="grid grid-cols-1 gap-4 text-sm sm:grid-cols-2">
           <div className="bg-white p-3 rounded">
-            <div className="text-red-600 font-medium">Total de Erros</div>
+            <div className="text-red-600 font-medium">Total Errors</div>
             <div className="text-xl font-bold text-red-700">{totalErrors}</div>
           </div>
           <div className="bg-white p-3 rounded">
-            <div className="text-red-600 font-medium">Tratamentos Afetados</div>
+            <div className="text-red-600 font-medium">Affected Treatments</div>
             <div className="text-xl font-bold text-red-700">
               {errors.length}
             </div>
@@ -89,7 +89,7 @@ const TreatmentCreationErrors: React.FC<TreatmentCreationErrorsProps> = ({
       <div className="space-y-4 mb-6">
         <h3 className="font-semibold text-gray-800 flex items-center gap-2">
           <span>📋</span>
-          Detalhes dos Problemas
+          Problem Details
         </h3>
 
         {errors.map((treatmentError, index) => (
@@ -105,7 +105,7 @@ const TreatmentCreationErrors: React.FC<TreatmentCreationErrorsProps> = ({
                 {getTreatmentName(treatmentError.treatmentType)}
               </h4>
               <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">
-                {treatmentError.errors.length} erro
+                {treatmentError.errors.length} error
                 {treatmentError.errors.length !== 1 ? "s" : ""}
               </span>
             </div>
@@ -129,16 +129,13 @@ const TreatmentCreationErrors: React.FC<TreatmentCreationErrorsProps> = ({
       <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-lg">✨</span>
-          <h3 className="font-semibold text-yellow-800">Recomendações</h3>
+          <h3 className="font-semibold text-yellow-800">Recommendations</h3>
         </div>
         <ul className="text-sm text-yellow-700 space-y-1">
-          <li>
-            • Verifique se já existem agendamentos conflitantes para este
-            paciente
-          </li>
-          <li>• Confirme se as configurações de horário estão corretas</li>
-          <li>• Tente novamente em alguns minutos</li>
-          <li>• Se o problema persistir, contate o suporte técnico</li>
+          <li>• Check for conflicting appointments for this patient</li>
+          <li>• Confirm scheduling settings are correct</li>
+          <li>• Try again in a few minutes</li>
+          <li>• If the issue persists, contact technical support</li>
         </ul>
       </div>
 
@@ -146,18 +143,18 @@ const TreatmentCreationErrors: React.FC<TreatmentCreationErrorsProps> = ({
       <div className="flex flex-col-reverse gap-3 justify-center sm:flex-row">
         {onRetry && (
           <Button type="button" onClick={onRetry}>
-            Voltar
+            Back
           </Button>
         )}
         <Button type="button" variant="outline" onClick={onContinue}>
-          Continuar Mesmo Assim
+          Continue Anyway
         </Button>
       </div>
 
       {/* Footer Note */}
       <div className="mt-4 text-center text-xs text-gray-500">
-        ✨ O registro de tratamento foi salvo com sucesso. Apenas os
-        agendamentos automáticos apresentaram problemas.
+        ✨ The treatment record was saved successfully. Only automatic
+        appointments encountered issues.
       </div>
     </div>
   );

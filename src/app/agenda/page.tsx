@@ -10,10 +10,7 @@ export default function AgendaPage() {
   return (
     <Suspense
       fallback={
-        <LoadingFallback
-          message="Carregando calendário da agenda..."
-          size="large"
-        />
+        <LoadingFallback message="Loading agenda calendar..." size="large" />
       }
     >
       <AgendaCalendar />

@@ -10,6 +10,10 @@ import LoadingFallback from "@/components/common/LoadingFallback";
 import { getTodayClinic } from "@/utils/timezoneDate";
 import { Button, Card, CardBody, CardHeader } from "@/components/ui";
 import { PageHeader } from "@/components/layout";
+import {
+  AGENDA_COLUMN_TITLES,
+  AGENDA_PAGE_LABELS,
+} from "./utils/agendaFilterConstants";
 
 // Lazy load heavy modal component for better bundle optimization
 const NewAttendanceFormModal = lazy(
@@ -48,14 +52,14 @@ const AgendaCalendar: React.FC = () => {
       <Card>
         <CardHeader className="border-gray-100 p-4">
           <PageHeader
-            title="Agenda de Atendimentos"
-            description="Visualize e gerencie os agendamentos por data e tipo de atendimento"
+            title={AGENDA_PAGE_LABELS.title}
+            description={AGENDA_PAGE_LABELS.description}
             actions={
               <Button
                 className="w-full sm:w-auto"
                 onClick={() => setShowNewAttendance(true)}
               >
-                + Novo Agendamento
+                {AGENDA_PAGE_LABELS.newAttendanceButton}
               </Button>
             }
           />
@@ -78,7 +82,7 @@ const AgendaCalendar: React.FC = () => {
           {/* Two Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AgendaColumn
-              title="Consultas de Avaliação"
+              title={AGENDA_COLUMN_TITLES.assessment}
               agendaItems={filteredAgenda.assessment.map((item) => ({
                 ...item,
                 patients: item.patients.map((patient) => ({
@@ -94,7 +98,7 @@ const AgendaCalendar: React.FC = () => {
             />
 
             <AgendaColumn
-              title="Fisioterapia / TENS"
+              title={AGENDA_COLUMN_TITLES.physiotherapy}
               agendaItems={filteredAgenda.physiotherapy.map((item) => ({
                 ...item,
                 patients: item.patients.map((patient) => ({
@@ -117,7 +121,7 @@ const AgendaCalendar: React.FC = () => {
         <Suspense
           fallback={
             <LoadingFallback
-              message="Carregando formulário de agendamento..."
+              message={AGENDA_PAGE_LABELS.schedulingFormLoading}
               size="small"
             />
           }
@@ -125,9 +129,8 @@ const AgendaCalendar: React.FC = () => {
           <NewAttendanceFormModal
             onClose={() => setShowNewAttendance(false)}
             onSuccess={handleFormSuccess}
-            title="Agendamento de Consulta de Avaliação"
-            subtitle="Atendimentos do tipo Fisioterapia e TENS devem ser criados
-          automaticamente após a consulta de avaliação."
+            title={AGENDA_PAGE_LABELS.schedulingModalTitle}
+            subtitle="Physiotherapy and TENS appointments must be created automatically after the assessment consultation."
             showDateField={true}
             validationDate={selectedDate || getTodayClinic()}
           />

@@ -26,10 +26,10 @@ describe("ScheduledAppointmentsPreview", () => {
       />,
     );
 
-    expect(screen.getByText("Próximos agendamentos:")).toBeInTheDocument();
-    expect(screen.getByText("21/01/2026")).toBeInTheDocument();
-    expect(screen.getByText("28/01/2026")).toBeInTheDocument();
-    expect(screen.getByText("04/02/2026")).toBeInTheDocument();
+    expect(screen.getByText("Upcoming appointments:")).toBeInTheDocument();
+    expect(screen.getByText("01/21/2026")).toBeInTheDocument();
+    expect(screen.getByText("01/28/2026")).toBeInTheDocument();
+    expect(screen.getByText("02/04/2026")).toBeInTheDocument();
   });
 
   it("should render dates without times", () => {
@@ -41,7 +41,7 @@ describe("ScheduledAppointmentsPreview", () => {
       />,
     );
 
-    expect(screen.getByText("21/01/2026")).toBeInTheDocument();
+    expect(screen.getByText("01/21/2026")).toBeInTheDocument();
     expect(screen.queryByText(/⏰/)).not.toBeInTheDocument();
   });
 
@@ -65,10 +65,10 @@ describe("ScheduledAppointmentsPreview", () => {
       />,
     );
 
-    expect(screen.getByText("21/01/2026")).toBeInTheDocument();
-    expect(screen.getByText("28/01/2026")).toBeInTheDocument();
-    expect(screen.getByText("04/02/2026")).toBeInTheDocument();
-    expect(screen.getByText("11/02/2026")).toBeInTheDocument();
+    expect(screen.getByText("01/21/2026")).toBeInTheDocument();
+    expect(screen.getByText("01/28/2026")).toBeInTheDocument();
+    expect(screen.getByText("02/04/2026")).toBeInTheDocument();
+    expect(screen.getByText("02/11/2026")).toBeInTheDocument();
     expect(screen.queryByText("01/04/2026")).not.toBeInTheDocument();
   });
 
@@ -93,7 +93,7 @@ describe("ScheduledAppointmentsPreview", () => {
       />,
     );
 
-    expect(screen.getByText("+2 mais")).toBeInTheDocument();
+    expect(screen.getByText("+2 more")).toBeInTheDocument();
   });
 
   it("should not show +N more indicator for 10 or fewer dates", () => {
@@ -104,7 +104,7 @@ describe("ScheduledAppointmentsPreview", () => {
       />,
     );
 
-    expect(screen.queryByText(/\+\d+ mais/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/\+\d+ more/)).not.toBeInTheDocument();
   });
 
   it("should handle empty scheduled dates", () => {
@@ -116,12 +116,12 @@ describe("ScheduledAppointmentsPreview", () => {
     );
 
     expect(
-      screen.getByText("Todos os agendamentos foram concluídos"),
+      screen.getByText("All appointments have been completed"),
     ).toBeInTheDocument();
     expect(screen.queryByText(/\d{2}\/\d{2}\/\d{4}/)).not.toBeInTheDocument();
   });
 
-  it("should show (não concluídos) when createdDate is at least 7 days old", () => {
+  it("should show (not completed) when createdDate is at least 7 days old", () => {
     const oldCreatedDate = toYmd(new Date(Date.now() - 10 * 86400000));
     render(
       <ScheduledAppointmentsPreview
@@ -131,7 +131,7 @@ describe("ScheduledAppointmentsPreview", () => {
     );
 
     expect(
-      screen.getByText("Agendamentos não concluídos:"),
+      screen.getByText("Incomplete appointments:"),
     ).toBeInTheDocument();
   });
 
@@ -143,6 +143,6 @@ describe("ScheduledAppointmentsPreview", () => {
       />,
     );
 
-    expect(screen.getByText("Próximos agendamentos:")).toBeInTheDocument();
+    expect(screen.getByText("Upcoming appointments:")).toBeInTheDocument();
   });
 });

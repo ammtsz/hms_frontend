@@ -33,7 +33,7 @@ export const useTreatmentsByPatient = (patientId: number): UseTreatmentsByPatien
       const response = await getTreatmentsByPatient(patientId.toString());
 
       if (!response.success) {
-        throw new Error(response.error || 'Erro ao carregar tratamentos');
+        throw new Error(response.error || 'Failed to load treatments');
       }
 
       return response.value || [];
@@ -70,7 +70,7 @@ export const useCancelTreatments = () => {
       const response = await bulkCancelTreatments(treatmentIds, cancellationReason);
 
       if (!response.success) {
-        throw new Error(response.error || 'Erro ao cancelar tratamentos');
+        throw new Error(response.error || 'Failed to cancel treatments');
       }
 
       return response.value;
@@ -92,7 +92,7 @@ export const useDeleteTreatment = () => {
       const response = await deleteTreatment(treatmentId);
 
       if (!response.success) {
-        throw new Error(response.error || 'Erro ao remover tratamento');
+        throw new Error(response.error || 'Failed to remove treatment');
       }
 
       return response.value;
@@ -170,7 +170,7 @@ export function useEditTreatments({
           }
           const res = await updateTreatment(String(treatmentId), updatePayload);
           if (!res.success) {
-            throw new Error(res.error ?? 'Erro ao atualizar tratamento.');
+            throw new Error(res.error ?? 'Failed to update treatment.');
           }
         } else {
           const createPayload = {
@@ -194,7 +194,7 @@ export function useEditTreatments({
           }
           const res = await createTreatment(createPayload);
           if (!res.success) {
-            throw new Error(res.error ?? 'Erro ao criar tratamento.');
+            throw new Error(res.error ?? 'Failed to create treatment.');
           }
         }
       }
@@ -205,7 +205,7 @@ export function useEditTreatments({
       onClose();
     },
     onError: (e) => {
-      setSubmitError(e instanceof Error ? e.message : 'Erro ao salvar alterações.');
+      setSubmitError(e instanceof Error ? e.message : 'Error saving changes.');
     },
   });
 }

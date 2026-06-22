@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { AlertTriangle, Info } from "lucide-react";
 import type { AbsenceJustification, ScheduledAbsence } from "../../types";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import type { IAttendanceStatusDetailWithType } from "../../../../utils/attendanceDataUtils";
 import {
   groupAbsenceJustificationsByCard,
@@ -42,7 +42,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
   const justifiedCards = absenceCards.filter((c) => c.justified);
   const unjustifiedCards = absenceCards.filter((c) => !c.justified);
 
-  // Group completed attendances with locais (body location) counts
+  // Group completed attendances with body location counts
   const groupedCompletedAttendances = useMemo(
     () => groupAttendancesForDisplayWithBodyLocation(completedAttendances),
     [completedAttendances],
@@ -51,7 +51,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
   return (
     <div>
       <h3 className="text-lg font-semibold mb-4">
-        Confirmação - {formatDateBR(selectedDate)}
+        Confirmation - {formatDisplayDate(selectedDate)}
       </h3>
 
       <div className="space-y-6 mb-6">
@@ -63,7 +63,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                 {groupedCompletedAttendances.length}
               </div>
               <div className="text-sm text-green-800">
-                Atendimentos Concluídos
+                Completed Attendances
               </div>
             </div>
           </div>
@@ -73,7 +73,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               <div className="text-2xl font-bold text-yellow-600">
                 {justifiedCards.length}
               </div>
-              <div className="text-sm text-yellow-800">Faltas Justificadas</div>
+              <div className="text-sm text-yellow-800">Justified Absences</div>
             </div>
           </div>
 
@@ -82,9 +82,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               <div className="text-2xl font-bold text-red-600">
                 {unjustifiedCards.length}
               </div>
-              <div className="text-sm text-red-800">
-                Faltas não Justificadas
-              </div>
+              <div className="text-sm text-red-800">Unjustified Absences</div>
             </div>
           </div>
         </div>
@@ -93,7 +91,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         {groupedCompletedAttendances.length > 0 && (
           <div className="bg-white border border-gray-200 rounded-md p-4">
             <h4 className="text-md font-medium text-gray-900 mb-3">
-              Atendimentos Concluídos
+              Completed Attendances
             </h4>
             <ul className="space-y-2">
               {groupedCompletedAttendances.map((attendance, index) => (
@@ -108,7 +106,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         {justifiedCards.length > 0 && (
           <div className="bg-white border border-gray-200 rounded-md p-4">
             <h4 className="text-md font-medium text-gray-900 mb-3">
-              Faltas Justificadas
+              Justified Absences
             </h4>
             <ul className="space-y-3">
               {justifiedCards.map((card, index) => (
@@ -126,7 +124,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
                   </div>
                   {card.justification && (
                     <div className="text-gray-600 mt-1">
-                      Justificativa: {card.justification}
+                      Justification: {card.justification}
                     </div>
                   )}
                 </li>
@@ -138,7 +136,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         {unjustifiedCards.length > 0 && (
           <div className="bg-white border border-gray-200 rounded-md p-4">
             <h4 className="text-md font-medium text-gray-900 mb-3">
-              Faltas não Justificadas
+              Unjustified Absences
             </h4>
             <ul className="space-y-3">
               {unjustifiedCards.map((card, index) => (
@@ -166,12 +164,12 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
             </div>
             <div className="ml-3">
               <h3 className="text-sm font-medium text-blue-800">
-                Finalizar o dia
+                Finalize the day
               </h3>
               <div className="mt-2 text-sm text-blue-700">
                 <p>
-                  Clique em &quot;Finalizar Dia&quot; para confirmar e registrar
-                  todas as informações acima.
+                  Click &quot;Finalize Day&quot; to confirm and record all the
+                  information above.
                 </p>
               </div>
             </div>
@@ -185,11 +183,11 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
               <AlertTriangle className="h-5 w-5 text-red-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Atenção</h3>
+              <h3 className="text-sm font-medium text-red-800">Attention</h3>
               <div className="mt-2 text-sm text-red-700">
                 <p>
-                  Esta ação não pode ser desfeita. Certifique-se de que todas as
-                  informações estão corretas antes de prosseguir.
+                  This action cannot be undone. Make sure all information is
+                  correct before proceeding.
                 </p>
               </div>
             </div>
@@ -203,7 +201,7 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
             onClick={onBack}
             disabled={isSubmitting}
           >
-            Voltar
+            Back
           </Button>
           <Button
             type="button"
@@ -211,9 +209,9 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
             onClick={onSubmit}
             disabled={isSubmitting}
             isLoading={isSubmitting}
-            loadingText="Finalizando..."
+            loadingText="Finalizing..."
           >
-            Finalizar Dia
+            Finalize Day
           </Button>
         </div>
       </div>

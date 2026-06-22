@@ -8,7 +8,7 @@ interface LoadingSpinnerProps {
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = "medium",
-  message = "Carregando...",
+  message = "Loading...",
   showSpinner = true,
 }) => {
   const sizeClasses = {
@@ -31,7 +31,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         <div
           className={`${sizeClasses[size]} border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4`}
           role="status"
-          aria-label="Carregando"
+          aria-label="Loading"
         />
       )}
       <p className="text-gray-600 text-center">{message}</p>

@@ -19,7 +19,7 @@ const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
 }) => {
   const [confirmationText, setConfirmationText] = useState("");
   const confirmationInputRef = useRef<HTMLInputElement>(null);
-  const expectedText = "EXCLUIR";
+  const expectedText = "DELETE";
   const isConfirmed = confirmationText.toUpperCase() === expectedText;
 
   const handleClose = () => {
@@ -37,7 +37,7 @@ const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title="Excluir Paciente"
+      title="Delete Patient"
       maxWidth="md"
       initialFocusRef={confirmationInputRef}
     >
@@ -45,10 +45,10 @@ const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
         {/* Warning Message */}
         <div className="text-center mb-6">
           <p className="text-lg font-semibold text-gray-900 mb-2">
-            Esta ação não pode ser desfeita!
+            This action cannot be undone!
           </p>
           <p className="text-sm text-gray-600">
-            Você está prestes a excluir permanentemente o paciente:
+            You are about to permanently delete the patient:
           </p>
           <p className="text-base font-bold text-gray-900 mt-2">
             {patientName}
@@ -58,14 +58,14 @@ const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
         {/* Important Notes */}
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
           <p className="text-sm text-yellow-800 font-semibold mb-2">
-            ⚠️ Importante:
+            ⚠️ Important:
           </p>
           <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside">
             <li>
-              Todos os dados do paciente serão excluídos, incluindo histórico de
-              atendimentos e registros de tratamento caso existam
+              All patient data will be deleted, including attendance history and
+              treatment records if present
             </li>
-            <li>Esta ação não poderá ser revertida</li>
+            <li>This action cannot be undone</li>
           </ul>
         </div>
 
@@ -74,20 +74,20 @@ const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
           <Field
             label={
               <>
-                Digite{" "}
+                Type{" "}
                 <span className="font-bold text-red-600">{expectedText}</span>{" "}
-                para confirmar:
+                to confirm:
               </>
             }
           >
-          <Input
-            ref={confirmationInputRef}
-            type="text"
-            value={confirmationText}
-            onChange={(e) => setConfirmationText(e.target.value)}
-            placeholder="Digite EXCLUIR"
-            disabled={isDeleting}
-          />
+            <Input
+              ref={confirmationInputRef}
+              type="text"
+              value={confirmationText}
+              onChange={(e) => setConfirmationText(e.target.value)}
+              placeholder="Type DELETE"
+              disabled={isDeleting}
+            />
           </Field>
         </div>
 
@@ -99,18 +99,18 @@ const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
             onClick={handleClose}
             disabled={isDeleting}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
             onClick={handleConfirm}
             variant="danger"
             isLoading={isDeleting}
-            loadingText="Excluindo..."
+            loadingText="Deleting..."
             disabled={!isConfirmed}
             className="flex-1"
           >
-            Excluir Permanentemente
+            Delete Permanently
           </Button>
         </div>
       </div>

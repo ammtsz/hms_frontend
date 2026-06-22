@@ -42,7 +42,7 @@ const createMockConsultation = (
 ): ConsultationResponseDto => ({
   id,
   attendanceId,
-  mainComplaint: "Test complaint",
+  mainConcern: "Test complaint",
   food: "Test food recommendation",
   water: "Test water recommendation",
   ointments: "Test ointment recommendation",
@@ -60,20 +60,20 @@ const createMockConsultation = (
 const createMockPostConsultationFormData = (
   overrides: Partial<PostConsultationFormData> = {},
 ): PostConsultationFormData => ({
-  mainComplaint: "Dor nas costas",
+  mainConcern: "Back pain",
   patientStatus: "T" as PatientStatusValue,
   startDate: "2024-01-15",
   returnWeeks: 4,
-  food: "Evitar frituras",
-  water: "Beber 2 litros por dia",
-  ointments: "Aplicar pomada anti-inflamatória",
+  food: "Avoid fried foods",
+  water: "Drink 2 liters per day",
+  ointments: "Apply anti-inflammatory ointment",
   recommendations: {
     physiotherapy: {
       startDate: "2024-01-15",
       treatments: [
         {
-          locations: ["Coluna vertebral"],
-          color: "azul",
+          locations: ["Back"],
+          color: "blue",
           startDate: "2024-01-15",
           duration: 21,
           quantity: 3,
@@ -84,7 +84,7 @@ const createMockPostConsultationFormData = (
       startDate: "2024-01-15",
       treatments: [
         {
-          locations: ["Ombro direito"],
+          locations: ["Right Ankle"],
           startDate: "2024-01-15",
           quantity: 2,
         },
@@ -93,7 +93,7 @@ const createMockPostConsultationFormData = (
     returnWeeks: 4,
     returnWhenTreatmentComplete: false,
   },
-  notes: "Paciente relata melhora gradual",
+  notes: "Patient reports gradual improvement",
   noGeneralRecommendations: false,
   noTreatmentRecommendations: false,
   ...overrides,
@@ -223,14 +223,14 @@ describe("useConsultationSubmission", () => {
       });
       expect(mockMutateAsync).toHaveBeenCalledWith({
         attendanceId: 456,
-        mainComplaint: "Dor nas costas",
+        mainConcern: "Back pain",
         patientStatus: "T",
-        food: "Evitar frituras",
-        water: "Beber 2 litros por dia",
-        ointments: "Aplicar pomada anti-inflamatória",
+        food: "Avoid fried foods",
+        water: "Drink 2 liters per day",
+        ointments: "Apply anti-inflammatory ointment",
         returnWeeks: 4,
         returnWhenTreatmentComplete: false,
-        notes: "Paciente relata melhora gradual",
+        notes: "Patient reports gradual improvement",
         physiotherapy: true,
         tens: true,
       });
@@ -246,8 +246,8 @@ describe("useConsultationSubmission", () => {
             startDate: "2024-01-15",
             treatments: [
               {
-                locations: ["Cabeça"],
-                color: "verde",
+                locations: ["Head"],
+                color: "green",
                 startDate: "2024-01-15",
                 duration: 21,
                 quantity: 3,
@@ -291,7 +291,7 @@ describe("useConsultationSubmission", () => {
             startDate: "2024-01-15",
             treatments: [
               {
-                locations: ["Perna esquerda"],
+                locations: ["Left leg"],
                 startDate: "2024-01-15",
                 quantity: 1,
               },
@@ -350,7 +350,7 @@ describe("useConsultationSubmission", () => {
       expect(submitResult).toMatchObject({ consultationId: 654 });
       expect(mockMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
-          mainComplaint: "Dor nas costas",
+          mainConcern: "Back pain",
         }),
       );
     });
@@ -387,7 +387,7 @@ describe("useConsultationSubmission", () => {
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentData = createMockPostConsultationFormData({
-        mainComplaint: "",
+        mainConcern: "",
         food: "",
         water: "",
         ointments: "",
@@ -409,7 +409,7 @@ describe("useConsultationSubmission", () => {
       expect(submitResult).toMatchObject({ consultationId: 999 });
       expect(mockMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
-          mainComplaint: "",
+          mainConcern: "",
           food: "",
           water: "",
           ointments: "",
@@ -418,7 +418,7 @@ describe("useConsultationSubmission", () => {
       );
     });
 
-    it("should return cancelledAttendances when create response includes them (Alta/Faltas)", async () => {
+    it("should return cancelledAttendances when create response includes them (Discharged/Missed)", async () => {
       const mockConsultation = createMockConsultation(888, 700);
       const cancelledAttendances = [
         { id: 10, type: "assessment", scheduledDate: "2026-01-25" },
@@ -609,7 +609,7 @@ describe("useConsultationSubmission", () => {
       const updateCall = mockUpdateMutateAsync.mock.calls[0][0];
       expect(updateCall.id).toBe("99");
       expect(updateCall.data).toMatchObject({
-        mainComplaint: treatmentData.mainComplaint,
+        mainConcern: treatmentData.mainConcern,
         patientStatus: treatmentData.patientStatus,
         food: treatmentData.food,
       });
@@ -779,7 +779,7 @@ describe("useConsultationSubmission", () => {
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentData = createMockPostConsultationFormData({
-        mainComplaint: "Custom complaint",
+        mainConcern: "Custom complaint",
         patientStatus: "A",
         food: "Custom food recommendation",
         water: "Custom water recommendation",
@@ -799,7 +799,7 @@ describe("useConsultationSubmission", () => {
       expect(mockMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           attendanceId: 1200,
-          mainComplaint: "Custom complaint",
+          mainConcern: "Custom complaint",
           patientStatus: "A",
           food: "Custom food recommendation",
           water: "Custom water recommendation",
@@ -860,10 +860,10 @@ describe("useConsultationSubmission", () => {
         wrapper: createWrapper,
       });
       const treatmentData1 = createMockPostConsultationFormData({
-        mainComplaint: "First complaint",
+        mainConcern: "First complaint",
       });
       const treatmentData2 = createMockPostConsultationFormData({
-        mainComplaint: "Second complaint",
+        mainConcern: "Second complaint",
       });
 
       let result1, result2;
@@ -889,10 +889,10 @@ describe("useConsultationSubmission", () => {
         wrapper: createWrapper,
       });
       const treatmentData1 = createMockPostConsultationFormData({
-        mainComplaint: "Concurrent 1",
+        mainConcern: "Concurrent 1",
       });
       const treatmentData2 = createMockPostConsultationFormData({
-        mainComplaint: "Concurrent 2",
+        mainConcern: "Concurrent 2",
       });
 
       let results: Awaited<

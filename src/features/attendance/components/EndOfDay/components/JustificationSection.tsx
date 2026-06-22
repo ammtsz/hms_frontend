@@ -44,7 +44,7 @@ export const JustificationSection: React.FC<JustificationSectionProps> = ({
               }
             />
             <span className="ml-2 text-sm text-gray-700">
-              Falta justificada
+              Justified absence
             </span>
           </label>
           <label className="flex items-center">
@@ -56,14 +56,14 @@ export const JustificationSection: React.FC<JustificationSectionProps> = ({
               }
             />
             <span className="ml-2 text-sm text-gray-700">
-              Falta não justificada
+              Unjustified absence
             </span>
           </label>
         </div>
 
         {justification?.justified === true && (
           <Field
-            label="Justificativa"
+            label="Justification"
             htmlFor={`justification-${patientId}-${sectionType}`}
           >
             <Textarea
@@ -77,7 +77,7 @@ export const JustificationSection: React.FC<JustificationSectionProps> = ({
                   e.target.value,
                 )
               }
-              placeholder="Descreva o motivo da falta..."
+              placeholder="Describe the reason for the absence..."
               rows={2}
             />
           </Field>

@@ -47,7 +47,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Tab Navigation
 
-- [ ] All tabs visible: Atendimentos, Agenda, Pacientes, Tratamentos
+- [ ] All tabs visible: Attendances, Agenda, Patients, Treatments
 - [ ] Active tab highlighted correctly
 - [ ] Tab navigation works (page switches)
 - [ ] `aria-current="page"` set on active tab
@@ -82,7 +82,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Filter by status works (Active, Discharged, etc.)
 - [ ] Patient cards display all info correctly
 - [ ] Click patient card navigates to detail page
-- [ ] "Novo Paciente" button visible
+- [ ] "New Patient" button visible
 - [ ] Loading states show during data fetch
 - [ ] Error states show on API failure
 - [ ] Empty state shows when no patients
@@ -93,7 +93,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Required field validation works
 - [ ] Phone number auto-formats: (XX) XXXXX-XXXX
 - [ ] Birth date starts empty (not prefilled with today)
-- [ ] Birth date can be entered segment-by-segment (dd/mm/yyyy) without jumping to today
+- [ ] Birth date can be entered segment-by-segment (mm/dd/yyyy) without jumping to today
 - [ ] Birth date validation (required, no future dates)
 - [ ] Submit disabled until birth date and other required fields are valid
 - [ ] Patient timezone defaults to the clinic timezone and is not user-editable
@@ -110,7 +110,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Treatment history displays
 - [ ] Active treatments section shows
 - [ ] Completed treatments section shows
-- [ ] Main complaint displays for consultations
+- [ ] Main concern displays for consultations
 - [ ] Parent attendance links visible
 - [ ] Loading states show during fetch
 - [ ] Error handling for invalid patient ID
@@ -132,7 +132,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 ### Walk-In Panel
 
 - [ ] Walk-in panel visible on left side
-- [ ] "Novo Paciente" toggle works
+- [ ] "New Patient" toggle works
 - [ ] Patient search/select works for existing patients
 - [ ] All attendance types available (Assessment, Physiotherapy, TENS)
 - [ ] Priority selection works (Emergency=1, Intermediate=2, Normal=3)
@@ -180,7 +180,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Attendance type badge shows
 - [ ] Priority indicator visible
 - [ ] Time/date displays correctly
-- [ ] Main complaint shows (if consultation)
+- [ ] Main concern shows (if consultation)
 - [ ] Click to expand (physiotherapy/tens only)
 - [ ] Delete button works
 - [ ] Confirmation before delete
@@ -205,14 +205,14 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Day Finalization
 
-- [ ] "Finalizar Dia" button visible
+- [ ] "End of Day" button visible
 - [ ] Confirmation modal shows before finalization
 - [ ] Finalization disables all editing
 - [ ] Finalization marks absences as MISSED
 - [ ] Finalization state persists in localStorage
 - [ ] Visual feedback (opacity, disabled states)
 - [ ] **No undo** - finalization is permanent
-- [ ] "Dia finalizado" button shown when finalized
+- [ ] "Day finalized" button shown when finalized
 
 ---
 
@@ -272,7 +272,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Create Holiday
 
-- [ ] "Adicionar Feriado" button opens modal
+- [ ] "Add holiday" button opens modal
 - [ ] Name field required
 - [ ] Date picker works (YYYY-MM-DD format)
 - [ ] Description field optional
@@ -294,7 +294,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Holiday Templates
 
-- [ ] "Modelos" tab visible
+- [ ] "Templates" tab visible
 - [ ] Template list displays
 - [ ] Create template button works
 - [ ] Template name required
@@ -303,7 +303,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Apply Template
 
-- [ ] "Aplicar" button visible per template
+- [ ] "Apply template" button visible per template
 - [ ] Year selection modal opens
 - [ ] Apply template creates holidays for year
 - [ ] Invalid dates skipped (e.g., Feb 31)
@@ -329,7 +329,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Post-attendance modal opens after completion
 - [ ] Tabbed form displays: Basic Info, General Recommendations, Treatment Recommendations
 - [ ] Basic Info tab validates:
-  - [ ] Main complaint required
+  - [ ] Main concern required
   - [ ] Emergency contact
   - [ ] Medical history
 - [ ] General Recommendations tab:
@@ -352,7 +352,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Body location multiselect works
 - [ ] Search functionality in body location selector
 - [ ] Multiple locations selected
-- [ ] "Adicionar Tratamento" button creates session
+- [ ] "Add treatment" button creates session
 - [ ] Color picker for physiotherapy
 - [ ] Duration field for physiotherapy
 - [ ] Quantity field for all treatments
@@ -390,7 +390,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Parent selector visible in agenda form
 - [ ] Only root consultations shown as options
 - [ ] Options sorted by date (most recent first)
-- [ ] Format: "YYYY-MM-DD - Main Complaint"
+- [ ] Format: "YYYY-MM-DD - Main Concern"
 - [ ] Loading state while fetching
 - [ ] Selection clears on patient change
 - [ ] Selection clears on new patient toggle
@@ -515,7 +515,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] `/patients/[id]`: section FAB reachable; FAB menu opens upward and all section labels visible; desktop rail (`lg+`) icons/labels align; cards and history items wrap; no clipped actions
 - [ ] `/agenda`: filters and columns usable; patient rows stack in columns
 - [ ] Settings (`/settings/*`): user cards; system tables stack; profile tabs scroll
-- [ ] `/login`: form fits 320px; inputs and Entrar button usable
+- [ ] `/login`: form fits 320px; inputs and Sign In button usable
 - [ ] Modals: fit viewport; body scrolls inside modal; close control reachable
 - [ ] Touch targets: primary actions ≥ 44px (buttons, `IconButton`, tab nav)
 - [ ] Attendance status changes on phone: read-only layout OK; DnD remains desktop (`MobileDesktopDnDAlert`) — touch DnD **not** HMS (optional follow-up)
@@ -524,7 +524,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 ### Tablet (640px – 1024px) — release QA
 
 - [ ] Attendance: two-column board at `md`; four columns at `lg`
-- [ ] Patient list: table from `md`; Registro column from `sm`
+- [ ] Patient list: table from `md`; ID column from `sm`
 - [ ] Touch targets adequate on filters and toolbars
 - [ ] Navigation and modals usable in portrait and landscape
 

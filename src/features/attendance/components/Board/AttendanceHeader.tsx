@@ -20,7 +20,7 @@ interface AttendanceHeaderProps {
   onDateChange: (date: string) => void;
   isDayFinalized?: boolean;
   noSlotsForDay?: boolean;
-  /** When set, shows "Feriado para [treatment types]" (e.g. when date is holiday for some or all types) */
+  /** When set, shows "Holiday for [treatment types]" (e.g. when date is holiday for some or all types) */
   holidayForDay?: string | null;
   /** When true, day is disabled because it is a holiday for all treatment types */
   isDayDisabledByHoliday?: boolean;
@@ -62,7 +62,7 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
   return (
     <div className="w-full pb-4">
       <h2 className="mb-4 flex items-center gap-2 text-lg text-[color:var(--primary-dark)]">
-        Data selecionada:
+        Selected date:
       </h2>
 
       <div className="mb-4 flex flex-col justify-between gap-3 md:flex-row md:items-center md:gap-16">
@@ -76,7 +76,7 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             onMouseDown={handleMouseDown}
-            lang="pt-BR"
+            lang="en-US"
           />
           <Button
             variant="outline"
@@ -84,8 +84,8 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
             onClick={() =>
               commitImmediately(addCalendarDaysToLocalYmd(selectedDate, -7))
             }
-            title="Voltar uma semana"
-            aria-label="Voltar uma semana"
+            title="Go back one week"
+            aria-label="Go back one week"
           >
             <ChevronsLeft />
           </Button>
@@ -95,7 +95,7 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
             onClick={() =>
               commitImmediately(addCalendarDaysToLocalYmd(selectedDate, -1))
             }
-            aria-label="Voltar um dia"
+            aria-label="Go back one day"
           >
             <ChevronLeft />
           </Button>
@@ -105,7 +105,7 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
             onClick={() =>
               commitImmediately(addCalendarDaysToLocalYmd(selectedDate, 1))
             }
-            aria-label="Avançar um dia"
+            aria-label="Advance one day"
           >
             <ChevronRight />
           </Button>
@@ -115,8 +115,8 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
             onClick={() =>
               commitImmediately(addCalendarDaysToLocalYmd(selectedDate, 7))
             }
-            title="Avançar uma semana"
-            aria-label="Avançar uma semana"
+            title="Advance one week"
+            aria-label="Advance one week"
           >
             <ChevronsRight />
           </Button>
@@ -124,15 +124,15 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
             variant="outline"
             onClick={() => commitImmediately(getTodayClinic())}
           >
-            Hoje
+            Today
           </Button>
           {onRefresh ? (
             <Button
               variant="outline"
               size="icon"
               onClick={onRefresh}
-              title="Atualizar atendimentos"
-              aria-label="Atualizar atendimentos"
+              title="Refresh attendances"
+              aria-label="Refresh attendances"
             >
               <RefreshCw size={18} />
             </Button>
@@ -143,7 +143,7 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
           className="relative shrink-0 max-sm:w-full md:self-auto"
           onClick={handleCheckUnresolved}
           disabled={unresolvedLoading}
-          title="Verificar atendimentos não resolvidos de datas passadas"
+          title="Check unresolved attendances from past dates"
         >
           {unresolvedData?.hasUnresolved ? (
             <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -151,7 +151,7 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
               <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
             </span>
           ) : null}
-          Pendências
+          Pending
         </Button>
       </div>
 
@@ -159,10 +159,8 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
         <div className="mb-4 flex items-center gap-2 rounded border border-green-400 bg-green-100 px-4 py-2 text-green-700">
           <span className="text-lg">📅</span>
           <div>
-            <strong>Dia finalizado</strong>
-            <p className="text-sm">
-              Os cartões estão desabilitados para edição
-            </p>
+            <strong>Day finalized</strong>
+            <p className="text-sm">Cards are disabled for editing</p>
           </div>
         </div>
       ) : null}
@@ -171,10 +169,10 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
         <div className="mb-4 flex items-center gap-2 rounded border border-amber-400 bg-amber-100 px-4 py-2 text-amber-800">
           <span className="text-lg">📋</span>
           <div>
-            <strong>Não há atendimento neste dia</strong>
+            <strong>There is no attendance on this day</strong>
             <p className="text-sm">
-              Não existe agendamento disponível para esta data. Altere a data
-              para encontrar um horário disponível.
+              There are no appointments available for this date. Change the date
+              to find an available time.
             </p>
           </div>
         </div>
@@ -187,8 +185,8 @@ export const AttendanceHeader: React.FC<AttendanceHeaderProps> = ({
             <strong>{holidayForDay}</strong>
             {isDayDisabledByHoliday ? (
               <p className="mt-0.5 text-sm">
-                Não é possível gerenciar atendimentos nesta data. Selecione
-                outra data.
+                It is not possible to manage attendances on this date. Select
+                another date.
               </p>
             ) : null}
           </div>

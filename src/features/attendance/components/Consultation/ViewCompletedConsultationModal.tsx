@@ -94,8 +94,8 @@ const ViewCompletedConsultationModal: React.FC = () => {
     <BaseModal
       isOpen={isOpen}
       onClose={handleClose}
-      title={`Consulta Finalizada - ${patientName || "Paciente"}`}
-      subtitle={`Visualização dos tratamentos recomendados • Atendimento #${attendanceId}`}
+      title={`Completed Consultation - ${patientName || "Patient"}`}
+      subtitle={`Recommended treatments • Attendance #${attendanceId}`}
       maxWidth="2xl"
     >
       <div className="p-6">
@@ -103,7 +103,7 @@ const ViewCompletedConsultationModal: React.FC = () => {
           <div className="flex items-center justify-center py-12">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-              <p className="text-gray-600">Carregando dados da consulta...</p>
+              <p className="text-gray-600">Loading consultation data...</p>
             </div>
           </div>
         )}
@@ -113,8 +113,7 @@ const ViewCompletedConsultationModal: React.FC = () => {
             error={
               typeof error === "string"
                 ? error
-                : (error as Error)?.message ||
-                  "Erro ao carregar dados da consulta"
+                : (error as Error)?.message || "Error loading consultation data"
             }
             dismissible={false}
           />
@@ -123,13 +122,13 @@ const ViewCompletedConsultationModal: React.FC = () => {
         {!isLoading && !error && consultation && (
           <>
             <SuccessHeader />
-            {/* Main complaint section */}
+            {/* Main concern section */}
             <div className="mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
               <h3 className="text-sm font-semibold text-gray-900 mb-2">
-                Queixa Principal
+                Main Concern
               </h3>
               <p className="text-sm text-gray-800">
-                {consultation.mainComplaint || "Não informada"}
+                {consultation.mainConcern || "Not informed"}
               </p>
             </div>
 
@@ -140,30 +139,30 @@ const ViewCompletedConsultationModal: React.FC = () => {
               consultation.notes) && (
               <div className="mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">
-                  Recomendações Gerais
+                  General Recommendations
                 </h3>
                 <div className="space-y-4 text-sm text-gray-700">
                   {consultation.food && (
                     <div>
-                      <span className="font-semibold">🍎 ALIMENTAÇÃO:</span>{" "}
+                      <span className="font-semibold">🍎 FOOD:</span>{" "}
                       {consultation.food}
                     </div>
                   )}
                   {consultation.water && (
                     <div>
-                      <span className="font-semibold">💧 ÁGUA:</span>{" "}
+                      <span className="font-semibold">💧 WATER:</span>{" "}
                       {consultation.water}
                     </div>
                   )}
                   {consultation.ointments && (
                     <div>
-                      <span className="font-semibold">🧴 POMADAS:</span>{" "}
+                      <span className="font-semibold">🧴 OINTMENTS:</span>{" "}
                       {consultation.ointments}
                     </div>
                   )}
                   {consultation.notes && (
                     <div>
-                      <span className="font-semibold">💡 OBSERVAÇÕES:</span>{" "}
+                      <span className="font-semibold">💡 NOTES:</span>{" "}
                       {consultation.notes}
                     </div>
                   )}
@@ -197,8 +196,8 @@ const ViewCompletedConsultationModal: React.FC = () => {
             ) : (
               <div className="mb-6 p-4 bg-gray-50 border border-gray-200 rounded-lg">
                 <p className="text-sm text-gray-600 text-center">
-                  Nenhum tratamento (fisioterapia ou TENS) foi recomendado nesta
-                  consulta.
+                  No treatment (physiotherapy or TENS) was recommended in this
+                  consultation.
                 </p>
               </div>
             )}
@@ -208,7 +207,7 @@ const ViewCompletedConsultationModal: React.FC = () => {
         {!isLoading && !error && !consultation && (
           <div className="py-12 text-center">
             <p className="text-gray-600">
-              Nenhuma consulta encontrada para este atendimento.
+              No consultation found for this attendance.
             </p>
           </div>
         )}
@@ -217,7 +216,7 @@ const ViewCompletedConsultationModal: React.FC = () => {
       {/* Footer */}
       <div className="bg-gray-50 px-6 py-4 border-t flex justify-end border-gray-300">
         <Button type="button" onClick={handleClose}>
-          Fechar
+          Close
         </Button>
       </div>
     </BaseModal>

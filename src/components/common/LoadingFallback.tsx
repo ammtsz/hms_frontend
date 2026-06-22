@@ -8,7 +8,7 @@ interface LoadingFallbackProps {
 }
 
 const LoadingFallback: React.FC<LoadingFallbackProps> = ({
-  message = "Carregando...",
+  message = "Loading...",
   size = "medium",
   showSpinner = true,
   className = "",

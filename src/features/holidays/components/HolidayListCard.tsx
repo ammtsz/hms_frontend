@@ -5,12 +5,7 @@ import { Calendar, CalendarDays, Edit2, Trash2 } from "lucide-react";
 import { HolidayGroup } from "@/utils/holidayGrouping";
 import { Holiday } from "@/types/holiday";
 import { IconButton } from "@/components/ui";
-
-const TREATMENT_TYPE_LABELS = {
-  assessment: "Consulta de Avaliação",
-  physiotherapy: "Fisioterapia",
-  tens: "TENS",
-} as const;
+import { formatBlockedTreatmentTypes } from "../utils/holidayDisplayUtils";
 
 export interface HolidayListCardProps {
   group: HolidayGroup;
@@ -19,19 +14,7 @@ export interface HolidayListCardProps {
 }
 
 function getBlockedTreatmentTypes(group: HolidayGroup): string {
-  const blockedTypes = group.holidays[0].blockedTreatmentTypes;
-
-  if (!blockedTypes || blockedTypes.length === 0) {
-    return "Consulta de Avaliação, Fisioterapia, TENS";
-  }
-
-  return blockedTypes
-    .map(
-      (type) =>
-        TREATMENT_TYPE_LABELS[type as keyof typeof TREATMENT_TYPE_LABELS] ||
-        type,
-    )
-    .join(", ");
+  return formatBlockedTreatmentTypes(group.holidays[0].blockedTreatmentTypes);
 }
 
 export function HolidayListCard({
@@ -63,16 +46,16 @@ export function HolidayListCard({
           <IconButton
             onClick={handleEdit}
             tone="primary"
-            title={group.isPeriod ? "Editar período" : "Editar"}
-            aria-label={group.isPeriod ? "Editar período" : "Editar"}
+            title={group.isPeriod ? "Edit period" : "Edit"}
+            aria-label={group.isPeriod ? "Edit period" : "Edit"}
           >
             <Edit2 className="h-4 w-4" />
           </IconButton>
           <IconButton
             onClick={handleDelete}
             tone="danger"
-            title={group.isPeriod ? "Excluir período" : "Excluir"}
-            aria-label={group.isPeriod ? "Excluir período" : "Excluir"}
+            title={group.isPeriod ? "Delete period" : "Delete"}
+            aria-label={group.isPeriod ? "Delete period" : "Delete"}
           >
             <Trash2 className="h-4 w-4" />
           </IconButton>
@@ -81,7 +64,7 @@ export function HolidayListCard({
 
       <dl className="space-y-2 text-sm">
         <div>
-          <dt className="text-gray-500">Descrição</dt>
+          <dt className="text-gray-500">Description</dt>
           <dd className="break-words text-gray-800">
             {group.description || "—"}
           </dd>
@@ -93,11 +76,11 @@ export function HolidayListCard({
             <Calendar className="h-4 w-4 text-gray-600" aria-hidden />
           )}
           <dd className="font-medium text-gray-800">
-            {group.isPeriod ? `${group.holidays.length} dias` : "1 dia"}
+            {group.isPeriod ? `${group.holidays.length} days` : "1 day"}
           </dd>
         </div>
         <div>
-          <dt className="text-gray-500">Folga</dt>
+          <dt className="text-gray-500">Blocked treatments</dt>
           <dd className="break-words text-gray-800">
             {getBlockedTreatmentTypes(group)}
           </dd>

@@ -4,7 +4,7 @@ import { transformPriorityToApi, transformStatusToApi } from "@/utils/apiTransfo
 import { formatPhoneNumber } from "@/utils/formUtils";
 import type { UpdatePatientRequest, PatientResponseDto } from "@/api/types";
 import { checkForDuplicatePatients } from "@/features/patients/edit/utils/duplicateDetection";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 
 export interface EditPatientFormData {
   name: string;
@@ -12,7 +12,7 @@ export interface EditPatientFormData {
   birthDate: string | null; // YYYY-MM-DD format
   priority: string;
   status: string;
-  mainComplaint: string;
+  mainConcern: string;
   dischargeDate: string | null; // YYYY-MM-DD format
   nextAttendanceDates: { date: string; type: string }[]; // dates as YYYY-MM-DD strings
 }
@@ -119,18 +119,18 @@ export const useEditPatientForm = ({
 
   const validateForm = (): boolean => {
     if (!patient.name.trim()) {
-      setError("Nome é obrigatório");
+      setError("Name is required");
       return false;
     }
 
     if (!patient.birthDate) {
-      setError("Data de nascimento é obrigatória");
+      setError("Birth date is required");
       return false;
     }
 
     // Validate phone format if provided
     if (patient.phone && !/^\(\d{2}\) \d{5}-\d{4}$/.test(patient.phone)) {
-      setError("Telefone deve estar no formato (XX) XXXXX-XXXX");
+      setError("Phone must be in format (XX) XXXXX-XXXX");
       return false;
     }
 
@@ -140,8 +140,8 @@ export const useEditPatientForm = ({
       minDischargeDate &&
       patient.dischargeDate < minDischargeDate
     ) {
-      setError(
-        `A data de alta não pode ser anterior à data do último atendimento concluído (${formatDateBR(minDischargeDate)}).`,
+      setError(        
+        `The discharge date cannot be earlier than the date of the last completed attendance (${formatDisplayDate(minDischargeDate)}).`,
       );
       return false;
     }
@@ -161,7 +161,7 @@ export const useEditPatientForm = ({
       return;
     }
 
-    // When changing to Alta (A) or Faltas (F), confirm cancellation of open attendances
+    // When changing to Discharged (A) or Missed (F), confirm cancellation of open attendances
     if (
       !skipStatusChangeConfirm &&
       (patient.status === "A" || patient.status === "F") &&
@@ -203,7 +203,7 @@ export const useEditPatientForm = ({
         name: patient.name.trim(),
         priority: transformPriorityToApi(patient.priority as "1" | "2" | "3"),
         patientStatus: transformStatusToApi(patient.status as "N" | "T" | "A" | "F"),
-        mainComplaint: patient.mainComplaint.trim() || undefined,
+        mainConcern: patient.mainConcern.trim() || undefined,
       };
 
       // Only include phone if it's provided and properly formatted
@@ -235,8 +235,8 @@ export const useEditPatientForm = ({
 
       onClose();
     } catch (err) {
-      console.error("Erro ao atualizar paciente:", err);
-      const errorMessage = "Erro interno do servidor";
+      console.error("Error updating patient:", err);
+      const errorMessage = "Internal server error";
       setError(errorMessage);
       if (onError) {
         onError(errorMessage);
@@ -279,18 +279,17 @@ export const useEditPatientForm = ({
       console.error("Error deleting patient:", err);
       
       // Parse error message for specific cases
-      const errorMessage = err instanceof Error ? err.message : "Erro ao excluir paciente";
+      const errorMessage = err instanceof Error ? err.message : "Error deleting patient";
       
       let friendlyError = errorMessage;
       if (
         errorMessage.toLowerCase().includes("active attendances") ||
-        errorMessage.toLowerCase().includes("atendimentos ativos") ||
         (errorMessage.toLowerCase().includes("cannot delete patient") &&
           errorMessage.toLowerCase().includes("attendances"))
       ) {
         friendlyError =
-          "Não é possível excluir este paciente pois ele possui atendimentos em andamento ou concluídos. " +
-          "É permitida a exclusão apenas de pacientes sem histórico de atendimento ou com apenas atendimentos cancelados ou perdidos.";
+          "It is not possible to delete this patient because he has ongoing or completed appointments. " +
+          "Deletion is only allowed for patients without appointment history or with only canceled or missed appointments.";
       }
       
       setError(friendlyError);

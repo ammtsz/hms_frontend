@@ -40,8 +40,8 @@ const PostTreatmentModal: React.FC = () => {
     <BaseModal
       isOpen={isOpen}
       onClose={handleModalClose}
-      title="Registrar Sessão de Tratamento"
-      subtitle={patientName ? `Paciente: ${patientName}` : undefined}
+      title="Register Treatment Session"
+      subtitle={patientName ? `Patient: ${patientName}` : undefined}
       maxWidth="2xl"
       preventOverflow
       showCloseButton={!isSubmitting}

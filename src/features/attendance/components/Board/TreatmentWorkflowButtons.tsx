@@ -10,11 +10,7 @@ interface TreatmentWorkflowButtonsProps {
 
 export const TreatmentWorkflowButtons: React.FC<
   TreatmentWorkflowButtonsProps
-> = ({
-  isDayFinalized = false,
-  noSlotsForDay = false,
-  selectedDate,
-}) => {
+> = ({ isDayFinalized = false, noSlotsForDay = false, selectedDate }) => {
   const openEndOfDayModal = useOpenEndOfDay();
   const disabled = isDayFinalized || noSlotsForDay;
 
@@ -27,10 +23,10 @@ export const TreatmentWorkflowButtons: React.FC<
         disabled={disabled}
       >
         {isDayFinalized
-          ? "Dia finalizado"
+          ? "Day finalized"
           : noSlotsForDay
-            ? "Sem atendimento neste dia"
-            : "Finalizar Dia"}
+            ? "No attendances on this day"
+            : "End of Day"}
       </Button>
     </div>
   );

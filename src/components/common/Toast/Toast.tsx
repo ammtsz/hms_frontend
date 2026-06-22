@@ -86,7 +86,7 @@ export default function Toast({ toast }: ToastProps) {
       <IconButton
         onClick={handleClose}
         className="min-h-0 min-w-0 flex-shrink-0 p-0 text-gray-400 hover:bg-transparent hover:text-gray-600"
-        aria-label="Fechar notificação"
+        aria-label="Close notification"
       >
         <X className="w-4 h-4" />
       </IconButton>

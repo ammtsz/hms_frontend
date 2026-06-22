@@ -133,38 +133,38 @@ const NewAttendanceForm: React.FC<NewAttendanceFormProps> = ({
 
       {/* Patient Selection */}
       <div className="space-y-2">
-        <Field label="Nome do Paciente">
-        <div className="relative">
-          <Input
-            type="text"
-            value={search}
-            onChange={handleInputChange}
-            className="pr-10"
-            placeholder="Digite o nome do paciente..."
-            disabled={isSubmitting}
-          />
-          <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          {/* Patient suggestions dropdown */}
-          {search &&
-            !isNewPatient &&
-            showSuggestions &&
-            filteredPatients.length > 0 && (
-              <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto">
-                {filteredPatients.slice(0, 5).map((patient) => (
-                  <Button
-                    key={patient.id}
-                    type="button"
-                    variant="ghost"
-                    onClick={() => handlePatientSelect(patient.name)}
-                    className="w-full justify-start rounded-none font-normal"
-                    disabled={isSubmitting}
-                  >
-                    <div className="font-normal mr-auto">{patient.name}</div>
-                  </Button>
-                ))}
-              </div>
-            )}
-        </div>
+        <Field label="Patient Name">
+          <div className="relative">
+            <Input
+              type="text"
+              value={search}
+              onChange={handleInputChange}
+              className="pr-10"
+              placeholder="Enter patient name..."
+              disabled={isSubmitting}
+            />
+            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            {/* Patient suggestions dropdown */}
+            {search &&
+              !isNewPatient &&
+              showSuggestions &&
+              filteredPatients.length > 0 && (
+                <div className="absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-40 overflow-y-auto">
+                  {filteredPatients.slice(0, 5).map((patient) => (
+                    <Button
+                      key={patient.id}
+                      type="button"
+                      variant="ghost"
+                      onClick={() => handlePatientSelect(patient.name)}
+                      className="w-full justify-start rounded-none font-normal"
+                      disabled={isSubmitting}
+                    >
+                      <div className="font-normal mr-auto">{patient.name}</div>
+                    </Button>
+                  ))}
+                </div>
+              )}
+          </div>
         </Field>
 
         {/* New patient toggle */}
@@ -174,7 +174,7 @@ const NewAttendanceForm: React.FC<NewAttendanceFormProps> = ({
             checked={isNewPatient}
             onChange={handleNewPatientToggle}
             disabled={isSubmitting}
-            label="Novo paciente"
+            label="New patient"
             labelPosition="right"
             size="sm"
           />
@@ -197,22 +197,22 @@ const NewAttendanceForm: React.FC<NewAttendanceFormProps> = ({
         {/* Priority Selection - only for new patients */}
         {isNewPatient && (
           <div className="my-6">
-            <Field label="Prioridade">
-            <Select
-              value={priority}
-              onChange={(e) => setPriority(e.target.value as Priority)}
-              disabled={isSubmitting || prioritiesLoading}
-            >
-              {sortedPriorities.length === 0 ? (
-                <option value={priority}>{priority}</option>
-              ) : (
-                sortedPriorities.map((p) => (
-                  <option key={p.value} value={p.value}>
-                    {p.value} - {p.label || p.value}
-                  </option>
-                ))
-              )}
-            </Select>
+            <Field label="Priority">
+              <Select
+                value={priority}
+                onChange={(e) => setPriority(e.target.value as Priority)}
+                disabled={isSubmitting || prioritiesLoading}
+              >
+                {sortedPriorities.length === 0 ? (
+                  <option value={priority}>{priority}</option>
+                ) : (
+                  sortedPriorities.map((p) => (
+                    <option key={p.value} value={p.value}>
+                      {p.value} - {p.label || p.value}
+                    </option>
+                  ))
+                )}
+              </Select>
             </Field>
           </div>
         )}
@@ -221,36 +221,38 @@ const NewAttendanceForm: React.FC<NewAttendanceFormProps> = ({
       {/* Date Selection (if enabled) */}
       {showDateField && (
         <div className="my-6">
-          <Field label="Data do Agendamento" error={dateSlotError}>
-          <Input
-            type="date"
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            invalid={Boolean(dateSlotError)}
-            disabled={isSubmitting}
-            min={getTodayClinic()}
-          />
+          <Field label="Appointment Date" error={dateSlotError}>
+            <Input
+              type="date"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              invalid={Boolean(dateSlotError)}
+              disabled={isSubmitting}
+              min={getTodayClinic()}
+            />
           </Field>
         </div>
       )}
 
       {/* Notes */}
-      <Field label="Motivo do Agendamento (opcional)">
+      <Field label="Reason for appointment (optional)">
         <Textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
-          placeholder="Observações sobre o agendamento..."
+          placeholder="Notes about the appointment..."
           disabled={isSubmitting}
         />
       </Field>
 
       {/* Submit Button */}
-      <div className={onCancel ? "flex flex-col-reverse gap-3 sm:flex-row" : ""}>
+      <div
+        className={onCancel ? "flex flex-col-reverse gap-3 sm:flex-row" : ""}
+      >
         <Button
           type="submit"
           isLoading={isSubmitting}
-          loadingText="Agendando..."
+          loadingText="Scheduling..."
           className={onCancel ? "flex-1" : "w-full"}
           disabled={
             isSubmitting ||
@@ -259,7 +261,7 @@ const NewAttendanceForm: React.FC<NewAttendanceFormProps> = ({
             !!dateSlotError
           }
         >
-          Agendar Atendimento
+          Schedule Attendance
         </Button>
         {onCancel && (
           <Button
@@ -269,7 +271,7 @@ const NewAttendanceForm: React.FC<NewAttendanceFormProps> = ({
             className="flex-1"
             disabled={isSubmitting}
           >
-            Cancelar
+            Cancel
           </Button>
         )}
       </div>

@@ -5,21 +5,21 @@ describe("duplicateDetection", () => {
   const mockPatients: PatientBasic[] = [
     {
       id: "1",
-      name: "João Silva",
+      name: "John Smith",
       phone: "(11) 98765-4321",
       priority: "3",
       status: "T",
     },
     {
       id: "2",
-      name: "Maria Santos",
+      name: "Emily Williams",
       phone: "(21) 91234-5678",
       priority: "2",
       status: "N",
     },
     {
       id: "3",
-      name: "João da Silva",
+      name: "John Williams",
       phone: "(11) 98765-4321",
       priority: "3",
       status: "T",
@@ -29,14 +29,14 @@ describe("duplicateDetection", () => {
   it("should find exact name match", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
-      "João Silva",
+      "John Smith",
       "(99) 99999-9999",
       "999"
     );
 
     expect(duplicates).toHaveLength(1);
     expect(duplicates[0].id).toBe("1");
-    expect(duplicates[0].name).toBe("João Silva");
+    expect(duplicates[0].name).toBe("John Smith");
   });
 
   it("should find exact phone match", () => {
@@ -54,7 +54,7 @@ describe("duplicateDetection", () => {
   it("should be case insensitive for names", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
-      "joão silva",
+      "john smith",
       "(99) 99999-9999",
       "999"
     );
@@ -66,7 +66,7 @@ describe("duplicateDetection", () => {
   it("should ignore accents in names", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
-      "João Silvá",
+      "Jöhn Smith",
       "(99) 99999-9999",
       "999"
     );
@@ -89,7 +89,7 @@ describe("duplicateDetection", () => {
   it("should exclude current patient from results", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
-      "João Silva",
+      "John Smith",
       "(11) 98765-4321",
       "1" // Current patient ID
     );
@@ -101,7 +101,7 @@ describe("duplicateDetection", () => {
   it("should find similar names (fuzzy matching)", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
-      "Joao Silva", // Missing accent
+      "Jon Smith", // Missing letter (fuzzy match)
       "(99) 99999-9999",
       "999"
     );
@@ -123,7 +123,7 @@ describe("duplicateDetection", () => {
   it("should handle empty patient list", () => {
     const duplicates = checkForDuplicatePatients(
       [],
-      "João Silva",
+      "John Smith",
       "(11) 98765-4321",
       "999"
     );
@@ -135,7 +135,7 @@ describe("duplicateDetection", () => {
     const patientsWithoutPhone: PatientBasic[] = [
       {
         id: "4",
-        name: "João Silva",
+        name: "John Smith",
         phone: "",
         priority: "3",
         status: "T",
@@ -144,7 +144,7 @@ describe("duplicateDetection", () => {
 
     const duplicates = checkForDuplicatePatients(
       patientsWithoutPhone,
-      "João Silva",
+      "John Smith",
       "",
       "999"
     );
@@ -156,7 +156,7 @@ describe("duplicateDetection", () => {
   it("should return patient details in correct format", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
-      "João Silva",
+      "John Smith",
       "(11) 98765-4321",
       "999"
     );
@@ -177,7 +177,7 @@ describe("duplicateDetection", () => {
       "999"
     );
 
-    // Should find both João Silva and João da Silva
+    // Should find both John Smith and John Smith
     expect(duplicates.length).toBeGreaterThanOrEqual(2);
   });
 
@@ -196,7 +196,7 @@ describe("duplicateDetection", () => {
   it("should trim whitespace from names", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
-      "  João Silva  ", // With whitespace
+      "  John Smith  ", // With whitespace
       "(99) 99999-9999",
       "999"
     );

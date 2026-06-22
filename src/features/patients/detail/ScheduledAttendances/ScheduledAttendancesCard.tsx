@@ -106,7 +106,7 @@ export const ScheduledAttendancesCard: React.FC<
   };
 
   return (
-    <Card id="proximos-agendamentos">
+    <Card id="upcoming-appointments">
       <CardBody>
         <DetailCardCollapsibleHeader
           isCollapsed={isCollapsed}
@@ -117,7 +117,7 @@ export const ScheduledAttendancesCard: React.FC<
                 className="h-5 w-5 shrink-0 text-gray-600"
                 aria-hidden
               />
-              Próximos Agendamentos
+              Upcoming Appointments
               <span className="text-sm font-normal text-gray-600">
                 ({totalItems})
               </span>
@@ -130,9 +130,9 @@ export const ScheduledAttendancesCard: React.FC<
                 size="xs"
                 onClick={handleRefresh}
                 className="text-blue-600 hover:text-blue-800"
-                title="Atualizar agendamentos"
+                title="Update appointments"
               >
-                Atualizar
+                Refresh
               </Button>
             ) : null
           }
@@ -143,13 +143,13 @@ export const ScheduledAttendancesCard: React.FC<
             {loading && (
               <LoadingSpinner
                 size="medium"
-                message="Carregando próximos agendamentos..."
+                message="Loading upcoming appointments..."
               />
             )}
 
             {error && (
               <ErrorState
-                title="Erro ao carregar agendamentos"
+                title="Error loading appointments"
                 message={error}
                 onRetry={() => {
                   refetchAttendances();
@@ -178,7 +178,7 @@ export const ScheduledAttendancesCard: React.FC<
                     onClick={showMore}
                     totalItems={totalItems}
                     visibleCount={visibleCount}
-                    itemLabel="agendamentos"
+                    itemLabel="appointments"
                     disabled={loading}
                   />
                 )}

@@ -3,23 +3,23 @@ import { Button } from "../Button";
 
 describe("Button", () => {
   it("renders children and defaults to type button", () => {
-    render(<Button>Salvar</Button>);
+    render(<Button>Save</Button>);
 
-    const button = screen.getByRole("button", { name: "Salvar" });
+    const button = screen.getByRole("button", { name: "Save" });
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute("type", "button");
   });
 
   it("supports loading state", () => {
     render(
-      <Button isLoading loadingText="Salvando...">
-        Salvar
+      <Button isLoading loadingText="Saving...">
+        Save
       </Button>,
     );
 
-    const button = screen.getByRole("button", { name: "Salvando..." });
+    const button = screen.getByRole("button", { name: "Saving..." });
     expect(button).toBeDisabled();
-    expect(button).not.toHaveTextContent("Salvar");
+    expect(button).not.toHaveTextContent("Save");
   });
 
   it("does not call onClick when disabled by loading", () => {
@@ -27,7 +27,7 @@ describe("Button", () => {
 
     render(
       <Button isLoading onClick={onClick}>
-        Salvar
+        Save
       </Button>,
     );
 
@@ -38,11 +38,11 @@ describe("Button", () => {
   it("applies variant, size, and custom classes", () => {
     render(
       <Button variant="outline" size="sm" className="custom-class">
-        Cancelar
+        Cancel
       </Button>,
     );
 
-    const button = screen.getByRole("button", { name: "Cancelar" });
+    const button = screen.getByRole("button", { name: "Cancel" });
     expect(button).toHaveClass("border-gray-300", "min-h-[40px]", "custom-class");
   });
 

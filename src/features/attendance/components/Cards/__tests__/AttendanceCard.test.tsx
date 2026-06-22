@@ -103,7 +103,7 @@ describe("AttendanceCard Component", () => {
   let queryClient: QueryClient;
 
   const mockPatient: AttendanceStatusDetail = {
-    name: "João Silva",
+    name: "John Smith",
     priority: "1" as Priority,
     attendanceId: 123,
     patientId: 456,
@@ -144,7 +144,7 @@ describe("AttendanceCard Component", () => {
       renderWithQueryClient(<AttendanceCard {...defaultProps} />);
 
       const card = screen.getByRole("listitem");
-      expect(card).toHaveTextContent("João Silva");
+      expect(card).toHaveTextContent("John Smith");
       expect(card).toHaveTextContent("P1");
     });
 
@@ -160,7 +160,7 @@ describe("AttendanceCard Component", () => {
       );
 
       const card = screen.getByRole("listitem");
-      expect(card).toHaveTextContent(/3\.\s*João Silva/);
+      expect(card).toHaveTextContent(/3\.\s*John Smith/);
       expect(card).toHaveTextContent("P1");
     });
 
@@ -170,9 +170,9 @@ describe("AttendanceCard Component", () => {
       );
 
       const card = screen.getByRole("listitem");
-      expect(card).toHaveTextContent("João Silva");
+      expect(card).toHaveTextContent("John Smith");
       expect(card).toHaveTextContent("P1");
-      expect(card.textContent).not.toMatch(/\d+\.\s*João Silva/);
+      expect(card.textContent).not.toMatch(/\d+\.\s*John Smith/);
     });
   });
 
@@ -403,14 +403,14 @@ describe("AttendanceCard Component", () => {
       );
 
       const card = screen.getByRole("listitem");
-      expect(card).toHaveTextContent("João Silva");
+      expect(card).toHaveTextContent("John Smith");
       expect(card).toHaveTextContent("P2");
     });
 
     it("should render different patient names", () => {
       const differentPatient: AttendanceStatusDetail = {
         ...mockPatient,
-        name: "Maria Santos",
+        name: "Emily Williams",
       };
 
       renderWithQueryClient(
@@ -418,7 +418,7 @@ describe("AttendanceCard Component", () => {
       );
 
       const card = screen.getByRole("listitem");
-      expect(card).toHaveTextContent("Maria Santos");
+      expect(card).toHaveTextContent("Emily Williams");
       expect(card).toHaveTextContent("P1");
     });
 
@@ -489,7 +489,7 @@ describe("AttendanceCard Component", () => {
         <AttendanceCard {...propsWithoutNextToBeAttended} />,
       );
 
-      expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
+      expect(screen.queryByText("Next")).not.toBeInTheDocument();
     });
 
     it("should handle high index numbers correctly", () => {
@@ -498,7 +498,7 @@ describe("AttendanceCard Component", () => {
       );
 
       const card = screen.getByRole("listitem");
-      expect(card).toHaveTextContent(/100\.\s*João Silva/);
+      expect(card).toHaveTextContent(/100\.\s*John Smith/);
       expect(card).toHaveTextContent("P1");
     });
   });
@@ -508,7 +508,7 @@ describe("AttendanceCard Component", () => {
       render(<AttendanceCard {...defaultProps} status="scheduled" />);
 
       expect(screen.getByTestId("settings-icon")).toBeInTheDocument();
-      expect(screen.getByTitle("Gerenciar agendamento")).toBeInTheDocument();
+      expect(screen.getByTitle("Manage appointment")).toBeInTheDocument();
     });
 
     it("does not show delete button when attendanceId is not provided", () => {
@@ -536,13 +536,13 @@ describe("AttendanceCard Component", () => {
 
       render(<AttendanceCard {...defaultProps} status="scheduled" />);
 
-      const deleteButton = screen.getByTitle("Gerenciar agendamento");
+      const deleteButton = screen.getByTitle("Manage appointment");
       fireEvent.click(deleteButton);
 
       expect(openCancellationFn).toHaveBeenCalledTimes(1);
       expect(openCancellationFn).toHaveBeenCalledWith(
         [123],
-        "João Silva",
+        "John Smith",
         expect.any(String),
       );
     });
@@ -554,7 +554,7 @@ describe("AttendanceCard Component", () => {
 
       render(<AttendanceCard {...defaultProps} status="scheduled" />);
 
-      const deleteButton = screen.getByTitle("Gerenciar agendamento");
+      const deleteButton = screen.getByTitle("Manage appointment");
       fireEvent.click(deleteButton, mockEvent);
 
       expect(openCancellationFn).toHaveBeenCalled();
@@ -636,7 +636,7 @@ describe("AttendanceCard Component", () => {
       // Find the span with line-through class that contains the patient name
       const lineThrough = container.querySelector(".line-through");
       expect(lineThrough).toBeInTheDocument();
-      expect(lineThrough).toHaveTextContent("João Silva");
+      expect(lineThrough).toHaveTextContent("John Smith");
     });
 
     it("should not show delete button for missed attendance", () => {
@@ -653,7 +653,7 @@ describe("AttendanceCard Component", () => {
         />,
       );
 
-      expect(screen.queryByTitle("Remover")).not.toBeInTheDocument();
+      expect(screen.queryByTitle("Manage appointment")).not.toBeInTheDocument();
     });
 
     it("should show proper tooltip for missed attendance", () => {
@@ -672,7 +672,7 @@ describe("AttendanceCard Component", () => {
 
       // Find the element with the title attribute
       const tooltipElement = container.querySelector(
-        '[title="FALTA - João Silva - Prioridade: 1"]',
+        '[title="MISSED - John Smith - Priority: 1"]',
       );
       expect(tooltipElement).toBeInTheDocument();
     });

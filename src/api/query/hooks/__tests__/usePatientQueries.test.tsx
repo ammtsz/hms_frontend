@@ -112,7 +112,7 @@ const mockPatientApiResponse = {
   priority: PatientPriority.LEVEL_3,
   patientStatus: PatientStatus.NEW_PATIENT,
   birthDate: "1990-01-01",
-  mainComplaint: "Test complaint",
+  mainConcern: "Test complaint",
   startDate: "2023-01-01",
   missingAppointmentsStreak: 0,
   createdAt: "2023-01-01T10:00:00Z",
@@ -139,7 +139,7 @@ const mockTransformedPatient = {
   priority: "3" as Priority,
   status: "N" as Status,
   birthDate: "1990-01-01",
-  mainComplaint: "Test complaint",
+  mainConcern: "Test complaint",
   startDate: "2023-01-01",
   dischargeDate: null,
   nextAttendanceDates: [],
@@ -332,7 +332,7 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Paciente não encontrado");
+      expect(result.current.error?.message).toBe("Patient not found");
     });
 
     it("should not execute query when patientId is not provided", () => {
@@ -401,7 +401,7 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Paciente não encontrado");
+      expect(result.current.error?.message).toBe("Patient not found");
     });
 
     it("should not execute query when patientId is not provided", () => {
@@ -478,9 +478,7 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe(
-        "Erro ao carregar atendimentos",
-      );
+      expect(result.current.error?.message).toBe("Error loading attendances");
     });
 
     it("should not execute query when patientId is not provided", () => {
@@ -550,9 +548,7 @@ describe("usePatientQueries", () => {
               const apiResult = await getPatients();
 
               if (!apiResult.success || !apiResult.value) {
-                throw new Error(
-                  apiResult.error || "Erro ao carregar pacientes",
-                );
+                throw new Error(apiResult.error || "Error loading patients");
               }
 
               return transformPatientsFromApi(apiResult.value);
@@ -602,9 +598,7 @@ describe("usePatientQueries", () => {
               const apiResult = await getPatients();
 
               if (!apiResult.success || !apiResult.value) {
-                throw new Error(
-                  apiResult.error || "Erro ao carregar pacientes",
-                );
+                throw new Error(apiResult.error || "Error loading patients");
               }
 
               return transformPatientsFromApi(apiResult.value);
@@ -621,7 +615,7 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Erro ao carregar pacientes");
+      expect(result.current.error?.message).toBe("Error loading patients");
     });
 
     it("should throw default error when no error message provided", async () => {
@@ -654,9 +648,7 @@ describe("usePatientQueries", () => {
               const apiResult = await getPatients();
 
               if (!apiResult.success || !apiResult.value) {
-                throw new Error(
-                  apiResult.error || "Erro ao carregar pacientes",
-                );
+                throw new Error(apiResult.error || "Error loading patients");
               }
 
               return transformPatientsFromApi(apiResult.value);
@@ -673,7 +665,7 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Erro ao carregar pacientes");
+      expect(result.current.error?.message).toBe("Error loading patients");
     });
   });
 
@@ -750,7 +742,7 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Erro ao criar paciente");
+      expect(result.current.error?.message).toBe("Error creating patient");
     });
   });
 
@@ -856,7 +848,7 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Erro ao atualizar paciente");
+      expect(result.current.error?.message).toBe("Error updating patient");
     });
   });
 
@@ -931,7 +923,7 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Erro ao excluir paciente");
+      expect(result.current.error?.message).toBe("Error deleting patient");
     });
   });
 

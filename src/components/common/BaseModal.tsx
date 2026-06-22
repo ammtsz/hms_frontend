@@ -124,11 +124,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
                 ) : null}
               </div>
               {showCloseButton ? (
-                <IconButton
-                  onClick={onClose}
-                  tone="neutral"
-                  aria-label="Fechar"
-                >
+                <IconButton onClick={onClose} tone="neutral" aria-label="Close">
                   <X className="w-6 h-6" />
                 </IconButton>
               ) : null}

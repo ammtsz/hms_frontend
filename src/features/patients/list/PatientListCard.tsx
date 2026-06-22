@@ -37,17 +37,14 @@ export function PatientListCard({
             </dd>
           </div>
           <div className="min-w-0">
-            <dt className="text-gray-500">Prioridade</dt>
+            <dt className="text-gray-500">Priority</dt>
             <dd className="truncate font-medium text-gray-800">
               {priorityLabel}
             </dd>
           </div>
         </dl>
       </div>
-      <ChevronRight
-        className="h-5 w-5 shrink-0 text-gray-400"
-        aria-hidden
-      />
+      <ChevronRight className="h-5 w-5 shrink-0 text-gray-400" aria-hidden />
     </Link>
   );
 }

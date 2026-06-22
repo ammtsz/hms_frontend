@@ -162,12 +162,12 @@ describe("TreatmentRecommendationsSection", () => {
       );
 
       expect(
-        screen.getByText("Recomendações de Tratamento"),
+        screen.getByText("Treatment Recommendations"),
       ).toBeInTheDocument();
-      expect(screen.getByText("Fisioterapia")).toBeInTheDocument();
+      expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
       expect(screen.getByText("TENS")).toBeInTheDocument();
       expect(
-        screen.queryByRole("button", { name: /Adicionar Tratamento/i }),
+        screen.queryByRole("button", { name: /Add Treatment/i }),
       ).not.toBeInTheDocument();
 
       // Forms are initially not rendered until structures are initialized
@@ -185,18 +185,18 @@ describe("TreatmentRecommendationsSection", () => {
       );
 
       const physiotherapySection = screen
-        .getByText("Fisioterapia")
+        .getByText("Physiotherapy")
         .closest("div.border-2");
       expect(physiotherapySection).not.toBeNull();
 
       fireEvent.click(
         within(physiotherapySection as HTMLElement).getByRole("button", {
-          name: /Como configurar/i,
+          name: /How to set up/i,
         }),
       );
 
       expect(
-        screen.getByText(/abaixo para criar uma nova linha/i),
+        screen.getByText(/below to create a new row/i),
       ).toBeInTheDocument();
     });
 
@@ -395,8 +395,8 @@ describe("TreatmentRecommendationsSection", () => {
         />,
       );
 
-      const mainTitle = screen.getByText("Recomendações de Tratamento");
-      const physiotherapyTitle = screen.getByText("Fisioterapia");
+      const mainTitle = screen.getByText("Treatment Recommendations");
+      const physiotherapyTitle = screen.getByText("Physiotherapy");
 
       expect(mainTitle).toHaveClass("text-gray-400");
       expect(physiotherapyTitle).toHaveClass("text-gray-400");
@@ -413,7 +413,7 @@ describe("TreatmentRecommendationsSection", () => {
       );
 
       const notesTextarea = screen.getByPlaceholderText(
-        /observações sobre as sessões de fisioterapia e TENS/i,
+        /Notes about Physiotherapy and TENS sessions/i,
       );
       expect(notesTextarea).toBeDisabled();
     });

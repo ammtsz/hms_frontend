@@ -1,9 +1,15 @@
 export const ERROR_MESSAGE = {
-  LOGIN_FAILED: 'Usuário ou senha inválidos',
-  UNAUTHORIZED: 'Faça o login para continuar',
-  INTERNAL_SERVER_ERROR: 'Erro interno do servidor, por favor tente novamente mais tarde',
-  NOT_FOUND: 'Recurso não encontrado',
-  PATIENT_NOT_FOUND: 'Paciente não encontrado',
-  BAD_REQUEST: 'Requisição inválida',
-  CONFLICT: 'Registro já existe ou há conflito de dados.',
-} 
+  LOGIN_FAILED: 'Invalid username or password',
+  UNAUTHORIZED: 'Sign in to continue',
+  INTERNAL_SERVER_ERROR: 'Internal server error, please try again later',
+  NOT_FOUND: 'Resource not found',
+  PATIENT_NOT_FOUND: 'Patient not found',
+  BAD_REQUEST: 'Invalid request',
+  CONFLICT: 'Record already exists or there is a data conflict.',
+} as const;
+
+export const CLIENT_ERROR_MESSAGE = {
+  VALIDATION: 'Please verify the information provided and try again.',
+  RATE_LIMIT:
+    'Too many login attempts. Please wait a few minutes and try again.',
+} as const;

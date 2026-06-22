@@ -27,7 +27,7 @@ import {
 export interface ParentAttendanceOption {
   id: number;
   date: string;
-  mainComplaint: string;
+  mainConcern: string;
   label: string;
 }
 
@@ -173,25 +173,25 @@ export const useAttendanceForm = ({
           (p) => p.name.toLowerCase() === name.toLowerCase()
         );
         if (existingPatient) {
-          setError("Paciente já cadastrado. Desmarque 'Novo paciente' para selecioná-lo.");
+          setError("Patient already registered. Uncheck 'New patient' to select it.");
           return null;
         }
 
         const newPatient = await createPatientMutation.mutateAsync({
           name,
           priority: transformPriorityToApi(priority),
-          mainComplaint: notes,
+          mainConcern: notes,
         });
 
         if (!newPatient) {
-          throw new Error("Erro ao criar paciente: dados não retornados");
+          throw new Error("Error creating patient: no data returned");
         }
         return newPatient.id.toString();
       }
 
       const patient = patients.find((p) => p.name === selectedPatient);
       if (!patient) {
-        setError("Paciente selecionado não encontrado.");
+        setError("Selected patient not found.");
         return null;
       }
       return patient.id;
@@ -316,8 +316,8 @@ export const useAttendanceForm = ({
         if (isNewPatient) {
           const reason =
             (firstError && getNoScheduleReasonForNewPatient(firstError)) ||
-            (hasConflict ? "Agenda indisponível para esta data." : firstError) ||
-            "Erro ao criar agendamento(s).";
+            (hasConflict ? "Schedule unavailable for this date." : firstError) ||
+            "Error creating appointment(s).";
           setError(buildNewPatientSchedulingFailureMessage(reason));
           setIsNewPatient(false);
           setSelectedPatient(name);
@@ -351,7 +351,7 @@ export const useAttendanceForm = ({
       return true;
     } catch (err) {
       console.error("Error in handleRegisterNewAttendance:", err);
-      setError("Erro inesperado ao processar a solicitação. Tente novamente.");
+      setError("Unexpected error occurred while processing the request. Please try again.");
       return false;
     } finally {
       setIsSubmitting(false);

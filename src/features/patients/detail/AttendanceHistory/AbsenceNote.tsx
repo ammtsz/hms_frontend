@@ -31,9 +31,7 @@ export const AbsenceNote: React.FC<AbsenceNoteProps> = ({
   );
 
   const defaultMessage =
-    status === "missed"
-      ? "Falta não justificada"
-      : "Cancelamento sem justificativa";
+    status === "missed" ? "Unjustified absence" : "Unjustified cancellation";
 
   return (
     <div
@@ -47,9 +45,7 @@ export const AbsenceNote: React.FC<AbsenceNoteProps> = ({
         <div className="text-sm w-full">
           {/* Attendance Type */}
           <div className="mb-2">
-            <span className="font-medium text-gray-900">
-              Tipo de atendimento:
-            </span>
+            <span className="font-medium text-gray-900">Attendance Type:</span>
             <span className="text-gray-700 ml-1">{treatmentTypeLabel}</span>
           </div>
 
@@ -57,7 +53,7 @@ export const AbsenceNote: React.FC<AbsenceNoteProps> = ({
           {absenceNotes ? (
             <>
               <span className="font-medium text-gray-900">
-                {absenceJustified ? "Falta justificada:" : "Motivo:"}
+                {absenceJustified ? "Absence justified:" : "Reason:"}
               </span>
               <span className="text-gray-700 ml-1">{absenceNotes}</span>
             </>

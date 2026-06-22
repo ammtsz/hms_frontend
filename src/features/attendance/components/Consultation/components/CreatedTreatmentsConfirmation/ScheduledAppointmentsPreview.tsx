@@ -1,5 +1,5 @@
 import React from "react";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 
 const MAX_PREVIEW_DATES = 10;
 
@@ -15,16 +15,16 @@ export const ScheduledAppointmentsPreview: React.FC<
   ScheduledAppointmentsPreviewProps
 > = ({ scheduledDates, createdDate }) => {
   return (
-    <div className="mt-3 pt-3 border-t border-gray-300 border-dashed">
-      <div className="text-xs text-gray-600 mb-2 flex items-center space-x-1">
+    <div className="mt-3 pt-3 border-t border-dashed border-gray-300">
+      <div className="mb-2 flex items-center space-x-1 text-xs text-gray-600">
         <span className="text-sm">📅</span>
         {scheduledDates.length === 0 ? (
-          <span>Todos os agendamentos foram concluídos</span>
+          <span>All appointments have been completed</span>
         ) : new Date(createdDate) <
           new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) ? (
-          <span>Agendamentos não concluídos:</span>
+          <span>Incomplete appointments:</span>
         ) : (
-          <span>Próximos agendamentos:</span>
+          <span>Upcoming appointments:</span>
         )}
       </div>
       <div className="flex flex-wrap gap-1">
@@ -34,14 +34,14 @@ export const ScheduledAppointmentsPreview: React.FC<
           .map((dateData, index) => (
             <span
               key={index}
-              className="inline-flex flex-col items-start px-2 py-1 rounded text-xs bg-blue-50 text-blue-700 border border-blue-200"
+              className="inline-flex flex-col items-start rounded border border-blue-200 bg-blue-50 px-2 py-1 text-xs text-blue-700"
             >
-              <span>{formatDateBR(dateData.date)}</span>
+              <span>{formatDisplayDate(dateData.date)}</span>
             </span>
           ))}
         {scheduledDates.length > MAX_PREVIEW_DATES && (
-          <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-gray-100 text-gray-600">
-            +{scheduledDates.length - MAX_PREVIEW_DATES} mais
+          <span className="inline-flex items-center rounded bg-gray-100 px-2 py-1 text-xs text-gray-600">
+            +{scheduledDates.length - MAX_PREVIEW_DATES} more
           </span>
         )}
       </div>

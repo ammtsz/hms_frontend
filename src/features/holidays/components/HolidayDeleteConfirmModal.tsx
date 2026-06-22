@@ -28,14 +28,14 @@ const HolidayDeleteConfirmModal: React.FC<HolidayDeleteConfirmModalProps> = ({
     <BaseModal
       isOpen={Boolean(holiday)}
       onClose={onCancel}
-      title="Confirmar Exclusão"
+      title="Confirm Deletion"
       maxWidth="md"
       showCloseButton={!isDeleting}
     >
       <div className="p-6">
         {holiday ? (
           <p className="mb-6 text-gray-600">
-            Tem certeza que deseja excluir o feriado{" "}
+            Are you sure you want to delete the holiday{" "}
             <strong>{holiday.name}</strong> ({formatDate(holiday.holidayDate)})?
           </p>
         ) : null}
@@ -46,7 +46,7 @@ const HolidayDeleteConfirmModal: React.FC<HolidayDeleteConfirmModalProps> = ({
             onClick={onCancel}
             disabled={isDeleting}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
@@ -54,9 +54,9 @@ const HolidayDeleteConfirmModal: React.FC<HolidayDeleteConfirmModalProps> = ({
             onClick={onConfirm}
             disabled={isDeleting || !holiday}
             isLoading={isDeleting}
-            loadingText="Excluindo..."
+            loadingText="Deleting..."
           >
-            Excluir
+            Delete
           </Button>
         </div>
       </div>

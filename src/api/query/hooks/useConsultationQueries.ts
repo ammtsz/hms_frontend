@@ -25,7 +25,7 @@ export function useConsultations() {
       const result = await getConsultations();
 
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao carregar consultas');
+        throw new Error(result.error || 'Failed to load consultations');
       }
 
       return result.value;
@@ -51,7 +51,7 @@ export function useConsultationByAttendance(attendanceId: string | number) {
         ) {
           return null;
         }
-        throw new Error(result.error || 'Erro ao carregar consulta');
+        throw new Error(result.error || 'Failed to load consultation');
       }
 
       return result.value || null;
@@ -86,7 +86,7 @@ export function useLatestConsultationByPatient(patientId: string | number) {
         ) {
           return null;
         }
-        throw new Error(result.error || 'Erro ao carregar última consulta');
+        throw new Error(result.error || 'Error loading latest consultation');
       }
 
       return result.value || null;
@@ -131,7 +131,7 @@ export function useCreateConsultation() {
         const result = await createConsultation(data);
 
         if (!result.success || !result.value) {
-          throw new Error(result.error || 'Erro ao criar consulta');
+          throw new Error(result.error || 'Failed to create consultation');
         }
 
         return result.value as UpdateConsultationResponseDto;
@@ -170,7 +170,7 @@ export function useUpdateConsultation() {
       const result = await updateConsultation(id.toString(), data);
 
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao atualizar consulta');
+        throw new Error(result.error || 'Failed to update consultation');
       }
 
       return result.value as UpdateConsultationResponseDto;
@@ -202,7 +202,7 @@ export function useDeleteConsultation() {
       const result = await deleteConsultation(id.toString());
 
       if (!result.success) {
-        throw new Error(result.error || 'Erro ao excluir consulta');
+        throw new Error(result.error || 'Failed to delete consultation');
       }
 
       return true;
@@ -236,7 +236,7 @@ export function useScheduleReturnAttendance() {
       const result = await scheduleReturnAttendance(consultationId, mode);
 
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Erro ao agendar retorno');
+        throw new Error(result.error || 'Failed to schedule follow-up');
       }
 
       return result.value;

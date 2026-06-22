@@ -163,15 +163,15 @@ export async function createHolidayPeriod(
         return {
           success: false,
           error: countText
-            ? `Existem ${countText} atendimento(s) agendado(s) no período informado. Remova ou reagende antes de criar o feriado.`
-            : 'Existe atendimento agendado no período informado. Remova ou reagende antes de criar o feriado.',
+            ? `There are ${countText} appointment(s) scheduled in the requested period. Remove or reschedule them before creating the holiday.`
+            : 'There is an appointment scheduled in the requested period. Remove or reschedule it before creating the holiday.',
         };
       }
 
       if (backendMessage === 'DUPLICATE_HOLIDAY') {
         return {
           success: false,
-          error: 'Já existe um feriado no período informado.',
+          error: 'There is already a holiday in the requested period.',
         };
       }
     }

@@ -22,7 +22,7 @@ export interface UseCommittedDateInputOptions {
 export interface UseCommittedDateInputReturn {
   draftValue: string;
   inputRef: RefObject<HTMLInputElement | null>;
-  /** Bypass draft/blur logic — for chevrons, "Hoje", etc. */
+  /** Bypass draft/blur logic — for chevrons, "Today", etc. */
   commitImmediately: (date: string) => void;
   handleKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
   handleBlur: () => void;

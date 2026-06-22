@@ -20,19 +20,19 @@ jest.mock("../../CurrentTreatmentCard/TreatmentProgressBar", () => ({
 const mockPhysiotherapyGroup = {
   id: 1,
   treatmentType: "physiotherapy" as const,
-  bodyLocation: "Cabeça",
+  bodyLocation: "Head",
   plannedSessions: 10,
   completedSessions: 3,
   status: "in_progress",
   durationMinutes: 30,
-  color: "azul",
+  color: "blue",
   sessions: [{ status: "scheduled" }, { status: "completed" }],
 };
 
 const mockTensGroup = {
   id: 2,
   treatmentType: "tens" as const,
-  bodyLocation: "Ombro direito",
+  bodyLocation: "Right Ankle",
   plannedSessions: 5,
   completedSessions: 2,
   status: "in_progress",
@@ -54,13 +54,13 @@ describe("TreatmentGroupCard", () => {
       />,
     );
 
-    expect(screen.getByText(/Cabeça/)).toBeInTheDocument();
-    const colorBadge = screen.getByText("azul");
+    expect(screen.getByText(/Head/)).toBeInTheDocument();
+    const colorBadge = screen.getByText("blue");
     expect(colorBadge).toBeInTheDocument();
     expect(colorBadge).toHaveStyle({
-      backgroundColor: getColorCodeWithOpacity("azul", 0.25),
+      backgroundColor: getColorCodeWithOpacity("blue", 0.25),
     });
-    expect(screen.getByText(/30 unidades/)).toBeInTheDocument();
+    expect(screen.getByText(/30 minutes/)).toBeInTheDocument();
     expect(screen.getByTestId("progress-bar")).toHaveTextContent("3/10");
   });
 
@@ -73,7 +73,7 @@ describe("TreatmentGroupCard", () => {
       />,
     );
 
-    expect(screen.getByText(/Ombro direito/)).toBeInTheDocument();
+    expect(screen.getByText(/Right Ankle/)).toBeInTheDocument();
     expect(screen.getByTestId("progress-bar")).toHaveTextContent("2/5");
   });
 
@@ -86,10 +86,10 @@ describe("TreatmentGroupCard", () => {
       />,
     );
 
-    const deleteButton = screen.getByTitle("Cancelar tratamento");
+    const deleteButton = screen.getByTitle("Cancel treatment");
     fireEvent.click(deleteButton);
 
-    expect(mockOnDelete).toHaveBeenCalledWith([1], "Fisioterapia");
+    expect(mockOnDelete).toHaveBeenCalledWith([1], "Physiotherapy");
   });
 
   it("disables delete button when isDeleting is true", () => {
@@ -101,7 +101,7 @@ describe("TreatmentGroupCard", () => {
       />,
     );
 
-    const deleteButton = screen.getByTitle("Cancelar tratamento");
+    const deleteButton = screen.getByTitle("Cancel treatment");
     expect(deleteButton).toBeDisabled();
   });
 
@@ -123,7 +123,7 @@ describe("TreatmentGroupCard", () => {
       />,
     );
 
-    expect(screen.getByText(/Local não especificado/)).toBeInTheDocument();
+    expect(screen.getByText(/not specified/)).toBeInTheDocument();
     expect(screen.getByTestId("progress-bar")).toHaveTextContent("0/1");
   });
 });

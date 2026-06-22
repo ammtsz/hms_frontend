@@ -44,13 +44,13 @@ const mockTreatmentWithSessions: TreatmentResponseDto = {
   attendanceId: 1,
   patientId: 123,
   treatmentType: "physiotherapy",
-  bodyLocation: "Coronário",
+  bodyLocation: "Head",
   startDate: "2024-01-01",
   plannedSessions: 10,
   completedSessions: 3,
   status: "in_progress",
   durationMinutes: 15,
-  color: "Azul",
+  color: "Blue",
   notes: undefined,
   sessions: [
     { ...mockScheduledRecord, sessionNumber: 1, status: "completed" as const },
@@ -166,9 +166,9 @@ describe("PostTreatmentModal", () => {
     it("should render when modal is open", () => {
       renderModal();
       expect(
-        screen.getByText("Registrar Sessão de Tratamento"),
+        screen.getByText("Register Treatment Session"),
       ).toBeInTheDocument();
-      expect(screen.getByText("Paciente: Test Patient")).toBeInTheDocument();
+      expect(screen.getByText("Patient: Test Patient")).toBeInTheDocument();
     });
 
     it("should not render when modal is closed", () => {
@@ -178,7 +178,7 @@ describe("PostTreatmentModal", () => {
       });
       renderModal();
       expect(
-        screen.queryByText("Registrar Sessão de Tratamento"),
+        screen.queryByText("Register Treatment Session"),
       ).not.toBeInTheDocument();
     });
 
@@ -195,7 +195,7 @@ describe("PostTreatmentModal", () => {
         mockUseSessionsByPatientResult([], { isLoading: true }),
       );
       renderModal();
-      expect(screen.getByText("Carregando...")).toBeInTheDocument();
+      expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
     });
 
     it("should show error state", () => {
@@ -208,7 +208,7 @@ describe("PostTreatmentModal", () => {
         refetch: jest.fn().mockResolvedValue(undefined),
       });
       renderModal();
-      expect(screen.getByText(/erro ao carregar/i)).toBeInTheDocument();
+      expect(screen.getByText(/error loading/i)).toBeInTheDocument();
     });
 
     it("should show empty state when no rows", () => {
@@ -224,23 +224,21 @@ describe("PostTreatmentModal", () => {
         mockUseSessionsByPatientResult([]),
       );
       renderModal();
-      expect(
-        screen.getByText(/nenhum tratamento encontrado/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/no treatments found/i)).toBeInTheDocument();
     });
   });
 
   describe("Rows and interactions", () => {
     it("should display one row with treatment type and body location", () => {
       renderModal();
-      expect(screen.getByText("Fisioterapia")).toBeInTheDocument();
-      expect(screen.getByText(/Coronário/)).toBeInTheDocument();
+      expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
+      expect(screen.getByText(/Head/)).toBeInTheDocument();
     });
 
     it("should show session label and circles", () => {
       renderModal();
-      expect(screen.getByText(/Sessão 4 de 10/)).toBeInTheDocument();
-      expect(screen.getByText(/sessões finalizadas/)).toBeInTheDocument();
+      expect(screen.getByText(/Session 4 of 10/)).toBeInTheDocument();
+      expect(screen.getByText(/completed sessions|session completed/)).toBeInTheDocument();
     });
 
     it("should have all checkboxes checked by default", () => {
@@ -251,13 +249,13 @@ describe("PostTreatmentModal", () => {
 
     it("should close modal when cancel is clicked", () => {
       renderModal();
-      fireEvent.click(screen.getByRole("button", { name: /cancelar/i }));
+      fireEvent.click(screen.getByRole("button", { name: /Cancel/i }));
       expect(mockCloseModal).toHaveBeenCalledWith("postTreatment");
     });
 
     it("should close modal when X is clicked", () => {
       renderModal();
-      fireEvent.click(screen.getByRole("button", { name: "Fechar" }));
+      fireEvent.click(screen.getByRole("button", { name: "Close" }));
       expect(mockCloseModal).toHaveBeenCalledWith("postTreatment");
     });
 
@@ -267,7 +265,7 @@ describe("PostTreatmentModal", () => {
       fireEvent.click(checkbox);
       await waitFor(() => {
         expect(
-          screen.getByLabelText(/motivo.*não realização/i),
+          screen.getByLabelText(/reason.*non-performance/i),
         ).toBeInTheDocument();
       });
     });
@@ -276,14 +274,14 @@ describe("PostTreatmentModal", () => {
       renderModal();
       fireEvent.click(screen.getByRole("checkbox"));
       expect(
-        screen.getByRole("button", { name: /registrar sessão/i }),
+        screen.getByRole("button", { name: /Register Session/i }),
       ).toBeDisabled();
     });
 
     it("should call onComplete with completed attendance ids on successful submit", async () => {
       renderModal();
       fireEvent.click(
-        screen.getByRole("button", { name: /registrar sessão/i }),
+        screen.getByRole("button", { name: /Register Session/i }),
       );
 
       await waitFor(() => {
@@ -302,11 +300,11 @@ describe("PostTreatmentModal", () => {
 
       renderModal();
       fireEvent.click(
-        screen.getByRole("button", { name: /registrar sessão/i }),
+        screen.getByRole("button", { name: /Register Session/i }),
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/erro ao registrar/i)).toBeInTheDocument();
+        expect(screen.getByText(/error submitting/i)).toBeInTheDocument();
       });
       expect(mockPostTreatmentModal.onComplete).not.toHaveBeenCalled();
     });

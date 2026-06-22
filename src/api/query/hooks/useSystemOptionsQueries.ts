@@ -26,7 +26,7 @@ export function useBodyLocations(includeInactive = false) {
     queryFn: async () => {
       const result = await getBodyLocations(includeInactive);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Falha ao carregar locais do corpo');
+        throw new Error(result.error || 'Failed to load body locations');
       }
       return result.value;
     },
@@ -41,7 +41,7 @@ export function useCreateBodyLocation() {
     mutationFn: async (value: string) => {
       const result = await createBodyLocation(value);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Falha ao criar local do corpo');
+        throw new Error(result.error || 'Failed to create body location');
       }
       return result.value;
     },
@@ -65,7 +65,7 @@ export function useUpdateBodyLocation() {
     }) => {
       const result = await updateBodyLocation(id, updates);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Falha ao atualizar local do corpo');
+        throw new Error(result.error || 'Failed to update body location');
       }
       return result.value;
     },
@@ -83,7 +83,7 @@ export function useDeleteBodyLocation() {
     mutationFn: async (id: number) => {
       const result = await deleteBodyLocation(id);
       if (!result.success) {
-        throw new Error(result.error || 'Falha ao excluir local do corpo');
+        throw new Error(result.error || 'Failed to delete body location');
       }
     },
     onSuccess: () => {
@@ -100,7 +100,7 @@ export function useColors(includeInactive = false) {
     queryFn: async () => {
       const result = await getColors(includeInactive);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Falha ao carregar cores');
+        throw new Error(result.error || 'Failed to load colors');
       }
       return result.value;
     },
@@ -115,7 +115,7 @@ export function useCreateColor() {
     mutationFn: async (value: string) => {
       const result = await createColor(value);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Falha ao criar cor');
+        throw new Error(result.error || 'Failed to create color');
       }
       return result.value;
     },
@@ -139,7 +139,7 @@ export function useUpdateColor() {
     }) => {
       const result = await updateColor(id, updates);
       if (!result.success || !result.value) {
-        throw new Error(result.error || 'Falha ao atualizar cor');
+        throw new Error(result.error || 'Failed to update color');
       }
       return result.value;
     },
@@ -157,7 +157,7 @@ export function useDeleteColor() {
     mutationFn: async (id: number) => {
       const result = await deleteColor(id);
       if (!result.success) {
-        throw new Error(result.error || 'Falha ao excluir cor');
+        throw new Error(result.error || 'Failed to delete color');
       }
     },
     onSuccess: () => {

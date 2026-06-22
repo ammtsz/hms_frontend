@@ -26,11 +26,11 @@ jest.mock("../GeneralNotesField", () => ({
     onChange: (v: string) => void;
   }) => (
     <div data-testid="general-notes">
-      <label>Observações (opcional)</label>
+      <label>Notes (optional)</label>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        aria-label="Observações"
+        aria-label="Notes"
       />
     </div>
   ),
@@ -61,7 +61,7 @@ describe("PostTreatmentModalBody", () => {
 
   it("shows loading state", () => {
     render(<PostTreatmentModalBody {...defaultProps} loading={true} />);
-    expect(screen.getByText("Carregando...")).toBeInTheDocument();
+    expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
   });
 
   it("shows error state with message and retry button", () => {
@@ -73,10 +73,10 @@ describe("PostTreatmentModalBody", () => {
         onRetry={onRetry}
       />,
     );
-    expect(screen.getByText(/erro ao carregar/i)).toBeInTheDocument();
+    expect(screen.getByText(/error loading/i)).toBeInTheDocument();
     expect(screen.getByText(/Failed to load/)).toBeInTheDocument();
     const retryButton = screen.getByRole("button", {
-      name: /tentar novamente/i,
+      name: /try again/i,
     });
     expect(retryButton).toBeInTheDocument();
     fireEvent.click(retryButton);
@@ -87,7 +87,7 @@ describe("PostTreatmentModalBody", () => {
     render(
       <PostTreatmentModalBody {...defaultProps} error="Something went wrong" />,
     );
-    expect(screen.getByText(/erro ao carregar/i)).toBeInTheDocument();
+    expect(screen.getByText(/error loading/i)).toBeInTheDocument();
     expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
   });
 
@@ -95,10 +95,10 @@ describe("PostTreatmentModalBody", () => {
     const onRetry = jest.fn();
     render(<PostTreatmentModalBody {...defaultProps} onRetry={onRetry} />);
     expect(
-      screen.getByText(/nenhum tratamento encontrado para estes atendimentos/i),
+      screen.getByText(/no treatments found for these attendances/i),
     ).toBeInTheDocument();
     const retryButton = screen.getByRole("button", {
-      name: /tentar novamente/i,
+      name: /try again/i,
     });
     fireEvent.click(retryButton);
     expect(onRetry).toHaveBeenCalledTimes(1);
@@ -118,7 +118,7 @@ describe("PostTreatmentModalBody", () => {
       />,
     );
     expect(
-      screen.getByText(/tratamentos realizados.*desmarque e informe o motivo/i),
+      screen.getByText(/Treatments completed.*uncheck them and provide a reason/i),
     ).toBeInTheDocument();
     expect(screen.getByTestId("section-physiotherapy")).toBeInTheDocument();
     expect(screen.getByTestId("general-notes")).toBeInTheDocument();
@@ -140,7 +140,7 @@ describe("PostTreatmentModalBody", () => {
         setGeneralNotes={setGeneralNotes}
       />,
     );
-    const textarea = screen.getByRole("textbox", { name: /observações/i });
+    const textarea = screen.getByRole("textbox", { name: /notes/i });
     fireEvent.change(textarea, { target: { value: "New note" } });
     expect(setGeneralNotes).toHaveBeenCalledWith("New note");
   });

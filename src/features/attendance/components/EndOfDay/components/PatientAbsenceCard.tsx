@@ -2,6 +2,7 @@ import React from "react";
 import type { AbsenceJustification } from "../types";
 import type { AttendanceType } from "@/types/types";
 import type { GroupedAbsence } from "../hooks/useAbsenceJustification";
+import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
 import { JustificationSection } from "./JustificationSection";
 import { Checkbox } from "@/components/ui";
 
@@ -57,7 +58,7 @@ export const PatientAbsenceCard: React.FC<PatientAbsenceCardProps> = ({
               onChange={() => toggleApplyToAll(group.patientId)}
             />
             <span className="ml-2 text-sm text-gray-700">
-              Aplicar justificativa para todos os atendimentos
+              Apply justification to all attendances
             </span>
           </label>
         )}
@@ -77,7 +78,7 @@ export const PatientAbsenceCard: React.FC<PatientAbsenceCardProps> = ({
               <JustificationSection
                 patientId={group.patientId}
                 sectionType="assessment"
-                sectionLabel="Consulta"
+                sectionLabel={getAttendanceTypeLabel("assessment")}
                 justification={getJustificationForType(
                   group.patientId,
                   "assessment",

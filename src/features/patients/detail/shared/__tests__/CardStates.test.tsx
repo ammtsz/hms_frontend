@@ -67,7 +67,7 @@ describe("CardStates Components", () => {
       expect(screen.getByText("⚠️")).toBeInTheDocument();
       expect(screen.getByText("Error Title")).toBeInTheDocument();
       expect(screen.getByText("Error message")).toBeInTheDocument();
-      expect(screen.getByText("Tentar novamente")).toBeInTheDocument();
+      expect(screen.getByText("Try again")).toBeInTheDocument();
     });
 
     it("calls onRetry when retry button is clicked", () => {
@@ -81,7 +81,7 @@ describe("CardStates Components", () => {
         />,
       );
 
-      fireEvent.click(screen.getByText("Tentar novamente"));
+      fireEvent.click(screen.getByText("Try again"));
       expect(mockRetry).toHaveBeenCalledTimes(1);
     });
 
@@ -108,10 +108,10 @@ describe("CardStates Components", () => {
       render(<AttendanceHistoryEmpty patient={mockPatient} />);
 
       expect(
-        screen.getByText("Nenhum atendimento registrado"),
+        screen.getByText("No attendances recorded"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Agendar primeiro atendimento/),
+        screen.getByText(/Schedule the first appointment/),
       ).toBeInTheDocument();
     });
 
@@ -123,10 +123,10 @@ describe("CardStates Components", () => {
       render(<AttendanceHistoryEmpty patient={mockPatient} />);
 
       expect(
-        screen.getByText("Nenhum atendimento registrado"),
+        screen.getByText("No attendances recorded"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(/Próximo atendimento agendado para/),
+        screen.getByText(/Next appointment scheduled for/),
       ).toBeInTheDocument();
     });
   });
@@ -135,16 +135,16 @@ describe("CardStates Components", () => {
     it("renders with correct links", () => {
       render(<ScheduledAttendancesEmpty patientId="123" />);
 
-      expect(screen.getByText("Nenhum agendamento futuro")).toBeInTheDocument();
+      expect(screen.getByText("No upcoming appointments")).toBeInTheDocument();
 
-      const scheduleLink = screen.getByText("📅 Agendar Consulta");
+      const scheduleLink = screen.getByText("📅 Schedule Appointment");
       expect(scheduleLink).toBeInTheDocument();
       expect(scheduleLink.closest("a")).toHaveAttribute(
         "href",
         "/agenda?patient=123&action=schedule",
       );
 
-      const agendaLink = screen.getByText("Ver Agenda");
+      const agendaLink = screen.getByText("View Schedule");
       expect(agendaLink).toBeInTheDocument();
       expect(agendaLink.closest("a")).toHaveAttribute("href", "/agenda");
     });
@@ -155,11 +155,11 @@ describe("CardStates Components", () => {
       render(<TreatmentRecommendationsEmpty />);
 
       expect(
-        screen.getByText("Recomendações não disponíveis"),
+        screen.getByText("Recommendations unavailable"),
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          /Este paciente ainda não possui recomendações de tratamento registradas/,
+          /This patient does not yet have any treatment recommendations recorded./,
         ),
       ).toBeInTheDocument();
     });
@@ -169,9 +169,9 @@ describe("CardStates Components", () => {
     it("renders current treatment empty state", () => {
       render(<CurrentTreatmentEmpty />);
 
-      expect(screen.getByText("Nenhum tratamento ativo")).toBeInTheDocument();
+      expect(screen.getByText("No active treatment")).toBeInTheDocument();
       expect(
-        screen.getByText(/não possui tratamentos em andamento/),
+        screen.getByText(/currently has no ongoing treatments/),
       ).toBeInTheDocument();
     });
   });

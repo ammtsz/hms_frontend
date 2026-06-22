@@ -83,7 +83,7 @@ describe("TreatmentRecommendationTable.utils", () => {
 
     it("in edit mode returns first treatment start date", () => {
       const treatments: PhysiotherapyLocationTreatment[] = [
-        { locations: [], color: "azul", duration: 1, quantity: 1, startDate: "2025-02-01" },
+        { locations: [], color: "blue", duration: 1, quantity: 1, startDate: "2025-02-01" },
       ];
       expect(
         getDefaultTreatmentStartDate({
@@ -96,8 +96,8 @@ describe("TreatmentRecommendationTable.utils", () => {
 
     it("in create mode with existing treatments returns last treatment start date", () => {
       const treatments: PhysiotherapyLocationTreatment[] = [
-        { locations: [], color: "azul", duration: 1, quantity: 1, startDate: "2025-02-01" },
-        { locations: [], color: "azul", duration: 1, quantity: 1, startDate: "2025-02-10" },
+        { locations: [], color: "blue", duration: 1, quantity: 1, startDate: "2025-02-01" },
+        { locations: [], color: "blue", duration: 1, quantity: 1, startDate: "2025-02-10" },
       ];
       expect(
         getDefaultTreatmentStartDate({
@@ -151,7 +151,7 @@ describe("TreatmentRecommendationTable.utils", () => {
 
     it("creates physiotherapy row in edit mode reusing first row color and duration", () => {
       const treatments: PhysiotherapyLocationTreatment[] = [
-        { locations: ["Cabeça"], color: "azul", duration: 2, quantity: 5, startDate: "2025-01-15" },
+        { locations: ["Head"], color: "blue", duration: 2, quantity: 5, startDate: "2025-01-15" },
       ];
       const row = createNewTreatmentRow({
         treatmentType: "physiotherapy",
@@ -160,7 +160,7 @@ describe("TreatmentRecommendationTable.utils", () => {
         isEditMode: true,
         scheduleSettings,
       }) as PhysiotherapyLocationTreatment;
-      expect(row.color).toBe("azul");
+      expect(row.color).toBe("blue");
       expect(row.duration).toBe(2);
     });
 
@@ -195,8 +195,8 @@ describe("TreatmentRecommendationTable.utils", () => {
 
     it("for physiotherapy, blocks locations only for same color", () => {
       const treatments: PhysiotherapyLocationTreatment[] = [
-        { locations: ["Head"], color: "azul", duration: 1, quantity: 1, startDate: "2025-01-01" },
-        { locations: ["Chest"], color: "azul", duration: 1, quantity: 1, startDate: "2025-01-01" },
+        { locations: ["Head"], color: "blue", duration: 1, quantity: 1, startDate: "2025-01-01" },
+        { locations: ["Chest"], color: "blue", duration: 1, quantity: 1, startDate: "2025-01-01" },
         { locations: ["Leg"], color: "red", duration: 1, quantity: 1, startDate: "2025-01-01" },
       ];
       const blocked = getBlockedLocationsForRow({
@@ -266,7 +266,7 @@ describe("TreatmentRecommendationTable.utils", () => {
       expect(findInactiveOptionByValue(options, "Head")).toBeUndefined();
     });
     it("returns undefined when no match", () => {
-      expect(findInactiveOptionByValue(options, "Arm")).toBeUndefined();
+      expect(findInactiveOptionByValue(options, "Left Arm")).toBeUndefined();
     });
   });
 });

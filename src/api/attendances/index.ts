@@ -15,7 +15,7 @@ import { getTodayClinic } from '@/utils/timezoneDate';
 export interface EligibleParentOptionDto {
   id: number;
   date: string;
-  mainComplaint: string;
+  mainConcern: string;
   label: string;
 }
 
@@ -291,7 +291,7 @@ export const postponeAttendance = async (
     if (axiosError.response?.status === 409 || axiosError.response?.status === 400) {
       return {
         success: false,
-        error: 'Data não disponível, tente reagendar para outra data'
+        error: 'Date not available, try to reschedule for another date'
       };
     }
     const message = getErrorMessage(axiosError.status);
@@ -352,7 +352,7 @@ export const bulkPostponeAttendances = async (
     if (axiosError.response?.status === 409 || axiosError.response?.status === 400) {
       return {
         success: false,
-        error: 'Data não disponível para alguns atendimentos, tente reagendar para outra data',
+        error: 'Date not available for some appointments, try to reschedule for another date',
       };
     }
     const message = getErrorMessage((error as AxiosError).status);

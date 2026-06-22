@@ -183,7 +183,7 @@ const TreatmentRecommendationsSection: React.FC<
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className={mainTitleClass}>Recomendações de Tratamento</h3>
+        <h3 className={mainTitleClass}>Treatment Recommendations</h3>
         <Button
           type="button"
           variant="ghost"
@@ -192,7 +192,7 @@ const TreatmentRecommendationsSection: React.FC<
           className="text-green-700 hover:text-green-800"
         >
           <HelpCircle size={16} />
-          {showTips ? "Ocultar dicas" : "Ver dicas"}
+          {showTips ? "Hide tips" : "View tips"}
         </Button>
       </div>
 
@@ -200,10 +200,10 @@ const TreatmentRecommendationsSection: React.FC<
         <div className="bg-green-50 border border-green-200 rounded-md p-4">
           <ul className="text-sm text-green-800 space-y-1">
             <li>
-              • Os tratamentos configurados aqui serão automaticamente agendados
+              • The treatments configured here will be scheduled automatically
             </li>
-            <li>• Cada sessão será criada com intervalos semanais</li>
-            <li>• É possível ajustar datas individuais após a criação</li>
+            <li>• Each session will be created at weekly intervals</li>
+            <li>• Individual dates can be adjusted after creation</li>
           </ul>
         </div>
       )}
@@ -212,7 +212,7 @@ const TreatmentRecommendationsSection: React.FC<
       <div className="border-2 border-gray-200 rounded-lg p-4">
         <div className={hasPhysiotherapyTreatments ? "mb-6" : ""}>
           <div className="flex flex-col items-start gap-0.5">
-            <h4 className={physiotherapyTitleClass}>Fisioterapia</h4>
+            <h4 className={physiotherapyTitleClass}>Physiotherapy</h4>
             <Button
               type="button"
               variant="ghost"
@@ -223,7 +223,7 @@ const TreatmentRecommendationsSection: React.FC<
               className="text-gray-500 hover:text-gray-700"
             >
               <HelpCircle size={16} />
-              {showPhysiotherapyInstructions ? "Ocultar" : "Como configurar"}
+              {showPhysiotherapyInstructions ? "Hide" : "How to set up"}
             </Button>
           </div>
         </div>
@@ -233,28 +233,28 @@ const TreatmentRecommendationsSection: React.FC<
           >
             <ul className="text-sm text-gray-700 space-y-1">
               <li>
-                • <strong>Passo 1:</strong> Clique em &quot;+ Adicionar
-                Tratamento&quot; abaixo para criar uma nova linha
+                • <strong>Step 1:</strong> Click &quot;+ Add Treatment&quot;
+                below to create a new row
               </li>
               <li>
-                • <strong>Passo 2:</strong> Clique na linha para editar e
-                selecione os locais do corpo digitando ou escolhendo da lista
+                • <strong>Step 2:</strong> Click the row to edit and select body
+                locations by typing or choosing from the list
               </li>
               <li>
-                • <strong>Passo 3:</strong> Configure os parâmetros: cor da luz,
-                duração (minutos) e quantidade de sessões
+                • <strong>Step 3:</strong> Configure the parameters: light
+                color, duration (minutes), and number of sessions
               </li>
               <li>
-                • <strong>Passo 4:</strong> Defina a data de início do
-                tratamento (padrão: 7 dias a partir de hoje)
+                • <strong>Step 4:</strong> Set the start date of the treatment
+                (standard: 7 days from today)
               </li>
               <li>
-                • <strong>Dica:</strong> Você pode criar novos locais do corpo
-                digitando e clicando em &quot;✨ Criar&quot;
+                • <strong>Tip:</strong> You can create new body locations by
+                typing and clicking &quot;✨ Create&quot;
               </li>
               <li>
-                • Clique no ícone de check (✓) para salvar, ou no ícone da
-                lixeira (🗑️) para remover
+                • Click the check icon (✓) to save, or the trash icon (🗑️) to
+                remove
               </li>
             </ul>
           </div>
@@ -286,7 +286,7 @@ const TreatmentRecommendationsSection: React.FC<
               className="text-gray-500 hover:text-gray-700"
             >
               <HelpCircle size={16} />
-              {showTensInstructions ? "Ocultar" : "Como configurar"}
+              {showTensInstructions ? "Hide" : "How to set up"}
             </Button>
           </div>
         </div>
@@ -296,28 +296,28 @@ const TreatmentRecommendationsSection: React.FC<
           >
             <ul className="text-sm text-gray-700 space-y-1">
               <li>
-                • <strong>Passo 1:</strong> Clique em &quot;+ Adicionar
-                Tratamento&quot; abaixo para criar uma nova linha
+                • <strong>Step 1:</strong> Click &quot;+ Add Treatment&quot;
+                below to create a new row
               </li>
               <li>
-                • <strong>Passo 2:</strong> Clique na linha para editar e
-                selecione os locais do corpo digitando ou escolhendo da lista
+                • <strong>Step 2:</strong> Click the row to edit and select body
+                locations by typing or choosing from the list
               </li>
               <li>
-                • <strong>Passo 3:</strong> Configure os parâmetros: quantidade
-                de sessões
+                • <strong>Step 3:</strong> Configure the parameters: number of
+                sessions
               </li>
               <li>
-                • <strong>Passo 4:</strong> Defina a data de início do
-                tratamento (padrão: 7 dias a partir de hoje)
+                • <strong>Step 4:</strong> Set the start date of the treatment
+                (standard: 7 days from today)
               </li>
               <li>
-                • <strong>Dica:</strong> Você pode criar novos locais do corpo
-                digitando e clicando em &quot;✨ Criar&quot;
+                • <strong>Tip:</strong> You can create new body locations by
+                typing and clicking &quot;✨ Create&quot;
               </li>
               <li>
-                • Clique no ícone de check (✓) para salvar, ou no ícone da
-                lixeira (🗑️) para remover
+                • Click the check icon (✓) to save, or the trash icon (🗑️) to
+                remove
               </li>
             </ul>
           </div>
@@ -342,7 +342,7 @@ const TreatmentRecommendationsSection: React.FC<
           <Field
             label={
               <span className={labelClass}>
-                📝 Observações - Tratamentos (Fisioterapia / TENS) (Opcional)
+                📝 Notes - Treatments (Physiotherapy / TENS) (Optional)
               </span>
             }
           >
@@ -354,7 +354,7 @@ const TreatmentRecommendationsSection: React.FC<
               }
               onChange={(e) => handleTreatmentNotesChange(e.target.value)}
               disabled={disabled}
-              placeholder="Observações sobre as sessões de Fisioterapia e TENS..."
+              placeholder="Notes about Physiotherapy and TENS sessions..."
               maxLength={500}
               rows={3}
               className="resize-none text-sm"
@@ -368,7 +368,7 @@ const TreatmentRecommendationsSection: React.FC<
                 ""
               ).length
             }
-            /500 caracteres
+            /500 characters
           </div>
         </div>
       )}

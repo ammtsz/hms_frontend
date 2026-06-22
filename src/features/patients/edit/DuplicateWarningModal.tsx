@@ -3,6 +3,7 @@ import Link from "next/link";
 import BaseModal from "@/components/common/BaseModal";
 import { User, Phone } from "lucide-react";
 import { Button } from "@/components/ui";
+import { getTreatmentStatusLabel } from "@/utils/patientUtils";
 
 interface DuplicatePatient {
   id: string;
@@ -27,41 +28,25 @@ const DuplicateWarningModal: React.FC<DuplicateWarningModalProps> = ({
   duplicatePatients,
   isSaving,
 }) => {
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "N":
-        return "Paciente Novo";
-      case "T":
-        return "Em Tratamento";
-      case "A":
-        return "Alta do tratamento";
-      case "F":
-        return "Faltas Consecutivas";
-      default:
-        return status;
-    }
-  };
-
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
-      title="Paciente com informações similares"
+      title="Patient with similar information"
       maxWidth="lg"
     >
       <div className="p-6">
         {/* Warning Message */}
         <div className="text-start mb-6">
           <p className="text-md text-gray-800">
-            Verifique se já existe um cadastro para este paciente antes de
-            salvar.
+            Check if a record for this patient already exists before saving.
           </p>
         </div>
 
         {/* Similar Patients List */}
         <div className="bg-gray-50 rounded-lg p-4 mb-6 max-h-64 overflow-y-auto">
           <h3 className="text-sm font-semibold text-gray-700 mb-3">
-            Pacientes Similares:
+            Similar Patients:
           </h3>
           <div className="space-y-3">
             {duplicatePatients.map((patient) => (
@@ -82,11 +67,11 @@ const DuplicateWarningModal: React.FC<DuplicateWarningModalProps> = ({
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Phone className="w-3 h-3" />
-                      <span>{patient.phone || "Sem telefone"}</span>
+                      <span>{patient.phone || "No phone"}</span>
                     </div>
                     <div className="mt-2">
                       <span className="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">
-                        {getStatusText(patient.status)}
+                        {getTreatmentStatusLabel(patient.status)}
                       </span>
                     </div>
                   </div>
@@ -96,7 +81,7 @@ const DuplicateWarningModal: React.FC<DuplicateWarningModalProps> = ({
                     rel="noopener noreferrer"
                     className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
                   >
-                    Ver Perfil →
+                    View Profile →
                   </Link>
                 </div>
               </div>
@@ -113,16 +98,16 @@ const DuplicateWarningModal: React.FC<DuplicateWarningModalProps> = ({
             className="flex-1"
             disabled={isSaving}
           >
-            Cancelar e Revisar
+            Cancel and Review
           </Button>
           <Button
             type="button"
             onClick={onSaveAnyway}
             isLoading={isSaving}
-            loadingText="Salvando..."
+            loadingText="Saving..."
             className="flex-1"
           >
-            Salvar Mesmo Assim
+            Save Anyway
           </Button>
         </div>
       </div>

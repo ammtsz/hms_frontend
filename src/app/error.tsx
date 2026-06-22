@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { Button } from '@/components/ui';
+import { useEffect } from "react";
+import { Button } from "@/components/ui";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };
@@ -16,25 +16,22 @@ interface ErrorPageProps {
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
   useEffect(() => {
     // Log to error reporting service in production
-    console.error('Unhandled route error:', error);
+    console.error("Unhandled route error:", error);
   }, [error]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 p-8 text-center">
       <h2 className="text-xl font-semibold text-gray-800">
-        Ocorreu um erro inesperado
+        An unexpected error occurred
       </h2>
       <p className="text-gray-600 max-w-md">
-        Algo deu errado ao carregar esta página. Por favor, tente novamente.
+        Something went wrong while loading this page. Please try again.
       </p>
       {error.digest && (
-        <p className="text-xs text-gray-400">Código: {error.digest}</p>
+        <p className="text-xs text-gray-400">Code: {error.digest}</p>
       )}
-      <Button
-        onClick={reset}
-        className="bg-blue-600 hover:bg-blue-700"
-      >
-        Tentar novamente
+      <Button onClick={reset} className="bg-blue-600 hover:bg-blue-700">
+        Try again
       </Button>
     </div>
   );

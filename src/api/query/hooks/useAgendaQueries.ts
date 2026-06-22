@@ -125,7 +125,7 @@ export const useAgendaAttendances = (filters?: AgendaApiFilters) => {
       if (result.success && result.value) {
         return result.value;
       } else {
-        throw new Error(result.error || "Erro ao carregar agenda");
+        throw new Error(result.error || "Failed to load schedule");
       }
     },
     enabled: datesValid,

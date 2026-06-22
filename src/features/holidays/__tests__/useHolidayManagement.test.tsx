@@ -10,15 +10,15 @@ const mockHolidays = [
   {
     id: 1,
     holidayDate: "2026-12-25",
-    name: "Natal",
-    description: "Feriado Nacional",
+    name: "Christmas",
+    description: "National Holiday",
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
   },
   {
     id: 2,
     holidayDate: "2026-01-01",
-    name: "Ano Novo",
+    name: "New Year",
     description: undefined,
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",

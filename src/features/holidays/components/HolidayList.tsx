@@ -7,6 +7,11 @@ import { useDateHelpers } from "@/hooks/useDateHelpers";
 import { groupHolidaysByPeriod, HolidayGroup } from "@/utils/holidayGrouping";
 import { HolidayListCard } from "./HolidayListCard";
 import { Button, IconButton } from "@/components/ui";
+import {
+  formatBlockedTreatmentTypes,
+  HOLIDAY_LIST_EMPTY_STATE,
+  HOLIDAY_LIST_TABLE_HEADERS,
+} from "../utils/holidayDisplayUtils";
 
 interface HolidayListProps {
   holidays: Holiday[] | undefined;
@@ -21,7 +26,7 @@ const HolidayList: React.FC<HolidayListProps> = ({
   onDelete,
   onCreateClick,
 }) => {
-  const { formatDateToDDMMYYYY } = useDateHelpers();
+  const { formatDisplayDate } = useDateHelpers();
 
   // Group holidays by periods
   const holidayGroups = holidays ? groupHolidaysByPeriod(holidays) : [];
@@ -31,10 +36,10 @@ const HolidayList: React.FC<HolidayListProps> = ({
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
         <Calendar className="w-16 h-16 mx-auto text-gray-300 mb-4" />
         <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Nenhum feriado cadastrado
+          {HOLIDAY_LIST_EMPTY_STATE.title}
         </h3>
         <p className="text-gray-600 mb-6">
-          Adicione feriados para bloquear datas no calendário
+          {HOLIDAY_LIST_EMPTY_STATE.description}
         </p>
         <Button
           type="button"
@@ -42,7 +47,7 @@ const HolidayList: React.FC<HolidayListProps> = ({
           className="bg-blue-800 hover:bg-blue-900"
         >
           <Plus className="w-5 h-5" />
-          Adicionar Primeiro Feriado
+          {HOLIDAY_LIST_EMPTY_STATE.button}
         </Button>
       </div>
     );
@@ -69,22 +74,22 @@ const HolidayList: React.FC<HolidayListProps> = ({
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Data(s)
+                {HOLIDAY_LIST_TABLE_HEADERS.dates}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Nome
+                {HOLIDAY_LIST_TABLE_HEADERS.name}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Descrição
+                {HOLIDAY_LIST_TABLE_HEADERS.description}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Duração
+                {HOLIDAY_LIST_TABLE_HEADERS.duration}
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Folga
+                {HOLIDAY_LIST_TABLE_HEADERS.dayOff}
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Ações
+                {HOLIDAY_LIST_TABLE_HEADERS.actions}
               </th>
             </tr>
           </thead>
@@ -95,7 +100,7 @@ const HolidayList: React.FC<HolidayListProps> = ({
                 group={group}
                 onEdit={onEdit}
                 onDelete={onDelete}
-                formatDate={formatDateToDDMMYYYY}
+                formatDate={formatDisplayDate}
               />
             ))}
           </tbody>
@@ -115,34 +120,16 @@ interface HolidayGroupRowProps {
   formatDate: (date: string) => string;
 }
 
-// Treatment types mapping
-const TREATMENT_TYPE_LABELS = {
-  assessment: "Consulta de Avaliação",
-  physiotherapy: "Fisioterapia",
-  tens: "TENS",
-} as const;
+// Treatment types mapping — see formatBlockedTreatmentTypes in holidayDisplayUtils
 
 const HolidayGroupRow: React.FC<HolidayGroupRowProps> = ({
   group,
   onEdit,
   onDelete,
 }) => {
-  // Get blocked treatment types for display
-  const getBlockedTreatmentTypes = () => {
-    const blockedTypes = group.holidays[0].blockedTreatmentTypes;
-
-    if (!blockedTypes || blockedTypes.length === 0) {
-      return "Consulta de Avaliação, Fisioterapia, TENS";
-    }
-
-    return blockedTypes
-      .map(
-        (type) =>
-          TREATMENT_TYPE_LABELS[type as keyof typeof TREATMENT_TYPE_LABELS] ||
-          type,
-      )
-      .join(", ");
-  };
+  const blockedTreatmentTypesLabel = formatBlockedTreatmentTypes(
+    group.holidays[0].blockedTreatmentTypes,
+  );
   // For period holidays, we'll edit the first holiday (could be improved to edit all)
   const handleEdit = () => {
     onEdit(group.holidays[0]);
@@ -182,20 +169,20 @@ const HolidayGroupRow: React.FC<HolidayGroupRowProps> = ({
             <>
               <CalendarDays className="w-4 h-4 text-blue-600" />
               <span className="text-sm text-blue-600 font-medium">
-                {group.holidays.length} dias
+                {group.holidays.length} days
               </span>
             </>
           ) : (
             <>
               <Calendar className="w-4 h-4 text-gray-600" />
-              <span className="text-sm text-gray-600">1 dia</span>
+              <span className="text-sm text-gray-600">1 day</span>
             </>
           )}
         </div>
       </td>
       <td className="px-6 py-4">
         <div className="text-sm text-gray-900 max-w-44">
-          {getBlockedTreatmentTypes()}
+          {blockedTreatmentTypesLabel}
         </div>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -203,16 +190,16 @@ const HolidayGroupRow: React.FC<HolidayGroupRowProps> = ({
           onClick={handleEdit}
           tone="primary"
           className="mr-4"
-          title={group.isPeriod ? "Editar período" : "Editar"}
-          aria-label={group.isPeriod ? "Editar período" : "Editar"}
+          title={group.isPeriod ? "Edit period" : "Edit"}
+          aria-label={group.isPeriod ? "Edit period" : "Edit"}
         >
           <Edit2 className="w-4 h-4" />
         </IconButton>
         <IconButton
           onClick={handleDelete}
           tone="danger"
-          title={group.isPeriod ? "Excluir período" : "Excluir"}
-          aria-label={group.isPeriod ? "Excluir período" : "Excluir"}
+          title={group.isPeriod ? "Delete period" : "Delete"}
+          aria-label={group.isPeriod ? "Delete period" : "Delete"}
         >
           <Trash2 className="w-4 h-4" />
         </IconButton>

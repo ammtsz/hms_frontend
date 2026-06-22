@@ -10,12 +10,12 @@ import {
   useUpdateNoteCategory,
 } from "@/api/query/hooks/useNoteCategoriesQueries";
 
-export const SYSTEM_STATUS_CHANGE_CATEGORY_VALUE = "alteracao_de_status";
+export const SYSTEM_STATUS_CHANGE_CATEGORY_VALUE = "status_change";
 export const SYSTEM_STATUS_CHANGE_CATEGORY_TOOLTIP =
-  "A categoria 'Mudança de status' não pode ser editada ou removida, pois é usada para gerar notas automáticas pelo sistema.";
-export const SYSTEM_DEFAULT_NOTE_CATEGORY_VALUES = ["geral", "general"] as const;
+  "The 'Status change' category cannot be edited or removed because it is used to generate automatic notes by the system.";
+export const SYSTEM_DEFAULT_NOTE_CATEGORY_VALUES = ["general"] as const;
 export const SYSTEM_DEFAULT_NOTE_CATEGORY_DELETE_TOOLTIP =
-  "A categoria 'Geral' não pode ser removida, pois é a categoria padrão do sistema.";
+  "The 'General' category cannot be removed because it is the system's default category.";
 const NOTE_CATEGORY_CODE_REGEX = /^[a-z0-9_-]+$/;
 
 export function getCategoryLabel(option: SystemOption): string {
@@ -72,11 +72,12 @@ export function useNoteCategoriesManagement() {
     if (isSystemStatusChangeCategory(option)) return;
     const trimmed = editingLabel.trim();
     if (!trimmed) {
-      showToast("Informe um rótulo para a categoria.", "error");
+      // translate to english
+      showToast("Please enter a label for the category.", "error");
       return;
     }
     if (trimmed.length > 50) {
-      showToast("Rótulo deve ter no máximo 50 caracteres.", "error");
+      showToast("Label must not exceed 50 characters.", "error");
       return;
     }
 
@@ -85,7 +86,7 @@ export function useNoteCategoriesManagement() {
       updates: { label: trimmed },
     });
     cancelEdit();
-    showToast("Categoria atualizada com sucesso.", "success");
+    showToast("Category updated successfully.", "success");
   };
 
   const toggleActive = async (option: SystemOption) => {
@@ -96,7 +97,7 @@ export function useNoteCategoriesManagement() {
       updates: { isActive: !option.isActive },
     });
     showToast(
-      option.isActive ? "Categoria desativada." : "Categoria ativada.",
+      option.isActive ? "Category deactivated." : "Category activated.",
       "success",
     );
   };
@@ -113,7 +114,7 @@ export function useNoteCategoriesManagement() {
 
     await deleteMutation.mutateAsync(deleteOption.id);
     closeDeleteConfirm();
-    showToast("Categoria excluída com sucesso.", "success");
+    showToast("Category deleted successfully.", "success");
   };
 
   const handleCreate = async () => {
@@ -122,25 +123,25 @@ export function useNoteCategoriesManagement() {
     const value = newValue.trim();
     const label = newLabel.trim();
     if (!value) {
-      setCreateError("Informe um código para a categoria.");
+      setCreateError("Please enter a code for the category.");
       return;
     }
     if (value.length > 50) {
-      setCreateError("Código deve ter no máximo 50 caracteres.");
+      setCreateError("Code must not exceed 50 characters.");
       return;
     }
     if (!NOTE_CATEGORY_CODE_REGEX.test(value)) {
       setCreateError(
-        "Código inválido. Use apenas letras minúsculas (a-z), números (0-9), _ ou -.",
+        "Invalid code. Use only lowercase letters (a-z), numbers (0-9), _ or -.",
       );
       return;
     }
     if (!label) {
-      setCreateError("Informe um rótulo para a categoria.");
+      setCreateError("Please enter a label for the category.");
       return;
     }
     if (label.length > 50) {
-      setCreateError("Rótulo deve ter no máximo 50 caracteres.");
+      setCreateError("Label must not exceed 50 characters.");
       return;
     }
 
@@ -154,10 +155,10 @@ export function useNoteCategoriesManagement() {
       setIsAdding(false);
       setNewValue("");
       setNewLabel("");
-      showToast("Categoria criada com sucesso.", "success");
+      showToast("Category created successfully.", "success");
     } catch (err) {
       const msg =
-        err instanceof Error ? err.message : "Erro ao criar categoria";
+        err instanceof Error ? err.message : "Error creating category";
       setCreateError(msg);
     }
   };

@@ -31,7 +31,7 @@ export const getPatientById = async (id: string): Promise<ApiResponse<PatientRes
     
     // Provide more specific error for patient not found
     if (axiosError.status === 404) {
-      message = 'Paciente não encontrado';
+      message = 'Patient not found';
     }
     
     return { success: false, error: message };
@@ -78,7 +78,7 @@ export const getPatientNotes = async (patientId: string): Promise<ApiResponse<Pa
     let message = getErrorMessage(axiosError.status);
     
     if (axiosError.status === 404) {
-      message = 'Paciente não encontrado';
+      message = 'Patient not found';
     }
     
     return { success: false, error: message };
@@ -97,7 +97,7 @@ export const createPatientNote = async (
     let message = getErrorMessage(axiosError.status);
     
     if (axiosError.status === 404) {
-      message = 'Paciente não encontrado';
+      message = 'Patient not found';
     }
     
     return { success: false, error: message };
@@ -117,7 +117,7 @@ export const updatePatientNote = async (
     let message = getErrorMessage(axiosError.status);
     
     if (axiosError.status === 404) {
-      message = 'Nota não encontrada';
+      message = 'Note not found';
     }
     
     return { success: false, error: message };
@@ -136,7 +136,7 @@ export const deletePatientNote = async (
     let message = getErrorMessage(axiosError.status);
     
     if (axiosError.status === 404) {
-      message = 'Nota não encontrada';
+      message = 'Note not found';
     }
     
     return { success: false, error: message };

@@ -54,9 +54,9 @@ describe("useConsultationQueries hooks", () => {
   const mockConsultation: ConsultationResponseDto = {
     id: 1,
     attendanceId: 123,
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     food: "Light meals",
-    water: "Energized water",
+    water: "2L/day",
     ointments: "Healing ointments",
     physiotherapy: true,
     tens: false,
@@ -161,7 +161,9 @@ describe("useConsultationQueries hooks", () => {
 
       // Verify the API was called
       expect(mockedAPI.getConsultations).toHaveBeenCalledTimes(1);
-      expect(result.current.error?.message).toBe("Erro ao carregar consultas");
+      expect(result.current.error?.message).toBe(
+        "Failed to load consultations",
+      );
     });
 
     it("should use correct query options", async () => {
@@ -309,9 +311,9 @@ describe("useConsultationQueries hooks", () => {
     it("should create treatment record successfully", async () => {
       const createData: CreateConsultationRequest = {
         attendanceId: 123,
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         food: "Light meals",
-        water: "Energized water",
+        water: "2L/day",
         physiotherapy: true,
         returnWeeks: 2,
       };
@@ -333,7 +335,7 @@ describe("useConsultationQueries hooks", () => {
     it("should handle create error", async () => {
       const createData: CreateConsultationRequest = {
         attendanceId: 123,
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         physiotherapy: false,
         returnWeeks: 1,
       };
@@ -355,7 +357,7 @@ describe("useConsultationQueries hooks", () => {
     it("should handle create success but no value", async () => {
       const createData: CreateConsultationRequest = {
         attendanceId: 123,
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         notes: "Test notes",
       };
 
@@ -369,14 +371,14 @@ describe("useConsultationQueries hooks", () => {
       });
 
       await expect(result.current.mutateAsync(createData)).rejects.toThrow(
-        "Erro ao criar consulta",
+        "Failed to create consultation",
       );
     });
 
     it("should invalidate queries on success", async () => {
       const createData: CreateConsultationRequest = {
         attendanceId: 123,
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         physiotherapy: true,
         returnWeeks: 3,
       };
@@ -629,7 +631,7 @@ describe("useConsultationQueries hooks", () => {
     it("should handle create record error", async () => {
       const createData: CreateConsultationRequest = {
         attendanceId: 123,
-        mainComplaint: "Test complaint",
+        mainConcern: "Test complaint",
         physiotherapy: true,
         returnWeeks: 5,
       };

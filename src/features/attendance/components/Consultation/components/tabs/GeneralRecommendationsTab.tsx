@@ -28,18 +28,17 @@ const GeneralRecommendationsTab: React.FC<GeneralRecommendationsTabProps> = ({
     <div className="space-y-6">
       <div className="mb-4">
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          Recomendações Gerais
+          General Recommendations
         </h3>
         <p className="text-sm text-gray-600">
-          Forneça orientações gerais sobre alimentação, hidratação e cuidados
-          complementares.
+          Provide general guidance on food, hydration, and complementary care.
         </p>
       </div>
 
       <Field
-        label={<span className={labelClass}>Alimentação</span>}
+        label={<span className={labelClass}>Food</span>}
         htmlFor="food"
-        helpText="Orientações específicas sobre dieta e alimentação durante o tratamento"
+        helpText="Specific guidance on diet and food during treatment"
       >
         <Textarea
           id="food"
@@ -48,14 +47,14 @@ const GeneralRecommendationsTab: React.FC<GeneralRecommendationsTabProps> = ({
           onChange={handleInputChange}
           disabled={isFieldsDisabled}
           rows={3}
-          placeholder="Recomendações alimentares (ex: evitar carnes vermelhas, priorizar vegetais, etc.)"
+          placeholder="Dietary recommendations (e.g. avoid red meat, prioritize vegetables, etc.)"
         />
       </Field>
 
       <Field
-        label={<span className={labelClass}>Água</span>}
+        label={<span className={labelClass}>Water</span>}
         htmlFor="water"
-        helpText="Quantidade e tipo de água recomendada"
+        helpText="Recommended amount and type of water"
       >
         <Input
           type="text"
@@ -64,14 +63,14 @@ const GeneralRecommendationsTab: React.FC<GeneralRecommendationsTabProps> = ({
           value={formData.water}
           onChange={handleInputChange}
           disabled={isFieldsDisabled}
-          placeholder="Ex: 2L de água por dia"
+          placeholder="e.g. 2L of water per day"
         />
       </Field>
 
       <Field
-        label={<span className={labelClass}>Pomadas</span>}
+        label={<span className={labelClass}>Ointments</span>}
         htmlFor="ointments"
-        helpText="Produtos tópicos para aplicação externa"
+        helpText="Topical products for external application"
       >
         <Input
           type="text"
@@ -80,7 +79,7 @@ const GeneralRecommendationsTab: React.FC<GeneralRecommendationsTabProps> = ({
           value={formData.ointments}
           onChange={handleInputChange}
           disabled={isFieldsDisabled}
-          placeholder="Pomadas recomendadas..."
+          placeholder="Recommended ointments..."
         />
       </Field>
 
@@ -95,9 +94,8 @@ const GeneralRecommendationsTab: React.FC<GeneralRecommendationsTabProps> = ({
               role="alert"
             >
               <p className="text-sm text-red-700">
-                Adicione pelo menos uma recomendação (alimentação, água ou
-                pomadas) ou marque a opção abaixo indicando que nenhuma se
-                aplica.
+                Add at least one recommendation (food, water, or ointments), or
+                mark the option below indicating that none apply.
               </p>
             </div>
           )}
@@ -115,11 +113,11 @@ const GeneralRecommendationsTab: React.FC<GeneralRecommendationsTabProps> = ({
               htmlFor="noGeneralRecommendations"
               className="text-sm font-medium text-gray-900 cursor-pointer"
             >
-              Nenhuma recomendação geral se aplica a este atendimento
+              No general recommendations apply to this appointment
             </label>
             <p className="text-xs text-gray-600 mt-1">
-              Marque esta opção se não houver orientações de alimentação, água
-              ou pomadas para este atendimento.
+              Check this option if there are no diet, hydration, or ointment
+              recommendations for this appointment.
             </p>
           </div>
         </div>

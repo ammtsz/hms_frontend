@@ -58,7 +58,7 @@ describe('useAppointmentsThresholdQueries', () => {
     it('should throw when API returns success: false', async () => {
       mockedApi.getAppointmentsThreshold.mockResolvedValue({
         success: false,
-        error: 'Falha ao carregar',
+        error: 'Failed to load',
       });
 
       const wrapper = createWrapper();
@@ -68,7 +68,7 @@ describe('useAppointmentsThresholdQueries', () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error).toEqual(new Error('Falha ao carregar'));
+      expect(result.current.error).toEqual(new Error('Failed to load'));
     });
   });
 
@@ -101,7 +101,7 @@ describe('useAppointmentsThresholdQueries', () => {
     it('should set error when API returns success: false', async () => {
       mockedApi.updateAppointmentsThreshold.mockResolvedValue({
         success: false,
-        error: 'Apenas administradores podem alterar este valor',
+        error: 'Only administrators can change this value',
       });
 
       const wrapper = createWrapper();
@@ -120,7 +120,7 @@ describe('useAppointmentsThresholdQueries', () => {
       });
 
       expect(result.current.error).toEqual(
-        new Error('Apenas administradores podem alterar este valor'),
+        new Error('Only administrators can change this value'),
       );
     });
   });

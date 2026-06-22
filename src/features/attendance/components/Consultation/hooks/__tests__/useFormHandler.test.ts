@@ -194,7 +194,7 @@ describe('useFormHandler', () => {
       await result.current.handleSubmit(event);
     });
 
-    expect(result.current.error).toBe('Erro inesperado');
+    expect(result.current.error).toBe('Unexpected error occurred');
   });
 
   it('should reset form to initial state', () => {
@@ -336,7 +336,7 @@ describe('usePatientFormHandler', () => {
       await result.current.handleSubmit(event);
     });
 
-    expect(result.current.error).toBe('Telefone é obrigatório');
+    expect(result.current.error).toBe('Phone is required');
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 
@@ -355,7 +355,7 @@ describe('usePatientFormHandler', () => {
       await result.current.handleSubmit(event);
     });
 
-    expect(result.current.error).toBe('Data de nascimento é obrigatória');
+    expect(result.current.error).toBe('Date of birth is required');
     expect(mockOnSubmit).not.toHaveBeenCalled();
   });
 

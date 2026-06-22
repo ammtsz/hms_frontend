@@ -63,14 +63,12 @@ export default function NoteCategoriesManagementList() {
   } = useNoteCategoriesManagement();
 
   if (isLoading) {
-    return <div className="text-center py-6 text-gray-500">Carregando...</div>;
+    return <div className="text-center py-6 text-gray-500">Loading...</div>;
   }
 
   if (error) {
     return (
-      <div className="text-sm text-red-600">
-        Erro ao carregar categorias das anotações.
-      </div>
+      <div className="text-sm text-red-600">Error loading note categories.</div>
     );
   }
 
@@ -80,12 +78,12 @@ export default function NoteCategoriesManagementList() {
         <Table className={stackedTableClasses.table}>
           <TableHeader className={stackedTableClasses.header}>
             <TableRow>
-              <TableHead>Código</TableHead>
-              <TableHead>Rótulo</TableHead>
+              <TableHead>Code</TableHead>
+              <TableHead>Label</TableHead>
               <TableHead className="w-28">Status</TableHead>
-              <TableHead className="hidden w-32 md:table-cell">Uso</TableHead>
+              <TableHead className="hidden w-32 md:table-cell">Usage</TableHead>
               <TableHead align="center" className="w-32">
-                Ação
+                Action
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -101,11 +99,11 @@ export default function NoteCategoriesManagementList() {
               return (
                 <TableRow key={option.id} className={stackedTableClasses.row}>
                   <TableCell className={stackedTableClasses.cell}>
-                    <TableMobileLabel>Código</TableMobileLabel>
+                    <TableMobileLabel>Code</TableMobileLabel>
                     {option.value}
                   </TableCell>
                   <TableCell className={stackedTableClasses.cell}>
-                    <TableMobileLabel>Rótulo</TableMobileLabel>
+                    <TableMobileLabel>Label</TableMobileLabel>
                     {isEditing ? (
                       <div className="flex items-center gap-2">
                         <Input
@@ -134,7 +132,7 @@ export default function NoteCategoriesManagementList() {
                           variant={option.isActive ? "success" : "neutral"}
                           title={SYSTEM_STATUS_CHANGE_CATEGORY_TOOLTIP}
                         >
-                          {option.isActive ? "● Ativo" : "○ Inativo"}
+                          {option.isActive ? "● Active" : "○ Inactive"}
                         </Badge>
                       ) : (
                         <Button
@@ -147,9 +145,9 @@ export default function NoteCategoriesManagementList() {
                               ? "bg-green-100 text-green-700 hover:bg-green-200 disabled:opacity-50"
                               : "bg-gray-100 text-gray-600 hover:bg-gray-200 disabled:opacity-50"
                           }`}
-                          title={option.isActive ? "Desativar" : "Ativar"}
+                          title={option.isActive ? "Deactivate" : "Activate"}
                         >
-                          {option.isActive ? "● Ativo" : "○ Inativo"}
+                          {option.isActive ? "● Active" : "○ Inactive"}
                         </Button>
                       )
                     ) : (
@@ -161,17 +159,17 @@ export default function NoteCategoriesManagementList() {
                             : undefined
                         }
                       >
-                        {option.isActive ? "Ativo" : "Inativo"}
+                        {option.isActive ? "Active" : "Inactive"}
                       </Badge>
                     )}
                   </TableCell>
                   <TableCell
                     className={`${stackedTableClasses.cell} hidden md:table-cell`}
                   >
-                    <TableMobileLabel>Uso</TableMobileLabel>
+                    <TableMobileLabel>Usage</TableMobileLabel>
                     {typeof option.usageCount === "number" &&
                     option.usageCount > 0
-                      ? `${option.usageCount} nota(s)`
+                      ? `${option.usageCount} note(s)`
                       : "-"}
                   </TableCell>
 
@@ -179,14 +177,14 @@ export default function NoteCategoriesManagementList() {
                     align="center"
                     className={`${stackedTableClasses.actionsCell} md:text-center`}
                   >
-                    <TableMobileLabel>Ação</TableMobileLabel>
+                    <TableMobileLabel>Action</TableMobileLabel>
                     {isEditing ? (
                       <div className="flex gap-2 justify-center">
                         <IconButton
                           onClick={() => saveEdit(option)}
                           disabled={updateMutation.isPending}
                           tone="success"
-                          title="Salvar"
+                          title="Save"
                         >
                           <Save className="w-4 h-4" />
                         </IconButton>
@@ -194,7 +192,7 @@ export default function NoteCategoriesManagementList() {
                           onClick={cancelEdit}
                           disabled={updateMutation.isPending}
                           tone="neutral"
-                          title="Cancelar"
+                          title="Cancel"
                         >
                           <X className="w-4 h-4" />
                         </IconButton>
@@ -211,8 +209,8 @@ export default function NoteCategoriesManagementList() {
                             isSystemStatusChangeCategory(option)
                               ? SYSTEM_STATUS_CHANGE_CATEGORY_TOOLTIP
                               : isAdmin
-                                ? "Editar rótulo"
-                                : "Apenas admin"
+                                ? "Edit label"
+                                : "Admin only"
                           }
                         >
                           <Pencil className="w-4 h-4" />
@@ -230,8 +228,8 @@ export default function NoteCategoriesManagementList() {
                             isDeleteBlocked
                               ? deleteTooltip
                               : isAdmin
-                                ? "Excluir"
-                                : "Apenas admin"
+                                ? "Delete"
+                                : "Admin only"
                           }
                         >
                           <Trash2 className="w-4 h-4" />
@@ -249,32 +247,32 @@ export default function NoteCategoriesManagementList() {
       {isAdding && (
         <Card className="space-y-3 border-blue-300 bg-blue-50 p-4">
           <div className="text-sm font-semibold text-blue-900">
-            Nova categoria de notas
+            New note category
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Código
+                Code
               </label>
               <Input
                 type="text"
                 value={newValue}
                 onChange={(e) => setNewValue(e.target.value)}
                 maxLength={50}
-                placeholder="ex: contato_paciente"
+                placeholder="ex: patient_contact"
                 pattern="[a-z0-9_-]+"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Rótulo
+                Label
               </label>
               <Input
                 type="text"
                 value={newLabel}
                 onChange={(e) => setNewLabel(e.target.value)}
                 maxLength={50}
-                placeholder="ex: Geral"
+                placeholder="ex: General"
               />
             </div>
           </div>
@@ -286,17 +284,17 @@ export default function NoteCategoriesManagementList() {
               onClick={handleCreate}
               disabled={createMutation.isPending}
               isLoading={createMutation.isPending}
-              loadingText="Criando..."
+              loadingText="Creating..."
               className="flex-1"
             >
-              Criar
+              Create
             </Button>
             <Button
               variant="outline"
               onClick={() => setIsAdding(false)}
               className="border-blue-200 hover:bg-blue-100"
             >
-              Cancelar
+              Cancel
             </Button>
           </div>
         </Card>
@@ -309,7 +307,7 @@ export default function NoteCategoriesManagementList() {
           className="w-full border-2 border-dashed border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600"
         >
           <Plus className="w-5 h-5" />
-          Nova categoria
+          New note category
         </Button>
       )}
 
@@ -319,12 +317,12 @@ export default function NoteCategoriesManagementList() {
           <BaseModal
             isOpen
             onClose={closeDeleteConfirm}
-            title="Confirmar Exclusão"
+            title="Confirm Delete"
             maxWidth="md"
           >
             <div className="p-4 sm:p-6">
               <p className="mb-4 text-sm text-gray-600">
-                Tem certeza que deseja excluir &ldquo;
+                Are you sure you want to delete &ldquo;
                 {deleteOption.label ?? deleteOption.value}&rdquo;?
               </p>
               <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -333,17 +331,17 @@ export default function NoteCategoriesManagementList() {
                   onClick={closeDeleteConfirm}
                   className="bg-gray-100 text-gray-700 hover:bg-gray-200 sm:flex-1"
                 >
-                  Cancelar
+                  Cancel
                 </Button>
                 <Button
                   variant="danger"
                   onClick={handleDelete}
                   disabled={deleteMutation.isPending}
                   isLoading={deleteMutation.isPending}
-                  loadingText="Excluindo..."
+                  loadingText="Deleting..."
                   className="sm:flex-1"
                 >
-                  Excluir
+                  Delete
                 </Button>
               </div>
             </div>

@@ -23,8 +23,8 @@ function calculateAge(birthDate: Date | string): number {
 
 function formatStreakMessage(streak: number): string {
   return streak === 1
-    ? "1 falta consecutiva não justificada"
-    : `${streak} faltas consecutivas não justificadas`;
+    ? "1 consecutive unjustified absence"
+    : `${streak} consecutive unjustified absences`;
 }
 
 export const HeaderCard: React.FC<HeaderCardProps> = ({
@@ -39,7 +39,7 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({
     <span key="id" className="text-gray-500">
       #{patient.id}
     </span>,
-    <span key="age">{calculateAge(patient.birthDate)} anos</span>,
+    <span key="age">{calculateAge(patient.birthDate)} years</span>,
   ];
 
   if (patient.phone) {
@@ -57,7 +57,7 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({
 
   if (weeksInTreatment !== undefined) {
     metadataItems.push(
-      <span key="weeks">{weeksInTreatment} sem. em tratamento</span>,
+      <span key="weeks">{weeksInTreatment} weeks in treatment</span>,
     );
   }
 
@@ -103,14 +103,14 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({
 
           {showHistoricalStreak ? (
             <p className="text-sm text-gray-400">
-              {formatStreakMessage(streak)} (tratamento anterior)
+              {formatStreakMessage(streak)} (previous treatment)
             </p>
           ) : null}
 
           <div className="min-w-0">
-            <p className="text-sm text-gray-500">Queixa principal</p>
+            <p className="text-sm text-gray-500">Main complaint</p>
             <p className="mt-1 break-words text-base text-gray-900">
-              {patient.mainComplaint}
+              {patient.mainConcern}
             </p>
           </div>
         </div>

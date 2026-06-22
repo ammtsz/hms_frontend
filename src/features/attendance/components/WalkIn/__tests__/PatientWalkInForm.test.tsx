@@ -34,7 +34,7 @@ jest.mock("@/api/query/hooks/usePatientQueries", () => ({
     data: [
       {
         id: "1",
-        name: "João Silva",
+        name: "John Smith",
         phone: "11999999999",
         priority: "Normal" as const,
         status: "T" as const,
@@ -123,7 +123,7 @@ describe("PatientWalkInForm", () => {
           id: 1,
           type: SystemOptionType.PRIORITY,
           value: "1",
-          label: "Exceção",
+          label: "Priority",
           isActive: true,
           sortOrder: 1,
           createdAt: "",
@@ -133,7 +133,7 @@ describe("PatientWalkInForm", () => {
           id: 2,
           type: SystemOptionType.PRIORITY,
           value: "2",
-          label: "Idoso/crianças",
+          label: "Standard",
           isActive: true,
           sortOrder: 2,
           createdAt: "",
@@ -143,7 +143,7 @@ describe("PatientWalkInForm", () => {
           id: 3,
           type: SystemOptionType.PRIORITY,
           value: "3",
-          label: "Padrão",
+          label: "Priority 3",
           isActive: true,
           sortOrder: 3,
           createdAt: "",
@@ -195,8 +195,8 @@ describe("PatientWalkInForm", () => {
           {
             id: 100,
             date: "2025-01-10",
-            mainComplaint: "Dor de cabeça",
-            label: "2025-01-10 - Dor de cabeça",
+            mainConcern: "Headache",
+            label: "2025-01-10 - Headache",
           },
         ],
       },
@@ -265,11 +265,11 @@ describe("PatientWalkInForm", () => {
       />,
     );
 
-    expect(screen.getByText("Nome do Paciente")).toBeInTheDocument();
+    expect(screen.getByText("Patient Name")).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("Buscar paciente pelo nome..."),
+      screen.getByPlaceholderText("Search patient by name..."),
     ).toBeInTheDocument();
-    expect(screen.getByText("Consulta de Avaliação")).toBeInTheDocument();
+    expect(screen.getByText("Assessment Consultation")).toBeInTheDocument();
     // Note: Physiotherapy and TENS removed - only created via PostAttendanceModal
   });
 
@@ -285,24 +285,24 @@ describe("PatientWalkInForm", () => {
 
       // Fill in the form with existing patient name
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João Silva");
+      await user.type(nameInput, "John Smith");
 
       // Wait for patient suggestion and click it
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
       // The form defaults to assessment attendance type (no need to select)
       // Submit the form - since useAttendancesByDate returns empty array by default,
       // no duplicates will be detected and the form will attempt to create the attendance
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
       await user.click(submitButton);
 
@@ -346,23 +346,23 @@ describe("PatientWalkInForm", () => {
 
       // Fill in the form with existing patient name
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João Silva");
+      await user.type(nameInput, "John Smith");
 
       // Wait for patient suggestion and click it
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
       // The form defaults to assessment attendance type (no need to select)
       // Submit the form
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
 
       // Button should be enabled with valid form
@@ -379,7 +379,7 @@ describe("PatientWalkInForm", () => {
 
       // Should not show duplicate error
       expect(
-        screen.queryByText(/agendamento duplicado/i),
+        screen.queryByText(/duplicate appointment/i),
       ).not.toBeInTheDocument();
     });
 
@@ -417,23 +417,23 @@ describe("PatientWalkInForm", () => {
 
       // Fill in the form
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João Silva");
+      await user.type(nameInput, "John Smith");
 
       // Wait for patient suggestion and click it
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
       // The form defaults to assessment attendance type
       // Submit the form
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
 
       // Ensure button is enabled
@@ -460,12 +460,12 @@ describe("PatientWalkInForm", () => {
       );
 
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João");
+      await user.type(nameInput, "John");
 
       await waitFor(() => {
-        expect(screen.getByText("João Silva")).toBeInTheDocument();
+        expect(screen.getByText("John Smith")).toBeInTheDocument();
       });
     });
 
@@ -478,7 +478,7 @@ describe("PatientWalkInForm", () => {
       );
 
       // Enable new patient mode
-      const newPatientSwitch = screen.getByLabelText("Novo paciente");
+      const newPatientSwitch = screen.getByLabelText(/New patient/i);
       await user.click(newPatientSwitch);
 
       const phoneInput = screen.getByPlaceholderText("(XX) XXXXX-XXXX");
@@ -496,10 +496,10 @@ describe("PatientWalkInForm", () => {
       );
 
       // Enable new patient mode to access birth date field
-      const newPatientSwitch = screen.getByLabelText("Novo paciente");
+      const newPatientSwitch = screen.getByLabelText(/New patient/i);
       await user.click(newPatientSwitch);
 
-      const dateInput = screen.getByLabelText("Data de Nascimento *");
+      const dateInput = screen.getByLabelText("Date of Birth *");
       await user.type(dateInput, "2000-01-15");
 
       expect(dateInput).toHaveValue("2000-01-15");
@@ -514,10 +514,10 @@ describe("PatientWalkInForm", () => {
       );
 
       // Enable new patient mode to access priority field
-      const newPatientSwitch = screen.getByLabelText("Novo paciente");
+      const newPatientSwitch = screen.getByLabelText(/New patient/i);
       await user.click(newPatientSwitch);
 
-      const prioritySelect = screen.getByLabelText("Prioridade");
+      const prioritySelect = screen.getByLabelText("Priority");
       await user.selectOptions(prioritySelect, "1");
 
       expect(prioritySelect).toHaveValue("1");
@@ -534,20 +534,20 @@ describe("PatientWalkInForm", () => {
       );
 
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João");
+      await user.type(nameInput, "John");
 
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
-      expect(nameInput).toHaveValue("João Silva");
-      expect(screen.queryByText("João Silva")).not.toBeInTheDocument(); // Dropdown should close
+      expect(nameInput).toHaveValue("John Smith");
+      expect(screen.queryByText("John Smith")).not.toBeInTheDocument(); // Dropdown should close
     });
 
     it("clears selection when switching to new patient", async () => {
@@ -560,29 +560,29 @@ describe("PatientWalkInForm", () => {
 
       // First select an existing patient
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João");
+      await user.type(nameInput, "John");
 
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
-      expect(nameInput).toHaveValue("João Silva");
+      expect(nameInput).toHaveValue("John Smith");
 
       // Switch to new patient mode
       const newPatientSwitch = screen.getByRole("checkbox", {
-        name: /novo paciente/i,
+        name: /New patient/i,
       });
       await user.click(newPatientSwitch);
 
       // Name should be preserved when switching to new patient mode
       // This allows users to create a new patient with the same name
-      expect(nameInput).toHaveValue("João Silva");
+      expect(nameInput).toHaveValue("John Smith");
     });
   });
 
@@ -595,11 +595,9 @@ describe("PatientWalkInForm", () => {
       );
 
       // Form now shows assessment consultation as static text, not a selectable option
-      expect(screen.getByText("Consulta de Avaliação")).toBeInTheDocument();
+      expect(screen.getByText("Assessment Consultation")).toBeInTheDocument();
       expect(
-        screen.getByText(
-          /Outros tipos de atendimento.*são criados automaticamente/i,
-        ),
+        screen.getByText(/Other appointment types \(Physiotherapy, TENS\) are created/i),
       ).toBeInTheDocument();
     });
   });
@@ -615,13 +613,13 @@ describe("PatientWalkInForm", () => {
 
       // The submit button should be disabled when no name is provided
       const submitButton = screen.getByRole("button", {
-        name: /fazer check-in/i,
+        name: /^Check In$/i,
       });
       expect(submitButton).toBeDisabled();
 
       // Enter a name to enable the button
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
       await user.type(nameInput, "Test Patient");
 
@@ -641,22 +639,22 @@ describe("PatientWalkInForm", () => {
       );
 
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João");
+      await user.type(nameInput, "John");
 
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
       // The form defaults to assessment type, so submit button should be enabled
       // after selecting a parent attendance option
       const submitButton = screen.getByRole("button", {
-        name: /fazer check-in/i,
+        name: /^Check In$/i,
       });
 
       // Button should be enabled since form has patient and default assessment type
@@ -672,16 +670,16 @@ describe("PatientWalkInForm", () => {
       );
 
       // Switch to new patient mode
-      const newPatientSwitch = screen.getByLabelText("Novo paciente");
+      const newPatientSwitch = screen.getByLabelText(/New patient/i);
       await user.click(newPatientSwitch);
 
       // Fill partial form
-      const nameInput = screen.getByPlaceholderText("Nome do novo paciente...");
+      const nameInput = screen.getByPlaceholderText("Name of new patient...");
       await user.type(nameInput, "Test Patient");
 
       // Submit button should be disabled when required fields are missing
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
 
       expect(submitButton).toBeDisabled();
@@ -694,7 +692,7 @@ describe("PatientWalkInForm", () => {
       expect(submitButton).toBeDisabled();
 
       // Fill birth date to enable form submission
-      const birthDateInput = screen.getByLabelText("Data de Nascimento *");
+      const birthDateInput = screen.getByLabelText("Date of Birth *");
       await user.type(birthDateInput, "2000-01-15");
 
       expect(submitButton).toBeEnabled();
@@ -713,12 +711,12 @@ describe("PatientWalkInForm", () => {
 
       // Test switching to new patient mode
       const newPatientSwitch = screen.getByRole("checkbox", {
-        name: /novo paciente/i,
+        name: /New patient/i,
       });
 
       // Verify initial state shows existing patient mode
       expect(
-        screen.getByPlaceholderText("Buscar paciente pelo nome..."),
+        screen.getByPlaceholderText("Search patient by name..."),
       ).toBeInTheDocument();
 
       await user.click(newPatientSwitch);
@@ -726,12 +724,12 @@ describe("PatientWalkInForm", () => {
       // After clicking switch, should show new patient form elements
       await waitFor(() => {
         expect(
-          screen.getByPlaceholderText("Nome do novo paciente..."),
+          screen.getByPlaceholderText("Name of new patient..."),
         ).toBeInTheDocument();
       });
 
       // Test form field interactions
-      const nameInput = screen.getByPlaceholderText("Nome do novo paciente...");
+      const nameInput = screen.getByPlaceholderText("Name of new patient...");
       await user.type(nameInput, "New Patient");
       expect(nameInput).toHaveValue("New Patient");
 
@@ -739,13 +737,13 @@ describe("PatientWalkInForm", () => {
       await user.type(phoneInput, "11999999999");
       expect(phoneInput).toHaveValue("(11) 99999-9999"); // Should be formatted
 
-      const birthDateInput = screen.getByLabelText("Data de Nascimento *");
+      const birthDateInput = screen.getByLabelText("Date of Birth *");
       await user.type(birthDateInput, "2000-01-15");
       expect(birthDateInput).toHaveValue("2000-01-15");
 
       // Submit button should be enabled when form is valid
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
 
       await waitFor(() => {
@@ -765,27 +763,27 @@ describe("PatientWalkInForm", () => {
       );
 
       // Switch to new patient mode
-      const newPatientSwitch = screen.getByLabelText("Novo paciente");
+      const newPatientSwitch = screen.getByLabelText(/New patient/i);
       await user.click(newPatientSwitch);
 
       // Try to create patient with existing name
-      const nameInput = screen.getByPlaceholderText("Nome do novo paciente...");
-      await user.type(nameInput, "João Silva"); // Existing patient name
+      const nameInput = screen.getByPlaceholderText("Name of new patient...");
+      await user.type(nameInput, "John Smith"); // Existing patient name
 
       const phoneInput = screen.getByPlaceholderText("(XX) XXXXX-XXXX");
       await user.type(phoneInput, "11999999999");
 
-      const birthDateInput = screen.getByLabelText("Data de Nascimento *");
+      const birthDateInput = screen.getByLabelText("Date of Birth *");
       await user.type(birthDateInput, "2000-01-15");
 
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
       await user.click(submitButton);
 
       await waitFor(() => {
         expect(
-          screen.getByText(/paciente já cadastrado.*desmarque.*novo paciente/i),
+          screen.getByText(/patient already registered.*uncheck.*new patient/i),
         ).toBeInTheDocument();
       });
     });
@@ -805,27 +803,27 @@ describe("PatientWalkInForm", () => {
       );
 
       // Switch to new patient mode and fill form
-      const newPatientSwitch = screen.getByLabelText("Novo paciente");
+      const newPatientSwitch = screen.getByLabelText(/New patient/i);
       await user.click(newPatientSwitch);
 
-      const nameInput = screen.getByPlaceholderText("Nome do novo paciente...");
+      const nameInput = screen.getByPlaceholderText("Name of new patient...");
       await user.type(nameInput, "Failed Patient");
 
       const phoneInput = screen.getByPlaceholderText("(XX) XXXXX-XXXX");
       await user.type(phoneInput, "11999999999");
 
-      const birthDateInput = screen.getByLabelText("Data de Nascimento *");
+      const birthDateInput = screen.getByLabelText("Date of Birth *");
       await user.type(birthDateInput, "2000-01-15");
 
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
       await user.click(submitButton);
 
       // Should show generic error message (component catches specific error)
       await waitFor(() => {
         expect(
-          screen.getByText(/erro inesperado ao processar check-in/i),
+          screen.getByText(/unexpected error processing check-in/i),
         ).toBeInTheDocument();
       });
     });
@@ -843,31 +841,31 @@ describe("PatientWalkInForm", () => {
 
       // Test existing patient search and selection
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
 
       // Type patient name to trigger search
-      await user.type(nameInput, "João");
-      expect(nameInput).toHaveValue("João");
+      await user.type(nameInput, "John");
+      expect(nameInput).toHaveValue("John");
 
       // Patient suggestion should appear
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
       // Click on patient suggestion
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
       // Input should now show selected patient name
-      expect(nameInput).toHaveValue("João Silva");
+      expect(nameInput).toHaveValue("John Smith");
 
       // Test attendance type selection
 
       // Submit button should be enabled when form is complete
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
 
       await waitFor(() => {
@@ -882,7 +880,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
 
       // This test types a name that doesn't exist in the patient list
-      // The expected behavior is to show "Nome do paciente é obrigatório"
+      // The expected behavior is to show "Patient name is required"
       // because no valid patient was actually selected
 
       render(
@@ -893,18 +891,18 @@ describe("PatientWalkInForm", () => {
 
       // Type a name that doesn't exist in the patient list
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
       await user.type(nameInput, "Nonexistent Patient");
 
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
       await user.click(submitButton);
 
       await waitFor(() => {
         expect(
-          screen.getByText("Nome do paciente é obrigatório"),
+          screen.getByText("Patient name is required"),
         ).toBeInTheDocument();
       });
     });
@@ -927,37 +925,37 @@ describe("PatientWalkInForm", () => {
 
       // Fill form with existing patient to make submit button enabled
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João");
+      await user.type(nameInput, "John");
 
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
       await user.click(submitButton);
 
       // Wait for API error to appear (this is the message shown when attendance creation fails)
       await waitFor(() => {
         expect(
-          screen.getByText(/erro inesperado ao processar check-in/i),
+          screen.getByText(/unexpected error processing check-in/i),
         ).toBeInTheDocument();
       });
 
       // Change input should clear error
       await user.clear(nameInput);
-      await user.type(nameInput, "Maria");
+      await user.type(nameInput, "Emily");
 
       // Error should be cleared when input changes
       expect(
-        screen.queryByText(/erro inesperado ao processar check-in/i),
+        screen.queryByText(/unexpected error processing check-in/i),
       ).not.toBeInTheDocument();
     });
   });
@@ -974,27 +972,27 @@ describe("PatientWalkInForm", () => {
 
       // Fill form with existing patient
       const nameInput = screen.getByPlaceholderText(
-        "Buscar paciente pelo nome...",
+        "Search patient by name...",
       );
-      await user.type(nameInput, "João");
+      await user.type(nameInput, "John");
 
       // Patient suggestion should appear
       await waitFor(() => {
-        const suggestion = screen.getByText("João Silva");
+        const suggestion = screen.getByText("John Smith");
         expect(suggestion).toBeInTheDocument();
       });
 
-      const suggestion = screen.getByText("João Silva");
+      const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
       // Form should be filled with selected patient
-      expect(nameInput).toHaveValue("João Silva");
+      expect(nameInput).toHaveValue("John Smith");
 
       // Select attendance type
 
       // Submit button should be enabled when form is valid
       const submitButton = screen.getByRole("button", {
-        name: /check.in|registrar|salvar/i,
+        name: /check.in|register|save/i,
       });
       expect(submitButton).toBeEnabled();
 
@@ -1013,7 +1011,7 @@ describe("PatientWalkInForm", () => {
         />,
       );
 
-      const form = screen.getByText("Nome do Paciente").closest("form");
+      const form = screen.getByText("Patient Name").closest("form");
       const container = form?.parentElement;
       expect(container).toHaveClass(
         "rounded-lg",
@@ -1033,7 +1031,7 @@ describe("PatientWalkInForm", () => {
         />,
       );
 
-      const form = screen.getByText("Nome do Paciente").closest("form");
+      const form = screen.getByText("Patient Name").closest("form");
       const container = form?.parentElement;
       expect(container).not.toHaveClass("card-shadow");
     });

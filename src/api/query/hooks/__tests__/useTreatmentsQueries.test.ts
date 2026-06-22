@@ -39,14 +39,14 @@ describe('useTreatmentsByPatient', () => {
     attendanceId: 1,
     patientId: 1,
     treatmentType: 'physiotherapy' as const,
-    bodyLocation: 'Cabeça',
+    bodyLocation: 'Head',
     startDate: '2025-01-01',
     plannedSessions: 10,
     completedSessions: 3,
     status: 'in_progress',
     durationMinutes: 30,
-    color: 'azul',
-    notes: 'Tratamento indo bem',
+    color: 'blue',
+    notes: 'Treatment going well',
     sessions: [],
     createdDate: '2025-01-01',
     createdTime: '10:00:00',
@@ -110,13 +110,13 @@ describe('useTreatmentsByPatient', () => {
     it('handles API error response with message', async () => {
       mockGetTreatmentsByPatient.mockResolvedValue({
         success: false,
-        error: 'Paciente não encontrado',
+        error: 'Patient not found',
       });
 
       const { result } = renderHook(() => useTreatmentsByPatient(1));
 
       await waitFor(() => {
-        expect(result.current.error).toBe('Paciente não encontrado');
+        expect(result.current.error).toBe('Patient not found');
       }, { timeout: 5000 });
 
       expect(result.current.treatments).toEqual([]);
@@ -130,7 +130,7 @@ describe('useTreatmentsByPatient', () => {
       const { result } = renderHook(() => useTreatmentsByPatient(1));
 
       await waitFor(() => {
-        expect(result.current.error).toBe('Erro ao carregar tratamentos');
+        expect(result.current.error).toBe('Failed to load treatments');
       }, { timeout: 5000 });
 
       expect(result.current.treatments).toEqual([]);
@@ -247,13 +247,13 @@ describe('useEditTreatments', () => {
     attendanceId: 20,
     patientId: 1,
     treatmentType: 'physiotherapy' as const,
-    bodyLocation: 'Cabeça',
+    bodyLocation: 'Head',
     startDate: '2025-01-01',
     plannedSessions: 10,
     completedSessions: 0,
     status: 'in_progress',
     durationMinutes: 30,
-    color: 'azul',
+    color: 'blue',
     notes: undefined,
     createdDate: '2025-01-01',
     createdTime: '10:00:00',
@@ -288,8 +288,8 @@ describe('useEditTreatments', () => {
       await result.current.mutateAsync({
         treatments: [
           {
-            locations: ['Pescoço'],
-            color: 'azul',
+            locations: ['Neck'],
+            color: 'blue',
             duration: 30,
             quantity: 10,
             startDate: '2025-01-01',
@@ -305,7 +305,7 @@ describe('useEditTreatments', () => {
         attendanceId: 20,
         patientId: 1,
         treatmentType: 'physiotherapy',
-        bodyLocation: 'Pescoço',
+        bodyLocation: 'Neck',
         reuseAttendanceForFirstSession: true,
         firstSessionAttendanceId: 99,
       }),
@@ -346,7 +346,7 @@ describe('useDeleteTreatment', () => {
     it('handles API error response with message', async () => {
       mockDeleteTreatment.mockResolvedValue({
         success: false,
-        error: 'Sessão não encontrada',
+        error: 'Session not found',
       });
 
       const { result } = renderHook(() => useDeleteTreatment());
@@ -355,7 +355,7 @@ describe('useDeleteTreatment', () => {
         await act(async () => {
           await result.current.mutateAsync('1');
         });
-      }).rejects.toThrow('Sessão não encontrada');
+      }).rejects.toThrow('Session not found');
     });
 
     it('handles API error response without message', async () => {
@@ -369,7 +369,7 @@ describe('useDeleteTreatment', () => {
         await act(async () => {
           await result.current.mutateAsync('1');
         });
-      }).rejects.toThrow('Erro ao remover tratamento');
+      }).rejects.toThrow('Failed to remove treatment');
     });
 
     it('handles API rejection', async () => {

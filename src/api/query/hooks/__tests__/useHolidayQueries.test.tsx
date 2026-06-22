@@ -18,16 +18,16 @@ const mockHolidays = [
   {
     id: 1,
     holidayDate: "2026-12-25",
-    name: "Natal",
-    description: "Feriado Nacional",
+    name: "Christmas",
+    description: "National Holiday",
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
   },
   {
     id: 2,
     holidayDate: "2026-01-01",
-    name: "Ano Novo",
-    description: "Feriado Nacional",
+    name: "New Year",
+    description: "National Holiday",
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
   },
@@ -175,8 +175,8 @@ describe("useHolidayQueries", () => {
     it("creates a holiday successfully", async () => {
       const newHoliday = {
         holidayDate: "2026-12-31",
-        name: "Réveillon",
-        description: "Feriado Nacional",
+        name: "New Year's Eve",
+        description: "National Holiday",
       };
 
       const createdHoliday = { ...newHoliday, id: 3 };
@@ -209,7 +209,7 @@ describe("useHolidayQueries", () => {
 
       result.current.mutate({
         holidayDate: "2026-12-25",
-        name: "Natal",
+        name: "Christmas",
       });
 
       await waitFor(() => expect(result.current.isError).toBe(true));
@@ -218,7 +218,7 @@ describe("useHolidayQueries", () => {
 
   describe("useUpdateHoliday", () => {
     it("updates a holiday successfully", async () => {
-      const updatedData = { name: "Natal - Updated" };
+      const updatedData = { name: "Christmas - Updated" };
       const updatedHoliday = { ...mockHolidays[0], ...updatedData };
 
       (holidayApi.updateHoliday as jest.Mock).mockResolvedValue({
@@ -255,5 +255,4 @@ describe("useHolidayQueries", () => {
       expect(holidayApi.deleteHoliday).toHaveBeenCalledWith(1);
     });
   });
-
 });

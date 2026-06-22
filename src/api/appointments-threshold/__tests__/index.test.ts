@@ -37,7 +37,7 @@ describe('Appointments threshold API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Valor inválido (use entre 1 e 10)',
+        error: 'Invalid value (use between 1 and 10)',
       });
     });
 
@@ -48,7 +48,7 @@ describe('Appointments threshold API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Apenas administradores podem alterar este valor',
+        error: 'Only administrators can change this value',
       });
     });
 
@@ -59,7 +59,7 @@ describe('Appointments threshold API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro ao processar requisição',
+        error: 'Error processing request',
       });
     });
   });
@@ -88,7 +88,7 @@ describe('Appointments threshold API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Valor inválido (use entre 1 e 10)',
+        error: 'Invalid value (use between 1 and 10)',
       });
     });
 
@@ -99,7 +99,7 @@ describe('Appointments threshold API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Apenas administradores podem alterar este valor',
+        error: 'Only administrators can change this value',
       });
     });
 
@@ -123,7 +123,7 @@ describe('Appointments threshold API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro ao processar requisição',
+        error: 'Error processing request',
       });
     });
   });

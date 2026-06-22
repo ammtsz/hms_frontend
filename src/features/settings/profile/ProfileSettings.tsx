@@ -14,7 +14,7 @@ export default function ProfileSettings() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <p className="text-gray-500">Carregando...</p>
+        <p className="text-gray-500">Loading...</p>
       </div>
     );
   }
@@ -28,9 +28,9 @@ export default function ProfileSettings() {
       <div className="rounded-lg bg-white shadow">
         {/* Header */}
         <div className="border-b border-gray-200 p-4 sm:p-6">
-          <h1 className="text-2xl font-bold text-gray-900">Meu Perfil</h1>
+          <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
           <p className="text-gray-500 mt-1">
-            Gerencie suas informações pessoais e configurações de segurança
+            Manage your personal information and security settings
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export default function ProfileSettings() {
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            Informações Pessoais
+            Personal Information
           </Button>
           <Button
             variant="ghost"
@@ -59,7 +59,7 @@ export default function ProfileSettings() {
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
-            Alterar Senha
+            Change Password
           </Button>
         </div>
 

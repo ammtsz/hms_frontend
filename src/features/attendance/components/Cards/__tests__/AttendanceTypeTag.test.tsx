@@ -7,8 +7,8 @@ describe("AttendanceTypeTag", () => {
   describe("renders correctly for all attendance types", () => {
     test.each([
       ["tens", "TENS", "bg-blue-100", "text-blue-700"],
-      ["physiotherapy", "Fisioterapia", "bg-yellow-100", "text-yellow-700"],
-      ["assessment", "Consulta de Avaliação", "bg-gray-100", "text-gray-700"],
+      ["physiotherapy", "Physiotherapy", "bg-yellow-100", "text-yellow-700"],
+      ["assessment", "Assessment Consultation", "bg-gray-100", "text-gray-700"],
     ])(
       "renders %s type correctly",
       (type, expectedLabel, expectedBg, expectedText) => {
@@ -32,11 +32,11 @@ describe("AttendanceTypeTag", () => {
       expect(screen.getByText("3")).toBeInTheDocument();
     });
 
-    it("appends locais to title when count is greater than 1", () => {
+    it("appends locations to title when count is greater than 1", () => {
       render(<AttendanceTypeTag type="tens" count={2} />);
       expect(screen.getByText("2")).toHaveAttribute(
         "title",
-        expect.stringMatching(/\(2 locais\)/),
+        expect.stringMatching(/\(2 locations\)/),
       );
     });
   });
@@ -83,7 +83,7 @@ describe("AttendanceTypeTag", () => {
       expect(tag).toHaveClass("bg-gray-100", "text-gray-500");
       expect(tag).toHaveAttribute(
         "title",
-        expect.stringContaining("Desconhecido"),
+        expect.stringContaining("Unknown"),
       );
     });
   });

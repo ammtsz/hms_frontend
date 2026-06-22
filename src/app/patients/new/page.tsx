@@ -9,8 +9,8 @@ const PatientForm = lazy(() => import("@/features/patients/form"));
 
 export default function NewPatientPage() {
   const breadcrumbItems = [
-    { label: "Pacientes", href: "/patients" },
-    { label: "Cadastro de Paciente", isActive: true },
+    { label: "Patients", href: "/patients" },
+    { label: "Patient Registration", isActive: true },
   ];
 
   return (
@@ -20,7 +20,7 @@ export default function NewPatientPage() {
         <Suspense
           fallback={
             <LoadingFallback
-              message="Carregando formulário de cadastro..."
+              message="Loading registration form..."
               size="medium"
             />
           }

@@ -25,7 +25,7 @@ export const AttendanceHistoryHeader: React.FC<
       title={
         <>
           <History className="h-5 w-5 shrink-0 text-gray-600" aria-hidden />
-          Histórico de Atendimentos
+          Attendance History
           <span className="text-sm font-normal text-gray-600">
             ({totalItems})
           </span>
@@ -38,9 +38,9 @@ export const AttendanceHistoryHeader: React.FC<
             size="xs"
             onClick={onRefresh}
             className="text-blue-600 hover:text-blue-800"
-            title="Atualizar histórico"
+            title="Refresh history"
           >
-            Atualizar
+            Refresh
           </Button>
         ) : null
       }

@@ -7,7 +7,7 @@
 // Attendance Store - Core drag & drop and workflow management
 export { useAttendanceStore } from './attendanceStore';
 
-// Agenda Store - Calendar and scheduling UI state  
+// Calendar store - scheduling UI state  
 export {
   useAgendaStore,
   AGENDA_DAY_WINDOW_OPTIONS,
@@ -15,7 +15,7 @@ export {
   defaultAgendaCalendarStatusFilters,
 } from './agendaStore';
 
-// Agenda Selectors - Optimized selectors for performance
+// Calendar selectors - optimized selectors for performance
 export {
   // State selectors
   useSelectedDateString,

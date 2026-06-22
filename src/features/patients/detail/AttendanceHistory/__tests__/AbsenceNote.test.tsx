@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { AbsenceNote } from "../AbsenceNote";
+import { getTreatmentTypeLabel } from "../utils";
 
 describe("AbsenceNote", () => {
   const defaultProps = {
@@ -13,8 +14,8 @@ describe("AbsenceNote", () => {
   it("should render attendance type for physiotherapy only", () => {
     render(<AbsenceNote {...defaultProps} />);
 
-    expect(screen.getByText(/tipo de atendimento/i)).toBeInTheDocument();
-    expect(screen.getByText("Fisioterapia")).toBeInTheDocument();
+    expect(screen.getByText(/Attendance Type/i)).toBeInTheDocument();
+    expect(screen.getByText(getTreatmentTypeLabel(false, true, false))).toBeInTheDocument();
   });
 
   it("should render attendance type for tens only", () => {
@@ -26,7 +27,7 @@ describe("AbsenceNote", () => {
       />,
     );
 
-    expect(screen.getByText("TENS")).toBeInTheDocument();
+    expect(screen.getByText(getTreatmentTypeLabel(false, false, true))).toBeInTheDocument();
   });
 
   it("should render attendance type for both treatments", () => {
@@ -38,7 +39,7 @@ describe("AbsenceNote", () => {
       />,
     );
 
-    expect(screen.getByText("Fisioterapia e TENS")).toBeInTheDocument();
+    expect(screen.getByText(getTreatmentTypeLabel(false, true, true))).toBeInTheDocument();
   });
 
   it("should render attendance type for assessment consultation", () => {
@@ -50,7 +51,7 @@ describe("AbsenceNote", () => {
       />,
     );
 
-    expect(screen.getByText("Consulta de Avaliação")).toBeInTheDocument();
+    expect(screen.getByText(getTreatmentTypeLabel(true, false, false))).toBeInTheDocument();
   });
 
   it("should render default message when no treatment specified", () => {
@@ -62,20 +63,20 @@ describe("AbsenceNote", () => {
       />,
     );
 
-    expect(screen.getByText("Não especificado")).toBeInTheDocument();
+    expect(screen.getByText("Not specified")).toBeInTheDocument();
   });
 
   it("should render default missed message when no notes provided", () => {
     render(<AbsenceNote {...defaultProps} status="missed" />);
 
-    expect(screen.getByText("Falta não justificada")).toBeInTheDocument();
+    expect(screen.getByText("Unjustified absence")).toBeInTheDocument();
   });
 
   it("should render default cancelled message when no notes provided", () => {
     render(<AbsenceNote {...defaultProps} status="cancelled" />);
 
     expect(
-      screen.getByText("Cancelamento sem justificativa"),
+      screen.getByText("Unjustified cancellation"),
     ).toBeInTheDocument();
   });
 
@@ -83,12 +84,12 @@ describe("AbsenceNote", () => {
     render(
       <AbsenceNote
         {...defaultProps}
-        absenceNotes="Paciente teve compromisso familiar"
+        absenceNotes="Patient had a family commitment"
       />,
     );
 
     expect(
-      screen.getByText("Paciente teve compromisso familiar"),
+      screen.getByText("Patient had a family commitment"),
     ).toBeInTheDocument();
   });
 
@@ -96,26 +97,26 @@ describe("AbsenceNote", () => {
     render(
       <AbsenceNote
         {...defaultProps}
-        absenceNotes="Motivo médico"
+        absenceNotes="Medical reason"
         absenceJustified={true}
       />,
     );
 
-    expect(screen.getByText(/falta justificada/i)).toBeInTheDocument();
-    expect(screen.getByText("Motivo médico")).toBeInTheDocument();
+    expect(screen.getByText(/Absence justified/i)).toBeInTheDocument();
+    expect(screen.getByText("Medical reason")).toBeInTheDocument();
   });
 
-  it("should show motivo label when absence is not justified but has notes", () => {
+  it("should show reason label when absence is not justified but has notes", () => {
     render(
       <AbsenceNote
         {...defaultProps}
-        absenceNotes="Esqueceu o horário"
+        absenceNotes="Forgot the time"
         absenceJustified={false}
       />,
     );
 
-    expect(screen.getByText(/motivo/i)).toBeInTheDocument();
-    expect(screen.getByText("Esqueceu o horário")).toBeInTheDocument();
+    expect(screen.getByText(/Reason:/i)).toBeInTheDocument();
+    expect(screen.getByText("Forgot the time")).toBeInTheDocument();
   });
 
   it("should render with correct styling structure", () => {

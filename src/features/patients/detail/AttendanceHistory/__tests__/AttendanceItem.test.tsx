@@ -3,6 +3,9 @@ import React from "react";
 import { render, screen } from "@/utils/testUtils";
 import { AttendanceHistoryItem } from "../AttendanceHistoryItem";
 import { GroupedAttendance } from "@/utils/attendanceHistoryUtils";
+import { ATTENDANCE_HISTORY_STATUS_LABELS } from "@/utils/attendanceStatusLabels";
+import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getTreatmentTypeLabel } from "../utils";
 
 // Helper function to create mock attendance with required fields
 const createMockAttendance = (
@@ -26,11 +29,11 @@ describe("AttendanceHistoryItem", () => {
       const cancelledAttendance = createMockAttendance({
         date: "2026-02-10",
         status: "cancelled",
-        absenceNotes: "Paciente teve compromisso inadiável",
+        absenceNotes: "Patient had an unavoidable conflict",
         absenceJustified: true,
         treatments: {
           assessment: {
-            notes: "Consulta inicial",
+            notes: "Initial consultation",
           },
         },
       });
@@ -43,12 +46,12 @@ describe("AttendanceHistoryItem", () => {
       );
 
       // Check orange background (use getAllByText since date appears multiple times)
-      const dateElements = screen.getAllByText("10/02/2026");
+      const dateElements = screen.getAllByText("02/10/2026");
       const container = dateElements[0].closest("div.p-4");
       expect(container).toHaveClass("bg-orange-50", "border-orange-300");
 
       // Check strike-through text
-      const allDateElements = screen.getAllByText(/10\/02\/2026/);
+      const allDateElements = screen.getAllByText(/02\/10\/2026/);
       // Find the date element with the strike-through styling (first occurrence)
       const dateElement = allDateElements[0];
       expect(dateElement.closest("div")).toHaveClass(
@@ -56,24 +59,28 @@ describe("AttendanceHistoryItem", () => {
         "line-through",
       );
 
-      // Check CANCELADO label
-      expect(screen.getByText("(CANCELADO)")).toBeInTheDocument();
-      expect(screen.getByText("(CANCELADO)")).toHaveClass("text-orange-600");
+      // Check CANCELLED label
+      expect(screen.getByText("(CANCELLED)")).toBeInTheDocument();
+      expect(screen.getByText("(CANCELLED)")).toHaveClass("text-orange-600");
 
       // Check status badge
-      expect(screen.getByText("Cancelado")).toBeInTheDocument();
-      const badge = screen.getByText("Cancelado");
+      expect(
+        screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.cancelled),
+      ).toBeInTheDocument();
+      const badge = screen.getByText(
+        ATTENDANCE_HISTORY_STATUS_LABELS.cancelled,
+      );
       expect(badge).toHaveClass(
         "bg-orange-200",
         "text-orange-900",
         "border-orange-400",
       );
 
-      // Check absence reason box (cancelled status shows "Motivo:" even when justified)
+      // Check absence reason box (cancelled status shows "Reason:" even when justified)
       expect(
-        screen.getByText("Paciente teve compromisso inadiável"),
+        screen.getByText("Patient had an unavoidable conflict"),
       ).toBeInTheDocument();
-      const reasonBox = screen.getByText("Motivo:").closest("div.p-3");
+      const reasonBox = screen.getByText("Reason:").closest("div.p-3");
       expect(reasonBox).toHaveClass(
         "bg-orange-100",
         "border-l-4",
@@ -89,10 +96,8 @@ describe("AttendanceHistoryItem", () => {
         absenceJustified: false,
         treatments: {
           physiotherapy: {
-            bodyLocationsWithColors: [
-              { bodyLocation: "Cabeça", color: "Azul" },
-            ],
-            color: "Azul",
+            bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
+            color: "Blue",
             duration: 15,
             sessionNumber: "10",
           },
@@ -106,16 +111,16 @@ describe("AttendanceHistoryItem", () => {
         />,
       );
 
-      // AbsenceReasonBox shows "Não justificado" when absenceNotes is undefined but status is cancelled
-      expect(screen.getByText("Motivo:")).toBeInTheDocument();
-      expect(screen.getByText("Não justificado")).toBeInTheDocument();
+      // AbsenceReasonBox shows "Not justified" when absenceNotes is undefined but status is cancelled
+      expect(screen.getByText("Reason:")).toBeInTheDocument();
+      expect(screen.getByText("Not justified")).toBeInTheDocument();
     });
 
     it("displays cancelled attendance with fallback label when treatments are empty", () => {
       const cancelledAttendance = createMockAttendance({
         date: "2026-02-10",
         status: "cancelled",
-        absenceNotes: "tentar remarcar",
+        absenceNotes: "Try to reschedule",
         treatments: {},
       });
 
@@ -126,8 +131,8 @@ describe("AttendanceHistoryItem", () => {
         />,
       );
 
-      // When treatments are empty, getTreatmentTypeLabel returns "Não especificado"
-      expect(screen.getByText("Não especificado")).toBeInTheDocument();
+      // When treatments are empty, getTreatmentTypeLabel returns "not specified"
+      expect(screen.getByText("Not specified")).toBeInTheDocument();
     });
   });
 
@@ -136,11 +141,11 @@ describe("AttendanceHistoryItem", () => {
       const missedAttendance = createMockAttendance({
         date: "2026-02-05",
         status: "missed",
-        absenceNotes: "Paciente não compareceu",
+        absenceNotes: "Patient did not show up",
         absenceJustified: false,
         treatments: {
           tens: {
-            bodyLocations: ["Pé direito"],
+            bodyLocations: ["Right Foot"],
             sessionNumber: "5",
           },
         },
@@ -154,30 +159,32 @@ describe("AttendanceHistoryItem", () => {
       );
 
       // Check red background (use getAllByText since date appears multiple times)
-      const dateElements = screen.getAllByText("05/02/2026");
+      const dateElements = screen.getAllByText("02/05/2026");
       const container = dateElements[0].closest("div.p-4");
       expect(container).toHaveClass("bg-red-50", "border-red-300");
 
       // Check strike-through text
-      const allDateElements = screen.getAllByText(/05\/02\/2026/);
+      const allDateElements = screen.getAllByText(/02\/05\/2026/);
       const dateElement = allDateElements[0];
       expect(dateElement.closest("div")).toHaveClass(
         "text-gray-500",
         "line-through",
       );
 
-      // Check FALTA label
-      expect(screen.getByText("(FALTA)")).toBeInTheDocument();
-      expect(screen.getByText("(FALTA)")).toHaveClass("text-red-600");
+      // Check MISSED label
+      expect(screen.getByText("(MISSED)")).toBeInTheDocument();
+      expect(screen.getByText("(MISSED)")).toHaveClass("text-red-600");
 
       // Check status badge
-      expect(screen.getByText("Falta")).toBeInTheDocument();
-      const badge = screen.getByText("Falta");
+      expect(
+        screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.missed),
+      ).toBeInTheDocument();
+      const badge = screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.missed);
       expect(badge).toHaveClass("bg-red-200", "text-red-900", "border-red-400");
 
       // Check absence reason box
-      expect(screen.getByText("Paciente não compareceu")).toBeInTheDocument();
-      const reasonBox = screen.getByText("Motivo:").closest("div.p-3");
+      expect(screen.getByText("Patient did not show up")).toBeInTheDocument();
+      const reasonBox = screen.getByText("Reason:").closest("div.p-3");
       expect(reasonBox).toHaveClass(
         "bg-red-100",
         "border-l-4",
@@ -189,11 +196,11 @@ describe("AttendanceHistoryItem", () => {
       const missedAttendance = createMockAttendance({
         date: "2026-02-05",
         status: "missed",
-        absenceNotes: "Emergência familiar",
+        absenceNotes: "Emergency familiar",
         absenceJustified: true,
         treatments: {
           assessment: {
-            notes: "Consulta de retorno",
+            notes: "Return consultation",
           },
         },
       });
@@ -205,9 +212,9 @@ describe("AttendanceHistoryItem", () => {
         />,
       );
 
-      // Check "Falta justificada:" label is shown
-      expect(screen.getByText("Falta justificada:")).toBeInTheDocument();
-      expect(screen.getByText("Emergência familiar")).toBeInTheDocument();
+      // Check "Justified absence:" label is shown
+      expect(screen.getByText("Justified absence:")).toBeInTheDocument();
+      expect(screen.getByText("Emergency familiar")).toBeInTheDocument();
     });
   });
 
@@ -218,7 +225,7 @@ describe("AttendanceHistoryItem", () => {
         status: "completed",
         treatments: {
           assessment: {
-            notes: "Consulta realizada",
+            notes: "Consultation completed",
           },
         },
       });
@@ -231,22 +238,24 @@ describe("AttendanceHistoryItem", () => {
       );
 
       // Check normal background (use getAllByText since date appears multiple times)
-      const dateElements = screen.getAllByText("01/02/2026");
+      const dateElements = screen.getAllByText("02/01/2026");
       const container = dateElements[0].closest("div.p-4");
       expect(container).toHaveClass("bg-gray-50", "border-gray-200");
 
       // Check normal text (no strike-through)
-      const allDateElements = screen.getAllByText(/01\/02\/2026/);
+      const allDateElements = screen.getAllByText(/02\/01\/2026/);
       const dateElement = allDateElements[0];
       expect(dateElement.closest("div")).toHaveClass("text-gray-900");
       expect(dateElement.closest("div")).not.toHaveClass("line-through");
 
-      // Check no CANCELADO or FALTA labels
-      expect(screen.queryByText("(CANCELADO)")).not.toBeInTheDocument();
-      expect(screen.queryByText("(FALTA)")).not.toBeInTheDocument();
+      // Check no CANCELLED or MISSED labels
+      expect(screen.queryByText("(CANCELLED)")).not.toBeInTheDocument();
+      expect(screen.queryByText("(MISSED)")).not.toBeInTheDocument();
 
       // Check completed badge
-      expect(screen.getByText("Concluído")).toBeInTheDocument();
+      expect(
+        screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.completed),
+      ).toBeInTheDocument();
     });
   });
 
@@ -258,7 +267,7 @@ describe("AttendanceHistoryItem", () => {
         absenceNotes: "Test",
         treatments: {
           assessment: {
-            notes: "Consulta",
+            notes: "Assessment visit",
           },
         },
       });
@@ -270,7 +279,9 @@ describe("AttendanceHistoryItem", () => {
         />,
       );
 
-      expect(screen.getAllByText("Consulta").length).toBeGreaterThan(0);
+      expect(
+        screen.getAllByText(getAttendanceTypeLabel("assessment")).length,
+      ).toBeGreaterThan(0);
     });
 
     it("displays correct label for physiotherapy only", () => {
@@ -280,10 +291,8 @@ describe("AttendanceHistoryItem", () => {
         absenceNotes: "Test",
         treatments: {
           physiotherapy: {
-            bodyLocationsWithColors: [
-              { bodyLocation: "Cabeça", color: "Azul" },
-            ],
-            color: "Azul",
+            bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
+            color: "Blue",
             duration: 15,
             sessionNumber: "10",
           },
@@ -297,7 +306,9 @@ describe("AttendanceHistoryItem", () => {
         />,
       );
 
-      expect(screen.getByText("Fisioterapia")).toBeInTheDocument();
+      expect(
+        screen.getByText(getTreatmentTypeLabel(false, true, false)),
+      ).toBeInTheDocument();
     });
 
     it("displays correct label for tens only", () => {
@@ -307,7 +318,7 @@ describe("AttendanceHistoryItem", () => {
         absenceNotes: "Test",
         treatments: {
           tens: {
-            bodyLocations: ["Pé"],
+            bodyLocations: ["Foot"],
             sessionNumber: "5",
           },
         },
@@ -320,7 +331,9 @@ describe("AttendanceHistoryItem", () => {
         />,
       );
 
-      expect(screen.getByText("TENS")).toBeInTheDocument();
+      expect(
+        screen.getByText(getTreatmentTypeLabel(false, false, true)),
+      ).toBeInTheDocument();
     });
 
     it("displays correct label for both physiotherapy and tens", () => {
@@ -330,15 +343,13 @@ describe("AttendanceHistoryItem", () => {
         absenceNotes: "Test",
         treatments: {
           physiotherapy: {
-            bodyLocationsWithColors: [
-              { bodyLocation: "Cabeça", color: "Azul" },
-            ],
-            color: "Azul",
+            bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
+            color: "Blue",
             duration: 15,
             sessionNumber: "10",
           },
           tens: {
-            bodyLocations: ["Perna"],
+            bodyLocations: ["Leg"],
             sessionNumber: "5",
           },
         },
@@ -351,7 +362,9 @@ describe("AttendanceHistoryItem", () => {
         />,
       );
 
-      expect(screen.getByText("Fisioterapia e TENS")).toBeInTheDocument();
+      expect(
+        screen.getByText(getTreatmentTypeLabel(false, true, true)),
+      ).toBeInTheDocument();
     });
   });
 
@@ -362,8 +375,8 @@ describe("AttendanceHistoryItem", () => {
       absenceNotes: "Test",
       treatments: {
         physiotherapy: {
-          bodyLocationsWithColors: [{ bodyLocation: "Cabeça", color: "Azul" }],
-          color: "Azul",
+          bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
+          color: "Blue",
           duration: 15,
           sessionNumber: "10",
         },
@@ -376,13 +389,13 @@ describe("AttendanceHistoryItem", () => {
       absenceNotes: "Test",
       treatments: {
         tens: {
-          bodyLocations: ["Pé"],
+          bodyLocations: ["Foot"],
           sessionNumber: "5",
         },
       },
     });
 
-    it("should show Reagendar button when patient is in treatment (T) and cancelled", () => {
+    it("should show Reschedule button when patient is in treatment (T) and cancelled", () => {
       render(
         <AttendanceHistoryItem
           groupedAttendance={cancelledWithPhysiotherapy}
@@ -392,11 +405,11 @@ describe("AttendanceHistoryItem", () => {
       );
 
       expect(
-        screen.getByRole("button", { name: /Reagendar atendimento/i }),
+        screen.getByRole("button", { name: /ReSchedule Attendance/i }),
       ).toBeInTheDocument();
     });
 
-    it("should show Reagendar button when patient is in treatment (T) and missed", () => {
+    it("should show Reschedule button when patient is in treatment (T) and missed", () => {
       render(
         <AttendanceHistoryItem
           groupedAttendance={missedWithTens}
@@ -406,11 +419,11 @@ describe("AttendanceHistoryItem", () => {
       );
 
       expect(
-        screen.getByRole("button", { name: /Reagendar atendimento/i }),
+        screen.getByRole("button", { name: /ReSchedule Attendance/i }),
       ).toBeInTheDocument();
     });
 
-    it("should not show Reagendar button when patient is discharged (A)", () => {
+    it("should not show Reschedule button when patient is discharged (A)", () => {
       render(
         <AttendanceHistoryItem
           groupedAttendance={cancelledWithPhysiotherapy}
@@ -420,11 +433,11 @@ describe("AttendanceHistoryItem", () => {
       );
 
       expect(
-        screen.queryByRole("button", { name: /Reagendar atendimento/i }),
+        screen.queryByRole("button", { name: /ReSchedule Attendance/i }),
       ).not.toBeInTheDocument();
     });
 
-    it("should not show Reagendar button when patient has consecutive absences (F)", () => {
+    it("should not show Reschedule button when patient has consecutive absences (F)", () => {
       render(
         <AttendanceHistoryItem
           groupedAttendance={cancelledWithPhysiotherapy}
@@ -434,11 +447,11 @@ describe("AttendanceHistoryItem", () => {
       );
 
       expect(
-        screen.queryByRole("button", { name: /Reagendar atendimento/i }),
+        screen.queryByRole("button", { name: /ReSchedule Attendance/i }),
       ).not.toBeInTheDocument();
     });
 
-    it("should not show Reagendar button when patientTreatmentStatus is undefined", () => {
+    it("should not show Reschedule button when patientTreatmentStatus is undefined", () => {
       render(
         <AttendanceHistoryItem
           groupedAttendance={cancelledWithPhysiotherapy}
@@ -447,7 +460,7 @@ describe("AttendanceHistoryItem", () => {
       );
 
       expect(
-        screen.queryByRole("button", { name: /Reagendar atendimento/i }),
+        screen.queryByRole("button", { name: /ReSchedule Attendance/i }),
       ).not.toBeInTheDocument();
     });
   });

@@ -35,7 +35,7 @@ describe("MultiSectionModal", () => {
   describe("Modal visibility", () => {
     it("renders when modal is open", () => {
       render(<MultiSectionModal />);
-      expect(screen.getByText("Múltiplas Seções")).toBeInTheDocument();
+      expect(screen.getByText("Multiple Sections")).toBeInTheDocument();
     });
 
     it("does not render when modal is closed", () => {
@@ -52,14 +52,14 @@ describe("MultiSectionModal", () => {
   describe("Modal content", () => {
     it("displays the correct title", () => {
       render(<MultiSectionModal />);
-      expect(screen.getByText("Múltiplas Seções")).toBeInTheDocument();
+      expect(screen.getByText("Multiple Sections")).toBeInTheDocument();
     });
 
     it("displays the confirmation message", () => {
       render(<MultiSectionModal />);
       expect(
         screen.getByText(
-          "Este paciente está agendado nas duas consultas. Deseja mover para 'Sala de Espera' em ambas?",
+          "This patient is scheduled in both consultations. Do you want to move them to 'Waiting Room' in both?",
         ),
       ).toBeInTheDocument();
     });
@@ -67,21 +67,21 @@ describe("MultiSectionModal", () => {
     it("renders action buttons with correct text", () => {
       render(<MultiSectionModal />);
       expect(
-        screen.getByRole("button", { name: "Apenas nesta seção" }),
+        screen.getByRole("button", { name: "Only in this section" }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: "Mover em ambas" }),
+        screen.getByRole("button", { name: "Move in both" }),
       ).toBeInTheDocument();
     });
 
     it("renders close button with proper aria-label", () => {
       render(<MultiSectionModal />);
-      expect(screen.getByLabelText("Fechar")).toBeInTheDocument();
+      expect(screen.getByLabelText("Close")).toBeInTheDocument();
     });
 
     it("displays SVG icon in close button", () => {
       render(<MultiSectionModal />);
-      const closeButton = screen.getByLabelText("Fechar");
+      const closeButton = screen.getByLabelText("Close");
       const svg = closeButton.querySelector("svg");
       expect(svg).toBeInTheDocument();
       expect(svg).toHaveClass("h-6", "w-6");
@@ -89,12 +89,12 @@ describe("MultiSectionModal", () => {
   });
 
   describe("Button interactions", () => {
-    it("calls onConfirm callback when 'Mover em ambas' button is clicked", async () => {
+    it("calls onConfirm callback when 'Move in both' button is clicked", async () => {
       const user = userEvent.setup();
       render(<MultiSectionModal />);
 
       const confirmButton = screen.getByRole("button", {
-        name: "Mover em ambas",
+        name: "Move in both",
       });
       await user.click(confirmButton);
 
@@ -102,12 +102,12 @@ describe("MultiSectionModal", () => {
       expect(mockCloseModal).toHaveBeenCalledWith("multiSection");
     });
 
-    it("calls onCancel callback when 'Apenas nesta seção' button is clicked", async () => {
+    it("calls onCancel callback when 'Only in this section' button is clicked", async () => {
       const user = userEvent.setup();
       render(<MultiSectionModal />);
 
       const cancelButton = screen.getByRole("button", {
-        name: "Apenas nesta seção",
+        name: "Only in this section",
       });
       await user.click(cancelButton);
 
@@ -119,7 +119,7 @@ describe("MultiSectionModal", () => {
       const user = userEvent.setup();
       render(<MultiSectionModal />);
 
-      const closeButton = screen.getByLabelText("Fechar");
+      const closeButton = screen.getByLabelText("Close");
       await user.click(closeButton);
 
       expect(mockMultiSectionModal.onCancel).toHaveBeenCalledTimes(1);
@@ -138,7 +138,7 @@ describe("MultiSectionModal", () => {
       render(<MultiSectionModal />);
 
       const confirmButton = screen.getByRole("button", {
-        name: "Mover em ambas",
+        name: "Move in both",
       });
       await user.click(confirmButton);
 
@@ -156,7 +156,7 @@ describe("MultiSectionModal", () => {
       render(<MultiSectionModal />);
 
       const cancelButton = screen.getByRole("button", {
-        name: "Apenas nesta seção",
+        name: "Only in this section",
       });
       await user.click(cancelButton);
 
@@ -173,7 +173,7 @@ describe("MultiSectionModal", () => {
       const user = userEvent.setup();
       render(<MultiSectionModal />);
 
-      const closeButton = screen.getByLabelText("Fechar");
+      const closeButton = screen.getByLabelText("Close");
       await user.click(closeButton);
 
       // Should not throw an error
@@ -185,7 +185,7 @@ describe("MultiSectionModal", () => {
     it("applies correct CSS classes for modal overlay", () => {
       render(<MultiSectionModal />);
       const overlay = screen
-        .getByRole("button", { name: "Mover em ambas" })
+        .getByRole("button", { name: "Move in both" })
         .closest(".fixed");
       expect(overlay).toHaveClass(
         "fixed",
@@ -218,7 +218,7 @@ describe("MultiSectionModal", () => {
       render(<MultiSectionModal />);
 
       const cancelButton = screen.getByRole("button", {
-        name: "Apenas nesta seção",
+        name: "Only in this section",
       });
       expect(cancelButton).toHaveClass(
         "border",
@@ -230,7 +230,7 @@ describe("MultiSectionModal", () => {
       );
 
       const confirmButton = screen.getByRole("button", {
-        name: "Mover em ambas",
+        name: "Move in both",
       });
       expect(confirmButton).toHaveClass(
         "bg-blue-700",
@@ -243,7 +243,7 @@ describe("MultiSectionModal", () => {
     it("applies hover styles correctly", () => {
       render(<MultiSectionModal />);
 
-      const closeButton = screen.getByLabelText("Fechar");
+      const closeButton = screen.getByLabelText("Close");
       expect(closeButton).toHaveClass(
         "text-gray-600",
         "hover:bg-gray-100",
@@ -257,12 +257,12 @@ describe("MultiSectionModal", () => {
       render(<MultiSectionModal />);
 
       const cancelButton = screen.getByRole("button", {
-        name: "Apenas nesta seção",
+        name: "Only in this section",
       });
       const confirmButton = screen.getByRole("button", {
-        name: "Mover em ambas",
+        name: "Move in both",
       });
-      const closeButton = screen.getByLabelText("Fechar");
+      const closeButton = screen.getByLabelText("Close");
 
       // All buttons should be focusable
       cancelButton.focus();
@@ -279,7 +279,7 @@ describe("MultiSectionModal", () => {
       render(<MultiSectionModal />);
 
       const confirmButton = screen.getByRole("button", {
-        name: "Mover em ambas",
+        name: "Move in both",
       });
 
       // Test Enter key
@@ -301,7 +301,7 @@ describe("MultiSectionModal", () => {
       render(<MultiSectionModal />);
 
       const confirmButton = screen.getByRole("button", {
-        name: "Mover em ambas",
+        name: "Move in both",
       });
 
       // Click should handle the action without any issues
@@ -316,7 +316,7 @@ describe("MultiSectionModal", () => {
       render(<MultiSectionModal />);
 
       const confirmButton = screen.getByRole("button", {
-        name: "Mover em ambas",
+        name: "Move in both",
       });
 
       // Rapid clicks

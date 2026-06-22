@@ -60,15 +60,15 @@ describe("ShowMoreButton", () => {
       render(<ShowMoreButton {...defaultProps} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 itens");
+      expect(button).toHaveTextContent("Show more 10 items");
       expect(button).toHaveTextContent("+15");
     });
 
     it("should display correct text with custom item label", () => {
-      render(<ShowMoreButton {...defaultProps} itemLabel="produtos" />);
+      render(<ShowMoreButton {...defaultProps} itemLabel="records" />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 produtos");
+      expect(button).toHaveTextContent("Show more 10 records");
     });
 
     it("should limit display count to 10 when more than 10 remaining", () => {
@@ -77,7 +77,7 @@ describe("ShowMoreButton", () => {
       );
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 itens");
+      expect(button).toHaveTextContent("Show more 10 items");
       expect(button).toHaveTextContent("+40");
     });
 
@@ -87,7 +87,7 @@ describe("ShowMoreButton", () => {
       );
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 5 itens");
+      expect(button).toHaveTextContent("Show more 5 items");
       expect(button).toHaveTextContent("+5");
     });
 
@@ -97,7 +97,7 @@ describe("ShowMoreButton", () => {
       );
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 1 itens");
+      expect(button).toHaveTextContent("Show more 1 items");
       expect(button).toHaveTextContent("+1");
     });
   });
@@ -300,7 +300,7 @@ describe("ShowMoreButton", () => {
       expect(icon).toBeInTheDocument();
 
       // Check for text span
-      const textSpan = screen.getByText("Mostrar mais 10 itens");
+      const textSpan = screen.getByText("Show more 10 items");
       expect(textSpan).toBeInTheDocument();
 
       // Check for badge span
@@ -320,7 +320,7 @@ describe("ShowMoreButton", () => {
       );
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 itens");
+      expect(button).toHaveTextContent("Show more 10 items");
       expect(button).toHaveTextContent("+999950");
     });
 
@@ -328,7 +328,7 @@ describe("ShowMoreButton", () => {
       render(<ShowMoreButton {...defaultProps} visibleCount={0} />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 itens");
+      expect(button).toHaveTextContent("Show more 10 items");
       expect(button).toHaveTextContent("+25");
     });
 
@@ -338,7 +338,7 @@ describe("ShowMoreButton", () => {
       );
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 3 itens");
+      expect(button).toHaveTextContent("Show more 3 items");
       expect(button).toHaveTextContent("+3");
     });
 
@@ -348,7 +348,7 @@ describe("ShowMoreButton", () => {
       );
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 itens");
+      expect(button).toHaveTextContent("Show more 10 items");
       expect(button).toHaveTextContent("+10");
     });
   });
@@ -358,17 +358,17 @@ describe("ShowMoreButton", () => {
       render(<ShowMoreButton {...defaultProps} itemLabel="x" />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 x");
+      expect(button).toHaveTextContent("Show more 10 x");
     });
 
     it("should work with long item label", () => {
       render(
-        <ShowMoreButton {...defaultProps} itemLabel="elementos muito longos" />
+        <ShowMoreButton {...defaultProps} itemLabel="very long elements" />
       );
 
       const button = screen.getByRole("button");
       expect(button).toHaveTextContent(
-        "Mostrar mais 10 elementos muito longos"
+        "Show more 10 very long elements"
       );
     });
 
@@ -376,14 +376,14 @@ describe("ShowMoreButton", () => {
       render(<ShowMoreButton {...defaultProps} itemLabel="" />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 ");
+      expect(button).toHaveTextContent("Show more 10 ");
     });
 
     it("should work with numeric-like item label", () => {
       render(<ShowMoreButton {...defaultProps} itemLabel="123" />);
 
       const button = screen.getByRole("button");
-      expect(button).toHaveTextContent("Mostrar mais 10 123");
+      expect(button).toHaveTextContent("Show more 10 123");
     });
   });
 
@@ -418,7 +418,7 @@ describe("ShowMoreButton", () => {
 
       const button = screen.getByRole("button");
       // remainingItems = 25 - (-5) = 30, so Math.min(10, 30) = 10
-      expect(button).toHaveTextContent("Mostrar mais 10 itens");
+      expect(button).toHaveTextContent("Show more 10 items");
       expect(button).toHaveTextContent("+30");
     });
   });

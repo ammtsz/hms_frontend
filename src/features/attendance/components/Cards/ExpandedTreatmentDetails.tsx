@@ -71,13 +71,13 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
   if (!treatmentsWithSessionRows || treatmentsWithSessionRows.length === 0) {
     return (
       <div className="p-3 bg-gray-50 rounded text-sm text-gray-500 italic">
-        Nenhuma sessão de tratamento encontrada
+        No treatment session found
       </div>
     );
   }
 
-  const hasMainComplaint =
-    patientData?.mainComplaint && patientData.mainComplaint.trim();
+  const hasMainConcern =
+    patientData?.mainConcern && patientData.mainConcern.trim();
 
   const openEditForGroup = (
     treatmentType: "physiotherapy" | "tens",
@@ -99,14 +99,14 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
             ({ treatmentType, treatmentPlans, eligibility }) => {
               const canEdit = eligibility.canEdit;
               const tooltip = isCardDisabled
-                ? "Este atendimento não está ativo e não pode ser editado."
+                ? "This attendance is not active and cannot be edited."
                 : canEdit
-                  ? "Editar tratamento"
+                  ? "Edit treatment"
                   : eligibility.reason === "hasCompletedSessions"
-                    ? "Este tratamento já possui sessões concluídas e não pode mais ser editado."
+                    ? "This treatment already has completed sessions and can no longer be edited."
                     : eligibility.reason === "notEffectiveFirstDay"
-                      ? "Faça as edições necessárias no primeiro dia efetivo de tratamento."
-                      : "Este tratamento não pode ser editado neste momento.";
+                      ? "Make necessary edits on the first effective day of treatment."
+                      : "This treatment cannot be edited at this moment.";
               const physiotherapyColor =
                 treatmentType === "physiotherapy"
                   ? treatmentPlans[0]?.color
@@ -126,8 +126,8 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
                   title={tooltip}
                   className="w-full"
                 >
-                  Editar{" "}
-                  {treatmentType === "physiotherapy" ? "Fisioterapia" : "TENS"}
+                  Edit{" "}
+                  {treatmentType === "physiotherapy" ? "Physiotherapy" : "TENS"}
                   {treatmentType === "physiotherapy" && physiotherapyColor
                     ? ` - ${physiotherapyColor}`
                     : ""}
@@ -151,13 +151,11 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
         />
       )}
 
-      {hasMainComplaint && (
+      {hasMainConcern && (
         <div className="bg-blue-50 rounded-lg p-3 text-sm border border-blue-200">
-          <div className="font-semibold text-blue-900 mb-1">
-            Queixa Principal
-          </div>
+          <div className="font-semibold text-blue-900 mb-1">Main concern</div>
           <div className="text-blue-800 whitespace-pre-wrap">
-            {patientData.mainComplaint}
+            {patientData.mainConcern}
           </div>
         </div>
       )}
@@ -170,16 +168,16 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
           <div>
             <span className="font-semibold text-gray-700">
               {group.treatmentType === "physiotherapy"
-                ? "Fisioterapia"
+                ? "Physiotherapy"
                 : "TENS"}
-              {" – Sessão "}
+              {" – Session "}
               {group.sessionNumber}/{group.plannedSessions}
             </span>
           </div>
 
           <div>
             <span className="text-gray-700 font-semibold">
-              {group.bodyLocations.length === 1 ? "Local: " : "Locais: "}
+              {group.bodyLocations.length === 1 ? "Location: " : "Locations: "}
             </span>
             <span className="text-gray-800 font-normal">
               {group.bodyLocations.join(", ")}
@@ -188,7 +186,7 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
 
           {group.treatmentType === "physiotherapy" && group.color && (
             <div>
-              <span className="text-gray-700 font-semibold">Cor: </span>
+              <span className="text-gray-700 font-semibold">Color: </span>
               <span
                 className="px-2 py-0.5 rounded text-xs text-white font-normal"
                 style={{
@@ -203,10 +201,10 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
           {group.treatmentType === "physiotherapy" &&
             group.durationMinutes != null && (
               <div>
-                <span className="text-gray-700 font-semibold">Tempo: </span>
+                <span className="text-gray-700 font-semibold">Duration: </span>
                 <span className="text-gray-800 font-normal">
                   {group.durationMinutes}{" "}
-                  {group.durationMinutes === 1 ? "unidade" : "unidades"}
+                  {group.durationMinutes === 1 ? "minute" : "minutes"}
                 </span>
               </div>
             )}

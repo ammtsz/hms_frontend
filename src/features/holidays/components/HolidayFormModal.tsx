@@ -24,13 +24,7 @@ import {
   Radio,
   Textarea,
 } from "@/components/ui";
-
-// Treatment type constants
-const TREATMENT_TYPES = [
-  { value: "assessment", label: "Consulta de Avaliação" },
-  { value: "physiotherapy", label: "Fisioterapia" },
-  { value: "tens", label: "TENS" },
-] as const;
+import { HOLIDAY_TREATMENT_TYPE_OPTIONS } from "../utils/holidayDisplayUtils";
 
 type TreatmentType = "assessment" | "physiotherapy" | "tens";
 
@@ -123,18 +117,18 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Nome é obrigatório";
+      newErrors.name = "Name is required";
     } else if (formData.name.length > 255) {
-      newErrors.name = "Nome deve ter no máximo 255 caracteres";
+      newErrors.name = "Name must not exceed 255 characters";
     }
 
     if (!formData.holidayDate) {
-      newErrors.holidayDate = "Data é obrigatória";
+      newErrors.holidayDate = "Date is required";
     } else {
       const selectedDate = new Date(formData.holidayDate + "T00:00:00");
       const today = new Date(getTodayDate() + "T00:00:00");
       if (selectedDate < today && !isEditing) {
-        newErrors.holidayDate = "Data deve ser hoje ou no futuro";
+        newErrors.holidayDate = "Date must be today or in the future";
       }
     }
 
@@ -146,26 +140,26 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!periodData.name.trim()) {
-      newErrors.name = "Nome é obrigatório";
+      newErrors.name = "Name is required";
     } else if (periodData.name.length > 255) {
-      newErrors.name = "Nome deve ter no máximo 255 caracteres";
+      newErrors.name = "Name must not exceed 255 characters";
     }
 
     if (!periodData.startDate) {
-      newErrors.startDate = "Data de cadastro é obrigatória";
+      newErrors.startDate = "Start date is required";
     } else {
       const startDate = new Date(periodData.startDate + "T00:00:00");
       const today = new Date(getTodayDate() + "T00:00:00");
       if (startDate < today) {
-        newErrors.startDate = "Data deve ser hoje ou no futuro";
+        newErrors.startDate = "Date must be today or in the future";
       }
     }
 
     if (!periodData.endDate) {
-      newErrors.endDate = "Data de fim é obrigatória";
+      newErrors.endDate = "End date is required";
     } else if (!isValidDateRange(periodData.startDate, periodData.endDate)) {
       newErrors.endDate =
-        "Data de fim deve ser maior ou igual à data de início";
+        "End date must be greater than or equal to start date";
     }
 
     setErrors(newErrors);
@@ -204,7 +198,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
               setConflictError(
                 error instanceof Error
                   ? error.message
-                  : "Erro ao atualizar período de feriado",
+                  : "Error updating holiday period",
               );
             },
           },
@@ -225,7 +219,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
               setConflictError(
                 error instanceof Error
                   ? error.message
-                  : "Erro ao atualizar feriado",
+                  : "Error updating holiday",
               );
             },
           },
@@ -242,7 +236,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
           setConflictError(
             error instanceof Error
               ? error.message
-              : "Erro ao criar período de feriado",
+              : "Error creating holiday period",
           );
         },
       });
@@ -253,7 +247,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
 
         if (conflictData?.hasConflict) {
           setConflictError(
-            `Esta data possui ${conflictData.attendanceCount} atendimento(s) agendado(s). Não é possível criar feriado.`,
+            `This date has ${conflictData.attendanceCount} attendance(s) scheduled. Cannot create holiday.`,
           );
           return;
         }
@@ -266,7 +260,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
         onError: (error) => {
           console.error("Error creating holiday:", error);
           setConflictError(
-            error instanceof Error ? error.message : "Erro ao criar feriado",
+            error instanceof Error ? error.message : "Error creating holiday",
           );
         },
       });
@@ -313,10 +307,10 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
     <BaseModal
       isOpen
       onClose={onClose}
-      title={isEditing ? "Editar Feriado" : "Novo Feriado"}
+      title={isEditing ? "Edit Holiday" : "New Holiday"}
       subtitle={
         isEditing && holiday?.holidayGroupId
-          ? "Este feriado contém mais de um dia. As alterações serão aplicadas a todos os dias do período."
+          ? "This holiday spans more than one day. Changes will be applied to all days in the period."
           : undefined
       }
       maxWidth="lg"
@@ -338,7 +332,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
         {!isEditing && (
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700">
-              Tipo de Feriado
+              Holiday Type
             </label>
             <div className="flex gap-6">
               <label className="flex items-center gap-2">
@@ -347,7 +341,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
                   checked={!isRangeMode}
                   onChange={toggleRangeMode}
                 />
-                <span className="text-sm text-gray-700">Data Única</span>
+                <span className="text-sm text-gray-700">Single Day</span>
               </label>
               <label className="flex items-center gap-2">
                 <Radio
@@ -355,7 +349,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
                   checked={isRangeMode}
                   onChange={toggleRangeMode}
                 />
-                <span className="text-sm text-gray-700">Período</span>
+                <span className="text-sm text-gray-700">Period</span>
               </label>
             </div>
           </div>
@@ -365,12 +359,12 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
         {!isRangeMode ? (
           // Single Date
           <Field
-            label="Data *"
+            label="Date *"
             htmlFor="holidayDate"
             error={errors.holidayDate}
             helpText={
               isEditing
-                ? "A data não pode ser alterada após criação"
+                ? "The date cannot be changed after creation"
                 : undefined
             }
           >
@@ -388,7 +382,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
           // Date Range
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field
-              label="Data Início *"
+              label="Start Date *"
               htmlFor="startDate"
               error={errors.startDate}
             >
@@ -402,7 +396,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
                 invalid={Boolean(errors.startDate)}
               />
             </Field>
-            <Field label="Data Fim *" htmlFor="endDate" error={errors.endDate}>
+            <Field label="End Date *" htmlFor="endDate" error={errors.endDate}>
               <Input
                 type="date"
                 id="endDate"
@@ -418,7 +412,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
         )}
 
         {/* Name Field */}
-        <Field label="Nome *" htmlFor="name" error={errors.name}>
+        <Field label="Name *" htmlFor="name" error={errors.name}>
           <Input
             type="text"
             id="name"
@@ -429,7 +423,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
             }
             disabled={isPending}
             maxLength={255}
-            placeholder="Ex: Natal, Ano Novo, Carnaval, etc."
+            placeholder="e.g. Christmas, New Year, Carnival, etc."
             invalid={Boolean(errors.name)}
           />
         </Field>
@@ -437,10 +431,10 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
         {/* Blocked Treatment Types Field */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">
-            Tipos de Tratamento Bloqueados
+            Blocked Treatment Types
           </label>
           <div className="space-y-3">
-            {TREATMENT_TYPES.map((treatmentType) => {
+            {HOLIDAY_TREATMENT_TYPE_OPTIONS.map((treatmentType) => {
               const isSelected = isRangeMode
                 ? (periodData.blockedTreatmentTypes || []).includes(
                     treatmentType.value,
@@ -457,7 +451,9 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
                   <Checkbox
                     checked={isSelected}
                     onChange={() =>
-                      handleTreatmentTypeToggle(treatmentType.value)
+                      handleTreatmentTypeToggle(
+                        treatmentType.value as TreatmentType,
+                      )
                     }
                     disabled={isPending}
                   />
@@ -471,7 +467,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
         </div>
 
         {/* Description Field */}
-        <Field label="Descrição" htmlFor="description">
+        <Field label="Description" htmlFor="description">
           <Textarea
             id="description"
             name="description"
@@ -485,7 +481,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
             }
             disabled={isPending}
             rows={3}
-            placeholder="Informações adicionais sobre o feriado (opcional)"
+            placeholder="Additional holiday information (optional)"
           />
         </Field>
 
@@ -497,15 +493,15 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
             onClick={onClose}
             disabled={isPending}
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="submit"
             disabled={isPending}
             isLoading={isPending}
-            loadingText="Salvando..."
+            loadingText="Saving..."
           >
-            {isEditing ? "Salvar Alterações" : "Criar Feriado"}
+            {isEditing ? "Save Changes" : "Create Holiday"}
           </Button>
         </div>
       </form>

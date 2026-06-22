@@ -11,10 +11,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { UserRole } from "@/types/auth";
 import * as noteCategoryHooks from "@/api/query/hooks/useNoteCategoriesQueries";
-import {
-  SystemOptionType,
-  type SystemOption,
-} from "@/types/systemOptions";
+import { SystemOptionType, type SystemOption } from "@/types/systemOptions";
 
 jest.mock("@/contexts/AuthContext");
 jest.mock("@/contexts/ToastContext");
@@ -27,8 +24,8 @@ describe("NoteCategoriesManagementList", () => {
     {
       id: 1,
       type: SystemOptionType.NOTE_CATEGORY,
-      value: "geral",
-      label: "Geral",
+      value: "general",
+      label: "General",
       sortOrder: 1,
       isActive: true,
       usageCount: 4,
@@ -39,7 +36,7 @@ describe("NoteCategoriesManagementList", () => {
       id: 2,
       type: SystemOptionType.NOTE_CATEGORY,
       value: "treatment",
-      label: "Tratamento",
+      label: "Treatment",
       sortOrder: 2,
       isActive: false,
       usageCount: 1,
@@ -49,8 +46,8 @@ describe("NoteCategoriesManagementList", () => {
     {
       id: 3,
       type: SystemOptionType.NOTE_CATEGORY,
-      value: "alteracao_de_status",
-      label: "Mudança de status",
+      value: "status_change",
+      label: "Status change",
       sortOrder: 3,
       isActive: true,
       usageCount: 2,
@@ -95,26 +92,26 @@ describe("NoteCategoriesManagementList", () => {
   it("renders categories rows", () => {
     render(<NoteCategoriesManagementList />);
 
-    expect(screen.getByText("geral")).toBeInTheDocument();
-    expect(screen.getByText("Geral")).toBeInTheDocument();
-    expect(screen.getByText("Tratamento")).toBeInTheDocument();
-    expect(screen.getByText("alteracao_de_status")).toBeInTheDocument();
+    expect(screen.getByText("general")).toBeInTheDocument();
+    expect(screen.getByText("General")).toBeInTheDocument();
+    expect(screen.getByText("Treatment")).toBeInTheDocument();
+    expect(screen.getByText("status_change")).toBeInTheDocument();
 
-    expect(screen.getByText("4 nota(s)")).toBeInTheDocument();
+    expect(screen.getByText("4 note(s)")).toBeInTheDocument();
   });
 
   it("toggles category active state", async () => {
     render(<NoteCategoriesManagementList />);
 
     // Enter edit mode for the first category row.
-    fireEvent.click(screen.getAllByTitle("Editar rótulo")[0]);
+    fireEvent.click(screen.getAllByTitle("Edit label")[0]);
 
     // Now toggle status via the status column button.
-    fireEvent.click(screen.getByRole("button", { name: /Ativo/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Active/i }));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(
-        "Categoria desativada.",
+        "Category deactivated.",
         "success",
       );
     });
@@ -123,7 +120,7 @@ describe("NoteCategoriesManagementList", () => {
   it("creates a new category", async () => {
     render(<NoteCategoriesManagementList />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Nova categoria/i }));
+    fireEvent.click(screen.getByRole("button", { name: /New note category/i }));
 
     const textboxes = screen.getAllByRole("textbox");
     expect(textboxes.length).toBeGreaterThanOrEqual(2);
@@ -131,11 +128,11 @@ describe("NoteCategoriesManagementList", () => {
     fireEvent.change(textboxes[0], { target: { value: "custom" } });
     fireEvent.change(textboxes[1], { target: { value: "Custom" } });
 
-    fireEvent.click(screen.getByRole("button", { name: /Criar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Create/i }));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(
-        "Categoria criada com sucesso.",
+        "Category created successfully.",
         "success",
       );
     });
@@ -144,7 +141,7 @@ describe("NoteCategoriesManagementList", () => {
   it("shows validation error for invalid category code", async () => {
     render(<NoteCategoriesManagementList />);
 
-    fireEvent.click(screen.getByRole("button", { name: /Nova categoria/i }));
+    fireEvent.click(screen.getByRole("button", { name: /New note category/i }));
 
     const textboxes = screen.getAllByRole("textbox");
     expect(textboxes.length).toBeGreaterThanOrEqual(2);
@@ -152,24 +149,24 @@ describe("NoteCategoriesManagementList", () => {
     fireEvent.change(textboxes[0], { target: { value: "status$change" } });
     fireEvent.change(textboxes[1], { target: { value: "Custom" } });
 
-    fireEvent.click(screen.getByRole("button", { name: /Criar/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Create/i }));
 
     expect(
       screen.getByText(
-        "Código inválido. Use apenas letras minúsculas (a-z), números (0-9), _ ou -.",
+        "Invalid code. Use only lowercase letters (a-z), numbers (0-9), _ or -.",
       ),
     ).toBeInTheDocument();
   });
 
-  it("prevents editing/removing the 'alteracao_de_status' category", () => {
+  it("prevents editing/removing the 'status_change' category", () => {
     render(<NoteCategoriesManagementList />);
 
-    const statusRow = screen.getByText("alteracao_de_status").closest("tr");
+    const statusRow = screen.getByText("status_change").closest("tr");
     expect(statusRow).not.toBeNull();
     if (!statusRow) return;
 
     const titledElements = within(statusRow).getAllByTitle(
-      /gerar notas/i,
+      /generate automatic notes/i,
     );
     const lockedButtons = titledElements.filter(
       (el) => el.tagName.toLowerCase() === "button",
@@ -177,21 +174,23 @@ describe("NoteCategoriesManagementList", () => {
     expect(lockedButtons.length).toBeGreaterThanOrEqual(2);
     lockedButtons.forEach((btn) => expect(btn).toBeDisabled());
 
-    const statusTag = within(statusRow).getByText("Ativo");
+    const statusTag = within(statusRow).getByText("Active");
     expect(statusTag).toHaveAttribute(
       "title",
-      expect.stringMatching(/Mudança de status|gerar notas/i),
+      expect.stringMatching(/Status change|generate automatic notes/i),
     );
   });
 
-  it("prevents removing the default 'geral' category", () => {
+  it("prevents removing the default 'general' category", () => {
     render(<NoteCategoriesManagementList />);
 
-    const generalRow = screen.getByText("geral").closest("tr");
+    const generalRow = screen.getByText("general").closest("tr");
     expect(generalRow).not.toBeNull();
     if (!generalRow) return;
 
-    const deleteButton = within(generalRow).getByTitle(/categoria 'Geral'/i);
+    const deleteButton = within(generalRow).getByTitle(
+      /General.*category cannot be removed/i,
+    );
     expect(deleteButton).toBeDisabled();
   });
 });

@@ -23,19 +23,25 @@ jest.mock("@/features/patients/detail/CurrentTreatmentCard", () => ({
   ),
 }));
 
-jest.mock("@/features/patients/detail/AttendanceHistory/AttendanceHistoryCard", () => ({
-  AttendanceHistoryCard: () => (
-    <div data-testid="attendance-history-card">Attendance History Card</div>
-  ),
-}));
+jest.mock(
+  "@/features/patients/detail/AttendanceHistory/AttendanceHistoryCard",
+  () => ({
+    AttendanceHistoryCard: () => (
+      <div data-testid="attendance-history-card">Attendance History Card</div>
+    ),
+  }),
+);
 
-jest.mock("@/features/patients/detail/ScheduledAttendances/ScheduledAttendancesCard", () => ({
-  ScheduledAttendancesCard: () => (
-    <div data-testid="scheduled-attendances-card">
-      Scheduled Attendances Card
-    </div>
-  ),
-}));
+jest.mock(
+  "@/features/patients/detail/ScheduledAttendances/ScheduledAttendancesCard",
+  () => ({
+    ScheduledAttendancesCard: () => (
+      <div data-testid="scheduled-attendances-card">
+        Scheduled Attendances Card
+      </div>
+    ),
+  }),
+);
 
 jest.mock("@/features/patients/detail/PatientNotesCard", () => ({
   PatientNotesCard: () => (
@@ -185,7 +191,7 @@ describe("LazyComponents", () => {
       );
 
       expect(screen.getByTestId("loading-fallback")).toBeInTheDocument();
-      expect(screen.getByText("Carregando componente...")).toBeInTheDocument();
+      expect(screen.getByText("Loading component...")).toBeInTheDocument();
     });
 
     it("should render custom fallback when provided", () => {

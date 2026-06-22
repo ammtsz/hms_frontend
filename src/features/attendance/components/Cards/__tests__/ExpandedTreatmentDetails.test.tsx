@@ -25,13 +25,13 @@ describe("ExpandedTreatmentDetails", () => {
         attendanceId: 1,
         patientId: 1,
         treatmentType: "physiotherapy",
-        bodyLocation: "Cabeça",
+        bodyLocation: "Head",
         startDate: "2026-01-15",
         plannedSessions: 10,
         completedSessions: 3,
         status: "in_progress",
         durationMinutes: 14,
-        color: "azul",
+        color: "blue",
         notes: "Treatment progressing well",
         createdDate: "2026-01-15",
         createdTime: "10:00:00",
@@ -58,7 +58,7 @@ describe("ExpandedTreatmentDetails", () => {
         attendanceId: 1,
         patientId: 1,
         treatmentType: "tens",
-        bodyLocation: "Coluna",
+        bodyLocation: "Back",
         startDate: "2026-01-15",
         plannedSessions: 5,
         completedSessions: 2,
@@ -79,11 +79,11 @@ describe("ExpandedTreatmentDetails", () => {
       />,
     );
 
-    expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
-    expect(screen.getByText("azul")).toBeInTheDocument();
-    expect(screen.getByText(/Sessão 1\/10/)).toBeInTheDocument();
-    expect(screen.getByText("Cabeça")).toBeInTheDocument();
-    expect(screen.getByText(/14 unidades/)).toBeInTheDocument();
+    expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
+    expect(screen.getByText("blue")).toBeInTheDocument();
+    expect(screen.getByText(/Session 1\/10/)).toBeInTheDocument();
+    expect(screen.getByText("Head")).toBeInTheDocument();
+    expect(screen.getByText(/14 minutes/)).toBeInTheDocument();
   });
 
   it("should render tens session details", () => {
@@ -95,9 +95,9 @@ describe("ExpandedTreatmentDetails", () => {
     );
 
     expect(screen.getByText(/TENS/)).toBeInTheDocument();
-    expect(screen.getByText(/Sessão 1\/5/)).toBeInTheDocument();
-    expect(screen.getByText("Coluna")).toBeInTheDocument();
-    expect(screen.queryByText(/unidades/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Session 1\/5/)).toBeInTheDocument();
+    expect(screen.getByText("Back")).toBeInTheDocument();
+    expect(screen.queryByText(/units/)).not.toBeInTheDocument();
   });
 
   it("should render multiple sessions", () => {
@@ -108,7 +108,7 @@ describe("ExpandedTreatmentDetails", () => {
       />,
     );
 
-    expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
+    expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
     expect(screen.getByText(/TENS/)).toBeInTheDocument();
   });
 
@@ -120,9 +120,7 @@ describe("ExpandedTreatmentDetails", () => {
       />,
     );
 
-    expect(
-      screen.getByText("Nenhuma sessão de tratamento encontrada"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("No treatment session found")).toBeInTheDocument();
   });
 
   it("should render treatment notes when available", () => {

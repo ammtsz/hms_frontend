@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PasswordSettings from "../PasswordSettings";
 import { changeOwnPassword } from "@/api/users";
+import { PASSWORD_CHANGE_ERROR_MESSAGES } from "@/utils/passwordChangeErrorMessages";
 
 jest.mock("@/api/users");
 
@@ -29,11 +30,11 @@ describe("PasswordSettings", () => {
   it("renders password change form", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
-    expect(screen.getByText("Senha Atual *")).toBeInTheDocument();
-    expect(screen.getByText("Nova Senha *")).toBeInTheDocument();
-    expect(screen.getByText("Confirmar Nova Senha *")).toBeInTheDocument();
+    expect(screen.getByText("Current Password *")).toBeInTheDocument();
+    expect(screen.getByText("New Password *")).toBeInTheDocument();
+    expect(screen.getByText("Confirm New Password *")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /alterar senha/i }),
+      screen.getByRole("button", { name: /change password/i }),
     ).toBeInTheDocument();
   });
 
@@ -41,14 +42,16 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const currentPasswordInput = screen.getByPlaceholderText(
-      /digite sua senha atual/i,
+      /enter your current password/i,
     );
-    const newPasswordInput = screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
 
     expect(currentPasswordInput).toHaveAttribute("type", "password");
     expect(newPasswordInput).toHaveAttribute("type", "password");
 
-    fireEvent.click(screen.getByRole("button", { name: /mostrar nova senha/i }));
+    fireEvent.click(screen.getByRole("button", { name: /show new password/i }));
 
     expect(currentPasswordInput).toHaveAttribute("type", "password");
     expect(newPasswordInput).toHaveAttribute("type", "text");
@@ -58,13 +61,15 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const submitButton = screen.getByRole("button", {
-      name: /alterar senha/i,
+      name: /change password/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText("Senha atual é obrigatória")).toBeInTheDocument();
-      expect(screen.getByText("Nova senha é obrigatória")).toBeInTheDocument();
+      expect(
+        screen.getByText("Current password is required"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("New password is required")).toBeInTheDocument();
     });
   });
 
@@ -72,10 +77,11 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const currentPasswordInput = screen.getByPlaceholderText(
-      /digite sua senha atual/i,
+      /enter your current password/i,
     );
-    const newPasswordInput =
-      screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
 
     fireEvent.change(currentPasswordInput, {
       target: { value: "Current123!" },
@@ -83,13 +89,13 @@ describe("PasswordSettings", () => {
     fireEvent.change(newPasswordInput, { target: { value: "Short1!" } });
 
     const submitButton = screen.getByRole("button", {
-      name: /alterar senha/i,
+      name: /change password/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(
-        screen.getByText("Nova senha deve ter no mínimo 12 caracteres"),
+        screen.getByText("New password must be at least 12 characters"),
       ).toBeInTheDocument();
     });
   });
@@ -98,12 +104,13 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const currentPasswordInput = screen.getByPlaceholderText(
-      /digite sua senha atual/i,
+      /enter your current password/i,
     );
-    const newPasswordInput =
-      screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
     const confirmPasswordInput = screen.getByPlaceholderText(
-      /digite a senha novamente/i,
+      /re-enter the password/i,
     );
 
     fireEvent.change(currentPasswordInput, {
@@ -117,12 +124,12 @@ describe("PasswordSettings", () => {
     });
 
     const submitButton = screen.getByRole("button", {
-      name: /alterar senha/i,
+      name: /change password/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText("As senhas não coincidem")).toBeInTheDocument();
+      expect(screen.getByText("Passwords do not match")).toBeInTheDocument();
     });
   });
 
@@ -130,12 +137,13 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const currentPasswordInput = screen.getByPlaceholderText(
-      /digite sua senha atual/i,
+      /enter your current password/i,
     );
-    const newPasswordInput =
-      screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
     const confirmPasswordInput = screen.getByPlaceholderText(
-      /digite a senha novamente/i,
+      /re-enter the password/i,
     );
 
     fireEvent.change(currentPasswordInput, {
@@ -149,13 +157,15 @@ describe("PasswordSettings", () => {
     });
 
     const submitButton = screen.getByRole("button", {
-      name: /alterar senha/i,
+      name: /change password/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
       expect(
-        screen.getByText("A nova senha deve ser diferente da atual"),
+        screen.getByText(
+          "New password must be different from the current password",
+        ),
       ).toBeInTheDocument();
     });
   });
@@ -163,24 +173,25 @@ describe("PasswordSettings", () => {
   it("displays password strength indicator", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
-    const newPasswordInput =
-      screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
 
     // Weak password (less than 12 characters)
     fireEvent.change(newPasswordInput, { target: { value: "Weak123" } });
-    expect(screen.getByText("Força: Fraca")).toBeInTheDocument();
+    expect(screen.getByText("Strength: Weak")).toBeInTheDocument();
 
     // Medium password (12-15 characters)
     fireEvent.change(newPasswordInput, {
       target: { value: "Medium123456" },
     });
-    expect(screen.getByText("Força: Média")).toBeInTheDocument();
+    expect(screen.getByText("Strength: Medium")).toBeInTheDocument();
 
     // Strong password (16+ characters)
     fireEvent.change(newPasswordInput, {
       target: { value: "StrongPassword123456!" },
     });
-    expect(screen.getByText("Força: Forte")).toBeInTheDocument();
+    expect(screen.getByText("Strength: Strong")).toBeInTheDocument();
   });
 
   it("successfully changes password", async () => {
@@ -189,12 +200,13 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const currentPasswordInput = screen.getByPlaceholderText(
-      /digite sua senha atual/i,
+      /enter your current password/i,
     );
-    const newPasswordInput =
-      screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
     const confirmPasswordInput = screen.getByPlaceholderText(
-      /digite a senha novamente/i,
+      /re-enter the password/i,
     );
 
     fireEvent.change(currentPasswordInput, {
@@ -208,7 +220,7 @@ describe("PasswordSettings", () => {
     });
 
     const submitButton = screen.getByRole("button", {
-      name: /alterar senha/i,
+      name: /change password/i,
     });
     fireEvent.click(submitButton);
 
@@ -221,7 +233,7 @@ describe("PasswordSettings", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText("Senha alterada com sucesso!"),
+        screen.getByText("Password changed successfully!"),
       ).toBeInTheDocument();
     });
 
@@ -240,12 +252,13 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const currentPasswordInput = screen.getByPlaceholderText(
-      /digite sua senha atual/i,
+      /enter your current password/i,
     );
-    const newPasswordInput =
-      screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
     const confirmPasswordInput = screen.getByPlaceholderText(
-      /digite a senha novamente/i,
+      /re-enter the password/i,
     );
 
     fireEvent.change(currentPasswordInput, {
@@ -259,12 +272,14 @@ describe("PasswordSettings", () => {
     });
 
     const submitButton = screen.getByRole("button", {
-      name: /alterar senha/i,
+      name: /change password/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByText("Senha atual incorreta.")).toBeInTheDocument();
+      expect(
+        screen.getByText(PASSWORD_CHANGE_ERROR_MESSAGES.incorrectPassword),
+      ).toBeInTheDocument();
     });
   });
 
@@ -279,12 +294,13 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const currentPasswordInput = screen.getByPlaceholderText(
-      /digite sua senha atual/i,
+      /enter your current password/i,
     );
-    const newPasswordInput =
-      screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
     const confirmPasswordInput = screen.getByPlaceholderText(
-      /digite a senha novamente/i,
+      /re-enter the password/i,
     );
 
     fireEvent.change(currentPasswordInput, {
@@ -298,12 +314,12 @@ describe("PasswordSettings", () => {
     });
 
     const submitButton = screen.getByRole("button", {
-      name: /alterar senha/i,
+      name: /change password/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: /alterando/i })).toBeDisabled();
+      expect(screen.getByRole("button", { name: /changing/i })).toBeDisabled();
     });
   });
 
@@ -313,12 +329,13 @@ describe("PasswordSettings", () => {
     render(<PasswordSettings />, { wrapper: createWrapper() });
 
     const currentPasswordInput = screen.getByPlaceholderText(
-      /digite sua senha atual/i,
+      /enter your current password/i,
     );
-    const newPasswordInput =
-      screen.getByPlaceholderText(/mínimo 12 caracteres/i);
+    const newPasswordInput = screen.getByPlaceholderText(
+      /minimum 12 characters/i,
+    );
     const confirmPasswordInput = screen.getByPlaceholderText(
-      /digite a senha novamente/i,
+      /re-enter the password/i,
     );
 
     fireEvent.change(currentPasswordInput, {
@@ -332,14 +349,12 @@ describe("PasswordSettings", () => {
     });
 
     const submitButton = screen.getByRole("button", {
-      name: /alterar senha/i,
+      name: /change password/i,
     });
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(
-        screen.getByText("Network error"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Network error")).toBeInTheDocument();
     });
   });
 });

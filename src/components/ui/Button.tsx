@@ -58,7 +58,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       align = "center",
       fullWidth = false,
       isLoading = false,
-      loadingText = "Carregando...",
+      loadingText = "Loading...",
       disabled,
       className,
       children,

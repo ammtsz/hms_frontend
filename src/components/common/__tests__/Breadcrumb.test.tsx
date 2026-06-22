@@ -34,23 +34,23 @@ jest.mock("lucide-react", () => ({
 describe("Breadcrumb", () => {
   const mockItems = [
     { label: "Home", href: "/" },
-    { label: "Pacientes", href: "/patients" },
-    { label: "Cadastro de Paciente", isActive: true },
+    { label: "Patients", href: "/patients" },
+    { label: "Patient Registration", isActive: true },
   ];
 
   it("should render all breadcrumb items", () => {
     render(<Breadcrumb items={mockItems} />);
 
     expect(screen.getByText("Home")).toBeInTheDocument();
-    expect(screen.getByText("Pacientes")).toBeInTheDocument();
-    expect(screen.getByText("Cadastro de Paciente")).toBeInTheDocument();
+    expect(screen.getByText("Patients")).toBeInTheDocument();
+    expect(screen.getByText("Patient Registration")).toBeInTheDocument();
   });
 
   it("should render links for non-active items with href", () => {
     render(<Breadcrumb items={mockItems} />);
 
     const homeLink = screen.getByText("Home").closest("a");
-    const patientsLink = screen.getByText("Pacientes").closest("a");
+    const patientsLink = screen.getByText("Patients").closest("a");
 
     expect(homeLink).toHaveAttribute("href", "/");
     expect(patientsLink).toHaveAttribute("href", "/patients");
@@ -59,7 +59,7 @@ describe("Breadcrumb", () => {
   it("should not render link for active item", () => {
     render(<Breadcrumb items={mockItems} />);
 
-    const activeItem = screen.getByText("Cadastro de Paciente");
+    const activeItem = screen.getByText("Patient Registration");
     expect(activeItem.closest("a")).toBeNull();
     expect(activeItem).toHaveClass("text-gray-900", "font-medium");
   });
@@ -114,7 +114,7 @@ describe("Breadcrumb", () => {
     expect(homeLink).toHaveClass(
       "hover:text-blue-600",
       "transition-colors",
-      "duration-200"
+      "duration-200",
     );
   });
 });

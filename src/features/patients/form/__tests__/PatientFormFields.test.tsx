@@ -22,7 +22,7 @@ const defaultPatient = {
   birthDate: "1990-01-01",
   priority: "3",
   status: "T",
-  mainComplaint: "Test complaint",
+  mainConcern: "Test complaint",
 };
 
 const defaultProps = {
@@ -44,7 +44,7 @@ describe("PatientFormFields", () => {
           id: 1,
           type: "priority",
           value: "1",
-          label: "Exceção",
+          label: "Priority",
           isActive: true,
           sortOrder: 1,
           createdAt: "",
@@ -54,7 +54,7 @@ describe("PatientFormFields", () => {
           id: 2,
           type: "priority",
           value: "2",
-          label: "Idoso/crianças",
+          label: "Standard",
           isActive: true,
           sortOrder: 2,
           createdAt: "",
@@ -64,7 +64,7 @@ describe("PatientFormFields", () => {
           id: 3,
           type: "priority",
           value: "3",
-          label: "Padrão",
+          label: "Priority 3",
           isActive: true,
           sortOrder: 3,
           createdAt: "",
@@ -115,7 +115,7 @@ describe("PatientFormFields", () => {
         />,
       );
 
-      const optionN = screen.getByRole("option", { name: "Novo Paciente" });
+      const optionN = screen.getByRole("option", { name: "New patient" });
       expect(optionN).toBeDisabled();
     });
 
@@ -128,7 +128,7 @@ describe("PatientFormFields", () => {
         />,
       );
 
-      const optionN = screen.getByRole("option", { name: "Novo Paciente" });
+      const optionN = screen.getByRole("option", { name: "New patient" });
       expect(optionN).toBeDisabled();
     });
 
@@ -142,7 +142,7 @@ describe("PatientFormFields", () => {
         />,
       );
 
-      const optionN = screen.getByRole("option", { name: "Novo Paciente" });
+      const optionN = screen.getByRole("option", { name: "New patient" });
       expect(optionN).not.toBeDisabled();
     });
 
@@ -156,7 +156,7 @@ describe("PatientFormFields", () => {
         />,
       );
 
-      const optionT = screen.getByRole("option", { name: "Em Tratamento" });
+      const optionT = screen.getByRole("option", { name: "In Treatment" });
       expect(optionT).toBeDisabled();
     });
 
@@ -169,7 +169,7 @@ describe("PatientFormFields", () => {
         />,
       );
 
-      const optionT = screen.getByRole("option", { name: "Em Tratamento" });
+      const optionT = screen.getByRole("option", { name: "In Treatment" });
       expect(optionT).not.toBeDisabled();
     });
 
@@ -183,7 +183,7 @@ describe("PatientFormFields", () => {
       );
 
       const optionA = screen.getByRole("option", {
-        name: "Alta do tratamento",
+        name: "Discharged",
       });
       expect(optionA).not.toBeDisabled();
     });
@@ -199,7 +199,7 @@ describe("PatientFormFields", () => {
       );
 
       const optionA = screen.getByRole("option", {
-        name: "Alta do tratamento",
+        name: "Discharged",
       });
       expect(optionA).not.toBeDisabled();
     });
@@ -215,7 +215,7 @@ describe("PatientFormFields", () => {
       );
 
       const optionA = screen.getByRole("option", {
-        name: "Alta do tratamento",
+        name: "Discharged",
       });
       expect(optionA).toBeDisabled();
     });
@@ -230,7 +230,7 @@ describe("PatientFormFields", () => {
       );
 
       const optionF = screen.getByRole("option", {
-        name: "Faltas Consecutivas",
+        name: "Missed — consecutive",
       });
       expect(optionF).not.toBeDisabled();
     });
@@ -246,7 +246,7 @@ describe("PatientFormFields", () => {
       );
 
       const optionF = screen.getByRole("option", {
-        name: "Faltas Consecutivas",
+        name: "Missed — consecutive",
       });
       expect(optionF).not.toBeDisabled();
     });
@@ -262,7 +262,7 @@ describe("PatientFormFields", () => {
       );
 
       const optionF = screen.getByRole("option", {
-        name: "Faltas Consecutivas",
+        name: "Missed — consecutive",
       });
       expect(optionF).toBeDisabled();
     });

@@ -58,30 +58,33 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
     <div className="space-y-4">
       <div className="mb-4">
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          Informações Básicas do Atendimento
+          Basic Attendance Information
         </h3>
         <p className="text-sm text-gray-600">
-          Complete as informações essenciais sobre esta consulta.
+          Complete the essential information about this consultation.
         </p>
       </div>
 
-      <Field label="Queixa / Motivo da Consulta *" htmlFor="mainComplaint">
+      <Field
+        label="Main Concern / Reason for Consultation *"
+        htmlFor="mainConcern"
+      >
         <Textarea
-          id="mainComplaint"
-          name="mainComplaint"
-          value={formData.mainComplaint}
+          id="mainConcern"
+          name="mainConcern"
+          value={formData.mainConcern}
           onChange={handleInputChange}
           rows={3}
-          placeholder="Descreva a principal queixa ou motivo da consulta..."
+          placeholder="Describe the main concern or reason for the consultation..."
           required
         />
       </Field>
 
       <div className="flex flex-col gap-4 md:flex-row">
         <Field
-          label="Status do Tratamento *"
+          label="Treatment Status *"
           htmlFor="patientStatus"
-          helpText={`Status atual: ${getTreatmentStatusLabel(currentTreatmentStatus)}`}
+          helpText={`Current status: ${getTreatmentStatusLabel(currentTreatmentStatus)}`}
           className="flex-1"
         >
           <Select
@@ -91,8 +94,8 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             onChange={handleInputChange}
             required
           >
-            <option value="T">T - Em tratamento</option>
-            <option value="A">A - Alta do tratamento</option>
+            <option value="T">T - In treatment</option>
+            <option value="A">A - Discharged</option>
           </Select>
         </Field>
       </div>
@@ -101,9 +104,9 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           <p className="text-xs text-amber-800 font-medium flex items-center gap-2">
             <span className="text-base">⚠️</span>
             <span>
-              Ao selecionar &quot;Alta do tratamento&quot;, o tratamento do
-              paciente será encerrado. Esta ação indica que o paciente recebeu
-              alta e não necessita mais de acompanhamento.
+              Selecting &quot;Discharged&quot; will end the patient&apos;s
+              treatment. This indicates the patient has been discharged and does
+              not require further follow-up.
             </span>
           </p>
         </div>
@@ -114,7 +117,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           <span
             className={patientData?.startDate ? "text-gray-500" : undefined}
           >
-            Data de Cadastro *
+            Registration Date *
           </span>
         }
         htmlFor="startDate"
@@ -129,19 +132,19 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
         />
         {patientData?.startDate && (
           <p className="text-xs text-gray-400 mt-1">
-            Data de cadastro não pode ser alterada (somente leitura)
+            Registration date cannot be changed (read-only)
           </p>
         )}
       </Field>
 
-      <Field label="Notas da Consulta" htmlFor="notes">
+      <Field label="Consultation Notes" htmlFor="notes">
         <Textarea
           id="notes"
           name="notes"
           value={formData.notes}
           onChange={handleInputChange}
           rows={3}
-          placeholder="Observações sobre o atendimento..."
+          placeholder="Notes about the attendance..."
         />
       </Field>
     </div>

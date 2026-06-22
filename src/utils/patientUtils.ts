@@ -1,12 +1,10 @@
 /**
  * Patient Utility Functions
- * 
+ *
  * Pure utility functions for patient data validation and calculations.
  * These functions don't involve API calls and can be used across the application.
  */
 
-import { Patient } from "@/types/types";
-import { PatientResponseDto } from "@/api/types";
 import { getTodayClinic } from "@/utils/timezoneDate";
 
 /**
@@ -15,7 +13,7 @@ import { getTodayClinic } from "@/utils/timezoneDate";
 export function validatePatientData({
   name,
   phone,
-  birthDate
+  birthDate,
 }: {
   name: string;
   phone?: string;
@@ -33,7 +31,7 @@ export function validatePatientData({
   // Phone validation (optional but must be valid if provided)
   if (phone && phone.trim().length > 0) {
     const phoneRegex = /^\d{10,15}$/; // Simple phone validation
-    if (!phoneRegex.test(phone.replace(/\D/g, ''))) {
+    if (!phoneRegex.test(phone.replace(/\D/g, ""))) {
       errors.push("Phone number must be 10-15 digits");
     }
   }
@@ -44,7 +42,7 @@ export function validatePatientData({
     errors.push("Birth date cannot be in the future");
   }
 
-  const birthYear = parseInt(birthDate.split('-')[0]);
+  const birthYear = parseInt(birthDate.split("-")[0]);
   const currentYear = new Date().getFullYear();
   if (currentYear - birthYear > 120) {
     errors.push("Birth date is too far in the past");
@@ -52,7 +50,7 @@ export function validatePatientData({
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -60,32 +58,35 @@ export function validatePatientData({
  * Calculate age from birth date
  */
 export function calculateAge(birthDate: string): number {
-  const birthDateObj = new Date(birthDate + 'T00:00:00');
+  const birthDateObj = new Date(birthDate + "T00:00:00");
   const today = new Date();
   let age = today.getFullYear() - birthDateObj.getFullYear();
   const monthDiff = today.getMonth() - birthDateObj.getMonth();
-  
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDateObj.getDate())) {
+
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDateObj.getDate())
+  ) {
     age--;
   }
-  
+
   return age;
 }
+
+/** Canonical treatment status labels (N/T/A/F) */
+export const TREATMENT_STATUS_LABELS = {
+  N: "New patient",
+  T: "In Treatment",
+  A: "Discharged",
+  F: "Missed — consecutive",
+} as const;
 
 /**
  * Get human-readable treatment status label
  */
 export function getTreatmentStatusLabel(status: string): string {
-  switch (status) {
-    case "N":
-      return "Novo Paciente";
-    case "T":
-      return "Em Tratamento";
-    case "A":
-      return "Alta";
-    case "F":
-      return "Ausente";
-    default:
-      return status;
-  }
+  return (
+    TREATMENT_STATUS_LABELS[status as keyof typeof TREATMENT_STATUS_LABELS] ??
+    status
+  );
 }

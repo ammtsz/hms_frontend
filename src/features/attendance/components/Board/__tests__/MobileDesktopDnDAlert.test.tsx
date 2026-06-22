@@ -6,9 +6,9 @@ describe("MobileDesktopDnDAlert", () => {
     render(<MobileDesktopDnDAlert show />);
 
     expect(
-      screen.getByText(/Movimentação entre colunas/i),
+      screen.getByText(/Moving between columns/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/use um computador/i)).toBeInTheDocument();
+    expect(screen.getByText(/use a computer/i)).toBeInTheDocument();
     expect(screen.getByRole("status")).toHaveClass("lg:hidden");
   });
 

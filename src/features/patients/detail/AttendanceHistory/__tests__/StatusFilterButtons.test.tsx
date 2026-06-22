@@ -17,20 +17,20 @@ describe("StatusFilterButtons", () => {
   it("should render all filter buttons", () => {
     render(<StatusFilterButtons {...defaultProps} />);
 
-    expect(screen.getByRole("button", { name: /todos/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^All$/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /concluídos/i }),
+      screen.getByRole("button", { name: /^Completed$/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /faltas/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Missed$/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /cancelados/i }),
+      screen.getByRole("button", { name: /^Cancelled$/i }),
     ).toBeInTheDocument();
   });
 
   it("should highlight active filter button - all", () => {
     render(<StatusFilterButtons {...defaultProps} statusFilter="all" />);
 
-    const allButton = screen.getByRole("button", { name: /todos/i });
+    const allButton = screen.getByRole("button", { name: /^All$/i });
     expect(allButton).toHaveClass("bg-blue-600", "text-white");
   });
 
@@ -38,7 +38,7 @@ describe("StatusFilterButtons", () => {
     render(<StatusFilterButtons {...defaultProps} statusFilter="completed" />);
 
     const completedButton = screen.getByRole("button", {
-      name: /concluídos/i,
+      name: /^Completed$/i,
     });
     expect(completedButton).toHaveClass("bg-green-600", "text-white");
   });
@@ -46,7 +46,7 @@ describe("StatusFilterButtons", () => {
   it("should highlight active filter button - missed", () => {
     render(<StatusFilterButtons {...defaultProps} statusFilter="missed" />);
 
-    const missedButton = screen.getByRole("button", { name: /faltas/i });
+    const missedButton = screen.getByRole("button", { name: /^Missed$/i });
     expect(missedButton).toHaveClass("bg-red-600", "text-white");
   });
 
@@ -54,7 +54,7 @@ describe("StatusFilterButtons", () => {
     render(<StatusFilterButtons {...defaultProps} statusFilter="cancelled" />);
 
     const cancelledButton = screen.getByRole("button", {
-      name: /cancelados/i,
+      name: /^Cancelled$/i,
     });
     expect(cancelledButton).toHaveClass("bg-orange-600", "text-white");
   });
@@ -63,7 +63,7 @@ describe("StatusFilterButtons", () => {
     render(<StatusFilterButtons {...defaultProps} statusFilter="all" />);
 
     const completedButton = screen.getByRole("button", {
-      name: /concluídos/i,
+      name: /^Completed$/i,
     });
     expect(completedButton).toHaveClass("bg-gray-200", "text-gray-700");
   });
@@ -72,40 +72,40 @@ describe("StatusFilterButtons", () => {
     const user = userEvent.setup();
     render(<StatusFilterButtons {...defaultProps} />);
 
-    const allButton = screen.getByRole("button", { name: /todos/i });
+    const allButton = screen.getByRole("button", { name: /^All$/i });
     await user.click(allButton);
 
     expect(defaultProps.onFilterChange).toHaveBeenCalledWith("all");
   });
 
-  it("should call onFilterChange with correct value when clicking concluídos", async () => {
+  it("should call onFilterChange with correct value when clicking completed", async () => {
     const user = userEvent.setup();
     render(<StatusFilterButtons {...defaultProps} />);
 
     const completedButton = screen.getByRole("button", {
-      name: /concluídos/i,
+      name: /^Completed$/i,
     });
     await user.click(completedButton);
 
     expect(defaultProps.onFilterChange).toHaveBeenCalledWith("completed");
   });
 
-  it("should call onFilterChange with correct value when clicking faltas", async () => {
+  it("should call onFilterChange with correct value when clicking missed", async () => {
     const user = userEvent.setup();
     render(<StatusFilterButtons {...defaultProps} />);
 
-    const missedButton = screen.getByRole("button", { name: /faltas/i });
+    const missedButton = screen.getByRole("button", { name: /^Missed$/i });
     await user.click(missedButton);
 
     expect(defaultProps.onFilterChange).toHaveBeenCalledWith("missed");
   });
 
-  it("should call onFilterChange with correct value when clicking cancelados", async () => {
+  it("should call onFilterChange with correct value when clicking cancelled", async () => {
     const user = userEvent.setup();
     render(<StatusFilterButtons {...defaultProps} />);
 
     const cancelledButton = screen.getByRole("button", {
-      name: /cancelados/i,
+      name: /^Cancelled$/i,
     });
     await user.click(cancelledButton);
 

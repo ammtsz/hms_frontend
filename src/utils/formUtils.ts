@@ -62,19 +62,19 @@ export function validatePatientForm(
   requireBirthDate = false
 ): string | null {
   if (!data.name.trim()) {
-    return "Nome é obrigatório";
+    return "Name is required";
   }
 
   if (requireBirthDate && !data.birthDate) {
-    return "Data de nascimento é obrigatória";
+    return "Date of birth is required";
   }
 
   if (requirePhone && !data.phone.trim()) {
-    return "Telefone é obrigatório";
+    return "Phone is required";
   }
 
   if (data.phone && !validatePhoneFormat(data.phone)) {
-    return "Telefone deve estar no formato (XX) XXXXX-XXXX";
+    return "Phone must be in the format (XX) XXXXX-XXXX";
   }
 
   return null;

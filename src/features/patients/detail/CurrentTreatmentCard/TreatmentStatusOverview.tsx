@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import Link from "next/link";
 import { Patient } from "@/types/types";
-import { formatDateBR, getDaysOverdue } from "@/utils/dateUtils";
+import { formatDisplayDate, getDaysOverdue } from "@/utils/dateUtils";
 import {
   PATIENT_PAGE_SECTION_IDS,
   SCROLL_AFTER_EXPAND_DELAY_MS,
@@ -38,10 +38,10 @@ export const TreatmentStatusOverview: React.FC<
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
       <div className="bg-white border border-gray-200 p-4 rounded-lg">
         <div className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">
-          Data de Cadastro
+          Registration Date
         </div>
         <div className="text-lg font-semibold text-gray-900">
-          {formatDateBR(patient.startDate)}
+          {formatDisplayDate(patient.startDate)}
         </div>
       </div>
 
@@ -51,41 +51,43 @@ export const TreatmentStatusOverview: React.FC<
         className={OVERVIEW_CARD_CLASS}
       >
         <div className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-1">
-          Próximo Atendimento
+          Next Appointment
         </div>
         <div className="text-lg font-semibold text-gray-900 break-words">
           {patient.nextAttendanceDates[0]?.date ? (
-            formatDateBR(patient.nextAttendanceDates[0].date)
+            formatDisplayDate(patient.nextAttendanceDates[0].date)
           ) : (
-            <span className="font-medium text-gray-500">Não agendado</span>
+            <span className="font-medium text-gray-500">Not scheduled</span>
           )}
         </div>
         <div className="mt-2 text-xs text-blue-600">
-          Ver todos os agendamentos →
+          View all appointments →
         </div>
       </button>
 
       {patient.status === "A" ? (
         <div className="bg-white border border-gray-200 p-4 rounded-lg block w-full text-left">
           <div className="flex items-center gap-1 text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">
-            Alta recebida em
+            Discharged on
           </div>
           <div className="text-lg font-semibold text-gray-900">
             {patient.dischargeDate ? (
-              formatDateBR(patient.dischargeDate)
+              formatDisplayDate(patient.dischargeDate)
             ) : (
-              <span className="text-gray-500 font-medium">Não definida</span>
+              <span className="text-gray-500 font-medium">Not set</span>
             )}
           </div>
         </div>
       ) : (
-        <Link href={`/patients/${patient.id}/edit?focus=dischargeDate`} className={OVERVIEW_CARD_CLASS}>
+        <Link
+          href={`/patients/${patient.id}/edit?focus=dischargeDate`}
+          className={OVERVIEW_CARD_CLASS}
+        >
           <div className="flex items-center gap-1 text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">
-            Alta Prevista
+            Expected Discharge
             {isOverdue && (
               <span className="">
-                ({daysOverdue === 1 ? "1 dia" : `${daysOverdue} dias`} em
-                atraso)
+                ({daysOverdue === 1 ? "1 day" : `${daysOverdue} days`} overdue)
               </span>
             )}
           </div>
@@ -95,12 +97,12 @@ export const TreatmentStatusOverview: React.FC<
             }`}
           >
             {patient.dischargeDate ? (
-              formatDateBR(patient.dischargeDate)
+              formatDisplayDate(patient.dischargeDate)
             ) : (
-              <span className="text-gray-500 font-medium">Não definida</span>
+              <span className="text-gray-500 font-medium">Not set</span>
             )}
           </div>
-          <div className="text-xs text-blue-600 mt-2">Atualizar data →</div>
+          <div className="text-xs text-blue-600 mt-2">Update date →</div>
         </Link>
       )}
     </div>

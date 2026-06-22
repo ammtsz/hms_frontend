@@ -207,9 +207,9 @@ describe("AttendanceSections Component", () => {
     it("should render both assessment and mixed sections", () => {
       render(<AttendanceSections {...defaultProps} />);
 
-      expect(screen.getByText(/▼\s*Consultas\s*\(\d+\)/)).toBeInTheDocument();
+      expect(screen.getByText(/▼\s*Consultation\s*\(\d+\)/)).toBeInTheDocument();
       expect(
-        screen.getByText(/▼\s*Fisioterapia e TENS\s*\(\d+\)/),
+        screen.getByText(/▼\s*Physiotherapy and TENS\s*\(\d+\)/),
       ).toBeInTheDocument();
     });
 
@@ -250,17 +250,17 @@ describe("AttendanceSections Component", () => {
       render(<AttendanceSections {...defaultProps} />);
 
       const assessmentButton = screen.getByRole("button", {
-        name: /Consultas/,
+        name: /Consultation/,
       });
       expect(assessmentButton).toBeInTheDocument();
-      expect(assessmentButton).toHaveTextContent(/▼\s*Consultas\s*\(\d+\)/);
+      expect(assessmentButton).toHaveTextContent(/▼\s*Consultation\s*\(\d+\)/);
     });
 
     it("should toggle assessment section collapse on button click", () => {
       render(<AttendanceSections {...defaultProps} />);
 
       const assessmentButton = screen.getByRole("button", {
-        name: /Consultas/,
+        name: /Consultation/,
       });
       fireEvent.click(assessmentButton);
 
@@ -275,7 +275,7 @@ describe("AttendanceSections Component", () => {
         />,
       );
 
-      expect(screen.getByText(/▶\s*Consultas\s*\(\d+\)/)).toBeInTheDocument();
+      expect(screen.getByText(/▶\s*Consultation\s*\(\d+\)/)).toBeInTheDocument();
 
       // Should not render assessment attendance columns
       const assessmentColumns = screen.queryAllByTestId(/attendance-column-/);
@@ -309,11 +309,11 @@ describe("AttendanceSections Component", () => {
       render(<AttendanceSections {...defaultProps} />);
 
       const mixedButton = screen.getByRole("button", {
-        name: /Fisioterapia e TENS/,
+        name: /Physiotherapy and TENS/,
       });
       expect(mixedButton).toBeInTheDocument();
       expect(mixedButton).toHaveTextContent(
-        /▼\s*Fisioterapia e TENS\s*\(\d+\)/,
+        /▼\s*Physiotherapy and TENS\s*\(\d+\)/,
       );
     });
 
@@ -321,7 +321,7 @@ describe("AttendanceSections Component", () => {
       render(<AttendanceSections {...defaultProps} />);
 
       const mixedButton = screen.getByRole("button", {
-        name: /Fisioterapia e TENS/,
+        name: /Physiotherapy and TENS/,
       });
       fireEvent.click(mixedButton);
 
@@ -339,13 +339,13 @@ describe("AttendanceSections Component", () => {
       );
 
       expect(
-        screen.getByText(/▶\s*Fisioterapia e TENS\s*\(\d+\)/),
+        screen.getByText(/▶\s*Physiotherapy and TENS\s*\(\d+\)/),
       ).toBeInTheDocument();
 
       // Should not render treatment legend
-      expect(screen.queryByText("Fisioterapia")).not.toBeInTheDocument();
+      expect(screen.queryByText("Physiotherapy")).not.toBeInTheDocument();
       expect(screen.queryByText("TENS")).not.toBeInTheDocument();
-      expect(screen.queryByText("Fisioterapia e TENS")).not.toBeInTheDocument();
+      expect(screen.queryByText("Physiotherapy and TENS")).not.toBeInTheDocument();
     });
 
     it("should show expanded state when at least one of physiotherapy or tens is expanded", () => {
@@ -357,25 +357,25 @@ describe("AttendanceSections Component", () => {
       );
 
       expect(
-        screen.getByText(/▼\s*Fisioterapia e TENS\s*\(\d+\)/),
+        screen.getByText(/▼\s*Physiotherapy and TENS\s*\(\d+\)/),
       ).toBeInTheDocument();
 
       // Should render treatment legend
-      expect(screen.getByText("Fisioterapia")).toBeInTheDocument();
+      expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
       expect(screen.getByText("TENS")).toBeInTheDocument();
-      expect(screen.getByText("Fisioterapia e TENS")).toBeInTheDocument();
+      expect(screen.getByText("Physiotherapy and TENS")).toBeInTheDocument();
     });
 
     it("should render treatment type legend with correct colors", () => {
       render(<AttendanceSections {...defaultProps} />);
 
       // Check legend items exist
-      expect(screen.getByText("Fisioterapia")).toBeInTheDocument();
+      expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
       expect(screen.getByText("TENS")).toBeInTheDocument();
-      expect(screen.getByText("Fisioterapia e TENS")).toBeInTheDocument();
+      expect(screen.getByText("Physiotherapy and TENS")).toBeInTheDocument();
 
       // Check color indicators by their container
-      const legendContainer = screen.getByText("Fisioterapia").closest("div");
+      const legendContainer = screen.getByText("Physiotherapy").closest("div");
       expect(
         legendContainer?.querySelector(".bg-yellow-400"),
       ).toBeInTheDocument();
@@ -384,7 +384,7 @@ describe("AttendanceSections Component", () => {
       expect(tensContainer?.querySelector(".bg-blue-500")).toBeInTheDocument();
 
       const combinedContainer = screen
-        .getByText("Fisioterapia e TENS")
+        .getByText("Physiotherapy and TENS")
         .closest("div");
       expect(
         combinedContainer?.querySelector(".bg-green-500"),
@@ -597,9 +597,9 @@ describe("AttendanceSections Component", () => {
         />,
       );
 
-      expect(screen.getByText(/▶\s*Consultas\s*\(\d+\)/)).toBeInTheDocument();
+      expect(screen.getByText(/▶\s*Consultation\s*\(\d+\)/)).toBeInTheDocument();
       expect(
-        screen.getByText(/▶\s*Fisioterapia e TENS\s*\(\d+\)/),
+        screen.getByText(/▶\s*Physiotherapy and TENS\s*\(\d+\)/),
       ).toBeInTheDocument();
 
       // Only buttons should be visible, no attendance columns
@@ -615,9 +615,9 @@ describe("AttendanceSections Component", () => {
         />,
       );
 
-      expect(screen.getByText(/▶\s*Consultas\s*\(\d+\)/)).toBeInTheDocument();
+      expect(screen.getByText(/▶\s*Consultation\s*\(\d+\)/)).toBeInTheDocument();
       expect(
-        screen.getByText(/▼\s*Fisioterapia e TENS\s*\(\d+\)/),
+        screen.getByText(/▼\s*Physiotherapy and TENS\s*\(\d+\)/),
       ).toBeInTheDocument();
 
       // Only mixed section should show columns
@@ -638,10 +638,10 @@ describe("AttendanceSections Component", () => {
       render(<AttendanceSections {...defaultProps} />);
 
       const assessmentButton = screen.getByRole("button", {
-        name: /Consultas/,
+        name: /Consultation/,
       });
       const mixedButton = screen.getByRole("button", {
-        name: /Fisioterapia e TENS/,
+        name: /Physiotherapy and TENS/,
       });
 
       expect(assessmentButton).toBeInTheDocument();
@@ -652,9 +652,9 @@ describe("AttendanceSections Component", () => {
       render(<AttendanceSections {...defaultProps} />);
 
       // Expanded sections should show down arrow
-      expect(screen.getByText(/▼\s*Consultas\s*\(\d+\)/)).toBeInTheDocument();
+      expect(screen.getByText(/▼\s*Consultation\s*\(\d+\)/)).toBeInTheDocument();
       expect(
-        screen.getByText(/▼\s*Fisioterapia e TENS\s*\(\d+\)/),
+        screen.getByText(/▼\s*Physiotherapy and TENS\s*\(\d+\)/),
       ).toBeInTheDocument();
     });
 
@@ -667,9 +667,9 @@ describe("AttendanceSections Component", () => {
       );
 
       // Collapsed sections should show right arrow
-      expect(screen.getByText(/▶\s*Consultas\s*\(\d+\)/)).toBeInTheDocument();
+      expect(screen.getByText(/▶\s*Consultation\s*\(\d+\)/)).toBeInTheDocument();
       expect(
-        screen.getByText(/▶\s*Fisioterapia e TENS\s*\(\d+\)/),
+        screen.getByText(/▶\s*Physiotherapy and TENS\s*\(\d+\)/),
       ).toBeInTheDocument();
     });
 
@@ -689,7 +689,7 @@ describe("AttendanceSections Component", () => {
       render(<AttendanceSections {...defaultProps} />);
 
       const assessmentButton = screen.getByRole("button", {
-        name: /Consultas/,
+        name: /Consultation/,
       });
 
       // Simulate Enter key press

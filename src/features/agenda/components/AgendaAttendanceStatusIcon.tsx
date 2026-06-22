@@ -61,10 +61,10 @@ export const AGENDA_STATUS_LEGEND_ITEMS: Array<{
   status: AttendanceStatus;
   label: string;
 }> = [
-  { status: AttendanceStatus.SCHEDULED, label: "Agendado" },
+  { status: AttendanceStatus.SCHEDULED, label: "Scheduled" },
   { status: AttendanceStatus.CHECKED_IN, label: "Checked-in" },
-  { status: AttendanceStatus.IN_PROGRESS, label: "Em andamento" },
-  { status: AttendanceStatus.COMPLETED, label: "Concluído" },
-  { status: AttendanceStatus.CANCELLED, label: "Cancelado" },
-  { status: AttendanceStatus.MISSED, label: "Falta" },
+  { status: AttendanceStatus.IN_PROGRESS, label: "In progress" },
+  { status: AttendanceStatus.COMPLETED, label: "Completed" },
+  { status: AttendanceStatus.CANCELLED, label: "Cancelled" },
+  { status: AttendanceStatus.MISSED, label: "Missed" },
 ];

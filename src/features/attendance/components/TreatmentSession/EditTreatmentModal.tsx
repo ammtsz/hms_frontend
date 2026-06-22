@@ -132,12 +132,12 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
     for (let i = 0; i < treatments.length; i++) {
       const t = treatments[i];
       if (!t.locations.length || t.locations.some((l) => !l.trim())) {
-        return "Preencha o local do corpo em todas as linhas.";
+        return "Fill in the body location for all rows.";
       }
       if (treatmentType === "physiotherapy") {
         const lb = t as PhysiotherapyLocationTreatment;
         if (!lb.color?.trim()) {
-          return "Selecione a cor em todas as linhas (Fisioterapia).";
+          return "Select the color for all rows in Physiotherapy.";
         }
       }
     }
@@ -156,21 +156,21 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
       await saveMutation.mutateAsync({ treatments, editSessionIds });
     } catch (err) {
       setSubmitError(
-        err instanceof Error ? err.message : "Erro ao atualizar tratamento.",
+        err instanceof Error ? err.message : "Error updating treatment.",
       );
     }
   }, [firstSession, validateRows, saveMutation, treatments, editSessionIds]);
 
   const defaultQuantity = firstSession?.plannedSessions ?? 1;
   const title =
-    treatmentType === "physiotherapy" ? "Editar Fisioterapia" : "Editar TENS";
+    treatmentType === "physiotherapy" ? "Edit Physiotherapy" : "Edit TENS";
 
   return (
     <BaseModal
       isOpen={isOpen}
       onClose={onClose}
       title={title}
-      subtitle={`${patientName} — Altere o local do corpo${treatmentType === "physiotherapy" ? ", a cor e o tempo" : ""}. A quantidade e a data de início não podem ser alteradas.`}
+      subtitle={`${patientName} — Edit the body location${treatmentType === "physiotherapy" ? ", color and duration" : ""}. The quantity and start date cannot be changed.`}
       maxWidth="4xl"
       preventOverflow
     >
@@ -203,25 +203,25 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
               }
               title={
                 !allowAddTreatmentRow
-                  ? "Só é possível adicionar um novo tratamento quando nenhuma sessão do tratamento original sofreu alterações."
+                  ? "It's only possible to add a new treatment when no sessions from the original treatment have been modified."
                   : undefined
               }
               className="mr-auto"
             >
-              Adicionar novo tratamento
+              Add New Treatment
             </Button>
           )}
           <Button type="button" variant="ghost" onClick={onClose}>
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
             onClick={handleSubmit}
             isLoading={isSubmitting}
-            loadingText="Salvando..."
+            loadingText="Saving..."
             disabled={isSubmitting || treatments.length === 0}
           >
-            Salvar alterações
+            Save changes
           </Button>
         </div>
       </div>

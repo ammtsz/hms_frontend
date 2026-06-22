@@ -20,7 +20,7 @@ describe('attendanceHistoryUtils', () => {
         assessment: { notes: 'Some notes' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation');
     });
 
     it('should return physiotherapy label', () => {
@@ -28,12 +28,12 @@ describe('attendanceHistoryUtils', () => {
         physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Fisioterapia');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Physiotherapy');
     });
 
     it('should return tens label', () => {
       const treatments: GroupedAttendance['treatments'] = {
-        tens: { bodyLocations: ['Shoulder'], sessionNumber: '1/3' }
+        tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/3' }
       };
       
       expect(getTreatmentTypesLabel(treatments)).toBe('TENS');
@@ -45,41 +45,41 @@ describe('attendanceHistoryUtils', () => {
         physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação + Fisioterapia');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation + Physiotherapy');
     });
 
     it('should combine multiple treatment types - assessment and tens', () => {
       const treatments: GroupedAttendance['treatments'] = {
         assessment: { notes: 'Notes' },
-        tens: { bodyLocations: ['Shoulder'], sessionNumber: '2/8' }
+        tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '2/8' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação + TENS');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation + TENS');
     });
 
     it('should combine multiple treatment types - physiotherapy and tens', () => {
       const treatments: GroupedAttendance['treatments'] = {
         physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '3/10' },
-        tens: { bodyLocations: ['Shoulder'], sessionNumber: '1/5' }
+        tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/5' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Fisioterapia + TENS');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Physiotherapy + TENS');
     });
 
     it('should combine all three treatment types', () => {
       const treatments: GroupedAttendance['treatments'] = {
         assessment: { notes: 'Notes' },
         physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '2/7' },
-        tens: { bodyLocations: ['Shoulder'], sessionNumber: '1/4' }
+        tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/4' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação + Fisioterapia + TENS');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation + Physiotherapy + TENS');
     });
 
     it('should return default label for empty treatments', () => {
       const treatments: GroupedAttendance['treatments'] = {};
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Tipo não especificado');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Unspecified type');
     });
 
     it('should handle treatments with undefined values', () => {
@@ -89,30 +89,30 @@ describe('attendanceHistoryUtils', () => {
         tens: undefined
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Tipo não especificado');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Unspecified type');
     });
 
     it('should handle null treatments object', () => {
       // Test the conditional logic branches
       const treatments1: GroupedAttendance['treatments'] = { assessment: { notes: 'test' } };
       const treatments2: GroupedAttendance['treatments'] = { physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' } };
-      const treatments3: GroupedAttendance['treatments'] = { tens: { bodyLocations: ['Arm'], sessionNumber: '2/8' } };
+      const treatments3: GroupedAttendance['treatments'] = { tens: { bodyLocations: ['Left Arm'], sessionNumber: '2/8' } };
       
-      expect(getTreatmentTypesLabel(treatments1)).toContain('Consulta de Avaliação');
-      expect(getTreatmentTypesLabel(treatments2)).toContain('Fisioterapia');
+      expect(getTreatmentTypesLabel(treatments1)).toContain('Assessment Consultation');
+      expect(getTreatmentTypesLabel(treatments2)).toContain('Physiotherapy');
       expect(getTreatmentTypesLabel(treatments3)).toContain('TENS');
     });
 
     it('should handle complex combinations for branch coverage', () => {
       // Test different branch paths in the function
       const emptyTypes: string[] = [];
-      const oneType: string[] = ['Consulta de Avaliação'];
-      const twoTypes: string[] = ['Consulta de Avaliação', 'Fisioterapia'];
+      const oneType: string[] = ['Assessment Consultation'];
+      const twoTypes: string[] = ['Assessment Consultation', 'Physiotherapy'];
       
       // These tests target the conditional logic inside getTreatmentTypesLabel
-      expect(emptyTypes.length > 0 ? emptyTypes.join(' + ') : 'Tipo não especificado').toBe('Tipo não especificado');
-      expect(oneType.length > 0 ? oneType.join(' + ') : 'Tipo não especificado').toBe('Consulta de Avaliação');
-      expect(twoTypes.length > 0 ? twoTypes.join(' + ') : 'Tipo não especificado').toBe('Consulta de Avaliação + Fisioterapia');
+      expect(emptyTypes.length > 0 ? emptyTypes.join(' + ') : 'Unspecified type').toBe('Unspecified type');
+      expect(oneType.length > 0 ? oneType.join(' + ') : 'Unspecified type').toBe('Assessment Consultation');
+      expect(twoTypes.length > 0 ? twoTypes.join(' + ') : 'Unspecified type').toBe('Assessment Consultation + Physiotherapy');
     });
   });
 
@@ -122,7 +122,7 @@ describe('attendanceHistoryUtils', () => {
         assessment: { isScheduled: true }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation');
     });
 
     it('should return physiotherapy label', () => {
@@ -130,12 +130,12 @@ describe('attendanceHistoryUtils', () => {
         physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Fisioterapia');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Physiotherapy');
     });
 
     it('should return tens label', () => {
       const treatments: GroupedScheduledAttendance['treatments'] = {
-        tens: { bodyLocations: ['Shoulder'], sessionNumber: '1/3' }
+        tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/3' }
       };
       
       expect(getTreatmentTypesLabel(treatments)).toBe('TENS');
@@ -147,41 +147,41 @@ describe('attendanceHistoryUtils', () => {
         physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação + Fisioterapia');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation + Physiotherapy');
     });
 
     it('should combine multiple treatment types - assessment and tens', () => {
       const treatments: GroupedScheduledAttendance['treatments'] = {
         assessment: { isScheduled: true },
-        tens: { bodyLocations: ['Shoulder'], sessionNumber: '1/3' }
+        tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/3' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação + TENS');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation + TENS');
     });
 
     it('should combine multiple treatment types - physiotherapy and tens', () => {
       const treatments: GroupedScheduledAttendance['treatments'] = {
         physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' },
-        tens: { bodyLocations: ['Shoulder'], sessionNumber: '1/3' }
+        tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/3' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Fisioterapia + TENS');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Physiotherapy + TENS');
     });
 
     it('should combine all three treatment types', () => {
       const treatments: GroupedScheduledAttendance['treatments'] = {
         assessment: { isScheduled: true },
         physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' },
-        tens: { bodyLocations: ['Shoulder'], sessionNumber: '1/3' }
+        tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/3' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação + Fisioterapia + TENS');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation + Physiotherapy + TENS');
     });
 
     it('should return default label for empty treatments', () => {
       const treatments: GroupedScheduledAttendance['treatments'] = {};
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Tipo não especificado');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Unspecified type');
     });
 
     it('should handle treatments with undefined values', () => {
@@ -191,7 +191,7 @@ describe('attendanceHistoryUtils', () => {
         tens: undefined
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Tipo não especificado');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Unspecified type');
     });
 
     it('should handle partial treatment data', () => {
@@ -199,7 +199,7 @@ describe('attendanceHistoryUtils', () => {
         physiotherapy: { bodyLocationsWithColors: [], sessionNumber: '0/0' }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Fisioterapia');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Physiotherapy');
     });
 
     it('should handle tens treatment with empty body locations', () => {
@@ -215,34 +215,34 @@ describe('attendanceHistoryUtils', () => {
         assessment: { isScheduled: false }
       };
       
-      expect(getTreatmentTypesLabel(treatments)).toBe('Consulta de Avaliação');
+      expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation');
     });
 
     it('should handle complex combinations for branch coverage', () => {
       // Test different branch paths in the function
       const emptyTypes: string[] = [];
-      const oneType: string[] = ['Consulta de Avaliação'];
-      const twoTypes: string[] = ['Consulta de Avaliação', 'Fisioterapia'];
+      const oneType: string[] = ['Assessment Consultation'];
+      const twoTypes: string[] = ['Assessment Consultation', 'Physiotherapy'];
       
       // These tests target the conditional logic inside getTreatmentTypesLabel
-      expect(emptyTypes.length > 0 ? emptyTypes.join(' + ') : 'Tipo não especificado').toBe('Tipo não especificado');
-      expect(oneType.length > 0 ? oneType.join(' + ') : 'Tipo não especificado').toBe('Consulta de Avaliação');
-      expect(twoTypes.length > 0 ? twoTypes.join(' + ') : 'Tipo não especificado').toBe('Consulta de Avaliação + Fisioterapia');
+      expect(emptyTypes.length > 0 ? emptyTypes.join(' + ') : 'Unspecified type').toBe('Unspecified type');
+      expect(oneType.length > 0 ? oneType.join(' + ') : 'Unspecified type').toBe('Assessment Consultation');
+      expect(twoTypes.length > 0 ? twoTypes.join(' + ') : 'Unspecified type').toBe('Assessment Consultation + Physiotherapy');
     });
 
     it('should test all conditional branches for type checking', () => {
       // Test each conditional branch individually
       const assessmentOnly: GroupedScheduledAttendance['treatments'] = { assessment: { isScheduled: true } };
       const physiotherapyOnly: GroupedScheduledAttendance['treatments'] = { physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' } };
-      const tensOnly: GroupedScheduledAttendance['treatments'] = { tens: { bodyLocations: ['Arm'], sessionNumber: '2/8' } };
+      const tensOnly: GroupedScheduledAttendance['treatments'] = { tens: { bodyLocations: ['Left Arm'], sessionNumber: '2/8' } };
       
       // Test the if conditions one by one
-      expect(getTreatmentTypesLabel(assessmentOnly)).toBe('Consulta de Avaliação');
-      expect(getTreatmentTypesLabel(physiotherapyOnly)).toBe('Fisioterapia');
+      expect(getTreatmentTypesLabel(assessmentOnly)).toBe('Assessment Consultation');
+      expect(getTreatmentTypesLabel(physiotherapyOnly)).toBe('Physiotherapy');
       expect(getTreatmentTypesLabel(tensOnly)).toBe('TENS');
       
       // Test empty case
-      expect(getTreatmentTypesLabel({})).toBe('Tipo não especificado');
+      expect(getTreatmentTypesLabel({})).toBe('Unspecified type');
     });
   });
 
@@ -301,7 +301,7 @@ describe('attendanceHistoryUtils', () => {
           createdDate: '2025-01-15',
           updatedDate: '2025-01-15',
           status: 'cancelled',
-          absenceNotes: 'tentar remarcar',
+          absenceNotes: 'Try to reschedule',
           cancelledDate: '2025-01-15'
         }
       ];
@@ -316,7 +316,7 @@ describe('attendanceHistoryUtils', () => {
       expect(completed?.treatments.assessment).toBeDefined();
       expect(cancelled?.date).toBe('2025-01-15');
       expect(cancelled?.attendanceIds).toEqual(['2']);
-      expect(cancelled?.absenceNotes).toBe('tentar remarcar');
+      expect(cancelled?.absenceNotes).toBe('Try to reschedule');
       expect(cancelled?.cancelledDate).toBe('2025-01-15');
     });
 
@@ -337,7 +337,7 @@ describe('attendanceHistoryUtils', () => {
         {
           id: 1,
           attendanceId: 1,
-          mainComplaint: 'Test complaint',
+          mainConcern: 'Test complaint',
           food: 'Test food',
           water: 'Test water',
           ointments: 'Test ointment',
@@ -486,7 +486,7 @@ describe('attendanceHistoryUtils', () => {
           attendanceId: 1,
           patientId: 1,
           treatmentType: 'tens',
-          bodyLocation: 'Shoulder',
+          bodyLocation: 'Left Shoulder',
           startDate: '2025-01-15',
           plannedSessions: 8,
           completedSessions: 3,
@@ -504,7 +504,7 @@ describe('attendanceHistoryUtils', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].treatments.tens).toEqual({
-        bodyLocations: ['Shoulder'],
+        bodyLocations: ['Left Shoulder'],
         sessionNumber: '3/8',
         notes: 'TENS treatment',
         attendanceNotes: 'TENS session',
@@ -651,13 +651,13 @@ describe('attendanceHistoryUtils', () => {
           attendanceId: 1,
           patientId: 1,
           treatmentType: 'physiotherapy',
-          bodyLocation: 'Coronário',
+          bodyLocation: 'Head',
           startDate: '2025-01-15',
           plannedSessions: 5,
           completedSessions: 2,
           status: 'completed',
           durationMinutes: 30,
-          color: 'Branco',
+          color: 'White',
           sessions: [sessionRecord1],
           createdDate: '2025-01-15',
           createdTime: '10:00:00',
@@ -670,13 +670,13 @@ describe('attendanceHistoryUtils', () => {
           attendanceId: 1,
           patientId: 1,
           treatmentType: 'physiotherapy',
-          bodyLocation: 'Abdômen',
+          bodyLocation: 'Lumbar',
           startDate: '2025-01-15',
           plannedSessions: 5,
           completedSessions: 3,
           status: 'completed',
           durationMinutes: 30,
-          color: 'Azul',
+          color: 'Blue',
           sessions: [sessionRecord2],
           createdDate: '2025-01-15',
           createdTime: '10:00:00',
@@ -690,8 +690,8 @@ describe('attendanceHistoryUtils', () => {
       expect(result).toHaveLength(1);
       expect(result[0].treatments.physiotherapy?.color).toBeUndefined();
       expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual([
-        { bodyLocation: 'Coronário', color: 'Branco' },
-        { bodyLocation: 'Abdômen', color: 'Azul' },
+        { bodyLocation: 'Head', color: 'White' },
+        { bodyLocation: 'Lumbar', color: 'Blue' },
       ]);
     });
 
@@ -756,7 +756,7 @@ describe('attendanceHistoryUtils', () => {
           attendanceId: 5,
           patientId: 1,
           treatmentType: 'physiotherapy',
-          bodyLocation: 'Arm',
+          bodyLocation: 'Left Arm',
           startDate: '2025-01-15',
           plannedSessions: 10,
           completedSessions: 2,
@@ -911,7 +911,7 @@ describe('attendanceHistoryUtils', () => {
           attendanceId: 1,
           patientId: 1,
           treatmentType: 'tens',
-          bodyLocation: 'Shoulder',
+          bodyLocation: 'Left Shoulder',
           startDate: '2025-01-15',
           plannedSessions: 8,
           completedSessions: 0,
@@ -932,7 +932,7 @@ describe('attendanceHistoryUtils', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].treatments.tens).toEqual({
-        bodyLocations: ['Shoulder'],
+        bodyLocations: ['Left Shoulder'],
         sessionNumber: '1/8',
         notes: '',
         attendanceNotes: undefined

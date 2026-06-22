@@ -56,12 +56,12 @@ export default function PriorityManagementList() {
   } = usePriorityManagementList();
 
   if (isLoading) {
-    return <div className="text-center py-6 text-gray-500">Carregando...</div>;
+    return <div className="text-center py-6 text-gray-500">Loading...</div>;
   }
 
   if (error) {
     return (
-      <div className="text-sm text-red-600">Erro ao carregar prioridades.</div>
+      <div className="text-sm text-red-600">Error loading priorities.</div>
     );
   }
 
@@ -71,12 +71,12 @@ export default function PriorityManagementList() {
         <Table className={stackedTableClasses.table}>
           <TableHeader className={stackedTableClasses.header}>
             <TableRow>
-              <TableHead>Código</TableHead>
-              <TableHead>Rótulo</TableHead>
+              <TableHead>Code</TableHead>
+              <TableHead>Label</TableHead>
               <TableHead className="w-28">Status</TableHead>
-              <TableHead className="hidden w-32 md:table-cell">Uso</TableHead>
+              <TableHead className="hidden w-32 md:table-cell">Usage</TableHead>
               <TableHead align="center" className="w-28">
-                Ação
+                Action
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -87,12 +87,12 @@ export default function PriorityManagementList() {
               return (
                 <TableRow key={option.id} className={stackedTableClasses.row}>
                   <TableCell className={stackedTableClasses.cell}>
-                    <TableMobileLabel>Código</TableMobileLabel>
+                    <TableMobileLabel>Code</TableMobileLabel>
                     {option.value}
                   </TableCell>
 
                   <TableCell className={stackedTableClasses.cell}>
-                    <TableMobileLabel>Rótulo</TableMobileLabel>
+                    <TableMobileLabel>Label</TableMobileLabel>
                     {isEditing ? (
                       <div className="flex items-center gap-2">
                         <Input
@@ -118,7 +118,7 @@ export default function PriorityManagementList() {
                           variant={option.isActive ? "success" : "neutral"}
                           title={PRIORITY_1_TOOLTIP}
                         >
-                          ● Ativo
+                          ● Active
                         </Badge>
                       ) : (
                         <Button
@@ -136,11 +136,11 @@ export default function PriorityManagementList() {
                           }`}
                           title={
                             option.isActive
-                              ? "Desativar prioridade"
-                              : "Ativar prioridade"
+                              ? "Deactivate priority"
+                              : "Activate priority"
                           }
                         >
-                          {option.isActive ? "● Ativo" : "○ Inativo"}
+                          {option.isActive ? "● Active" : "○ Inactive"}
                         </Button>
                       )
                     ) : (
@@ -152,7 +152,7 @@ export default function PriorityManagementList() {
                             : undefined
                         }
                       >
-                        {option.isActive ? "Ativo" : "Inativo"}
+                        {option.isActive ? "Active" : "Inactive"}
                       </Badge>
                     )}
                   </TableCell>
@@ -163,7 +163,7 @@ export default function PriorityManagementList() {
                     <TableMobileLabel>Uso</TableMobileLabel>
                     {typeof option.usageCount === "number" &&
                     option.usageCount > 0
-                      ? `${option.usageCount} paciente(s)`
+                      ? `${option.usageCount} patient(s)`
                       : "-"}
                   </TableCell>
 
@@ -171,14 +171,14 @@ export default function PriorityManagementList() {
                     align="center"
                     className={`${stackedTableClasses.actionsCell} md:text-center`}
                   >
-                    <TableMobileLabel>Ação</TableMobileLabel>
+                    <TableMobileLabel>Action</TableMobileLabel>
                     {isEditing ? (
                       <div className="flex gap-2 justify-center">
                         <IconButton
                           onClick={() => handleSaveLabel(option)}
                           disabled={updatePriorityOption.isPending}
                           tone="success"
-                          title="Salvar"
+                          title="Save"
                         >
                           <Save className="w-4 h-4" />
                         </IconButton>
@@ -189,7 +189,7 @@ export default function PriorityManagementList() {
                           }}
                           disabled={updatePriorityOption.isPending}
                           tone="neutral"
-                          title="Cancelar"
+                          title="Cancel"
                         >
                           <X className="w-4 h-4" />
                         </IconButton>
@@ -203,7 +203,7 @@ export default function PriorityManagementList() {
                         }}
                         disabled={!isAdmin}
                         tone="primary"
-                        title={isAdmin ? "Editar rótulo" : "Apenas admin"}
+                        title={isAdmin ? "Edit label" : "Admin only"}
                       >
                         <Pencil className="w-4 h-4" />
                       </IconButton>
@@ -219,26 +219,26 @@ export default function PriorityManagementList() {
       {deactivationOptionId && blockingPatients.length > 0 && (
         <div className="border border-amber-200 bg-amber-50 rounded-lg p-4 space-y-3">
           <h3 className="text-sm font-semibold text-amber-900">
-            Reatribuição necessária antes de desativar
+            Reassignment required before deactivating
           </h3>
           <p className="text-sm text-amber-800">
-            Não é possível desativar a prioridade {deactivationOptionId} porque
-            existem{" "}
+            It is not possible to deactivate the priority {deactivationOptionId}{" "}
+            because there are{" "}
             <span className="font-semibold">{blockingPatients.length}</span>{" "}
-            pacientes usando este nível. Selecione os pacientes e escolha para
-            qual prioridade ativa eles devem ser movidos.
+            patients using this level. Select the patients and choose for which
+            active priority they should be moved.
           </p>
 
           <div className="flex flex-col md:flex-row gap-3">
             <div className="flex-1">
               <label className="block text-sm font-medium text-amber-900 mb-2">
-                Pacientes usando a prioridade
+                Patients using the priority
               </label>
 
               <div className="max-h-64 overflow-auto border border-amber-200 bg-white rounded-md">
                 {blockingPatients.length === 0 ? (
                   <div className="p-3 text-sm text-gray-600">
-                    Nenhum paciente encontrado.
+                    No patients found.
                   </div>
                 ) : (
                   blockingPatients.map((p) => {
@@ -275,7 +275,7 @@ export default function PriorityManagementList() {
                   }
                   className="border-amber-200 text-amber-800 hover:bg-amber-100"
                 >
-                  Selecionar todos
+                  Select all
                 </Button>
                 <Button
                   variant="outline"
@@ -283,14 +283,14 @@ export default function PriorityManagementList() {
                   onClick={() => setSelectedPatientIds(new Set())}
                   className="border-amber-200 text-amber-800 hover:bg-amber-100"
                 >
-                  Limpar seleção
+                  Clear selection
                 </Button>
               </div>
             </div>
 
             <div className="w-full md:w-80">
               <label className="block text-sm font-medium text-amber-900 mb-2">
-                Prioridade reatribuída (ativa)
+                Reassigned priority (active)
               </label>
               <Select
                 value={targetPriority}
@@ -323,9 +323,9 @@ export default function PriorityManagementList() {
                   }
                   className="flex-1 bg-amber-600 hover:bg-amber-700"
                 >
-                  Reatribuir
+                  Reassign
                   {selectedPatientIds.size === blockingPatients.length
-                    ? " e desativar"
+                    ? " and deactivate"
                     : ""}
                 </Button>
                 <Button
@@ -333,7 +333,7 @@ export default function PriorityManagementList() {
                   onClick={closeDeactivationFlow}
                   className="border-amber-200 text-amber-800 hover:bg-amber-100"
                 >
-                  Cancelar
+                  Cancel
                 </Button>
               </div>
             </div>

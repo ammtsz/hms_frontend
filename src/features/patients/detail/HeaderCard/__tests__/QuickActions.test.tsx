@@ -3,13 +3,17 @@ import { render, screen } from "@testing-library/react";
 import QuickActions from "../QuickActions";
 import { Patient } from "@/types/types";
 
-jest.mock(
-  "next/link",
-  () =>
-    ({ children, href }: { children: React.ReactNode; href: string }) => (
-      <a href={href}>{children}</a>
-    ),
-);
+jest.mock("next/link", () => {
+  return function MockLink({
+    children,
+    href,
+  }: {
+    children: React.ReactNode;
+    href: string;
+  }) {
+    return <a href={href}>{children}</a>;
+  };
+});
 
 describe("QuickActions", () => {
   const mockPatient: Patient = {
@@ -19,7 +23,7 @@ describe("QuickActions", () => {
     priority: "3",
     status: "T",
     birthDate: "1990-01-01",
-    mainComplaint: "Test complaint",
+    mainConcern: "Test complaint",
     startDate: "2025-01-01",
     dischargeDate: null,
     timezone: "America/Sao_Paulo",
@@ -40,7 +44,7 @@ describe("QuickActions", () => {
   it("renders edit patient link", () => {
     render(<QuickActions patient={mockPatient} />);
 
-    const editLink = screen.getByRole("link", { name: /editar/i });
+    const editLink = screen.getByRole("link", { name: /Edit/i });
     expect(editLink).toHaveAttribute("href", "/patients/1/edit");
   });
 });

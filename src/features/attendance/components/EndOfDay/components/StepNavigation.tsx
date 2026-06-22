@@ -49,7 +49,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
           1
         </div>
         <div className="ml-3 min-w-0 text-sm font-medium text-gray-700">
-          Atendimentos
+          Attendances
         </div>
       </div>
       <div className="flex flex-1 items-center min-w-0">
@@ -60,7 +60,9 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
         >
           2
         </div>
-        <div className="ml-3 min-w-0 text-sm font-medium text-gray-700">Faltas</div>
+        <div className="ml-3 min-w-0 text-sm font-medium text-gray-700">
+          Absences
+        </div>
       </div>
       <div className="flex flex-1 items-center min-w-0">
         <div
@@ -71,7 +73,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
           3
         </div>
         <div className="ml-3 min-w-0 text-sm font-medium text-gray-700">
-          Confirmação
+          Confirmation
         </div>
       </div>
     </div>

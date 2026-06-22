@@ -1,13 +1,14 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { AttendanceStatusBadges } from "../AttendanceStatusBadges";
+import { ATTENDANCE_HISTORY_STATUS_LABELS } from "@/utils/attendanceStatusLabels";
 
 describe("AttendanceStatusBadges", () => {
   describe("absence badges", () => {
     it("renders cancelled badge", () => {
       render(<AttendanceStatusBadges absenceStatus="cancelled" />);
 
-      const badge = screen.getByText("Cancelado");
+      const badge = screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.cancelled);
       expect(badge).toBeInTheDocument();
       expect(badge.className).toContain("bg-orange-200");
       expect(badge.className).toContain("text-orange-900");
@@ -16,7 +17,7 @@ describe("AttendanceStatusBadges", () => {
     it("renders missed badge", () => {
       render(<AttendanceStatusBadges absenceStatus="missed" />);
 
-      const badge = screen.getByText("Falta");
+      const badge = screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.missed);
       expect(badge).toBeInTheDocument();
       expect(badge.className).toContain("bg-red-200");
       expect(badge.className).toContain("text-red-900");
@@ -33,8 +34,8 @@ describe("AttendanceStatusBadges", () => {
         />,
       );
 
-      expect(screen.getByText("Próximo")).toBeInTheDocument();
-      expect(screen.getByText("Agendado")).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.next)).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.scheduled)).toBeInTheDocument();
     });
 
     it("renders upcoming badge for upcoming appointments", () => {
@@ -47,8 +48,8 @@ describe("AttendanceStatusBadges", () => {
         />,
       );
 
-      expect(screen.getByText("Em breve")).toBeInTheDocument();
-      expect(screen.getByText("Agendado")).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.soon)).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.scheduled)).toBeInTheDocument();
     });
 
     it("renders only scheduled badge for regular appointments", () => {
@@ -61,9 +62,9 @@ describe("AttendanceStatusBadges", () => {
         />,
       );
 
-      expect(screen.getByText("Agendado")).toBeInTheDocument();
-      expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
-      expect(screen.queryByText("Em breve")).not.toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.scheduled)).toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_HISTORY_STATUS_LABELS.next)).not.toBeInTheDocument();
+      expect(screen.queryByText("Soon")).not.toBeInTheDocument();
     });
 
     it("does not render scheduled badge for cancelled appointments", () => {
@@ -75,15 +76,15 @@ describe("AttendanceStatusBadges", () => {
         />,
       );
 
-      expect(screen.queryByText("Agendado")).not.toBeInTheDocument();
-      expect(screen.getByText("Cancelado")).toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_HISTORY_STATUS_LABELS.scheduled)).not.toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.cancelled)).toBeInTheDocument();
     });
   });
 
   describe("status config badges", () => {
     it("renders status config badge when provided and no absence", () => {
       const statusConfig = {
-        label: "Concluído",
+        label: ATTENDANCE_HISTORY_STATUS_LABELS.completed,
         badgeClass: "bg-green-100 text-green-800",
         icon: <span>✓</span>,
       };
@@ -95,12 +96,12 @@ describe("AttendanceStatusBadges", () => {
         />,
       );
 
-      expect(screen.getByText("Concluído")).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.completed)).toBeInTheDocument();
     });
 
     it("does not render status config badge for absences", () => {
       const statusConfig = {
-        label: "Concluído",
+        label: ATTENDANCE_HISTORY_STATUS_LABELS.completed,
         badgeClass: "bg-green-100 text-green-800",
         icon: <span>✓</span>,
       };
@@ -112,8 +113,8 @@ describe("AttendanceStatusBadges", () => {
         />,
       );
 
-      expect(screen.queryByText("Concluído")).not.toBeInTheDocument();
-      expect(screen.getByText("Cancelado")).toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_HISTORY_STATUS_LABELS.completed)).not.toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.cancelled)).toBeInTheDocument();
     });
   });
 
@@ -138,8 +139,8 @@ describe("AttendanceStatusBadges", () => {
         />,
       );
 
-      expect(screen.getByText("Próximo")).toBeInTheDocument();
-      expect(screen.getByText("Agendado")).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.next)).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_HISTORY_STATUS_LABELS.scheduled)).toBeInTheDocument();
     });
   });
 });

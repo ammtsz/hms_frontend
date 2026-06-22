@@ -114,11 +114,11 @@ const HolidayManagementContent: React.FC = () => {
           data: cleanedData,
         });
         console.log("Template updated successfully:", result);
-        alert("Modelo atualizado com sucesso!");
+        alert("Template updated successfully!");
       } else {
         result = await createTemplate.mutateAsync(cleanedData);
         console.log("Template created successfully:", result);
-        alert("Modelo criado com sucesso!");
+        alert("Template created successfully!");
       }
       setShowTemplateFormModal(false);
       setEditingTemplate(null);
@@ -128,16 +128,16 @@ const HolidayManagementContent: React.FC = () => {
         const axiosError = error as AxiosError<{ message?: string }>;
         console.error("Error details:", axiosError.response?.data);
         alert(
-          `Erro ao salvar modelo: ${axiosError.response?.data?.message || "Erro desconhecido"}`,
+          `Error saving template: ${axiosError.response?.data?.message || "Unknown error"}`,
         );
       } else {
-        alert("Erro ao salvar modelo. Tente novamente.");
+        alert("Error saving template. Please try again.");
       }
     }
   };
 
   const handleDeleteTemplate = async (id: number) => {
-    if (!confirm("Tem certeza que deseja excluir este modelo?")) {
+    if (!confirm("Are you sure you want to delete this template?")) {
       return;
     }
 
@@ -145,7 +145,7 @@ const HolidayManagementContent: React.FC = () => {
       await deleteTemplate.mutateAsync(id);
     } catch (error) {
       console.error("Error deleting template:", error);
-      alert("Erro ao excluir modelo. Tente novamente.");
+      alert("Error deleting template. Please try again.");
     }
   };
 
@@ -178,17 +178,13 @@ const HolidayManagementContent: React.FC = () => {
       }
     } catch (error) {
       console.error("Error applying template:", error);
-      alert("Erro ao aplicar modelo. Tente novamente.");
+      alert("Error applying template. Please try again.");
     }
   };
 
   if (isLoading) {
     return (
-      <LoadingFallback
-        message="Carregando feriados..."
-        size="large"
-        showSpinner
-      />
+      <LoadingFallback message="Loading holidays..." size="large" showSpinner />
     );
   }
 
@@ -196,11 +192,9 @@ const HolidayManagementContent: React.FC = () => {
     return (
       <div className="p-8">
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-800 font-semibold">
-            Erro ao carregar feriados
-          </p>
+          <p className="text-red-800 font-semibold">Error loading holidays</p>
           <p className="text-red-600 text-sm mt-2">
-            {error instanceof Error ? error.message : "Erro desconhecido"}
+            {error instanceof Error ? error.message : "Unknown error"}
           </p>
         </div>
       </div>
@@ -213,17 +207,17 @@ const HolidayManagementContent: React.FC = () => {
       <Breadcrumb
         items={[
           { label: "Agenda", href: "/agenda" },
-          { label: "Feriados", isActive: true },
+          { label: "Holidays", isActive: true },
         ]}
       />
 
       {/* Header */}
       <div className="mb-8">
         <h1 className="flex items-center gap-3 text-xl font-semibold text-gray-900 sm:text-2xl">
-          Gerenciamento de Feriados
+          Holiday Management
         </h1>
         <p className="text-gray-600 mt-2">
-          Gerencie feriados e datas bloqueadas no calendário
+          Manage holidays and blocked dates in the calendar
         </p>
       </div>
 
@@ -232,7 +226,7 @@ const HolidayManagementContent: React.FC = () => {
         <div
           className="-mx-3 flex gap-4 overflow-x-auto px-3 snap-x sm:mx-0 sm:gap-8 sm:px-0"
           role="tablist"
-          aria-label="Feriados ou modelos"
+          aria-label="Holidays or templates"
         >
           <Button
             type="button"
@@ -248,7 +242,7 @@ const HolidayManagementContent: React.FC = () => {
           >
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
-              Feriados
+              Holidays
             </div>
             {activeTab === "holidays" && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
@@ -268,7 +262,7 @@ const HolidayManagementContent: React.FC = () => {
           >
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4" />
-              Modelos
+              Templates
             </div>
             {activeTab === "templates" && (
               <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600" />
@@ -306,7 +300,7 @@ const HolidayManagementContent: React.FC = () => {
               className="w-full sm:w-auto"
             >
               <FileText className="w-4 h-4" />
-              Novo Modelo
+              New Template
             </Button>
           </div>
 
@@ -387,9 +381,7 @@ const HolidayManagement: React.FC = () => {
   const { user, isLoading: authLoading } = useAuthContext();
 
   if (authLoading) {
-    return (
-      <LoadingFallback message="Carregando..." size="large" />
-    );
+    return <LoadingFallback message="Loading..." size="large" />;
   }
 
   if (!user || user.role !== UserRole.ADMIN) {

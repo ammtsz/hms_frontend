@@ -33,7 +33,7 @@ export const useConsultationSubmission = () => {
       try {
         const consultationRequest: CreateConsultationRequest = {
           attendanceId: attendanceId,
-          mainComplaint: data.mainComplaint,
+          mainConcern: data.mainConcern,
           patientStatus: data.patientStatus,
           food: data.food,
           water: data.water,
@@ -89,7 +89,7 @@ export const useConsultationSubmission = () => {
           const existingConsultation = consultationFetchResult.value;
 
           const updateRequest: UpdateConsultationRequest = {
-            mainComplaint: data.mainComplaint,
+            mainConcern: data.mainConcern,
             patientStatus: data.patientStatus,
             food: data.food,
             water: data.water,

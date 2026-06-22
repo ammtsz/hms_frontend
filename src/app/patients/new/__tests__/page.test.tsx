@@ -103,7 +103,7 @@ describe("NewPatientPage", () => {
       "max-w-4xl",
       "mx-auto",
       "w-full",
-      "px-4"
+      "px-4",
     );
   });
 
@@ -112,10 +112,10 @@ describe("NewPatientPage", () => {
 
     expect(screen.getByTestId("breadcrumb")).toBeInTheDocument();
     expect(screen.getByTestId("breadcrumb-item-0")).toHaveTextContent(
-      "Pacientes"
+      "Patients",
     );
     expect(screen.getByTestId("breadcrumb-item-1")).toHaveTextContent(
-      "Cadastro de Paciente"
+      "Patient Registration (Active)",
     );
     expect(screen.getByTestId("active-indicator")).toBeInTheDocument();
   });
@@ -172,11 +172,11 @@ describe("NewPatientPage", () => {
 
     // Check first breadcrumb item
     const firstItem = screen.getByTestId("breadcrumb-item-0");
-    expect(firstItem).toHaveTextContent("Pacientes");
+    expect(firstItem).toHaveTextContent("Patients");
 
     // Check second breadcrumb item (active)
     const secondItem = screen.getByTestId("breadcrumb-item-1");
-    expect(secondItem).toHaveTextContent("Cadastro de Paciente");
+    expect(secondItem).toHaveTextContent("Patient Registration (Active)");
     expect(screen.getByTestId("active-indicator")).toBeInTheDocument();
   });
 });

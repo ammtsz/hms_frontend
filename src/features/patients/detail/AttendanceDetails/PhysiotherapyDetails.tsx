@@ -58,7 +58,7 @@ export const PhysiotherapyDetails: React.FC<PhysiotherapyDetailsProps> = ({
   duration,
   sessionNumber,
   showSessions = false,
-  sessionLabel = "Sessão",
+  sessionLabel = "Session",
   notes,
   isAbsent,
   attendanceNotes,
@@ -74,7 +74,7 @@ export const PhysiotherapyDetails: React.FC<PhysiotherapyDetailsProps> = ({
   );
   const showPerLocationColorSuffix = distinctColors.length > 1;
 
-  const locationsLabel = entries.length > 1 ? "Locais" : "Local";
+  const locationsLabel = entries.length > 1 ? "Locations" : "Location";
   const locationsText = showPerLocationColorSuffix
     ? entries
         .map((e) =>
@@ -88,7 +88,7 @@ export const PhysiotherapyDetails: React.FC<PhysiotherapyDetailsProps> = ({
   return (
     <DetailBox variant={isAbsent ? "disabled" : "physiotherapy"}>
       <div className="flex items-center gap-2 mb-2 flex-wrap">
-        <div className="text-sm text-gray-700 font-medium">✨ Fisioterapia</div>
+        <div className="text-sm text-gray-700 font-medium">✨ Physiotherapy</div>
         {distinctColors.map((colorName) => (
           <span
             key={colorName}
@@ -108,8 +108,8 @@ export const PhysiotherapyDetails: React.FC<PhysiotherapyDetailsProps> = ({
         {renderSessions(sessionNumber, showSessions, sessionLabel)}
         {duration && (
           <>
-            <strong>Quantidade:</strong> {duration}{" "}
-            {duration > 1 ? "unidades" : "unidade"}
+            <strong>Quantity:</strong> {duration}{" "}
+            {duration > 1 ? "units" : "unit"}
             <br />
           </>
         )}

@@ -3,26 +3,21 @@ import { PageHeader, PageToolbar } from "../index";
 
 describe("PageHeader", () => {
   it("renders title and description", () => {
-    render(
-      <PageHeader
-        title="Pacientes"
-        description="Gerencie pacientes"
-      />,
-    );
+    render(<PageHeader title="Patients" description="Manage patients" />);
 
-    expect(screen.getByText("Pacientes")).toBeInTheDocument();
-    expect(screen.getByText("Gerencie pacientes")).toBeInTheDocument();
+    expect(screen.getByText("Patients")).toBeInTheDocument();
+    expect(screen.getByText("Manage patients")).toBeInTheDocument();
   });
 
   it("renders actions", () => {
     render(
       <PageHeader
-        title="Agenda"
-        actions={<button type="button">Novo</button>}
+        title="Schedule"
+        actions={<button type="button">New</button>}
       />,
     );
 
-    expect(screen.getByRole("button", { name: "Novo" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "New" })).toBeInTheDocument();
   });
 
   it("uses mobile-safe layout classes", () => {

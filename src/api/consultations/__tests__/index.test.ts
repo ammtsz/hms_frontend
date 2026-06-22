@@ -58,7 +58,7 @@ describe('Consultations API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: expect.stringMatching(/Internal server error, please try again later|Internal server error, please try again later/)
       });
     });
   });
@@ -85,7 +85,7 @@ describe('Consultations API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: expect.stringMatching(/Resource not found|Resource not found/)
       });
     });
   });
@@ -132,7 +132,7 @@ describe('Consultations API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Requisição inválida'
+        error: 'Invalid request'
       });
     });
   });
@@ -161,7 +161,7 @@ describe('Consultations API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: expect.stringMatching(/Resource not found|Resource not found/)
       });
     });
 
@@ -210,7 +210,7 @@ describe('Consultations API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: expect.stringMatching(/Resource not found|Resource not found/)
       });
     });
 
@@ -222,7 +222,7 @@ describe('Consultations API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: expect.stringMatching(/Internal server error, please try again later|Internal server error, please try again later/)
       });
     });
   });

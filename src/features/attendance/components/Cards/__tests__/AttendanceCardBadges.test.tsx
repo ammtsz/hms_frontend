@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import AttendanceCardBadges from "../AttendanceCardBadges";
+import { ATTENDANCE_CARD_OVERLAY_LABELS } from "../../../styles/cardStyles";
 import type { IGroupedPatient } from "../../../utils/patientGrouping";
 import { AttendanceType, Priority } from "@/types/types";
 
@@ -16,7 +17,7 @@ describe("AttendanceCardBadges", () => {
   });
 
   describe("Missed/Cancelled Badges", () => {
-    it("should display FALTA badge when isMissed is true", () => {
+    it("should display MISSED badge when isMissed is true", () => {
       render(
         <AttendanceCardBadges
           isMissed={true}
@@ -25,12 +26,12 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      const badge = screen.getByText("FALTA");
+      const badge = screen.getByText(ATTENDANCE_CARD_OVERLAY_LABELS.missed);
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveClass("bg-red-100", "text-red-700");
     });
 
-    it("should display CANCELADO badge when isCancelled is true", () => {
+    it("should display CANCELLED badge when isCancelled is true", () => {
       render(
         <AttendanceCardBadges
           isMissed={false}
@@ -39,7 +40,7 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      const badge = screen.getByText("CANCELADO");
+      const badge = screen.getByText(ATTENDANCE_CARD_OVERLAY_LABELS.cancelled);
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveClass("bg-gray-300", "text-gray-700");
     });
@@ -53,8 +54,8 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      expect(screen.queryByText("FALTA")).not.toBeInTheDocument();
-      expect(screen.queryByText("CANCELADO")).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.missed)).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.cancelled)).not.toBeInTheDocument();
     });
 
     it("should display both badges when both isMissed and isCancelled are true", () => {
@@ -66,13 +67,13 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      expect(screen.getByText("FALTA")).toBeInTheDocument();
-      expect(screen.getByText("CANCELADO")).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_CARD_OVERLAY_LABELS.missed)).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_CARD_OVERLAY_LABELS.cancelled)).toBeInTheDocument();
     });
   });
 
   describe("Next to be Attended Badge", () => {
-    it('should display "Próximo" badge when isNextToBeAttended is true', () => {
+    it('should display ATTENDANCE_CARD_OVERLAY_LABELS.next badge when isNextToBeAttended is true', () => {
       render(
         <AttendanceCardBadges
           isMissed={false}
@@ -81,10 +82,10 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      expect(screen.getByText("Próximo")).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_CARD_OVERLAY_LABELS.next)).toBeInTheDocument();
     });
 
-    it('should not display "Próximo" badge when isNextToBeAttended is false', () => {
+    it('should not display ATTENDANCE_CARD_OVERLAY_LABELS.next badge when isNextToBeAttended is false', () => {
       render(
         <AttendanceCardBadges
           isMissed={false}
@@ -93,10 +94,10 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.next)).not.toBeInTheDocument();
     });
 
-    it('should not display "Próximo" badge when patient is missed', () => {
+    it('should not display ATTENDANCE_CARD_OVERLAY_LABELS.next badge when patient is missed', () => {
       render(
         <AttendanceCardBadges
           isMissed={true}
@@ -105,10 +106,10 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.next)).not.toBeInTheDocument();
     });
 
-    it('should not display "Próximo" badge when patient is cancelled', () => {
+    it('should not display ATTENDANCE_CARD_OVERLAY_LABELS.next badge when patient is cancelled', () => {
       render(
         <AttendanceCardBadges
           isMissed={false}
@@ -117,10 +118,10 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.next)).not.toBeInTheDocument();
     });
 
-    it('should not display "Próximo" badge when patient is both missed and cancelled', () => {
+    it('should not display ATTENDANCE_CARD_OVERLAY_LABELS.next badge when patient is both missed and cancelled', () => {
       render(
         <AttendanceCardBadges
           isMissed={true}
@@ -129,7 +130,7 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.next)).not.toBeInTheDocument();
     });
   });
 
@@ -302,10 +303,10 @@ describe("AttendanceCardBadges", () => {
       );
 
       // Missed badge should show
-      expect(screen.getByText("FALTA")).toBeInTheDocument();
+      expect(screen.getByText(ATTENDANCE_CARD_OVERLAY_LABELS.missed)).toBeInTheDocument();
 
-      // "Próximo" should NOT show because patient is missed
-      expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
+      // ATTENDANCE_CARD_OVERLAY_LABELS.next should NOT show because patient is missed
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.next)).not.toBeInTheDocument();
 
       // Treatment counts should show
       expect(container.querySelector(".bg-yellow-200")).toBeInTheDocument();
@@ -321,9 +322,9 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      expect(screen.queryByText("FALTA")).not.toBeInTheDocument();
-      expect(screen.queryByText("CANCELADO")).not.toBeInTheDocument();
-      expect(screen.queryByText("Próximo")).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.missed)).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.cancelled)).not.toBeInTheDocument();
+      expect(screen.queryByText(ATTENDANCE_CARD_OVERLAY_LABELS.next)).not.toBeInTheDocument();
       expect(
         container.querySelector(".absolute.top-1.left-1"),
       ).not.toBeInTheDocument();
@@ -340,7 +341,7 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      const badge = screen.getByText("FALTA");
+      const badge = screen.getByText(ATTENDANCE_CARD_OVERLAY_LABELS.missed);
       expect(badge).toHaveClass("absolute", "top-1", "right-1", "z-10");
     });
 
@@ -353,7 +354,7 @@ describe("AttendanceCardBadges", () => {
         />,
       );
 
-      const badge = screen.getByText("Próximo");
+      const badge = screen.getByText(ATTENDANCE_CARD_OVERLAY_LABELS.next);
       expect(badge).toHaveClass("absolute", "top-1", "right-1", "z-10");
     });
 

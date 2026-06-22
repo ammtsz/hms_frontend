@@ -113,7 +113,7 @@ describe("NewPatientCheckInModal", () => {
     it("renders when modal is open and patient exists", () => {
       render(<NewPatientCheckInModal />);
       expect(screen.getByTestId("base-modal")).toBeInTheDocument();
-      expect(screen.getByText("Check-in do Novo Paciente")).toBeInTheDocument();
+      expect(screen.getByText("New Patient Check-in")).toBeInTheDocument();
     });
 
     it("does not render when modal is closed", () => {
@@ -142,7 +142,7 @@ describe("NewPatientCheckInModal", () => {
       render(<NewPatientCheckInModal />);
 
       expect(screen.getByTestId("base-modal")).toBeInTheDocument();
-      expect(screen.getByText("Check-in do Novo Paciente")).toBeInTheDocument();
+      expect(screen.getByText("New Patient Check-in")).toBeInTheDocument();
       expect(screen.getByTestId("modal-content")).toHaveAttribute(
         "data-max-width",
         "md",
@@ -286,13 +286,13 @@ describe("NewPatientCheckInModal", () => {
         ...mockNewPatientCheckInModal,
         patient: {
           ...mockPatientBasic,
-          name: "José María Fernández-López",
+          name: "John Fernandez-Lopez",
         },
       });
 
       render(<NewPatientCheckInModal />);
       expect(
-        screen.getByText("Patient: José María Fernández-López"),
+        screen.getByText("Patient: John Fernandez-Lopez"),
       ).toBeInTheDocument();
     });
   });

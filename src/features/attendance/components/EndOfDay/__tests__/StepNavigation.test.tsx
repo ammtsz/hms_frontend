@@ -13,9 +13,9 @@ describe("StepNavigation", () => {
   it("renders all three steps", () => {
     render(<StepNavigation {...defaultProps} />);
 
-    expect(screen.getByText("Atendimentos")).toBeInTheDocument();
-    expect(screen.getByText("Faltas")).toBeInTheDocument();
-    expect(screen.getByText("Confirmação")).toBeInTheDocument();
+    expect(screen.getByText("Attendances")).toBeInTheDocument();
+    expect(screen.getByText("Absences")).toBeInTheDocument();
+    expect(screen.getByText("Confirmation")).toBeInTheDocument();
   });
 
   it("highlights current step correctly", () => {

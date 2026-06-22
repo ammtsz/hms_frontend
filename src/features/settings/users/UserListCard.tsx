@@ -49,17 +49,17 @@ export function UserListCard({
 
       <div className="mt-3 space-y-2 text-sm">
         <p className="flex flex-wrap items-center gap-2">
-          <span className="text-gray-500">Função</span>
+          <span className="text-gray-500">Role</span>
           <Badge variant="primary">{ROLE_LABELS[user.role]}</Badge>
         </p>
         <p className="flex flex-wrap items-center gap-2">
           <span className="text-gray-500">Status</span>
           <Badge variant={user.isActive ? "success" : "neutral"}>
-            {user.isActive ? "Ativo" : "Inativo"}
+            {user.isActive ? "Active" : "Inactive"}
           </Badge>
         </p>
         <p className="flex flex-wrap items-center gap-2">
-          <span className="text-gray-500">Último login</span>
+          <span className="text-gray-500">Last login</span>
           <span className="font-medium text-gray-800">{lastLogin}</span>
         </p>
       </div>
@@ -67,13 +67,13 @@ export function UserListCard({
       <div
         className="mt-3 grid grid-cols-4 gap-1 border-t border-gray-100 pt-3"
         role="group"
-        aria-label={`Ações para ${user.name}`}
+        aria-label={`Actions for ${user.name}`}
       >
         <IconButton
           onClick={() => onEdit(user)}
           tone="primary"
-          title="Editar"
-          aria-label="Editar"
+          title="Edit"
+          aria-label="Edit"
           className="justify-self-center"
         >
           <Edit className="h-4 w-4" />
@@ -81,8 +81,8 @@ export function UserListCard({
         <IconButton
           onClick={() => onResetPassword(user)}
           tone="purple"
-          title="Redefinir Senha"
-          aria-label="Redefinir Senha"
+          title="Reset password"
+          aria-label="Reset password"
           className="justify-self-center"
         >
           <Key className="h-4 w-4" />
@@ -90,8 +90,8 @@ export function UserListCard({
         <IconButton
           onClick={() => onToggleActive(user)}
           tone={user.isActive ? "warning" : "success"}
-          title={user.isActive ? "Desativar" : "Reativar"}
-          aria-label={user.isActive ? "Desativar" : "Reativar"}
+          title={user.isActive ? "Deactivate" : "Reactivate"}
+          aria-label={user.isActive ? "Deactivate" : "Reactivate"}
           disabled={isSelf}
           className="justify-self-center"
         >
@@ -104,8 +104,8 @@ export function UserListCard({
         <IconButton
           onClick={() => onDelete(user)}
           tone="danger"
-          title="Excluir"
-          aria-label="Excluir"
+          title="Delete"
+          aria-label="Delete"
           disabled={isSelf}
           className="justify-self-center"
         >

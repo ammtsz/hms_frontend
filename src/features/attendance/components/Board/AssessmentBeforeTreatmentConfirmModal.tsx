@@ -32,22 +32,22 @@ export const AssessmentBeforeTreatmentConfirmModal: React.FC = () => {
     <BaseModal
       isOpen={modal.isOpen}
       onClose={handleCancel}
-      title="Tratamento de Fisioterapia/TENS pendente"
+      title="Pending Physiotherapy/TENS Treatment"
       maxWidth="md"
     >
       <div className="p-5">
         <p className="text-sm text-gray-600 mb-6">
-          O paciente possui um tratamento de Fisioterapia/TENS agendado para
-          hoje. Deseja mesmo mover a consulta para &quot;Em andamento&quot;
-          antes de concluir o tratamento?
+          The patient has a Physiotherapy/TENS treatment scheduled for today. Do
+          you really want to move the consultation to &quot;In progress&quot;
+          before completing the treatment?
         </p>
 
         <div className="flex flex-col-reverse justify-end gap-3 sm:flex-row">
           <Button type="button" variant="outline" onClick={handleCancel}>
-            Cancelar
+            Cancel
           </Button>
           <Button type="button" onClick={handleConfirm}>
-            Continuar
+            Continue
           </Button>
         </div>
       </div>

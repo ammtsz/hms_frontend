@@ -89,12 +89,12 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
-// Role labels for UI display (Portuguese)
+// Role labels for UI display
 export const ROLE_LABELS: Record<UserRole, string> = {
-  [UserRole.ADMIN]: 'Administrador',
-  [UserRole.STAFF]: 'Colaborador',
-  [UserRole.DOCTOR]: 'Médico', // Hidden in UI for now
-  [UserRole.THERAPIST]: 'Terapeuta', // Hidden in UI for now
+  [UserRole.ADMIN]: 'Administrator',
+  [UserRole.STAFF]: 'Staff',
+  [UserRole.DOCTOR]: 'Doctor', // Hidden in UI for now
+  [UserRole.THERAPIST]: 'Therapist', // Hidden in UI for now
 } as const;
 
 // Visible roles in user creation dropdown

@@ -44,9 +44,9 @@ export default function PatientDetailPage() {
         <div className="flex flex-col max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-4 sm:py-6 lg:py-8 w-full">
           <Breadcrumb
             items={[
-              { label: "Pacientes", href: "/patients" },
+              { label: "Patients", href: "/patients" },
               {
-                label: isRefetching ? "Recarregando..." : "Carregando...",
+                label: isRefetching ? "Reloading..." : "Loading...",
                 isActive: true,
               },
             ]}
@@ -55,7 +55,7 @@ export default function PatientDetailPage() {
           {isRefetching && failureCount > 1 && (
             <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
               <p className="text-blue-800 text-center">
-                Tentativa {failureCount} de 3... Recarregando dados do paciente.
+                Attempt {failureCount} of 3... Reloading patient data.
               </p>
             </div>
           )}
@@ -66,19 +66,17 @@ export default function PatientDetailPage() {
 
   // Error state with retry option
   if (error) {
-    const errorMessage = error.message || "Erro desconhecido";
-    const isPatientNotFound =
-      errorMessage.toLowerCase().includes("não encontrado") ||
-      errorMessage.toLowerCase().includes("not found");
+    const errorMessage = error.message || "Unknown error";
+    const isPatientNotFound = errorMessage.toLowerCase().includes("not found");
 
     return (
       <div className="flex flex-col gap-8 my-6 sm:my-16">
         <div className="max-w-4xl mx-auto w-full px-4">
           <Breadcrumb
             items={[
-              { label: "Pacientes", href: "/patients" },
+              { label: "Patients", href: "/patients" },
               {
-                label: isPatientNotFound ? "Não encontrado" : "Erro",
+                label: isPatientNotFound ? "Not found" : "Error",
                 isActive: true,
               },
             ]}
@@ -88,18 +86,17 @@ export default function PatientDetailPage() {
             reset={!isPatientNotFound ? refetch : undefined}
             title={
               isPatientNotFound
-                ? "Paciente não encontrado"
+                ? "Patient not found"
                 : failureCount > 0
-                  ? "Falha após múltiplas tentativas"
-                  : "Erro ao carregar paciente"
+                  ? "Failed after multiple attempts"
+                  : "Error loading patient"
             }
             showBackButton={true}
           />
           {!isPatientNotFound && failureCount > 0 && (
             <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
               <p className="text-yellow-800 text-sm text-center">
-                {failureCount} tentativa(s) realizadas. Você pode tentar
-                novamente.
+                {failureCount} attempt(s) failed. You can try again.
               </p>
             </div>
           )}
@@ -114,14 +111,14 @@ export default function PatientDetailPage() {
         <div className="max-w-4xl mx-auto w-full px-4">
           <Breadcrumb
             items={[
-              { label: "Pacientes", href: "/patients" },
-              { label: "Não encontrado", isActive: true },
+              { label: "Patients", href: "/patients" },
+              { label: "Not found", isActive: true },
             ]}
           />
           <PageError
-            error="Paciente não encontrado."
-            title="Paciente não encontrado"
-            backLabel="Voltar para Pacientes"
+            error="Patient not found."
+            title="Patient not found"
+            backLabel="Back to Patients"
             showBackButton={true}
           />
         </div>
@@ -137,7 +134,7 @@ export default function PatientDetailPage() {
         <div className="mx-auto max-w-7xl px-3 py-4 pb-24 sm:px-4 sm:py-6 lg:px-6 lg:py-8 lg:pb-8 xl:px-8">
           <Breadcrumb
             items={[
-              { label: "Pacientes", href: "/patients" },
+              { label: "Patients", href: "/patients" },
               { label: patient.name, isActive: true },
             ]}
           />
@@ -145,7 +142,7 @@ export default function PatientDetailPage() {
           <section
             id={PATIENT_PAGE_SECTION_IDS.header}
             className={PATIENT_PAGE_SECTION_SCROLL_MARGIN_CLASS}
-            aria-label="Dados do paciente"
+            aria-label="Patient info"
           >
             <LazyComponentWrapper>
               <LazyHeaderCard
@@ -162,7 +159,7 @@ export default function PatientDetailPage() {
           <section
             id={PATIENT_PAGE_SECTION_IDS.notes}
             className={PATIENT_PAGE_SECTION_SCROLL_MARGIN_CLASS}
-            aria-label="Anotações"
+            aria-label="Notes"
           >
             <LazyComponentWrapper>
               <LazyPatientNotesCard
@@ -176,7 +173,7 @@ export default function PatientDetailPage() {
             <section
               id={PATIENT_PAGE_SECTION_IDS.currentTreatment}
               className={PATIENT_PAGE_SECTION_SCROLL_MARGIN_CLASS}
-              aria-label="Tratamento atual"
+              aria-label="Current treatment"
             >
               <LazyComponentWrapper>
                 <LazyCurrentTreatmentCard
@@ -189,7 +186,7 @@ export default function PatientDetailPage() {
             <section
               id={PATIENT_PAGE_SECTION_IDS.sessionBreakdown}
               className={PATIENT_PAGE_SECTION_SCROLL_MARGIN_CLASS}
-              aria-label="Resumo de sessões"
+              aria-label="Session breakdown"
             >
               <LazyComponentWrapper>
                 <LazySessionBreakdownCard
@@ -202,7 +199,7 @@ export default function PatientDetailPage() {
             <section
               id={PATIENT_PAGE_SECTION_IDS.attendanceHistory}
               className={PATIENT_PAGE_SECTION_SCROLL_MARGIN_CLASS}
-              aria-label="Histórico de atendimentos"
+              aria-label="Attendance history"
             >
               <LazyComponentWrapper>
                 <LazyAttendanceHistoryCard
@@ -215,7 +212,7 @@ export default function PatientDetailPage() {
             <section
               id={PATIENT_PAGE_SECTION_IDS.scheduledAttendances}
               className={PATIENT_PAGE_SECTION_SCROLL_MARGIN_CLASS}
-              aria-label="Atendimentos agendados"
+              aria-label="Scheduled attendances"
             >
               <LazyComponentWrapper>
                 <LazyScheduledAttendancesCard

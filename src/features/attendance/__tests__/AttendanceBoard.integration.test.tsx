@@ -147,7 +147,7 @@ jest.mock("@/api/query/hooks/usePatientQueries", () => {
         queryFn: async () => {
           const result = await getPatients();
           if (!result.success || !result.value) {
-            throw new Error(result.error || "Erro ao carregar pacientes");
+            throw new Error(result.error || "Error loading patients");
           }
           return transformPatientsFromApi(result.value);
         },
@@ -207,7 +207,7 @@ describe("AttendanceBoard Integration Tests", () => {
       updatedAt: "2025-01-10T08:00:00.000Z",
       Patient: {
         id: 1,
-        name: "João Silva",
+        name: "John Smith",
         priority: "1",
       },
     },
@@ -222,7 +222,7 @@ describe("AttendanceBoard Integration Tests", () => {
       updatedAt: "2025-01-11T08:00:00.000Z",
       Patient: {
         id: 2,
-        name: "Maria Santos",
+        name: "Emily Williams",
         priority: "2",
       },
     },
@@ -259,7 +259,7 @@ describe("AttendanceBoard Integration Tests", () => {
       value: [
         {
           id: 1,
-          name: "João Silva",
+          name: "John Smith",
           priority: PatientPriority.LEVEL_1,
           patientStatus: PatientStatus.IN_TREATMENT,
           startDate: "2025-01-01",
@@ -269,7 +269,7 @@ describe("AttendanceBoard Integration Tests", () => {
         },
         {
           id: 2,
-          name: "Maria Santos",
+          name: "Emily Williams",
           priority: PatientPriority.LEVEL_2,
           patientStatus: PatientStatus.IN_TREATMENT,
           startDate: "2025-01-02",
@@ -317,7 +317,7 @@ describe("AttendanceBoard Integration Tests", () => {
       await waitFor(
         () => {
           expect(
-            screen.queryByText("Carregando atendimentos..."),
+            screen.queryByText("Loading attendances..."),
           ).not.toBeInTheDocument();
         },
         { timeout: 3000 },
@@ -328,10 +328,10 @@ describe("AttendanceBoard Integration Tests", () => {
 
       // Check that sections are rendered
       expect(
-        screen.getByRole("button", { name: /Consultas/i }),
+        screen.getByRole("button", { name: /Consultation/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("button", { name: /Fisioterapia e TENS/i }),
+        screen.getByRole("button", { name: /Physiotherapy and TENS/i }),
       ).toBeInTheDocument();
     });
 
@@ -341,17 +341,17 @@ describe("AttendanceBoard Integration Tests", () => {
       await waitFor(
         () => {
           expect(
-            screen.queryByText("Carregando atendimentos..."),
+            screen.queryByText("Loading attendances..."),
           ).not.toBeInTheDocument();
         },
         { timeout: 3000 },
       );
 
       // Check that real AttendanceColumn components are rendered
-      expect(screen.getAllByText("Agendados")).toHaveLength(2); // Both assessment and physiotherapy have this column
-      expect(screen.getAllByText("Sala de Espera")).toHaveLength(2);
-      expect(screen.getAllByText("Em Atendimento")).toHaveLength(2);
-      expect(screen.getAllByText("Finalizados")).toHaveLength(2); // "Finalizados" not "Atendidos"
+      expect(screen.getAllByText("Scheduled")).toHaveLength(2); // Both assessment and physiotherapy have this column
+      expect(screen.getAllByText("Waiting Room")).toHaveLength(2);
+      expect(screen.getAllByText("In Progress")).toHaveLength(2);
+      expect(screen.getAllByText("Completed")).toHaveLength(2); // "Completed" not "Completed"
     });
 
     it("should handle section collapse with real functionality", async () => {
@@ -360,14 +360,14 @@ describe("AttendanceBoard Integration Tests", () => {
       await waitFor(
         () => {
           expect(
-            screen.queryByText("Carregando atendimentos..."),
+            screen.queryByText("Loading attendances..."),
           ).not.toBeInTheDocument();
         },
         { timeout: 3000 },
       );
 
       const assessmentButton = screen.getByRole("button", {
-        name: /Consultas/i,
+        name: /Consultation/i,
       });
       fireEvent.click(assessmentButton);
 
@@ -387,7 +387,7 @@ describe("AttendanceBoard Integration Tests", () => {
       await waitFor(
         () => {
           expect(
-            screen.getByText("Erro ao carregar atendimentos"),
+            screen.getByText("Error loading attendances"),
           ).toBeInTheDocument(); // Error appears in error state
         },
         { timeout: 3000 },
@@ -402,14 +402,14 @@ describe("AttendanceBoard Integration Tests", () => {
       await waitFor(
         () => {
           expect(
-            screen.queryByText("Carregando atendimentos..."),
+            screen.queryByText("Loading attendances..."),
           ).not.toBeInTheDocument();
         },
         { timeout: 3000 },
       );
 
       // Check that the main container has proper structure
-      const mainHeading = screen.getByText(/Data selecionada:/);
+      const mainHeading = screen.getByText(/Selected date:/);
       expect(mainHeading).toBeInTheDocument();
 
       // Check date input
@@ -418,10 +418,10 @@ describe("AttendanceBoard Integration Tests", () => {
 
       // Check sections
       const assessmentSection = screen.getByRole("button", {
-        name: /Consultas/i,
+        name: /Consultation/i,
       });
       const physiotherapySection = screen.getByRole("button", {
-        name: /Fisioterapia e TENS/i,
+        name: /Physiotherapy and TENS/i,
       });
       expect(assessmentSection).toBeInTheDocument();
       expect(physiotherapySection).toBeInTheDocument();

@@ -22,7 +22,7 @@ export interface DetailCardCollapsibleHeaderProps {
 export const DetailCardCollapsibleHeader: React.FC<
   DetailCardCollapsibleHeaderProps
 > = ({ isCollapsed, onToggle, title, actions }) => {
-  const toggleLabel = isCollapsed ? "Expandir" : "Recolher";
+  const toggleLabel = isCollapsed ? "Expand" : "Collapse";
 
   return (
     <div

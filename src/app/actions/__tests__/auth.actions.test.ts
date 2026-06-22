@@ -4,6 +4,8 @@
  */
 
 import { loginAction, logoutAction } from '../auth.actions';
+import { AUTH_ERROR_MESSAGES } from '@/utils/authFormLabels';
+import { CLIENT_ERROR_MESSAGE } from '@/api/utils/messages';
 import {
   ACCESS_TOKEN_MAX_AGE,
   REFRESH_TOKEN_MAX_AGE,
@@ -123,9 +125,7 @@ describe('auth.actions', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe(
-        'Muitas tentativas de login. Por favor, aguarde alguns minutos e tente novamente.'
-      );
+      expect(result.error).toBe(CLIENT_ERROR_MESSAGE.RATE_LIMIT);
     });
 
     it('should return user-friendly error message when message includes "ThrottlerException"', async () => {
@@ -143,9 +143,7 @@ describe('auth.actions', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe(
-        'Muitas tentativas de login. Por favor, aguarde alguns minutos e tente novamente.'
-      );
+      expect(result.error).toBe(CLIENT_ERROR_MESSAGE.RATE_LIMIT);
     });
 
     it('should return user-friendly error message when message includes "Too Many Requests"', async () => {
@@ -163,9 +161,7 @@ describe('auth.actions', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe(
-        'Muitas tentativas de login. Por favor, aguarde alguns minutos e tente novamente.'
-      );
+      expect(result.error).toBe(CLIENT_ERROR_MESSAGE.RATE_LIMIT);
     });
 
     it('should return default error message for invalid credentials', async () => {
@@ -199,7 +195,7 @@ describe('auth.actions', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('Email ou senha inválidos');
+      expect(result.error).toBe(AUTH_ERROR_MESSAGES.invalidCredentials);
     });
 
     it('should handle network errors', async () => {
@@ -213,7 +209,7 @@ describe('auth.actions', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('Erro ao fazer login. Tente novamente.');
+      expect(result.error).toBe(AUTH_ERROR_MESSAGES.loginFailedGeneric);
     });
   });
 

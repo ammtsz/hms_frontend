@@ -14,7 +14,7 @@ import type {
   NoteCategory,
 } from "@/api/types";
 import { useNoteCategories } from "@/api/query/hooks/useNoteCategoriesQueries";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { DetailCardCollapsibleHeader } from "@/features/patients/detail/shared/DetailCardCollapsibleHeader";
 import {
   Button,
@@ -62,7 +62,8 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
   const [isAddingNote, setIsAddingNote] = useState(false);
   const [editingNoteId, setEditingNoteId] = useState<number | null>(null);
   const [newNoteContent, setNewNoteContent] = useState("");
-  const [newNoteCategory, setNewNoteCategory] = useState<NoteCategory>("geral");
+  const [newNoteCategory, setNewNoteCategory] =
+    useState<NoteCategory>("general");
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   const categoriesByValue = React.useMemo(() => {
@@ -99,7 +100,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
 
       // Reset form on success
       setNewNoteContent("");
-      setNewNoteCategory("geral");
+      setNewNoteCategory("general");
       setIsAddingNote(false);
     } catch (error) {
       // Error is handled by the mutation and displayed via error state
@@ -141,7 +142,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
   const handleCancelAdd = () => {
     setIsAddingNote(false);
     setNewNoteContent("");
-    setNewNoteCategory("geral");
+    setNewNoteCategory("general");
   };
 
   const handleCancelEdit = () => {
@@ -177,7 +178,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                 className="h-5 w-5 shrink-0 text-gray-600"
                 aria-hidden
               />
-              Anotações
+              Notes
               {notes.length > 0 ? (
                 <span className="text-sm font-normal text-gray-500">
                   ({notes.length})
@@ -193,7 +194,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                 onClick={() => setIsAddingNote(true)}
                 className="shrink-0 text-gray-600"
               >
-                + Adicionar
+                + Add
               </Button>
             ) : null
           }
@@ -213,7 +214,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
             {/* Add new note form */}
             {isAddingNote && (
               <div className="mb-6 p-4 border border-gray-200 rounded-lg bg-gray-50 gap-4 flex flex-col">
-                <Field label="Categoria">
+                <Field label="Category">
                   <Select
                     value={newNoteCategory}
                     onChange={(e) =>
@@ -232,11 +233,11 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                     value={newNoteContent}
                     onChange={(e) => setNewNoteContent(e.target.value)}
                     className="mb-1 min-h-[100px] resize-y"
-                    placeholder="Digite a nota..."
+                    placeholder="Type the note..."
                     maxLength={2000}
                   />
                   <span className="ml-auto text-xs text-gray-500">
-                    {newNoteContent.length}/2000 caracteres
+                    {newNoteContent.length}/2000 characters
                   </span>
                 </div>
                 <div className="mt-4 flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -246,7 +247,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                     onClick={handleCancelAdd}
                     className="min-h-[44px] w-full sm:w-auto"
                   >
-                    Cancelar
+                    Cancel
                   </Button>
                   <Button
                     type="button"
@@ -255,7 +256,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                     disabled={!newNoteContent.trim()}
                     className="min-h-[44px] w-full sm:w-auto"
                   >
-                    Salvar Nota
+                    Save Note
                   </Button>
                 </div>
               </div>
@@ -265,12 +266,9 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
             {notes.length === 0 ? (
               <div className="text-center py-8">
                 <div className="text-gray-400 text-lg mb-2">📝</div>
-                <p className="text-sm text-gray-600">
-                  Nenhuma nota adicionada ainda.
-                </p>
+                <p className="text-sm text-gray-600">No notes added yet.</p>
                 <p className="mt-1 text-xs text-gray-500">
-                  Clique em &quot;+ Adicionar&quot; para adicionar observações
-                  importantes.
+                  Click &quot;+ Add&quot; to add important notes.
                 </p>
               </div>
             ) : (
@@ -297,7 +295,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                           onClick={() => setEditingNoteId(note.id)}
                           className="min-h-[44px] px-2 py-1 text-xs text-blue-600 hover:text-blue-800 sm:min-h-0"
                         >
-                          Editar
+                          Edit
                         </Button>
                         <Button
                           type="button"
@@ -306,7 +304,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                           onClick={() => setDeleteConfirmId(note.id)}
                           className="min-h-[44px] px-2 py-1 text-xs text-red-600 hover:text-red-800 sm:min-h-0"
                         >
-                          Excluir
+                          Delete
                         </Button>
                       </div>
                     </div>
@@ -323,12 +321,13 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                           {note.noteContent}
                         </div>
                         <div className="text-xs text-gray-500">
-                          Criado em {formatDateBR(note.createdDate)} às{" "}
+                          Created on {formatDisplayDate(note.createdDate)} at{" "}
                           {note.createdTime.slice(0, 5)}
                           {note.updatedDate !== note.createdDate && (
                             <span>
-                              {" • "}Editado em {formatDateBR(note.updatedDate)}{" "}
-                              às {note.updatedTime}
+                              {" • "}Edited on{" "}
+                              {formatDisplayDate(note.updatedDate)} at{" "}
+                              {note.updatedTime}
                             </span>
                           )}
                         </div>
@@ -339,7 +338,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                     {deleteConfirmId === note.id && (
                       <div className="mt-3 p-3 bg-gray-100 border border-gray-300 rounded">
                         <p className="text-gray-700 text-sm mb-2">
-                          Tem certeza que deseja excluir esta nota?
+                          Are you sure you want to delete this note?
                         </p>
                         <div className="flex gap-2 justify-end">
                           <Button
@@ -347,7 +346,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                             variant="ghost"
                             onClick={() => setDeleteConfirmId(null)}
                           >
-                            Cancelar
+                            Cancel
                           </Button>
                           <Button
                             type="button"
@@ -355,7 +354,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
                             onClick={() => handleDeleteNote(note.id)}
                             className="text-red-600 hover:text-red-800"
                           >
-                            Excluir
+                            Delete
                           </Button>
                         </div>
                       </div>
@@ -367,9 +366,9 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
 
             <div className="mt-4 pt-4 border-t">
               <div className="text-xs text-gray-500">
-                💡 Utilize as notas para registrar observações importantes sobre
-                o comportamento, evolução do quadro, ou informações relevantes
-                para futuros atendimentos.
+                💡 Use notes to record important observations about behavior,
+                condition progress, or relevant information for future
+                attendances.
               </div>
             </div>
           </>
@@ -409,7 +408,7 @@ const EditNoteForm: React.FC<EditNoteFormProps> = ({
       />
       <div className="flex flex-col justify-between items-center">
         <span className="ml-auto text-xs text-gray-500">
-          {content.length}/2000 caracteres
+          {content.length}/2000 characters
         </span>
         <div className="mt-4 flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <Button
@@ -418,7 +417,7 @@ const EditNoteForm: React.FC<EditNoteFormProps> = ({
             onClick={onCancel}
             className="min-h-[44px] w-full sm:w-auto"
           >
-            Cancelar
+            Cancel
           </Button>
           <Button
             type="button"
@@ -426,7 +425,7 @@ const EditNoteForm: React.FC<EditNoteFormProps> = ({
             disabled={!content.trim()}
             className="min-h-[44px] w-full sm:w-auto"
           >
-            Salvar
+            Save
           </Button>
         </div>
       </div>

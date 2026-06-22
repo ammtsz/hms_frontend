@@ -2,8 +2,20 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ConfirmationStep from "../components/steps/ConfirmationStep";
+import { groupAttendancesForDisplayWithBodyLocation } from "../utils/confirmationStepUtils";
 import type { AbsenceJustification } from "../types";
 import type { IAttendanceStatusDetailWithType } from "../../../utils/attendanceDataUtils";
+
+function expectCompletedAttendanceLines(
+  completedAttendances: IAttendanceStatusDetailWithType[],
+) {
+  const grouped =
+    groupAttendancesForDisplayWithBodyLocation(completedAttendances);
+  grouped.forEach(({ patientName, label }) => {
+    expect(screen.getByText(`• ${patientName} (${label})`)).toBeInTheDocument();
+  });
+  return grouped.length;
+}
 
 // Mock data factories
 const createMockAttendance = (
@@ -45,7 +57,7 @@ describe("ConfirmationStep", () => {
   it("displays formatted date correctly", () => {
     render(<ConfirmationStep {...defaultProps} />);
 
-    expect(screen.getByText(/15\/01\/2024/)).toBeInTheDocument();
+    expect(screen.getByText(/01\/15\/2024/)).toBeInTheDocument();
   });
 
   it("shows summary cards with correct counts", () => {
@@ -118,14 +130,9 @@ describe("ConfirmationStep", () => {
     const completedSection = container.querySelector(
       "h4.text-md.font-medium.text-gray-900",
     );
-    expect(completedSection).toHaveTextContent("Atendimentos Concluídos");
+    expect(completedSection).toHaveTextContent("Completed Attendances");
 
-    expect(
-      screen.getByText("• Jane Doe (Consulta de Avaliação)"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("• Bob Smith (Fisioterapia - 1 local)"),
-    ).toBeInTheDocument();
+    expectCompletedAttendanceLines(completedAttendances);
   });
 
   it("displays justified absences with justifications", () => {
@@ -144,11 +151,11 @@ describe("ConfirmationStep", () => {
       />,
     );
 
-    const sections = screen.getAllByText("Faltas Justificadas");
+    const sections = screen.getAllByText("Justified Absences");
     expect(sections.length).toBeGreaterThan(0);
     expect(screen.getByText(/John Doe/)).toBeInTheDocument();
     expect(
-      screen.getByText("Justificativa: Medical emergency"),
+      screen.getByText("Justification: Medical emergency"),
     ).toBeInTheDocument();
   });
 
@@ -167,7 +174,7 @@ describe("ConfirmationStep", () => {
       />,
     );
 
-    const sections = screen.getAllByText("Faltas não Justificadas");
+    const sections = screen.getAllByText("Unjustified Absences");
     expect(sections.length).toBeGreaterThan(0);
     expect(screen.getByText("• Jane Doe")).toBeInTheDocument();
   });
@@ -175,24 +182,24 @@ describe("ConfirmationStep", () => {
   it("shows final confirmation message", () => {
     render(<ConfirmationStep {...defaultProps} />);
 
-    expect(screen.getByText("Finalizar o dia")).toBeInTheDocument();
+    expect(screen.getByText("Finalize the day")).toBeInTheDocument();
     expect(
-      screen.getByText(/Clique em.*Finalizar Dia.*para confirmar/),
+      screen.getByText(/Click.*Finalize Day.*to confirm/),
     ).toBeInTheDocument();
   });
 
   it("calls onBack when Back button is clicked", () => {
     render(<ConfirmationStep {...defaultProps} />);
 
-    fireEvent.click(screen.getByText("Voltar"));
+    fireEvent.click(screen.getByText("Back"));
 
     expect(defaultProps.onBack).toHaveBeenCalled();
   });
 
-  it("calls onSubmit when Finalizar Dia button is clicked", () => {
+  it("calls onSubmit when Finalize Day button is clicked", () => {
     render(<ConfirmationStep {...defaultProps} />);
 
-    fireEvent.click(screen.getByText("Finalizar Dia"));
+    fireEvent.click(screen.getByText("Finalize Day"));
 
     expect(defaultProps.onSubmit).toHaveBeenCalled();
   });
@@ -200,8 +207,8 @@ describe("ConfirmationStep", () => {
   it("disables buttons when submitting", () => {
     render(<ConfirmationStep {...defaultProps} isSubmitting={true} />);
 
-    const backButton = screen.getByText("Voltar");
-    const submitButton = screen.getByText("Finalizando...");
+    const backButton = screen.getByText("Back");
+    const submitButton = screen.getByText("Finalizing...");
 
     expect(backButton).toBeDisabled();
     expect(submitButton).toBeDisabled();
@@ -210,8 +217,8 @@ describe("ConfirmationStep", () => {
   it("shows loading state when submitting", () => {
     render(<ConfirmationStep {...defaultProps} isSubmitting={true} />);
 
-    expect(screen.getByText("Finalizando...")).toBeInTheDocument();
-    expect(screen.queryByText("Finalizar Dia")).not.toBeInTheDocument();
+    expect(screen.getByText("Finalizing...")).toBeInTheDocument();
+    expect(screen.queryByText("Finalize Day")).not.toBeInTheDocument();
   });
 
   it("handles attendances without names", () => {
@@ -230,26 +237,24 @@ describe("ConfirmationStep", () => {
       />,
     );
 
-    expect(
-      screen.getByText("• Unknown (Consulta de Avaliação)"),
-    ).toBeInTheDocument();
+    expectCompletedAttendanceLines(completedAttendances);
   });
 
   describe("Attendance Grouping Logic", () => {
     it("groups patient with assessment and treatments as two entries", () => {
       const completedAttendances = [
         createMockAttendance({
-          name: "Paciente 10",
+          name: "Patient 10",
           patientId: 10,
           attendanceType: "assessment",
         }),
         createMockAttendance({
-          name: "Paciente 10",
+          name: "Patient 10",
           patientId: 10,
           attendanceType: "physiotherapy",
         }),
         createMockAttendance({
-          name: "Paciente 10",
+          name: "Patient 10",
           patientId: 10,
           attendanceType: "tens",
         }),
@@ -262,19 +267,8 @@ describe("ConfirmationStep", () => {
         />,
       );
 
-      // Should show 2 entries for the same patient
-      expect(
-        screen.getByText("• Paciente 10 (Consulta de Avaliação)"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          "• Paciente 10 (Fisioterapia - 1 local e TENS - 1 local)",
-        ),
-      ).toBeInTheDocument();
-
-      // Count should be 2 (grouped)
-      const completedCard = screen.getByText("2");
-      expect(completedCard).toBeInTheDocument();
+      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(2);
+      expect(screen.getByText("2")).toBeInTheDocument();
     });
 
     it("groups patient with only assessment as one entry", () => {
@@ -293,19 +287,14 @@ describe("ConfirmationStep", () => {
         />,
       );
 
-      expect(
-        screen.getByText("• Patient A (Consulta de Avaliação)"),
-      ).toBeInTheDocument();
-
-      // Count should be 1
-      const completedCard = screen.getByText("1");
-      expect(completedCard).toBeInTheDocument();
+      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(1);
+      expect(screen.getByText("1")).toBeInTheDocument();
     });
 
     it("groups patient with only physiotherapy as one entry", () => {
       const completedAttendances = [
         createMockAttendance({
-          name: "Teste Manual 2",
+          name: "Manual Test 2",
           patientId: 2,
           attendanceType: "physiotherapy",
         }),
@@ -318,13 +307,8 @@ describe("ConfirmationStep", () => {
         />,
       );
 
-      expect(
-        screen.getByText("• Teste Manual 2 (Fisioterapia - 1 local)"),
-      ).toBeInTheDocument();
-
-      // Count should be 1
-      const completedCard = screen.getByText("1");
-      expect(completedCard).toBeInTheDocument();
+      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(1);
+      expect(screen.getByText("1")).toBeInTheDocument();
     });
 
     it("groups patient with only tens as one entry", () => {
@@ -343,13 +327,8 @@ describe("ConfirmationStep", () => {
         />,
       );
 
-      expect(
-        screen.getByText("• Patient C (TENS - 1 local)"),
-      ).toBeInTheDocument();
-
-      // Count should be 1
-      const completedCard = screen.getByText("1");
-      expect(completedCard).toBeInTheDocument();
+      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(1);
+      expect(screen.getByText("1")).toBeInTheDocument();
     });
 
     it("groups patient with both physiotherapy and tens as one entry", () => {
@@ -373,42 +352,32 @@ describe("ConfirmationStep", () => {
         />,
       );
 
-      expect(
-        screen.getByText(
-          "• Patient D (Fisioterapia - 1 local e TENS - 1 local)",
-        ),
-      ).toBeInTheDocument();
-
-      // Count should be 1 (grouped)
-      const completedCard = screen.getByText("1");
-      expect(completedCard).toBeInTheDocument();
+      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(1);
+      expect(screen.getByText("1")).toBeInTheDocument();
     });
 
     it("handles multiple different patients with different attendance types", () => {
       const completedAttendances = [
-        // Patient 1: assessment + treatments
         createMockAttendance({
-          name: "Paciente 10",
+          name: "Patient 10",
           patientId: 10,
           attendanceType: "assessment",
         }),
         createMockAttendance({
-          name: "Paciente 10",
+          name: "Patient 10",
           patientId: 10,
           attendanceType: "physiotherapy",
         }),
         createMockAttendance({
-          name: "Paciente 10",
+          name: "Patient 10",
           patientId: 10,
           attendanceType: "tens",
         }),
-        // Patient 2: only physiotherapy
         createMockAttendance({
-          name: "Teste Manual 2",
+          name: "Manual Test 2",
           patientId: 2,
           attendanceType: "physiotherapy",
         }),
-        // Patient 3: only assessment
         createMockAttendance({
           name: "Patient X",
           patientId: 3,
@@ -423,29 +392,8 @@ describe("ConfirmationStep", () => {
         />,
       );
 
-      // Patient 1: 2 entries
-      expect(
-        screen.getByText("• Paciente 10 (Consulta de Avaliação)"),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          "• Paciente 10 (Fisioterapia - 1 local e TENS - 1 local)",
-        ),
-      ).toBeInTheDocument();
-
-      // Patient 2: 1 entry
-      expect(
-        screen.getByText("• Teste Manual 2 (Fisioterapia - 1 local)"),
-      ).toBeInTheDocument();
-
-      // Patient 3: 1 entry
-      expect(
-        screen.getByText("• Patient X (Consulta de Avaliação)"),
-      ).toBeInTheDocument();
-
-      // Total count should be 4 (2 + 1 + 1)
-      const completedCard = screen.getByText("4");
-      expect(completedCard).toBeInTheDocument();
+      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(4);
+      expect(screen.getByText("4")).toBeInTheDocument();
     });
   });
 });

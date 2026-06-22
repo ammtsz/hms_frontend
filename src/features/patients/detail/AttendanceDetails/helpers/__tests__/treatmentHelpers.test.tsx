@@ -5,24 +5,24 @@ import { renderLocations, renderSessions, NotesBox } from "../treatmentHelpers";
 describe("treatmentHelpers", () => {
   describe("renderLocations", () => {
     it("should render single location with singular label", () => {
-      render(<div>{renderLocations(["Cabeça"])}</div>);
+      render(<div>{renderLocations(["Head"])}</div>);
 
-      expect(screen.getByText(/Local:/)).toBeInTheDocument();
-      expect(screen.getByText(/Cabeça/)).toBeInTheDocument();
+      expect(screen.getByText(/Location:/)).toBeInTheDocument();
+      expect(screen.getByText(/Head/)).toBeInTheDocument();
     });
 
     it("should render multiple locations with plural label", () => {
-      render(<div>{renderLocations(["Cabeça", "Peito", "Pernas"])}</div>);
+      render(<div>{renderLocations(["Head", "Chest", "Legs"])}</div>);
 
-      expect(screen.getByText(/Locais:/)).toBeInTheDocument();
-      expect(screen.getByText(/Cabeça, Peito, Pernas/)).toBeInTheDocument();
+      expect(screen.getByText(/Locations:/)).toBeInTheDocument();
+      expect(screen.getByText(/Head, Chest, Legs/)).toBeInTheDocument();
     });
 
     it("should handle empty array", () => {
       render(<div>{renderLocations([])}</div>);
 
       // Empty array still shows label but with empty location list
-      expect(screen.getByText(/Local:/)).toBeInTheDocument();
+      expect(screen.getByText(/Location:/)).toBeInTheDocument();
     });
   });
 
@@ -30,14 +30,14 @@ describe("treatmentHelpers", () => {
     it("should render sessions when showSessions is true", () => {
       render(<div>{renderSessions("3/5", true)}</div>);
 
-      expect(screen.getByText(/Sessões:/)).toBeInTheDocument();
+      expect(screen.getByText(/Sessions:/)).toBeInTheDocument();
       expect(screen.getByText("3/5")).toBeInTheDocument();
     });
 
     it("should use custom session label", () => {
-      render(<div>{renderSessions("2/4", true, "Aplicações")}</div>);
+      render(<div>{renderSessions("2/4", true, "Applications")}</div>);
 
-      expect(screen.getByText(/Aplicações:/)).toBeInTheDocument();
+      expect(screen.getByText(/Applications:/)).toBeInTheDocument();
       expect(screen.getByText("2/4")).toBeInTheDocument();
     });
 
@@ -58,30 +58,30 @@ describe("treatmentHelpers", () => {
     it("should render treatment notes with yellow border", () => {
       render(
         <NotesBox
-          notes="Tratamento progredindo bem"
+          notes="Treatment progressing well"
           noteType="treatment"
           borderColor="yellow"
         />,
       );
 
-      expect(screen.getByText(/Notas do tratamento:/)).toBeInTheDocument();
+      expect(screen.getByText(/Treatment notes:/)).toBeInTheDocument();
       expect(
-        screen.getByText("Tratamento progredindo bem"),
+        screen.getByText("Treatment progressing well"),
       ).toBeInTheDocument();
     });
 
     it("should render session notes with blue border", () => {
       const { container } = render(
         <NotesBox
-          notes="Sessão concluída com sucesso"
+          notes="Session completed successfully"
           noteType="session"
           borderColor="blue"
         />,
       );
 
-      expect(screen.getByText(/Notas da sessão:/)).toBeInTheDocument();
+      expect(screen.getByText(/Session notes:/)).toBeInTheDocument();
       expect(
-        screen.getByText("Sessão concluída com sucesso"),
+        screen.getByText("Session completed successfully"),
       ).toBeInTheDocument();
 
       const notesBox = container.querySelector(".border-blue-100");
@@ -91,13 +91,13 @@ describe("treatmentHelpers", () => {
     it("should render assessment notes with purple border", () => {
       const { container } = render(
         <NotesBox
-          notes="Orientações fornecidas"
+          notes="Instructions provided"
           noteType="assessment"
           borderColor="purple"
         />,
       );
 
-      expect(screen.getByText(/Notas da consulta:/)).toBeInTheDocument();
+      expect(screen.getByText(/Assessment notes:/)).toBeInTheDocument();
 
       const notesBox = container.querySelector(".border-purple-100");
       expect(notesBox).toBeInTheDocument();
@@ -106,19 +106,19 @@ describe("treatmentHelpers", () => {
     it("should render pre-consultation notes", () => {
       render(
         <NotesBox
-          notes="Paciente agendou retorno"
+          notes="Patient scheduled follow-up"
           noteType="pre-consultation"
           borderColor="purple"
         />,
       );
 
-      expect(screen.getByText(/Notas pré-consulta:/)).toBeInTheDocument();
+      expect(screen.getByText(/Pre-consultation notes:/)).toBeInTheDocument();
     });
 
     it("should apply disabled border when borderColor is disabled", () => {
       const { container } = render(
         <NotesBox
-          notes="Tratamento cancelado"
+          notes="Treatment cancelled"
           noteType="notes"
           borderColor="disabled"
         />,
@@ -130,7 +130,7 @@ describe("treatmentHelpers", () => {
 
     it("should apply red border for error/warning notes", () => {
       const { container } = render(
-        <NotesBox notes="Paciente faltou" noteType="notes" borderColor="red" />,
+        <NotesBox notes="Patient missed appointment" noteType="notes" borderColor="red" />,
       );
 
       const notesBox = container.querySelector(".border-red-300");

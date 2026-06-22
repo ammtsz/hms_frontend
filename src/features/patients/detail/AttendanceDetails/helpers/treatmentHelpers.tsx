@@ -3,7 +3,7 @@ import React from "react";
 
 // Helper: Render body locations
 export const renderLocations = (bodyLocations: string[]): React.ReactNode => {
-  const label = bodyLocations.length > 1 ? "Locais" : "Local";
+  const label = bodyLocations.length > 1 ? "Locations" : "Location";
   return (
     <>
       <strong>{label}:</strong> {bodyLocations.join(", ")}
@@ -16,7 +16,7 @@ export const renderLocations = (bodyLocations: string[]): React.ReactNode => {
 export const renderSessions = (
   sessionNumber?: string,
   showSessions?: boolean,
-  sessionLabel: string = "Sessões",
+  sessionLabel: string = "Sessions",
 ): React.ReactNode => {
   if (!showSessions || !sessionNumber) return null;
   return (
@@ -61,12 +61,12 @@ export const NotesBox: React.FC<NotesBoxProps> = ({
   };
 
   const label = {
-    treatment: "Notas do tratamento",
-    session: "Notas da sessão",
-    assessment: "Notas da consulta",
-    "pre-consultation": "Notas pré-consulta",
-    observations: "Observações",
-    notes: "Notas",
+    treatment: "Treatment notes",
+    session: "Session notes",
+    assessment: "Assessment notes",
+    "pre-consultation": "Pre-consultation notes",
+    observations: "Observations",
+    notes: "Notes",
   };
 
   return (

@@ -19,7 +19,7 @@ describe("NextConsultationCard", () => {
     updatedAt: "2026-01-15T00:00:00.000Z",
   };
 
-  /** createdDate in the past so getWeeksUntil(scheduledDate, createdDate) > 0 and "Retorno em" is shown */
+  /** createdDate in the past so getWeeksUntil(scheduledDate, createdDate) > 0 and "Return in" is shown */
   const createdDateForWeeks = "2026-01-01";
 
   describe("loading state", () => {
@@ -32,7 +32,7 @@ describe("NextConsultationCard", () => {
       );
 
       expect(
-        screen.getByText(/Buscando agendamentos criados/i),
+        screen.getByText(/Searching for created appointments/i),
       ).toBeInTheDocument();
       expect(screen.getByText("⏳")).toBeInTheDocument();
     });
@@ -48,7 +48,7 @@ describe("NextConsultationCard", () => {
       );
 
       expect(
-        screen.getByText(/Não foi possível carregar os agendamentos/i),
+        screen.getByText(/Error fetching appointments/i),
       ).toBeInTheDocument();
       expect(
         screen.getByText("Failed to load attendances"),
@@ -65,10 +65,10 @@ describe("NextConsultationCard", () => {
       );
 
       expect(
-        screen.getByText(/Retorno da Consulta de Avaliação/i),
+        screen.getByText(/Return of Assessment Consultation/i),
       ).toBeInTheDocument();
 
-      expect(screen.getByText("19/02/2026")).toBeInTheDocument();
+      expect(screen.getByText("02/19/2026")).toBeInTheDocument();
     });
 
     it("should show return weeks when provided", () => {
@@ -80,7 +80,7 @@ describe("NextConsultationCard", () => {
         />,
       );
 
-      expect(screen.getByText("7 semanas")).toBeInTheDocument();
+      expect(screen.getByText("7 weeks")).toBeInTheDocument();
     });
 
     it("should use singular form for 1 week", () => {
@@ -96,7 +96,7 @@ describe("NextConsultationCard", () => {
         />,
       );
 
-      expect(screen.getByText("1 semana")).toBeInTheDocument();
+      expect(screen.getByText("1 week")).toBeInTheDocument();
     });
   });
 

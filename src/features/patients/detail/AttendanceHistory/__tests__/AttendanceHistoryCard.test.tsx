@@ -53,10 +53,10 @@ jest.mock("@/features/patients/detail/shared/ShowMoreButton", () => ({
 
 const mockPatient: Patient = {
   id: "1",
-  name: "João Silva",
+  name: "John Smith",
   phone: "(11) 99999-9999",
   birthDate: "1980-05-15",
-  mainComplaint: "Dores de cabeça frequentes",
+  mainConcern: "Frequent headaches",
   status: "A",
   priority: "2",
   startDate: "2024-01-15",
@@ -70,9 +70,9 @@ const mockPatient: Patient = {
   ],
   currentRecommendations: {
     date: "2024-12-20",
-    food: "Leve",
-    water: "2L/dia",
-    ointment: "Aplicar 2x/dia",
+    food: "Light meals",
+    water: "2L/day",
+    ointment: "Apply 2x daily",
     physiotherapy: true,
     tens: false,
     returnWeeks: 2,
@@ -85,7 +85,7 @@ describe("AttendanceHistoryCard - Integration", () => {
   it("renders the component successfully", () => {
     render(<AttendanceHistoryCard patient={mockPatient} />);
 
-    expect(screen.getByText("Histórico de Atendimentos")).toBeInTheDocument();
+    expect(screen.getByText("Attendance History")).toBeInTheDocument();
   });
 
   // Note: This is a lightweight integration test to ensure the component renders.

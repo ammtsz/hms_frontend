@@ -25,26 +25,26 @@ export const PATIENT_PAGE_SECTIONS: ReadonlyArray<{
   label: string;
   iconName: "User" | "StickyNote" | "Activity" | "ClipboardList" | "History" | "CalendarDays";
 }> = [
-  { id: PATIENT_PAGE_SECTION_IDS.header, label: "Perfil", iconName: "User" },
-  { id: PATIENT_PAGE_SECTION_IDS.notes, label: "Anotações", iconName: "StickyNote" },
+  { id: PATIENT_PAGE_SECTION_IDS.header, label: "Profile", iconName: "User" },
+  { id: PATIENT_PAGE_SECTION_IDS.notes, label: "Notes", iconName: "StickyNote" },
   {
     id: PATIENT_PAGE_SECTION_IDS.currentTreatment,
-    label: "Resumo",
+    label: "Summary",
     iconName: "ClipboardList",
   },
   {
     id: PATIENT_PAGE_SECTION_IDS.sessionBreakdown,
-    label: "Tratamentos",
+    label: "Treatments",
     iconName: "Activity",
   },
   {
     id: PATIENT_PAGE_SECTION_IDS.attendanceHistory,
-    label: "Histórico",
+    label: "History",
     iconName: "History",
   },
   {
     id: PATIENT_PAGE_SECTION_IDS.scheduledAttendances,
-    label: "Agendamentos",
+    label: "Appointments",
     iconName: "CalendarDays",
   },
 ];

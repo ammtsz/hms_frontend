@@ -172,19 +172,19 @@ export function usePostTreatmentModalHook() {
 
   const handleSubmit = useCallback(async () => {
     if (error) {
-      setSubmitError("Corrija o erro antes de registrar. Use \"Tentar Novamente\" se necessário.");
+      setSubmitError("Please fix the error before submitting. Use \"Try Again\" if necessary.");
       return;
     }
     if (rows.length === 0) {
-      setSubmitError("Nenhum tratamento disponível para registrar.");
+      setSubmitError("No treatment available to register.");
       return;
     }
     if (!canSubmit) {
-      setSubmitError("Marque pelo menos um tratamento como realizado.");
+      setSubmitError("Please mark at least one treatment as completed.");
       return;
     }
     if (uncheckedWithMissingReason) {
-      setSubmitError("Informe o motivo para cada tratamento não realizado.");
+      setSubmitError("Please provide a reason for each incomplete treatment.");
       return;
     }
 
@@ -205,7 +205,7 @@ export function usePostTreatmentModalHook() {
         } else {
           const reason =
             cancellationReasons.get(row.attendanceId)?.trim() ||
-            "Não realizado nesta sessão";
+            "NNot completed in this session";
           await deleteAttendanceMutation.mutateAsync({
             attendanceId: row.attendanceId,
             cancellationReason: reason,
@@ -220,7 +220,7 @@ export function usePostTreatmentModalHook() {
       handleClose();
     } catch (error) {
       console.error("Error in PostTreatmentModal submit:", error);
-      setSubmitError("Erro ao registrar. Tente novamente.");
+      setSubmitError("Error submitting. Please try again.");
     }
   }, [
     error,

@@ -16,8 +16,8 @@ export const PageError: React.FC<PageErrorProps> = ({
   reset,
   showBackButton = true,
   backHref = "/patients",
-  backLabel = "Voltar para Pacientes",
-  title = "Ops! Algo deu errado",
+  backLabel = "Back to Patients",
+  title = "Oops! Something went wrong",
 }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-red-200">
@@ -32,7 +32,7 @@ export const PageError: React.FC<PageErrorProps> = ({
               onClick={reset}
               className="rounded-lg bg-blue-600 hover:bg-blue-700"
             >
-              Tentar Novamente
+              Try Again
             </Button>
           )}
 

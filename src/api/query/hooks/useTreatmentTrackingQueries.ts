@@ -23,7 +23,7 @@ export function useCreateTreatment() {
       const response = await createTreatment(payload);
 
       if (!response.success) {
-        throw new Error(response.error || 'Erro ao criar tratamento');
+        throw new Error(response.error || 'Failed to create treatment');
       }
 
       return response.value!;
@@ -46,7 +46,7 @@ export function useBulkCreateTreatments() {
       const response = await bulkCreateTreatments(bulkData);
 
       if (!response.success) {
-        throw new Error(response.error || 'Erro ao criar tratamentos');
+        throw new Error(response.error || 'Failed to create treatments');
       }
 
       return response.value!;

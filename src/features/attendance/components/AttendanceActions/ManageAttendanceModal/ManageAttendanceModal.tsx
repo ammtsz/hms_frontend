@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useManageAttendanceModal } from "./hooks/useManageAttendanceModal";
 import { getMinDate } from "@/utils/dateUtils";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { PatientStatus } from "@/api/types";
 import BaseModal from "@/components/common/BaseModal";
 import {
@@ -15,13 +15,13 @@ import {
 } from "@/components/ui";
 
 const WEEKDAYS = [
-  "Domingo",
-  "Segunda-feira",
-  "Terça-feira",
-  "Quarta-feira",
-  "Quinta-feira",
-  "Sexta-feira",
-  "Sábado",
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
 ];
 
 const MODAL_FOOTER_CLASS =
@@ -85,7 +85,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
       if (!row.sessionRow.attendanceId) return;
       const type =
         row.treatment.treatmentType === "physiotherapy"
-          ? "Fisioterapia"
+          ? "Physiotherapy"
           : "TENS";
       const loc = row.treatment.bodyLocation ?? "";
       const color = row.treatment.color ? `, ${row.treatment.color}` : "";
@@ -102,7 +102,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
     selectedAttendanceIds.forEach((id) => {
       const date = nextAvailableDates[String(id)] ?? null;
       const list = byDate.get(date) ?? [];
-      const label = attendanceIdToLabel.get(id) ?? "Consulta de Avaliação";
+      const label = attendanceIdToLabel.get(id) ?? "Assessment Consultation";
       list.push({ id, label });
       byDate.set(date, list);
     });
@@ -119,12 +119,12 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
     selectedCount > 0;
 
   const modalTitle = !action
-    ? "Gerenciar Agendamento"
+    ? "Manage Attendance"
     : action === "cancel"
-      ? "Cancelar Agendamento"
+      ? "Cancel Attendance"
       : postponeFeedback
-        ? "Resumo do Reagendamento"
-        : "Reagendar Atendimento";
+        ? "Reschedule Summary"
+        : "Reschedule Attendance";
 
   const handleModalClose = () => {
     if (isSubmitting) {
@@ -155,18 +155,18 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
           <div className="mb-4">
             {isAssessmentSelection ? (
               <p className="mb-6 text-sm text-gray-600">
-                Paciente: <strong>{patientName || ""}</strong>
+                Patient: <strong>{patientName || ""}</strong>
               </p>
             ) : (
               <p className="mb-6 text-sm text-gray-600">
-                Selecione os atendimentos de{" "}
-                <strong>{patientName || ""}</strong> que você deseja gerenciar.
+                Select the attendances for <strong>{patientName || ""}</strong>{" "}
+                you want to manage.
               </p>
             )}
 
             {loadingSessions ? (
               <div className="text-sm italic text-gray-600">
-                Carregando sessões...
+                Loading sessions...
               </div>
             ) : treatmentsWithSessionRows &&
               treatmentsWithSessionRows.length > 0 ? (
@@ -191,11 +191,11 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-medium text-gray-900">
                           {row.treatment.treatmentType === "physiotherapy"
-                            ? "Fisioterapia"
+                            ? "Physiotherapy"
                             : "TENS"}
                           : {row.treatment.bodyLocation}
                           {row.treatment.color &&
-                            ` (cor: ${row.treatment.color})`}
+                            ` (color: ${row.treatment.color})`}
                         </p>
                       </div>
                     </label>
@@ -206,15 +206,15 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
               <div className="mb-6">
                 {!isAssessmentSelection && (
                   <p className="text-sm italic text-gray-600">
-                    Nenhuma sessão encontrada.
+                    No sessions found.
                   </p>
                 )}
               </div>
             )}
 
             <p className="mb-6 text-md font-semibold text-gray-600">
-              O que você deseja fazer com{" "}
-              {selectedCount > 1 ? "estes agendamentos" : "este agendamento"}?
+              What would you like to do with{" "}
+              {selectedCount > 1 ? "these appointments" : "this appointment"}?
             </p>
 
             <div className="flex flex-col gap-3">
@@ -225,7 +225,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                 disabled={selectedCount === 0}
                 className="w-full"
               >
-                Reagendar ({selectedCount})
+                Reschedule ({selectedCount})
               </Button>
               <Button
                 type="button"
@@ -234,7 +234,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                 disabled={selectedCount === 0}
                 className="w-full"
               >
-                Cancelar Atendimento ({selectedCount})
+                Cancel Attendance ({selectedCount})
               </Button>
             </div>
           </div>
@@ -243,7 +243,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
         {action === "cancel" ? (
           <div className="mb-4">
             <p className="mb-4 text-sm text-gray-600">
-              Você está prestes a cancelar o agendamento de{" "}
+              You are about to cancel the appointment for{" "}
               <strong>{patientName || ""}</strong>.
             </p>
 
@@ -256,9 +256,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
             <form onSubmit={handleConfirmCancellation}>
               <div className="mb-4">
                 <fieldset className="space-y-3" disabled={isSubmitting}>
-                  <legend className="sr-only">
-                    Escolha o escopo do cancelamento
-                  </legend>
+                  <legend className="sr-only">Choose cancellation scope</legend>
                   <label className="flex cursor-pointer items-start gap-3">
                     <Radio
                       name="cancel-scope"
@@ -267,7 +265,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                       className="mt-1"
                     />
                     <span className="text-sm font-medium text-gray-700">
-                      Cancelar apenas este atendimento
+                      Cancel only this attendance
                     </span>
                   </label>
                   <label className="flex cursor-pointer items-start gap-3">
@@ -278,8 +276,8 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                       className="mt-1"
                     />
                     <span className="text-sm font-medium text-gray-700">
-                      Cancelar todos os atendimentos em aberto deste paciente
-                      (inclusive em outras datas)
+                      Cancel all open attendances for this patient (including
+                      other dates)
                     </span>
                   </label>
                 </fieldset>
@@ -287,13 +285,13 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                 {cancelAllOpenAttendances ? (
                   <>
                     <div className="mt-3 rounded-md border border-red-300 bg-red-50 p-3 text-sm text-red-700">
-                      Todos os atendimentos em aberto deste paciente serão
-                      cancelados e o status do paciente deixará de ser
-                      <strong> &quot;Em tratamento&quot;</strong>.
+                      All open attendances for this patient will be canceled and
+                      the patient status will no longer be{" "}
+                      <strong>&quot;In treatment&quot;</strong>.
                     </div>
 
                     <Field
-                      label="Alteração de status para:"
+                      label="Change status to:"
                       htmlFor="cancel-all-status"
                       className="mt-6"
                     >
@@ -310,10 +308,10 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                         disabled={isSubmitting}
                       >
                         <option value={PatientStatus.DISCHARGED}>
-                          Alta do tratamento ({PatientStatus.DISCHARGED})
+                          Discharged ({PatientStatus.DISCHARGED})
                         </option>
                         <option value={PatientStatus.ABSENT}>
-                          Faltas consecutivas ({PatientStatus.ABSENT})
+                          Missed — consecutive ({PatientStatus.ABSENT})
                         </option>
                       </Select>
                     </Field>
@@ -321,11 +319,11 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                 ) : null}
               </div>
               <Field
-                label="Motivo do cancelamento"
+                label="Cancellation reason"
                 htmlFor="cancellation-reason"
                 helpText={
                   cancelAllOpenAttendances
-                    ? "O motivo informado será adicionado às notas do paciente e a todos os atendimentos cancelados."
+                    ? "The provided reason will be added to the patient's notes and to all canceled attendances."
                     : undefined
                 }
                 className="my-6"
@@ -337,8 +335,8 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                   rows={3}
                   placeholder={
                     cancelAllOpenAttendances
-                      ? "Informe o motivo do cancelamento (obrigatório)"
-                      : "Informe o motivo do cancelamento (opcional)"
+                      ? "Provide the cancellation reason (required)"
+                      : "Provide the cancellation reason (optional)"
                   }
                   disabled={isSubmitting}
                 />
@@ -351,16 +349,16 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                   onClick={handleBackToSelection}
                   disabled={isSubmitting}
                 >
-                  Voltar
+                  Back
                 </Button>
                 <Button
                   type="submit"
                   variant="danger"
                   disabled={isSubmitting}
                   isLoading={isSubmitting}
-                  loadingText="Cancelando..."
+                  loadingText="Canceling..."
                 >
-                  Confirmar Cancelamento
+                  Confirm Cancellation
                 </Button>
               </div>
             </form>
@@ -372,36 +370,34 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
             <div className="max-h-[520px] space-y-4 overflow-y-auto pr-1">
               <div className="rounded-md border border-gray-200 bg-gray-50 p-3 text-sm text-gray-700">
                 <div>
-                  <span className="mr-1 font-semibold">Paciente:</span>
+                  <span className="mr-1 font-semibold">Patient:</span>
                   {patientName}
                 </div>
                 <div>
-                  <span className="mr-1 font-semibold">
-                    Modo de reagendamento:
-                  </span>
+                  <span className="mr-1 font-semibold">Reschedule mode:</span>
                   {postponeFeedback.mode === "next_available"
-                    ? "Próxima data disponível"
-                    : "Data específica"}
+                    ? "Next available date"
+                    : "Specific date"}
                 </div>
               </div>
 
               <div>
                 <h4 className="mb-2 text-sm font-semibold text-gray-900">
-                  Atendimentos reagendados ({postponeFeedback.successes.length})
+                  Rescheduled attendances ({postponeFeedback.successes.length})
                 </h4>
                 {postponeFeedback.successes.length > 0 ? (
                   <ul className="list-inside list-disc space-y-1 text-sm text-gray-700">
                     {postponeFeedback.successes.map((item) => (
                       <li key={`${item.attendanceId}-${item.newDate}`}>
                         {attendanceIdToLabel.get(item.attendanceId) ??
-                          `Atendimento #${item.attendanceId}`}{" "}
-                        - {formatDateBR(item.newDate)}
+                          `Attendance #${item.attendanceId}`}{" "}
+                        - {formatDisplayDate(item.newDate)}
                       </li>
                     ))}
                   </ul>
                 ) : (
                   <p className="text-sm text-gray-600">
-                    Nenhum atendimento reagendado.
+                    No attendances were rescheduled.
                   </p>
                 )}
               </div>
@@ -409,21 +405,21 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
               {postponeFeedback.mode === "next_available" ? (
                 <div>
                   <h4 className="mb-2 text-sm font-semibold text-gray-900">
-                    Retornos de avaliação reagendados automaticamente (
+                    Assessment returns auto-rescheduled (
                     {postponeFeedback.autoRescheduledReturns.length})
                   </h4>
                   {postponeFeedback.autoRescheduledReturns.length > 0 ? (
                     <ul className="list-inside list-disc space-y-1 text-sm text-gray-700">
                       {postponeFeedback.autoRescheduledReturns.map((item) => (
                         <li key={`${item.attendanceId}-${item.newDate}`}>
-                          De {formatDateBR(item.oldDate)} para{" "}
-                          {formatDateBR(item.newDate)}
+                          From {formatDisplayDate(item.oldDate)} to{" "}
+                          {formatDisplayDate(item.newDate)}
                         </li>
                       ))}
                     </ul>
                   ) : (
                     <p className="text-sm text-gray-600">
-                      Nenhum retorno precisou ser reagendado.
+                      No returns needed rescheduling.
                     </p>
                   )}
                 </div>
@@ -432,7 +428,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
               {postponeFeedback.failures.length > 0 ? (
                 <div className="rounded-md border border-red-300 bg-red-50 p-3">
                   <h4 className="mb-2 text-sm font-semibold text-red-800">
-                    Falhas no reagendamento ({postponeFeedback.failures.length})
+                    Reschedule failures ({postponeFeedback.failures.length})
                   </h4>
                   <ul className="list-inside list-disc space-y-1 text-sm text-red-700">
                     {postponeFeedback.failures.map((item) => (
@@ -447,7 +443,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
               {postponeFeedback.failedReturnReschedules.length > 0 ? (
                 <div className="rounded-md border border-amber-300 bg-amber-50 p-3">
                   <h4 className="mb-2 text-sm font-semibold text-amber-800">
-                    Retornos de avaliação para reagendar manualmente (
+                    Returns that need manual rescheduling (
                     {postponeFeedback.failedReturnReschedules.length})
                   </h4>
                   <ul className="list-inside list-disc space-y-1 text-sm text-amber-700">
@@ -463,7 +459,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
 
             <div className="mt-6 flex justify-end">
               <Button type="button" onClick={handleAcknowledgePostponeFeedback}>
-                OK, entendi
+                OK, got it
               </Button>
             </div>
           </div>
@@ -472,8 +468,8 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
         {action === "postpone" && !postponeFeedback ? (
           <div className="mb-4">
             <p className="mb-6 text-sm text-gray-600">
-              Reagendar o atendimento de <strong>{patientName || ""}</strong>.
-              Escolha a forma de reagendamento.
+              Reschedule attendance for <strong>{patientName || ""}</strong>.
+              Choose the rescheduling mode.
             </p>
 
             {error ? (
@@ -493,19 +489,19 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                     />
                     <span className="text-sm font-medium text-gray-700">
                       {weekDayLabel
-                        ? `Próxima ${weekDayLabel.toLowerCase()} disponível`
-                        : "Próxima data disponível (mesmo dia da semana)"}
+                        ? `Next available ${weekDayLabel.toLowerCase()}`
+                        : "Next available date (same day of week)"}
                     </span>
                   </label>
                   <p className="ml-6 text-xs text-gray-600">
-                    A consulta de avaliação de retorno relacionada a este
-                    atendimento será reagendada automaticamente.
+                    The return assessment consultation related to this
+                    attendance will be automatically rescheduled.
                   </p>
                   {postponeMode === "next_available" ? (
                     <div className="mb-4 ml-6 mt-2">
                       {loadingNextAvailable ? (
                         <p className="text-xs italic text-gray-600">
-                          Calculando próximas datas...
+                          Calculating next dates...
                         </p>
                       ) : (
                         <div className="space-y-3 text-sm">
@@ -514,8 +510,8 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                               <div key={date ?? "no-date"}>
                                 <p className="mb-1 text-sm font-semibold text-gray-800">
                                   {date != null
-                                    ? `${formatDateBR(date)}`
-                                    : "Sem data disponível em 52 semanas:"}
+                                    ? `${formatDisplayDate(date)}`
+                                    : "No available date in 52 weeks:"}
                                 </p>
                                 <ul className="list-inside list-disc space-y-0.5 text-gray-600">
                                   {items.map(({ id, label }) => (
@@ -536,18 +532,18 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                       disabled={isSubmitting}
                     />
                     <span className="text-sm font-medium text-gray-700">
-                      Por data específica
+                      By specific date
                     </span>
                   </label>
                   <p className="ml-6 text-xs text-gray-600">
-                    Consultas de Avaliação de retorno <strong> não</strong> são
-                    reagendadas automaticamente nesta opção.
+                    Return assessment consultations are not automatically
+                    rescheduled with this option.
                   </p>
                 </div>
 
                 {postponeMode === "by_date" ? (
                   <Field
-                    label="Selecionar data"
+                    label="Select date"
                     htmlFor="reschedule-date"
                     className="mt-3"
                   >
@@ -570,7 +566,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                   onClick={handleBackToSelection}
                   disabled={isSubmitting}
                 >
-                  Voltar
+                  Back
                 </Button>
                 <Button
                   type="submit"
@@ -583,9 +579,9 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                         )))
                   }
                   isLoading={isSubmitting}
-                  loadingText="Reagendando..."
+                  loadingText="Rescheduling..."
                 >
-                  Confirmar Reagendamento
+                  Confirm Reschedule
                 </Button>
               </div>
             </form>

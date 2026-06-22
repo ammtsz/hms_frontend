@@ -17,15 +17,15 @@ const mockHolidays = [
   {
     id: 1,
     holidayDate: "2026-12-25",
-    name: "Natal",
-    description: "Feriado Nacional 1",
+    name: "Christmas",
+    description: "National Holiday 1",
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
   },
   {
     id: 2,
     holidayDate: "2026-01-01",
-    name: "Ano Novo",
+    name: "New Year",
     description: null,
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
@@ -66,7 +66,7 @@ jest.mock("../components/HolidayActionsBar", () => {
             </option>
           ))}
         </select>
-        <button onClick={onCreateClick}>Novo Feriado</button>
+        <button onClick={onCreateClick}>New Holiday</button>
       </div>
     );
   };
@@ -83,7 +83,7 @@ jest.mock("../components/HolidayList", () => {
     onDelete: (holiday: Holiday) => void;
   }) {
     if (!holidays || holidays.length === 0) {
-      return <div data-testid="empty-state">Nenhum feriado cadastrado</div>;
+      return <div data-testid="empty-state">No holidays registered</div>;
     }
 
     return (
@@ -209,7 +209,7 @@ describe("HolidayManagement", () => {
 
     render(<HolidayManagement />);
 
-    expect(screen.getByText("Carregando...")).toBeInTheDocument();
+    expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
   });
 
   it("should call notFound when user is not authenticated", () => {
@@ -249,7 +249,7 @@ describe("HolidayManagement", () => {
 
   it("renders HolidayManagement component", () => {
     render(<HolidayManagement />);
-    expect(screen.getByText("Gerenciamento de Feriados")).toBeInTheDocument();
+    expect(screen.getByText("Holiday Management")).toBeInTheDocument();
   });
 
   it("displays loading state", () => {
@@ -260,7 +260,7 @@ describe("HolidayManagement", () => {
     });
 
     render(<HolidayManagement />);
-    expect(screen.getByText("Carregando feriados...")).toBeInTheDocument();
+    expect(screen.getByText("Loading holidays...")).toBeInTheDocument();
   });
 
   it("displays error state", () => {
@@ -271,7 +271,7 @@ describe("HolidayManagement", () => {
     });
 
     render(<HolidayManagement />);
-    expect(screen.getByText("Erro ao carregar feriados")).toBeInTheDocument();
+    expect(screen.getByText("Error loading holidays")).toBeInTheDocument();
   });
 
   it("displays year selector with 5 years", () => {
@@ -282,7 +282,7 @@ describe("HolidayManagement", () => {
   it("opens create modal", () => {
     render(<HolidayManagement />);
 
-    fireEvent.click(screen.getByText("Novo Feriado"));
+    fireEvent.click(screen.getByText("New Holiday"));
     expect(mockSetShowCreateModal).toHaveBeenCalledWith(true);
   });
 
@@ -302,8 +302,8 @@ describe("HolidayManagement", () => {
   it("displays holiday list when holidays exist", () => {
     render(<HolidayManagement />);
 
-    expect(screen.getByText("Natal")).toBeInTheDocument();
-    expect(screen.getByText("Ano Novo")).toBeInTheDocument();
+    expect(screen.getByText("Christmas")).toBeInTheDocument();
+    expect(screen.getByText("New Year")).toBeInTheDocument();
   });
 
   it("displays empty state when no holidays", () => {

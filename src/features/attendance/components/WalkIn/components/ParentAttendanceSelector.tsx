@@ -12,8 +12,8 @@ interface ParentAttendanceSelectorProps {
   onParentAttendanceChange: (value: string) => void;
 }
 
-const LABEL_FIRST_ATTENDANCE = "Primeira consulta de avaliação";
-const LABEL_NEW_COMPLAINT = "Nova queixa";
+const LABEL_FIRST_ATTENDANCE = "First assessment consultation";
+const LABEL_NEW_COMPLAINT = "New complaint";
 
 export const ParentAttendanceSelector: React.FC<
   ParentAttendanceSelectorProps
@@ -39,15 +39,15 @@ export const ParentAttendanceSelector: React.FC<
 
   return (
     <div className="my-6">
-      <h3 className="font-bold text-gray-700 mb-2">Queixa Principal</h3>
+      <h3 className="font-bold text-gray-700 mb-2">Main Complaint</h3>
       <div className="space-y-3">
         <Field
-          label="Esta consulta está relacionada a qual queixa? *"
+          label="Which complaint is this consultation related to? *"
           htmlFor="parent-attendance"
         >
           {loadingParentOptions ? (
             <div className="text-sm text-gray-500 py-2">
-              Carregando consultas anteriores...
+              Loading previous consultations...
             </div>
           ) : showOngoingList ? (
             <Select
@@ -57,7 +57,7 @@ export const ParentAttendanceSelector: React.FC<
               onChange={(e) => onParentAttendanceChange(e.target.value)}
               disabled={isSubmitting}
             >
-              <option value="">Selecione uma opção</option>
+              <option value="">Select an option</option>
               {parentAttendanceOptions.map((option) => (
                 <option key={option.id} value={option.id.toString()}>
                   {option.label}
@@ -72,7 +72,7 @@ export const ParentAttendanceSelector: React.FC<
               onChange={(e) => onParentAttendanceChange(e.target.value)}
               disabled={isSubmitting}
             >
-              <option value="">Selecione uma opção</option>
+              <option value="">Select an option</option>
               <option value={singleOptionValue}>{singleOptionLabel}</option>
             </Select>
           )}

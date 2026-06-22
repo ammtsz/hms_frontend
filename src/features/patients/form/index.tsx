@@ -2,7 +2,7 @@ import React from "react";
 import { usePatientForm } from "./hooks/usePatientForm";
 import PatientFormFields from "./PatientFormFields";
 import SuccessModal from "@/components/common/SuccessModal";
-import { formatDateBR } from "@/utils/dateUtils";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import { Button, Card } from "@/components/ui";
 
 const PatientForm: React.FC = () => {
@@ -27,10 +27,10 @@ const PatientForm: React.FC = () => {
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-xl font-semibold text-gray-800">
-              Cadastro de Paciente
+              Patient Registration
             </h2>
             <p className="text-sm text-gray-600 mt-1">
-              Preencha as informações do novo paciente
+              Fill in the new patient information
             </p>
           </div>
         </div>
@@ -44,7 +44,9 @@ const PatientForm: React.FC = () => {
         <PatientFormFields
           patient={patient}
           handleChange={handleChange}
-          handleAssessmentConsultationChange={handleAssessmentConsultationChange}
+          handleAssessmentConsultationChange={
+            handleAssessmentConsultationChange
+          }
           showAssessmentConsultation={true}
           validationErrors={validationErrors}
         />
@@ -53,10 +55,10 @@ const PatientForm: React.FC = () => {
           <Button
             type="submit"
             isLoading={isLoading}
-            loadingText="Salvando..."
+            loadingText="Saving..."
             disabled={isLoading || !isFormValid()}
           >
-            Cadastrar Paciente
+            Register Patient
           </Button>
         </div>
       </form>
@@ -64,8 +66,8 @@ const PatientForm: React.FC = () => {
       {/* Success Modal */}
       <SuccessModal
         isOpen={showSuccessModal}
-        title="Paciente cadastrado!"
-        message="O paciente foi cadastrado com sucesso no sistema."
+        title="Patient registered!"
+        message="The patient was successfully registered in the system."
         additionalInfo={
           <div
             className={`p-3 rounded-lg text-sm text-center ${
@@ -78,25 +80,25 @@ const PatientForm: React.FC = () => {
           >
             {scheduledAttendanceDate ? (
               <div>
-                <div>✓ Atendimento agendado automaticamente.</div>
+                <div>✓ Appointment scheduled automatically.</div>
                 <div className="mt-1 font-semibold">
-                  Data: {formatDateBR(scheduledAttendanceDate)}
+                  Date: {formatDisplayDate(scheduledAttendanceDate)}
                 </div>
               </div>
             ) : attendanceCreationFailed ? (
               <div>
                 <div className="font-medium">
-                  Não foi possível agendar a primeira consulta.
+                  Unable to schedule the first consultation.
                 </div>
                 <div className="mt-1">{attendanceCreationFailed.message}</div>
                 <div className="mt-2 text-red-700">
-                  Você pode agendar manualmente na agenda.
+                  You can schedule it manually in the schedule.
                 </div>
               </div>
             ) : (
               <span>
-                ⚠ Nenhum atendimento foi agendado. Você pode agendar manualmente
-                na agenda.
+                ⚠ No appointments were scheduled. You can schedule them manually
+                in the schedule.
               </span>
             )}
           </div>

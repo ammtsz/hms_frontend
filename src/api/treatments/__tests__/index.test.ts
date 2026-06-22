@@ -31,13 +31,13 @@ describe('Treatments API', () => {
     attendanceId: 1,
     patientId: 1,
     treatmentType: 'physiotherapy' as const,
-    bodyLocation: 'Cabeça',
+    bodyLocation: 'Head',
     startDate: '2025-01-15',
     plannedSessions: 10,
     completedSessions: 0,
     status: 'scheduled',
     durationMinutes: 7,
-    color: 'azul',
+    color: 'blue',
     notes: 'Test',
     createdDate: '2025-01-15',
     createdTime: '10:00:00',
@@ -67,7 +67,7 @@ describe('Treatments API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
   });
@@ -130,7 +130,7 @@ describe('Treatments API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Requisição inválida'
+        error: 'Invalid request'
       });
     });
   });
@@ -218,7 +218,7 @@ describe('Treatments API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Requisição inválida'
+        error: 'Invalid request'
       });
     });
   });
@@ -249,7 +249,7 @@ describe('Treatments API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Registro já existe ou há conflito de dados.',
+        error: 'Record already exists or there is a data conflict.',
       });
     });
 
@@ -261,7 +261,7 @@ describe('Treatments API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
   });
@@ -293,11 +293,11 @@ describe('Treatments API', () => {
       };
       mockApi.post.mockResolvedValue({ data: mockResponse });
 
-      const result = await bulkCancelTreatments([1, 2], 'Paciente solicitou');
+      const result = await bulkCancelTreatments([1, 2], 'Patient requested');
 
       expect(mockApi.post).toHaveBeenCalledWith('/treatments/bulk-cancel', {
         treatmentIds: [1, 2],
-        cancellationReason: 'Paciente solicitou'
+        cancellationReason: 'Patient requested'
       });
       expect(result).toEqual({
         success: true,
@@ -313,7 +313,7 @@ describe('Treatments API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Erro interno do servidor, por favor tente novamente mais tarde'
+        error: 'Internal server error, please try again later'
       });
     });
   });
@@ -338,7 +338,7 @@ describe('Treatments API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Recurso não encontrado'
+        error: 'Resource not found'
       });
     });
   });

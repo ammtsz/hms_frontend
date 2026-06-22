@@ -26,7 +26,7 @@ export interface DeactivatePriorityResponse {
   blockingPatients?: BlockingPriorityPatient[];
 }
 
-const DEFAULT_PRIORITY_ERROR_MESSAGE = "Erro ao processar requisição";
+const DEFAULT_PRIORITY_ERROR_MESSAGE = "Error processing request";
 
 export async function getPriorities(
   includeInactive = false,

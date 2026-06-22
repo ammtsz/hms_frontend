@@ -6,6 +6,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LoginForm } from "../LoginForm";
+import { LOGIN_FORM_LABELS } from "@/utils/authFormLabels";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { loginAction } from "@/app/actions/auth.actions";
@@ -35,13 +36,15 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     expect(screen.getByLabelText(/Email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Senha/i)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Entrar/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { level: 2, name: "Clínica" }),
+      screen.getByRole("button", { name: /Sign in/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { level: 1, name: "HMS" }),
+      screen.getByRole("heading", {
+        level: 1,
+        name: LOGIN_FORM_LABELS.clinicHeading,
+      }),
     ).toBeInTheDocument();
   });
 
@@ -49,10 +52,10 @@ describe("LoginForm", () => {
     const user = userEvent.setup();
     render(<LoginForm />);
 
-    await user.click(screen.getByRole("button", { name: /Entrar/i }));
+    await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     expect(
-      screen.getByText("Por favor, preencha todos os campos"),
+      screen.getByText(LOGIN_FORM_LABELS.fillAllFields),
     ).toBeInTheDocument();
     expect(loginAction).not.toHaveBeenCalled();
   });
@@ -72,11 +75,11 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     await user.type(
-      screen.getByPlaceholderText(/seu@email.com/),
+      screen.getByPlaceholderText(LOGIN_FORM_LABELS.emailPlaceholder),
       "test@example.com",
     );
     await user.type(screen.getByPlaceholderText(/••••••••/), "password123");
-    await user.click(screen.getByRole("button", { name: /Entrar/i }));
+    await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
       expect(mockSetQueryData).toHaveBeenCalledWith(
@@ -106,11 +109,11 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     await user.type(
-      screen.getByPlaceholderText(/seu@email.com/),
+      screen.getByPlaceholderText(LOGIN_FORM_LABELS.emailPlaceholder),
       "test@example.com",
     );
     await user.type(screen.getByPlaceholderText(/••••••••/), "password123");
-    await user.click(screen.getByRole("button", { name: /Entrar/i }));
+    await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/agenda");
@@ -136,11 +139,11 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     await user.type(
-      screen.getByPlaceholderText(/seu@email.com/),
+      screen.getByPlaceholderText(LOGIN_FORM_LABELS.emailPlaceholder),
       "test@example.com",
     );
     await user.type(screen.getByPlaceholderText(/••••••••/), "password123");
-    await user.click(screen.getByRole("button", { name: /Entrar/i }));
+    await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/agenda");
@@ -165,11 +168,11 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     await user.type(
-      screen.getByPlaceholderText(/seu@email.com/),
+      screen.getByPlaceholderText(LOGIN_FORM_LABELS.emailPlaceholder),
       "test@example.com",
     );
     await user.type(screen.getByPlaceholderText(/••••••••/), "password123");
-    await user.click(screen.getByRole("button", { name: /Entrar/i }));
+    await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/force-password-change");
@@ -180,21 +183,21 @@ describe("LoginForm", () => {
   it("on failed login shows error and does not redirect", async () => {
     (loginAction as jest.Mock).mockResolvedValue({
       success: false,
-      error: "Credenciais inválidas",
+      error: "Invalid credentials",
     });
 
     const user = userEvent.setup();
     render(<LoginForm />);
 
     await user.type(
-      screen.getByPlaceholderText(/seu@email.com/),
+      screen.getByPlaceholderText(LOGIN_FORM_LABELS.emailPlaceholder),
       "test@example.com",
     );
     await user.type(screen.getByPlaceholderText(/••••••••/), "wrong");
-    await user.click(screen.getByRole("button", { name: /Entrar/i }));
+    await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
-      expect(screen.getByText("Credenciais inválidas")).toBeInTheDocument();
+      expect(screen.getByText("Invalid credentials")).toBeInTheDocument();
     });
     expect(mockPush).not.toHaveBeenCalled();
   });
@@ -217,11 +220,11 @@ describe("LoginForm", () => {
     render(<LoginForm />);
 
     await user.type(
-      screen.getByPlaceholderText(/seu@email.com/),
+      screen.getByPlaceholderText(LOGIN_FORM_LABELS.emailPlaceholder),
       "test@example.com",
     );
     await user.type(screen.getByPlaceholderText(/••••••••/), "password123");
-    await user.click(screen.getByRole("button", { name: /Entrar/i }));
+    await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/attendance");

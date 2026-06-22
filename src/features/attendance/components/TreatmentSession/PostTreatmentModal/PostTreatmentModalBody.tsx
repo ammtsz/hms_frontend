@@ -35,34 +35,32 @@ export const PostTreatmentModalBody: React.FC<PostTreatmentModalBodyProps> = ({
 }) => (
   <div className="p-4 overflow-y-auto flex-1 min-h-0">
     {loading ? (
-      <div className="flex justify-center py-8 text-gray-500">
-        Carregando...
-      </div>
+      <div className="flex justify-center py-8 text-gray-500">Loading...</div>
     ) : error ? (
       <div className="py-8 text-red-600 text-center space-y-3">
         <p>
-          Erro ao carregar:{" "}
+          Error loading:{" "}
           {typeof error === "object" && error !== null && "message" in error
             ? String((error as Error).message)
             : String(error)}
         </p>
         <Button type="button" onClick={onRetry} variant="secondary">
-          Tentar Novamente
+          Try Again
         </Button>
       </div>
     ) : rows.length === 0 ? (
       <div className="py-8 text-gray-500 text-center space-y-3">
-        <p>Nenhum tratamento encontrado para estes atendimentos.</p>
+        <p>No treatments found for these attendances.</p>
         <Button type="button" onClick={onRetry} variant="secondary">
-          Tentar Novamente
+          Try Again
         </Button>
       </div>
     ) : (
       <>
         <p className="text-sm text-gray-600 mb-3">
-          Tratamentos realizados. Caso algum não tenha sido concluído, desmarque
-          e informe o motivo (estes terão seu status alteados para
-          &quot;cancelado&quot;).
+          Treatments completed. If any have not been completed, uncheck them and
+          provide a reason (these will have their status changed to
+          &quot;cancelled&quot;).
         </p>
         <div className="space-y-4">
           {(["physiotherapy", "tens"] as const).map((treatmentType) => {

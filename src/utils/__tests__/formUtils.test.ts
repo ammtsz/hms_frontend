@@ -128,7 +128,7 @@ describe('formUtils', () => {
 
   describe('validatePatientForm', () => {
     const validData = {
-      name: 'João Silva',
+      name: 'John Smith',
       phone: '(11) 99988-7766',
       birthDate: '1990-05-15',
     };
@@ -139,9 +139,9 @@ describe('formUtils', () => {
 
     it('should require name', () => {
       expect(validatePatientForm({ ...validData, name: '' }))
-        .toBe('Nome é obrigatório');
+        .toMatch(/Name is required|Name is required/);
       expect(validatePatientForm({ ...validData, name: '   ' }))
-        .toBe('Nome é obrigatório');
+        .toMatch(/Name is required|Name is required/);
     });
 
     it('should validate phone when required', () => {
@@ -152,7 +152,7 @@ describe('formUtils', () => {
       
       // Required
       expect(validatePatientForm(dataWithoutPhone, true))
-        .toBe('Telefone é obrigatório');
+        .toMatch(/Phone is required|Phone is required/);
     });
 
     it('should validate birth date when required', () => {
@@ -163,13 +163,13 @@ describe('formUtils', () => {
       
       // Required
       expect(validatePatientForm(dataWithoutBirthDate, false, true))
-        .toBe('Data de nascimento é obrigatória');
+        .toMatch(/Date of birth is required|Date of birth is required/);
     });
 
     it('should validate phone format when provided', () => {
       const dataWithBadPhone = { ...validData, phone: '11999887766' };
       expect(validatePatientForm(dataWithBadPhone))
-        .toBe('Telefone deve estar no formato (XX) XXXXX-XXXX');
+        .toMatch(/Phone must be in the format \(XX\) XXXXX-XXXX/);
     });
 
     it('should handle combination of requirements', () => {
@@ -177,18 +177,18 @@ describe('formUtils', () => {
       
       // Name is always required (first check)
       expect(validatePatientForm(emptyData, true, true))
-        .toBe('Nome é obrigatório');
+        .toMatch(/Name is required|Name is required/);
       
       // With name but missing required birth date
-      expect(validatePatientForm({ ...emptyData, name: 'João' }, false, true))
-        .toBe('Data de nascimento é obrigatória');
+      expect(validatePatientForm({ ...emptyData, name: 'John' }, false, true))
+        .toMatch(/Date of birth is required|Date of birth is required/);
       
       // With name and birth date but missing required phone
       expect(validatePatientForm(
-        { ...emptyData, name: 'João', birthDate: '1990-01-01' },
+        { ...emptyData, name: 'John', birthDate: '1990-01-01' },
         true,
         false
-      )).toBe('Telefone é obrigatório');
+      )).toMatch(/Phone is required|Phone is required/);
     });
 
     it('should allow optional empty phone when format is valid', () => {

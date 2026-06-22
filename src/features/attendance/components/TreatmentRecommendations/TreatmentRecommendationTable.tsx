@@ -266,26 +266,26 @@ const TreatmentRecommendationTable = forwardRef<
               <thead className={`bg-gray-50 ${stackedTableClasses.header}`}>
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider max-w-3xs">
-                    Locais do Corpo
+                    Body Locations
                   </th>
                   {isPhysiotherapy && (
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Cor
+                      Color
                     </th>
                   )}
                   {isPhysiotherapy && (
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Tempo
+                      Duration
                     </th>
                   )}
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Quantidade
+                    Quantity
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    Data Início
+                    Start Date
                   </th>
                   <th className="px-4 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider w-20">
-                    Ações
+                    Actions
                   </th>
                 </tr>
               </thead>
@@ -326,7 +326,7 @@ const TreatmentRecommendationTable = forwardRef<
                     >
                       {/* Locations */}
                       <td className="block py-2 md:table-cell md:max-w-3xs md:py-3 md:pl-3 md:pr-1 md:align-bottom">
-                        <TableMobileLabel>Locais do Corpo</TableMobileLabel>
+                        <TableMobileLabel>Body Locations</TableMobileLabel>
                         {isEditing ? (
                           <div className="space-y-1">
                             {creationError?.rowIndex === index && (
@@ -359,7 +359,7 @@ const TreatmentRecommendationTable = forwardRef<
                                   if (inactiveLocation) {
                                     setCreationError({
                                       rowIndex: index,
-                                      message: `O local "${inactiveLocation.value}" já existe, mas está inativo. Ative-o nas configurações de tratamentos para utilizá-lo.`,
+                                      message: `The location "${inactiveLocation.value}" already exists, but is inactive. Activate it in the treatment settings to use it.`,
                                     });
                                   } else {
                                     setCreationError({
@@ -367,7 +367,7 @@ const TreatmentRecommendationTable = forwardRef<
                                       message:
                                         error instanceof Error
                                           ? error.message
-                                          : "Erro ao criar local do corpo",
+                                          : "Error creating body location",
                                     });
                                   }
                                   throw error;
@@ -391,7 +391,7 @@ const TreatmentRecommendationTable = forwardRef<
                               ))
                             ) : (
                               <span className="text-sm text-gray-400 italic">
-                                Nenhum local selecionado
+                                No body locations selected
                               </span>
                             )}
                           </div>
@@ -401,7 +401,7 @@ const TreatmentRecommendationTable = forwardRef<
                       {/* Color (Physiotherapy only) */}
                       {isPhysiotherapy && (
                         <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
-                          <TableMobileLabel>Cor</TableMobileLabel>
+                          <TableMobileLabel>Color</TableMobileLabel>
                           {isEditing ? (
                             <Select
                               value={physiotherapyTreatment.color || ""}
@@ -415,7 +415,7 @@ const TreatmentRecommendationTable = forwardRef<
                               disabled={disabled}
                               className="min-h-8 px-2 py-1 text-sm"
                             >
-                              <option value="">Selecione</option>
+                              <option value="">Select</option>
                               {activeColors.map((color) => (
                                 <option key={color} value={color}>
                                   {color}
@@ -426,7 +426,7 @@ const TreatmentRecommendationTable = forwardRef<
                             <span className="text-sm text-gray-900">
                               {physiotherapyTreatment.color || (
                                 <span className="text-gray-400 italic">
-                                  Não definido
+                                  Not defined
                                 </span>
                               )}
                             </span>
@@ -437,7 +437,7 @@ const TreatmentRecommendationTable = forwardRef<
                       {/* Duration (Physiotherapy only) */}
                       {isPhysiotherapy && (
                         <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
-                          <TableMobileLabel>Tempo</TableMobileLabel>
+                          <TableMobileLabel>Duration</TableMobileLabel>
                           {isEditing ? (
                             <Select
                               value={physiotherapyTreatment.duration || 1}
@@ -451,20 +451,20 @@ const TreatmentRecommendationTable = forwardRef<
                               disabled={disabled}
                               className="min-h-8 px-2 py-1 text-sm"
                             >
-                              <option value={1}>1 unidade (7 min)</option>
-                              <option value={2}>2 unidades (14 min)</option>
-                              <option value={3}>3 unidades (21 min)</option>
-                              <option value={4}>4 unidades (28 min)</option>
-                              <option value={5}>5 unidades (35 min)</option>
-                              <option value={6}>6 unidades (42 min)</option>
-                              <option value={7}>7 unidades (49 min)</option>
-                              <option value={8}>8 unidades (56 min)</option>
-                              <option value={9}>9 unidades (63 min)</option>
-                              <option value={10}>10 unidades (70 min)</option>
+                              <option value={1}>1 unit (7 min)</option>
+                              <option value={2}>2 units (14 min)</option>
+                              <option value={3}>3 units (21 min)</option>
+                              <option value={4}>4 units (28 min)</option>
+                              <option value={5}>5 units (35 min)</option>
+                              <option value={6}>6 units (42 min)</option>
+                              <option value={7}>7 units (49 min)</option>
+                              <option value={8}>8 units (56 min)</option>
+                              <option value={9}>9 units (63 min)</option>
+                              <option value={10}>10 units (70 min)</option>
                             </Select>
                           ) : (
                             <span className="text-sm text-gray-900">
-                              {physiotherapyTreatment.duration} unidade
+                              {physiotherapyTreatment.duration} unit
                               {physiotherapyTreatment.duration !== 1
                                 ? "s"
                                 : ""}{" "}
@@ -476,7 +476,7 @@ const TreatmentRecommendationTable = forwardRef<
 
                       {/* Quantity (read-only in edit mode) */}
                       <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
-                        <TableMobileLabel>Quantidade</TableMobileLabel>
+                        <TableMobileLabel>Quantity</TableMobileLabel>
                         {isEditing ? (
                           <Input
                             type="number"
@@ -491,7 +491,7 @@ const TreatmentRecommendationTable = forwardRef<
                             disabled={disabled || isEditMode}
                             title={
                               isEditMode
-                                ? "Quantidade não pode ser editada após criação do tratamento"
+                                ? "Quantity cannot be edited after treatment creation"
                                 : ""
                             }
                             min="1"
@@ -507,7 +507,7 @@ const TreatmentRecommendationTable = forwardRef<
 
                       {/* Start Date (read-only in edit mode) */}
                       <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
-                        <TableMobileLabel>Data Início</TableMobileLabel>
+                        <TableMobileLabel>Start Date</TableMobileLabel>
                         {isEditing ? (
                           <div className="space-y-1">
                             {hasSlotError && (
@@ -528,7 +528,7 @@ const TreatmentRecommendationTable = forwardRef<
                               disabled={disabled || isEditMode}
                               title={
                                 isEditMode
-                                  ? "Data de início não pode ser editada após criação do tratamento"
+                                  ? "Start date cannot be edited after treatment creation"
                                   : ""
                               }
                               invalid={hasSlotError}
@@ -553,14 +553,14 @@ const TreatmentRecommendationTable = forwardRef<
                             )}
                             {new Date(
                               treatment.startDate + "T00:00:00",
-                            ).toLocaleDateString("pt-BR")}
+                            ).toLocaleDateString("en-US")}
                           </span>
                         )}
                       </td>
 
                       {/* Actions */}
                       <td className="block border-t border-gray-100 py-2 pt-3 md:table-cell md:border-0 md:py-3 md:pl-1 md:pr-3 md:text-center md:align-bottom">
-                        <TableMobileLabel>Ações</TableMobileLabel>
+                        <TableMobileLabel>Actions</TableMobileLabel>
                         <div className="flex h-8 items-center justify-end md:justify-center">
                           <IconButton
                             type="button"
@@ -572,8 +572,8 @@ const TreatmentRecommendationTable = forwardRef<
                             disabled={!canRemoveRow}
                             title={
                               isEditMode && editSessionIds[index] !== undefined
-                                ? "Remova os tratamentos previamente criados na página do paciente"
-                                : "Remover tratamento"
+                                ? "Remove the treatments previously created on the patient's page"
+                                : "Remove treatment"
                             }
                           >
                             <Trash2 size={16} />
@@ -598,7 +598,7 @@ const TreatmentRecommendationTable = forwardRef<
             disabled={disabled}
           >
             <Plus size={16} strokeWidth={2.5} />
-            Adicionar Tratamento
+            Add Treatment
           </Button>
         )}
       </div>

@@ -11,7 +11,7 @@ export default function PatientsPage() {
       <Suspense
         fallback={
           <div className="flex items-center justify-center p-8">
-            <div className="text-gray-500">Carregando pacientes...</div>
+            <div className="text-gray-500">Loading patients...</div>
           </div>
         }
       >

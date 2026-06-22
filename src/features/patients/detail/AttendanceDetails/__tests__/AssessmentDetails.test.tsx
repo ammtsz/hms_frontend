@@ -1,89 +1,90 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { AssessmentDetails } from "../AssessmentDetails";
+import { ASSESSMENT_DETAILS_TITLE } from "@/utils/attendanceStatusLabels";
 
 describe("AssessmentDetails", () => {
   it("should render default title", () => {
     render(<AssessmentDetails />);
 
-    expect(screen.getByText("📋 Consulta de Avaliação")).toBeInTheDocument();
+    expect(screen.getByText(ASSESSMENT_DETAILS_TITLE)).toBeInTheDocument();
   });
 
   it("should render custom title", () => {
-    render(<AssessmentDetails title="🙏 Tratamento Médico" />);
+    render(<AssessmentDetails title="🙏 Medical Treatment" />);
 
-    expect(screen.getByText(/Tratamento Médico/)).toBeInTheDocument();
+    expect(screen.getByText(/Medical Treatment/)).toBeInTheDocument();
   });
 
   it("should display assessment notes when provided", () => {
     render(
-      <AssessmentDetails preConsultationNotes="Paciente relata melhora" />,
+      <AssessmentDetails preConsultationNotes="Patient reports improvement" />,
     );
 
-    expect(screen.getByText(/Notas pré-consulta:/)).toBeInTheDocument();
-    expect(screen.getByText("Paciente relata melhora")).toBeInTheDocument();
+    expect(screen.getByText(/Pre-consultation notes:/)).toBeInTheDocument();
+    expect(screen.getByText("Patient reports improvement")).toBeInTheDocument();
   });
 
   it("should display treatment record notes when provided", () => {
     render(
-      <AssessmentDetails consultationNotes="Orientações sobre evolução médica" />,
+      <AssessmentDetails consultationNotes="Notes on medical progress" />,
     );
 
-    expect(screen.getByText(/Notas da consulta:/)).toBeInTheDocument();
+    expect(screen.getByText(/Assessment notes:/)).toBeInTheDocument();
     expect(
-      screen.getByText("Orientações sobre evolução médica"),
+      screen.getByText("Notes on medical progress"),
     ).toBeInTheDocument();
   });
 
   it("should display both assessment and treatment notes", () => {
     render(
       <AssessmentDetails
-        preConsultationNotes="Notas antes da consulta"
-        consultationNotes="Notas durante a consulta"
+        preConsultationNotes="Notes before consultation"
+        consultationNotes="Notes during the consultation"
       />,
     );
 
-    expect(screen.getByText("Notas antes da consulta")).toBeInTheDocument();
-    expect(screen.getByText("Notas durante a consulta")).toBeInTheDocument();
+    expect(screen.getByText("Notes before consultation")).toBeInTheDocument();
+    expect(screen.getByText("Notes during the consultation")).toBeInTheDocument();
   });
 
   it("should display food recommendation", () => {
     render(
       <AssessmentDetails
         recommendations={{
-          food: "Evitar carnes vermelhas",
+          food: "Avoid red meats",
         }}
       />,
     );
 
-    expect(screen.getByText(/Alimentação/)).toBeInTheDocument();
-    expect(screen.getByText("Evitar carnes vermelhas")).toBeInTheDocument();
+    expect(screen.getByText(/Food/)).toBeInTheDocument();
+    expect(screen.getByText("Avoid red meats")).toBeInTheDocument();
   });
 
   it("should display water recommendation", () => {
     render(
       <AssessmentDetails
         recommendations={{
-          water: "Água 3x ao dia",
+          water: "Water 3x daily",
         }}
       />,
     );
 
-    expect(screen.getAllByText(/Água/)[0]).toBeInTheDocument();
-    expect(screen.getByText("Água 3x ao dia")).toBeInTheDocument();
+    expect(screen.getAllByText(/Water/)[0]).toBeInTheDocument();
+    expect(screen.getByText("Water 3x daily")).toBeInTheDocument();
   });
 
   it("should display ointment recommendation", () => {
     render(
       <AssessmentDetails
         recommendations={{
-          ointment: "Aplicar na região afetada",
+          ointment: "Apply to affected area",
         }}
       />,
     );
 
-    expect(screen.getByText(/Pomada/)).toBeInTheDocument();
-    expect(screen.getByText("Aplicar na região afetada")).toBeInTheDocument();
+    expect(screen.getByText(/Ointment/)).toBeInTheDocument();
+    expect(screen.getByText("Apply to affected area")).toBeInTheDocument();
   });
 
   it("should display return weeks", () => {
@@ -95,8 +96,8 @@ describe("AssessmentDetails", () => {
       />,
     );
 
-    expect(screen.getByText(/Retorno/)).toBeInTheDocument();
-    expect(screen.getByText("4 semanas")).toBeInTheDocument();
+    expect(screen.getByText(/Return/)).toBeInTheDocument();
+    expect(screen.getByText("4 weeks")).toBeInTheDocument();
   });
 
   it("should display singular for 1 week", () => {
@@ -108,7 +109,7 @@ describe("AssessmentDetails", () => {
       />,
     );
 
-    expect(screen.getByText("1 semana")).toBeInTheDocument();
+    expect(screen.getByText("1 week")).toBeInTheDocument();
   });
 
   it("should display return when treatment complete", () => {
@@ -122,7 +123,7 @@ describe("AssessmentDetails", () => {
     );
 
     expect(
-      screen.getByText("retornar no último dia de tratamento"),
+      screen.getByText("return on the last day of treatment"),
     ).toBeInTheDocument();
   });
 
@@ -137,7 +138,7 @@ describe("AssessmentDetails", () => {
     );
 
     expect(
-      screen.getByText(/2 semanas após o término do tratamento/),
+      screen.getByText(/2 weeks after treatment ends/),
     ).toBeInTheDocument();
   });
 
@@ -146,10 +147,10 @@ describe("AssessmentDetails", () => {
       {
         id: 1,
         treatmentType: "physiotherapy" as const,
-        bodyLocation: "Cabeça",
+        bodyLocation: "Head",
         plannedSessions: 3,
         completedSessions: 0,
-        color: "Azul",
+        color: "Blue",
         status: "scheduled",
       },
     ];
@@ -161,8 +162,8 @@ describe("AssessmentDetails", () => {
       />,
     );
 
-    expect(screen.getByText(/Fisioterapia/)).toBeInTheDocument();
-    expect(screen.getByText(/3 sessões - Cabeça/)).toBeInTheDocument();
+    expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
+    expect(screen.getByText(/3 sessions - Head/)).toBeInTheDocument();
   });
 
   it("should display tens sessions", () => {
@@ -170,7 +171,7 @@ describe("AssessmentDetails", () => {
       {
         id: 2,
         treatmentType: "tens" as const,
-        bodyLocation: "Pé direito",
+        bodyLocation: "Right Foot",
         plannedSessions: 5,
         completedSessions: 0,
         status: "scheduled",
@@ -182,7 +183,7 @@ describe("AssessmentDetails", () => {
     );
 
     expect(screen.getByText(/TENS/)).toBeInTheDocument();
-    expect(screen.getByText(/5 sessões - Pé direito/)).toBeInTheDocument();
+    expect(screen.getByText(/5 sessions - Right Foot/)).toBeInTheDocument();
   });
 
   it("should apply disabled styling when isAbsent is true", () => {
@@ -203,20 +204,20 @@ describe("AssessmentDetails", () => {
     render(<AssessmentDetails isFirstAttendance={true} />);
 
     expect(
-      screen.getByText(/Consulta de retorno agendada/),
+      screen.getByText(/Return appointment scheduled/),
     ).toBeInTheDocument();
   });
 
   it("should display return attendance message when isFirstAttendance is false", () => {
     render(<AssessmentDetails isFirstAttendance={false} />);
 
-    expect(screen.getByText(/Primeira consulta agendada/)).toBeInTheDocument();
+    expect(screen.getByText(/First appointment scheduled/)).toBeInTheDocument();
   });
 
   it("should not display recommendations section when no recommendations", () => {
     render(<AssessmentDetails />);
 
-    expect(screen.queryByText(/Recomendações:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Recommendations:/)).not.toBeInTheDocument();
   });
 
   it("should render all recommendations together", () => {
@@ -224,22 +225,22 @@ describe("AssessmentDetails", () => {
       {
         id: 1,
         treatmentType: "physiotherapy" as const,
-        bodyLocation: "Cabeça",
+        bodyLocation: "Head",
         plannedSessions: 2,
         completedSessions: 0,
-        color: "Azul",
+        color: "Blue",
         status: "scheduled",
       },
     ];
 
     render(
       <AssessmentDetails
-        preConsultationNotes="Paciente apresenta boa receptividade"
-        consultationNotes="Orientado sobre tratamento"
+        preConsultationNotes="Patient shows good receptivity"
+        consultationNotes="Oriented about treatment"
         recommendations={{
-          food: "Evitar carnes",
-          water: "Água",
-          ointment: "Aplicar 2x ao dia",
+          food: "Avoid red meat",
+          water: "Water",
+          ointment: "Apply 2x daily",
           returnWeeks: 3,
         }}
         physiotherapySessions={physiotherapySessions}
@@ -247,11 +248,11 @@ describe("AssessmentDetails", () => {
       />,
     );
 
-    expect(screen.getByText(/Recomendações:/)).toBeInTheDocument();
-    expect(screen.getByText("Evitar carnes")).toBeInTheDocument();
-    expect(screen.getByText("Água")).toBeInTheDocument();
-    expect(screen.getByText("Aplicar 2x ao dia")).toBeInTheDocument();
-    expect(screen.getByText("3 semanas")).toBeInTheDocument();
-    expect(screen.getByText(/2 sessões - Cabeça/)).toBeInTheDocument();
+    expect(screen.getByText(/Recommendations:/)).toBeInTheDocument();
+    expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
+    expect(screen.getAllByText(/Water/)[0]).toBeInTheDocument();
+    expect(screen.getByText("Apply 2x daily")).toBeInTheDocument();
+    expect(screen.getByText("3 weeks")).toBeInTheDocument();
+    expect(screen.getByText(/2 sessions - Head/)).toBeInTheDocument();
   });
 });

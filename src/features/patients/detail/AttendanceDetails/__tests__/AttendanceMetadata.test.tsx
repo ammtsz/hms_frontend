@@ -4,7 +4,7 @@ import { AttendanceMetadata } from "../AttendanceMetadata";
 
 describe("AttendanceMetadata", () => {
   describe("Created Date Display", () => {
-    it("should always display created date in DD/MM/YYYY format", () => {
+    it("should always display created date in MM/DD/YYYY format", () => {
       render(
         <AttendanceMetadata
           createdDate="2026-02-10"
@@ -12,8 +12,8 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("Criado em:")).toBeInTheDocument();
-      expect(screen.getByText("10/02/2026")).toBeInTheDocument();
+      expect(screen.getByText("Created on:")).toBeInTheDocument();
+      expect(screen.getByText("02/10/2026")).toBeInTheDocument();
     });
 
     it("should extract date correctly from different ISO datetime formats", () => {
@@ -24,7 +24,7 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("05/01/2026")).toBeInTheDocument();
+      expect(screen.getByText("01/05/2026")).toBeInTheDocument();
     });
   });
 
@@ -37,10 +37,10 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("Criado em:")).toBeInTheDocument();
-      expect(screen.getByText("10/02/2026")).toBeInTheDocument();
-      expect(screen.getByText("Atualizado em:")).toBeInTheDocument();
-      expect(screen.getByText("15/02/2026")).toBeInTheDocument();
+      expect(screen.getByText("Created on:")).toBeInTheDocument();
+      expect(screen.getByText("02/10/2026")).toBeInTheDocument();
+      expect(screen.getByText("Updated on:")).toBeInTheDocument();
+      expect(screen.getByText("02/15/2026")).toBeInTheDocument();
     });
 
     it("should NOT display updated date when same as created date", () => {
@@ -51,8 +51,8 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("Criado em:")).toBeInTheDocument();
-      expect(screen.queryByText("Atualizado em:")).not.toBeInTheDocument();
+      expect(screen.getByText("Created on:")).toBeInTheDocument();
+      expect(screen.queryByText("Updated on:")).not.toBeInTheDocument();
     });
 
     it("should compare dates ignoring time component", () => {
@@ -64,7 +64,7 @@ describe("AttendanceMetadata", () => {
       );
 
       // Updated date should NOT appear because dates are the same
-      expect(screen.queryByText("Atualizado em:")).not.toBeInTheDocument();
+      expect(screen.queryByText("Updated on:")).not.toBeInTheDocument();
     });
   });
 
@@ -78,8 +78,8 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("Cancelado em:")).toBeInTheDocument();
-      expect(screen.getByText("18/02/2026")).toBeInTheDocument();
+      expect(screen.getByText("Cancelled on:")).toBeInTheDocument();
+      expect(screen.getByText("02/18/2026")).toBeInTheDocument();
     });
 
     it("should NOT display cancelled date when not provided", () => {
@@ -90,10 +90,10 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.queryByText("Cancelado em:")).not.toBeInTheDocument();
+      expect(screen.queryByText("Cancelled on:")).not.toBeInTheDocument();
     });
 
-    it("should format cancelled date from YYYY-MM-DD to DD/MM/YYYY", () => {
+    it("should format cancelled date from YYYY-MM-DD to MM/DD/YYYY", () => {
       render(
         <AttendanceMetadata
           createdDate="2026-02-10"
@@ -102,7 +102,7 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("18/02/2026")).toBeInTheDocument();
+      expect(screen.getByText("02/18/2026")).toBeInTheDocument();
     });
   });
 
@@ -117,12 +117,12 @@ describe("AttendanceMetadata", () => {
       );
 
       // All three should be present
-      expect(screen.getByText("Criado em:")).toBeInTheDocument();
-      expect(screen.getByText("10/02/2026")).toBeInTheDocument();
-      expect(screen.getByText("Atualizado em:")).toBeInTheDocument();
-      expect(screen.getByText("15/02/2026")).toBeInTheDocument();
-      expect(screen.getByText("Cancelado em:")).toBeInTheDocument();
-      expect(screen.getByText("18/02/2026")).toBeInTheDocument();
+      expect(screen.getByText("Created on:")).toBeInTheDocument();
+      expect(screen.getByText("02/10/2026")).toBeInTheDocument();
+      expect(screen.getByText("Updated on:")).toBeInTheDocument();
+      expect(screen.getByText("02/15/2026")).toBeInTheDocument();
+      expect(screen.getByText("Cancelled on:")).toBeInTheDocument();
+      expect(screen.getByText("02/18/2026")).toBeInTheDocument();
     });
 
     it("should only show created and cancelled when not updated", () => {
@@ -135,12 +135,12 @@ describe("AttendanceMetadata", () => {
       );
 
       // Created and cancelled should be present
-      expect(screen.getByText("Criado em:")).toBeInTheDocument();
-      expect(screen.getByText("10/02/2026")).toBeInTheDocument();
-      expect(screen.getByText("Cancelado em:")).toBeInTheDocument();
-      expect(screen.getByText("11/02/2026")).toBeInTheDocument();
+      expect(screen.getByText("Created on:")).toBeInTheDocument();
+      expect(screen.getByText("02/10/2026")).toBeInTheDocument();
+      expect(screen.getByText("Cancelled on:")).toBeInTheDocument();
+      expect(screen.getByText("02/11/2026")).toBeInTheDocument();
       // Updated should NOT be present (same as created)
-      expect(screen.queryByText("Atualizado em:")).not.toBeInTheDocument();
+      expect(screen.queryByText("Updated on:")).not.toBeInTheDocument();
     });
   });
 
@@ -174,7 +174,7 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      const criadoLabel = screen.getByText("Criado em:");
+      const criadoLabel = screen.getByText("Created on:");
       expect(criadoLabel).toHaveClass("font-medium");
     });
   });
@@ -188,7 +188,7 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("29/02/2024")).toBeInTheDocument();
+      expect(screen.getByText("02/29/2024")).toBeInTheDocument();
     });
 
     it("should handle year boundaries correctly", () => {
@@ -199,8 +199,8 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("31/12/2025")).toBeInTheDocument();
-      expect(screen.getByText("Atualizado em:")).toBeInTheDocument();
+      expect(screen.getByText("12/31/2025")).toBeInTheDocument();
+      expect(screen.getByText("Updated on:")).toBeInTheDocument();
       expect(screen.getByText("01/01/2026")).toBeInTheDocument();
     });
 
@@ -213,8 +213,8 @@ describe("AttendanceMetadata", () => {
         />,
       );
 
-      expect(screen.getByText("05/03/2026")).toBeInTheDocument();
-      expect(screen.getByText("08/03/2026")).toBeInTheDocument();
+      expect(screen.getByText("03/05/2026")).toBeInTheDocument();
+      expect(screen.getByText("03/08/2026")).toBeInTheDocument();
     });
   });
 });

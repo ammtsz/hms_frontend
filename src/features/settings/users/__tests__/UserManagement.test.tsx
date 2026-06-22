@@ -57,7 +57,7 @@ describe("UserManagement", () => {
 
     render(<UserManagement />, { wrapper: createWrapper() });
 
-    expect(screen.getByText("Carregando...")).toBeInTheDocument();
+    expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
   });
 
   it("should call notFound when user is not authenticated", () => {
@@ -122,6 +122,6 @@ describe("UserManagement", () => {
     render(<UserManagement />, { wrapper: createWrapper() });
 
     expect(mockNotFound).not.toHaveBeenCalled();
-    expect(screen.getByText("Carregando usuários...")).toBeInTheDocument();
+    expect(screen.getByText("Loading users...")).toBeInTheDocument();
   });
 });

@@ -26,7 +26,7 @@ const HolidayActionsBar: React.FC<HolidayActionsBarProps> = ({
             htmlFor="year-select"
             className="text-sm font-medium text-gray-700"
           >
-            Ano:
+            Year:
           </label>
           <Select
             id="year-select"
@@ -50,7 +50,7 @@ const HolidayActionsBar: React.FC<HolidayActionsBarProps> = ({
             className="min-h-[44px] w-full bg-blue-800 hover:bg-blue-900 sm:w-auto"
           >
             <Plus className="w-4 h-4" />
-            Novo Feriado
+            New Holiday
           </Button>
         </div>
       </div>

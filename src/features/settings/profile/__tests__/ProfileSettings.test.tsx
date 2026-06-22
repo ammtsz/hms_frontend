@@ -43,7 +43,7 @@ describe("ProfileSettings", () => {
 
     render(<ProfileSettings />, { wrapper: createWrapper() });
 
-    expect(screen.getByText("Carregando...")).toBeInTheDocument();
+    expect(screen.getAllByText("Loading...")[0]).toBeInTheDocument();
   });
 
   it("redirects to 404 when not authenticated", () => {
@@ -79,17 +79,17 @@ describe("ProfileSettings", () => {
 
     render(<ProfileSettings />, { wrapper: createWrapper() });
 
-    expect(screen.getByText("Meu Perfil")).toBeInTheDocument();
+    expect(screen.getByText("My Profile")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Gerencie suas informações pessoais e configurações de segurança",
+        "Manage your personal information and security settings",
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /informações pessoais/i }),
+      screen.getByRole("button", { name: /Personal Information/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /alterar senha/i }),
+      screen.getByRole("button", { name: /change password/i }),
     ).toBeInTheDocument();
   });
 
@@ -117,14 +117,16 @@ describe("ProfileSettings", () => {
     expect(screen.getByDisplayValue("John Doe")).toBeInTheDocument();
 
     // Switch to password tab
-    const passwordTab = screen.getByRole("button", { name: /alterar senha/i });
+    const passwordTab = screen.getByRole("button", {
+      name: /change password/i,
+    });
     fireEvent.click(passwordTab);
 
-    expect(screen.getByText("Senha Atual *")).toBeInTheDocument();
+    expect(screen.getByText("Current Password *")).toBeInTheDocument();
 
     // Switch back to profile tab
     const profileTab = screen.getByRole("button", {
-      name: /informações pessoais/i,
+      name: /personal information/i,
     });
     fireEvent.click(profileTab);
 
@@ -152,9 +154,11 @@ describe("ProfileSettings", () => {
     render(<ProfileSettings />, { wrapper: createWrapper() });
 
     const profileTab = screen.getByRole("button", {
-      name: /informações pessoais/i,
+      name: /personal information/i,
     });
-    const passwordTab = screen.getByRole("button", { name: /alterar senha/i });
+    const passwordTab = screen.getByRole("button", {
+      name: /change password/i,
+    });
 
     // Profile tab should be active by default
     expect(profileTab).toHaveClass("border-blue-800");

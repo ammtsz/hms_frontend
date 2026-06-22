@@ -20,9 +20,14 @@ import {
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useToast } from "@/contexts/ToastContext";
 import { UserRole } from "@/types/auth";
+import {
+  SYSTEM_SETTINGS_LABELS,
+  SYSTEM_SETTINGS_MIN_THRESHOLD,
+  SYSTEM_SETTINGS_MAX_THRESHOLD,
+} from "./systemSettingsLabels";
 
-const MIN_THRESHOLD = 1;
-const MAX_THRESHOLD = 10;
+const MIN_THRESHOLD = SYSTEM_SETTINGS_MIN_THRESHOLD;
+const MAX_THRESHOLD = SYSTEM_SETTINGS_MAX_THRESHOLD;
 const DEFAULT_THRESHOLD = 3;
 
 function stringifyThreshold(n: number): string {
@@ -63,11 +68,11 @@ export default function SystemSettings() {
     if (!thresholdValid) return;
     updateThreshold.mutate(numValue, {
       onSuccess: () => {
-        showToast("Configuração atualizada com sucesso.", "success");
+        showToast(SYSTEM_SETTINGS_LABELS.configUpdatedToast, "success");
       },
       onError: (err) => {
         showToast(
-          err instanceof Error ? err.message : "Erro ao salvar",
+          err instanceof Error ? err.message : "Error saving configuration",
           "error",
         );
       },
@@ -79,24 +84,25 @@ export default function SystemSettings() {
       <Card>
         <CardHeader>
           <h1 className="text-2xl font-semibold text-gray-900">
-            ⚙️ Configurações de Sistema
+            {SYSTEM_SETTINGS_LABELS.pageTitle}
           </h1>
           <p className="text-sm text-gray-600 mt-1">
-            Gerencie as opções do sistema
+            {SYSTEM_SETTINGS_LABELS.pageDescription}
           </p>
         </CardHeader>
 
         <CardBody className="space-y-6">
-          {/* Limite de faltas Section */}
+          {/* Missing Appointments Threshold Section */}
           <SectionDisclosure
-            title="Limite de faltas"
+            title={SYSTEM_SETTINGS_LABELS.missingAppointmentsThreshold}
             isOpen={thresholdExpanded}
             onToggle={() => setThresholdExpanded(!thresholdExpanded)}
             bodyClassName="space-y-3"
           >
             <p className="text-sm text-gray-600">
-              Defina quantas faltas consecutivas sem justificativa levam o
-              paciente ao status F (Faltas consecutivas).
+              Define how many consecutive missed appointments without
+              justification will lead to the patient being marked with the F
+              (Missing Appointments) status.
             </p>
             {thresholdLoading ? (
               <div className="h-10 bg-gray-100 rounded animate-pulse" />
@@ -104,7 +110,7 @@ export default function SystemSettings() {
               <>
                 <div className="flex flex-wrap items-center gap-3">
                   <label htmlFor="appointments-threshold" className="sr-only">
-                    Limite de faltas (1 a 10)
+                    Missing Appointments Threshold (1 to 10)
                   </label>
                   <Input
                     id="appointments-threshold"
@@ -124,26 +130,26 @@ export default function SystemSettings() {
                       !isAdmin || !thresholdChanged || updateThreshold.isPending
                     }
                     isLoading={updateThreshold.isPending}
-                    loadingText="Salvando..."
+                    loadingText="Saving..."
                     className="w-full sm:w-auto"
                   >
-                    Salvar
+                    Save
                   </Button>
                 </div>
                 <p className="text-sm text-gray-500">
-                  O valor atual é {serverValue}. Quando o paciente atinge este
-                  número de faltas consecutivas sem justificativa, o sistema
-                  altera o status para F (Faltas consecutivas) e cancela os
-                  atendimentos futuros.
+                  The current value is {serverValue}. When the patient reaches
+                  this number of consecutive missed appointments without
+                  justification, the system will change the status to F (Missing
+                  Appointments) and cancel future appointments.
                 </p>
                 {!isAdmin && (
                   <p className="text-sm text-amber-700">
-                    Apenas administradores podem alterar este valor.
+                    {SYSTEM_SETTINGS_LABELS.adminOnlyThreshold}
                   </p>
                 )}
                 {localValue !== "" && !thresholdValid && (
                   <p className="text-sm text-red-600" role="alert">
-                    Informe um valor entre {MIN_THRESHOLD} e {MAX_THRESHOLD}.
+                    {SYSTEM_SETTINGS_LABELS.thresholdValidation}
                   </p>
                 )}
               </>
@@ -152,7 +158,7 @@ export default function SystemSettings() {
 
           {/* Priorities Section */}
           <SectionDisclosure
-            title="Prioridades"
+            title={SYSTEM_SETTINGS_LABELS.priorities}
             isOpen={prioritiesExpanded}
             onToggle={() => setPrioritiesExpanded(!prioritiesExpanded)}
           >
@@ -161,7 +167,7 @@ export default function SystemSettings() {
 
           {/* Note Categories Section */}
           <SectionDisclosure
-            title="Categorias das Anotações"
+            title={SYSTEM_SETTINGS_LABELS.noteCategories}
             isOpen={noteCategoriesExpanded}
             onToggle={() => setNoteCategoriesExpanded(!noteCategoriesExpanded)}
           >
@@ -170,7 +176,7 @@ export default function SystemSettings() {
 
           {/* Body Locations Section */}
           <SectionDisclosure
-            title="Locais do Corpo"
+            title={SYSTEM_SETTINGS_LABELS.bodyLocations}
             isOpen={bodyLocationsExpanded}
             onToggle={() => setBodyLocationsExpanded(!bodyLocationsExpanded)}
           >
@@ -179,7 +185,7 @@ export default function SystemSettings() {
 
           {/* Colors Section */}
           <SectionDisclosure
-            title="Cores (Fisioterapia)"
+            title={SYSTEM_SETTINGS_LABELS.colorsPhysiotherapy}
             isOpen={colorsExpanded}
             onToggle={() => setColorsExpanded(!colorsExpanded)}
           >

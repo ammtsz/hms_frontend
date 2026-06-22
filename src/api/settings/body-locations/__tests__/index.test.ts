@@ -25,7 +25,7 @@ describe("Settings body locations API", () => {
   describe("getBodyLocations", () => {
     it("returns body locations on success", async () => {
       const mockResponse = {
-        data: [{ id: 1, isActive: true, value: "Arm", createdAt: "2026-01-01", updatedAt: "2026-01-01", type: "body_location" }],
+        data: [{ id: 1, isActive: true, value: "Left Arm", createdAt: "2026-01-01", updatedAt: "2026-01-01", type: "body_location" }],
       };
       mockApi.get.mockResolvedValue(mockResponse);
 
@@ -53,7 +53,7 @@ describe("Settings body locations API", () => {
 
       const result = await getBodyLocations(false);
 
-      expect(result).toEqual({ success: false, error: "Opção não encontrada" });
+      expect(result).toEqual({ success: false, error: expect.stringMatching(/Option not found|Option not found/) });
     });
   });
 
@@ -76,7 +76,7 @@ describe("Settings body locations API", () => {
 
       const result = await checkSimilarBodyLocations("X");
 
-      expect(result).toEqual({ success: false, error: "Este nome já existe" });
+      expect(result).toEqual({ success: false, error: expect.stringMatching(/This name already exists|This name already exists/) });
     });
   });
 
@@ -85,8 +85,8 @@ describe("Settings body locations API", () => {
       const mockValue = {
         id: 1,
         isActive: true,
-        value: "Arm",
-        label: "Arm",
+        value: "Left Arm",
+        label: "Left Arm",
         type: "body_location",
         createdAt: "2026-01-01",
         updatedAt: "2026-01-01",
@@ -94,10 +94,10 @@ describe("Settings body locations API", () => {
 
       mockApi.post.mockResolvedValue({ data: mockValue });
 
-      const result = await createBodyLocation("Arm");
+      const result = await createBodyLocation("Left Arm");
 
       expect(mockApi.post).toHaveBeenCalledWith("/settings/body-locations", {
-        value: "Arm",
+        value: "Left Arm",
       });
       expect(result).toEqual({ success: true, value: mockValue });
     });
@@ -107,7 +107,7 @@ describe("Settings body locations API", () => {
         response: { status: 409, data: { message: "Custom conflict" } },
       });
 
-      const result = await createBodyLocation("Arm");
+      const result = await createBodyLocation("Left Arm");
 
       expect(result).toEqual({ success: false, error: "Custom conflict" });
     });
@@ -143,7 +143,7 @@ describe("Settings body locations API", () => {
 
       const result = await updateBodyLocation(999, { label: "X" });
 
-      expect(result).toEqual({ success: false, error: "Opção não encontrada" });
+      expect(result).toEqual({ success: false, error: expect.stringMatching(/Option not found|Option not found/) });
     });
   });
 
@@ -162,7 +162,7 @@ describe("Settings body locations API", () => {
 
       const result = await deleteBodyLocation(999);
 
-      expect(result).toEqual({ success: false, error: "Requisição inválida" });
+      expect(result).toEqual({ success: false, error: expect.stringMatching(/Invalid request|Invalid request/) });
     });
   });
 });

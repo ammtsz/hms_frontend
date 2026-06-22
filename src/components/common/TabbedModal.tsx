@@ -50,9 +50,9 @@ const TabbedModal: React.FC<TabbedModalProps> = ({
   };
 
   const getTabStatusTooltip = (tab: TabDefinition) => {
-    if (tab.isValid) return "Todos os campos obrigatórios foram preenchidos.";
-    if (tab.hasWarning) return "Atenção! Formulário em branco.";
-    return "Preencha todos os campos obrigatórios.";
+    if (tab.isValid) return "All required fields have been filled.";
+    if (tab.hasWarning) return "Warning! Form has unsaved changes.";
+    return "Fill in all required fields.";
   };
 
   const getTabClassName = (tab: TabDefinition) => {
@@ -92,11 +92,14 @@ const TabbedModal: React.FC<TabbedModalProps> = ({
                 variant="ghost"
                 key={tab.id}
                 onClick={() => !tab.disabled && onTabChange(tab.id)}
-                className={cn(getTabClassName(tab), "shrink-0 snap-start sm:flex-1")}
+                className={cn(
+                  getTabClassName(tab),
+                  "shrink-0 snap-start sm:flex-1",
+                )}
                 disabled={tab.disabled}
                 title={
                   tab.disabled
-                    ? (tab.disabledTitle ?? "Indisponível")
+                    ? (tab.disabledTitle ?? "Unavailable")
                     : undefined
                 }
               >

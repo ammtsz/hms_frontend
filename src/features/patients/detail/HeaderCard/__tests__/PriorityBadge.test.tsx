@@ -7,12 +7,14 @@ jest.mock("@/api/query/hooks/usePriorityOptionsQueries", () => ({
   usePriorities: jest.fn(),
 }));
 
-const mockUsePriorities = usePriorities as jest.MockedFunction<typeof usePriorities>;
+const mockUsePriorities = usePriorities as jest.MockedFunction<
+  typeof usePriorities
+>;
 
 const mockPriorities = [
-  { value: "1", label: "Exceção" },
-  { value: "2", label: "Idoso/crianças" },
-  { value: "3", label: "Padrão" },
+  { value: "1", label: "Priority" },
+  { value: "2", label: "Standard" },
+  { value: "3", label: "Priority 3" },
 ] as Array<{ value: string; label: string }>;
 
 describe("PriorityBadge", () => {
@@ -24,21 +26,21 @@ describe("PriorityBadge", () => {
     } as unknown as ReturnType<typeof usePriorities>);
   });
 
-  describe("Priority Level 1 (Exceção)", () => {
+  describe("Priority Level 1 (Priority)", () => {
     it("should render with correct label and red styling", () => {
       render(<PriorityBadge priority="1" />);
 
-      const badge = screen.getByText("P1 • Exceção");
+      const badge = screen.getByText("P1 • Priority");
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveClass("border-red-500", "text-red-700", "bg-red-50");
     });
   });
 
-  describe("Priority Level 2 (Idoso/crianças)", () => {
+  describe("Priority Level 2 (Standard)", () => {
     it("should render with correct label and yellow styling", () => {
       render(<PriorityBadge priority="2" />);
 
-      const badge = screen.getByText("P2 • Idoso/crianças");
+      const badge = screen.getByText("P2 • Standard");
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveClass(
         "border-yellow-500",
@@ -48,11 +50,11 @@ describe("PriorityBadge", () => {
     });
   });
 
-  describe("Priority Level 3 (Padrão)", () => {
+  describe("Priority Level 3 (Priority 3)", () => {
     it("should render with correct label and blue styling", () => {
       render(<PriorityBadge priority="3" />);
 
-      const badge = screen.getByText("P3 • Padrão");
+      const badge = screen.getByText("P3 • Priority 3");
       expect(badge).toBeInTheDocument();
       expect(badge).toHaveClass(
         "border-blue-500",
@@ -80,14 +82,14 @@ describe("PriorityBadge", () => {
     it("should apply additional className when provided", () => {
       render(<PriorityBadge priority="1" className="custom-class" />);
 
-      const badge = screen.getByText("P1 • Exceção");
+      const badge = screen.getByText("P1 • Priority");
       expect(badge).toHaveClass("custom-class");
     });
 
     it("should maintain base classes when custom className is provided", () => {
       render(<PriorityBadge priority="2" className="ml-4" />);
 
-      const badge = screen.getByText("P2 • Idoso/crianças");
+      const badge = screen.getByText("P2 • Standard");
       expect(badge).toHaveClass(
         "inline-flex",
         "items-center",
@@ -107,7 +109,7 @@ describe("PriorityBadge", () => {
     it("should always include base classes", () => {
       render(<PriorityBadge priority="1" />);
 
-      const badge = screen.getByText("P1 • Exceção");
+      const badge = screen.getByText("P1 • Priority");
       expect(badge).toHaveClass(
         "inline-flex",
         "items-center",
