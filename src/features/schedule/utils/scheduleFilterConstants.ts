@@ -1,7 +1,7 @@
 import { AttendanceStatus } from "@/api/types";
 
-/** All workflow statuses available in the agenda status filter */
-export const ALL_AGENDA_FILTER_STATUSES: AttendanceStatus[] = [
+/** All workflow statuses available in the schedule status filter */
+export const ALL_SCHEDULE_FILTER_STATUSES: AttendanceStatus[] = [
   AttendanceStatus.SCHEDULED,
   AttendanceStatus.CHECKED_IN,
   AttendanceStatus.IN_PROGRESS,
@@ -10,7 +10,7 @@ export const ALL_AGENDA_FILTER_STATUSES: AttendanceStatus[] = [
   AttendanceStatus.MISSED,
 ];
 
-export const AGENDA_STATUS_CHECKBOX_LABELS: Record<AttendanceStatus, string> =
+export const SCHEDULE_STATUS_CHECKBOX_LABELS: Record<AttendanceStatus, string> =
   {
     [AttendanceStatus.SCHEDULED]: "Scheduled",
     [AttendanceStatus.CHECKED_IN]: "Checked-in",
@@ -20,7 +20,7 @@ export const AGENDA_STATUS_CHECKBOX_LABELS: Record<AttendanceStatus, string> =
     [AttendanceStatus.MISSED]: "Missed",
   };
 
-export const AGENDA_PAGE_LABELS = {
+export const SCHEDULE_PAGE_LABELS = {
   title: "Attendance Schedule",
   description: "View and manage appointments by date and attendance type",
   newAttendanceButton: "+ New Attendance",
@@ -28,12 +28,12 @@ export const AGENDA_PAGE_LABELS = {
   schedulingFormLoading: "Loading scheduling form...",
 } as const;
 
-export const AGENDA_COLUMN_TITLES = {
+export const SCHEDULE_COLUMN_TITLES = {
   assessment: "Assessment Consultations",
   physiotherapy: "Physiotherapy / TENS",
 } as const;
 
-export const AGENDA_COLUMN_MESSAGES = {
+export const SCHEDULE_COLUMN_MESSAGES = {
   loading: "Loading appointments...",
   emptyAssessment: "No assessment consultations found.",
   emptyPhysiotherapy: "No physiotherapy/TENS found.",
@@ -41,7 +41,7 @@ export const AGENDA_COLUMN_MESSAGES = {
   refreshing: "Refreshing...",
 } as const;
 
-export const AGENDA_FILTER_LABELS = {
+export const SCHEDULE_FILTER_LABELS = {
   attendanceStatus: "Attendance Status",
   legend: "Legend:",
   noStatusSelected: "No status selected: showing all statuses in the period.",

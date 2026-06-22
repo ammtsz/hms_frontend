@@ -72,7 +72,7 @@ describe("TabNav Component", () => {
       );
       expect(screen.getByText("Schedule").closest("a")).toHaveAttribute(
         "href",
-        "/agenda",
+        "/schedule",
       );
       expect(screen.getByText("Patients").closest("a")).toHaveAttribute(
         "href",
@@ -102,14 +102,14 @@ describe("TabNav Component", () => {
       expect(attendanceTab).toHaveAttribute("aria-current", "page");
     });
 
-    it("should mark agenda tab as active when on agenda page", () => {
-      mockUsePathname.mockReturnValue("/agenda");
+    it("should mark schedule tab as active when on schedule page", () => {
+      mockUsePathname.mockReturnValue("/schedule");
 
       render(<TabNav />);
 
-      const agendaTab = screen.getByText("Schedule").closest("a");
-      expect(agendaTab).toHaveClass("active");
-      expect(agendaTab).toHaveAttribute("aria-current", "page");
+      const scheduleTab = screen.getByText("Schedule").closest("a");
+      expect(scheduleTab).toHaveClass("active");
+      expect(scheduleTab).toHaveAttribute("aria-current", "page");
     });
 
     it("should mark patients tab as active when on patients page", () => {
@@ -151,13 +151,13 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const agendaTab = screen.getByText("Schedule").closest("a");
+      const scheduleTab = screen.getByText("Schedule").closest("a");
       const patientsTab = screen.getByText("Patients").closest("a");
 
-      expect(agendaTab).not.toHaveClass("active");
+      expect(scheduleTab).not.toHaveClass("active");
       expect(patientsTab).not.toHaveClass("active");
 
-      expect(agendaTab).not.toHaveAttribute("aria-current");
+      expect(scheduleTab).not.toHaveAttribute("aria-current");
       expect(patientsTab).not.toHaveAttribute("aria-current");
     });
   });
@@ -223,10 +223,10 @@ describe("TabNav Component", () => {
       render(<TabNav />);
 
       const attendanceTab = screen.getByText("Attendances").closest("a");
-      const agendaTab = screen.getByText("Schedule").closest("a");
+      const scheduleTab = screen.getByText("Schedule").closest("a");
 
       expect(attendanceTab).not.toHaveAttribute("aria-current");
-      expect(agendaTab).not.toHaveAttribute("aria-current");
+      expect(scheduleTab).not.toHaveAttribute("aria-current");
     });
 
     it("should have navigation landmark", () => {
@@ -286,7 +286,7 @@ describe("TabNav Component", () => {
 
   describe("URL Matching", () => {
     it("should match exact routes", () => {
-      mockUsePathname.mockReturnValue("/agenda");
+      mockUsePathname.mockReturnValue("/schedule");
 
       render(<TabNav />);
 

@@ -3,14 +3,14 @@ import { formatDisplayDateWithDayOfWeek } from "@/utils/dateUtils";
 import HolidayIndicator from "./HolidayIndicator";
 import { useHolidayForDate } from "../hooks/useHolidayForDate";
 
-interface AgendaDateHeaderProps {
+interface ScheduleDateHeaderProps {
   date: string; // YYYY-MM-DD format
 }
 
 /**
- * AgendaDateHeader - Displays date with optional holiday indicator
+ * ScheduleDateHeader - Displays date with optional holiday indicator
  */
-const AgendaDateHeader: React.FC<AgendaDateHeaderProps> = ({ date }) => {
+const ScheduleDateHeader: React.FC<ScheduleDateHeaderProps> = ({ date }) => {
   const { holiday } = useHolidayForDate(date);
 
   return (
@@ -30,4 +30,4 @@ const AgendaDateHeader: React.FC<AgendaDateHeaderProps> = ({ date }) => {
   );
 };
 
-export default AgendaDateHeader;
+export default ScheduleDateHeader;

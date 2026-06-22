@@ -9,18 +9,18 @@ export { useAttendanceStore } from './attendanceStore';
 
 // Calendar store - scheduling UI state  
 export {
-  useAgendaStore,
-  AGENDA_DAY_WINDOW_OPTIONS,
-  type AgendaDayWindowDays,
-  defaultAgendaCalendarStatusFilters,
-} from './agendaStore';
+  useScheduleStore,
+  SCHEDULE_DAY_WINDOW_OPTIONS,
+  type ScheduleDayWindowDays,
+  defaultScheduleCalendarStatusFilters,
+} from './scheduleStore';
 
 // Calendar selectors - optimized selectors for performance
 export {
   // State selectors
   useSelectedDateString,
-  useAgendaDayWindowDays,
-  useAgendaStatusFilters,
+  useScheduleDayWindowDays,
+  useScheduleStatusFilters,
   usePatientFilter,
   useConfirmRemove,
   useShowNewAttendance,
@@ -29,8 +29,8 @@ export {
   
   // Individual action selectors
   useSetSelectedDateString,
-  useSetAgendaDayWindowDays,
-  useSetAgendaStatusFilters,
+  useSetScheduleDayWindowDays,
+  useSetScheduleStatusFilters,
   useSetPatientFilter,
   useSetConfirmRemove,
   useSetShowNewAttendance,
@@ -38,8 +38,8 @@ export {
   useSetOpenPhysiotherapyIdx,
   
   // Combined selectors (use sparingly)
-  useAgendaActions,
-} from './agendaSelectors';
+  useScheduleActions,
+} from './scheduleSelectors';
 
 // Attendance Selectors - Optimized selectors for drag & drop performance
 export {
@@ -74,4 +74,4 @@ export {
 
 // Export store types for convenience
 export type { AttendanceStore } from './attendanceStore';
-export type { AgendaStore } from './agendaStore';
+export type { ScheduleStore } from './scheduleStore';

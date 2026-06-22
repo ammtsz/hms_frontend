@@ -93,7 +93,7 @@ describe("LoginForm", () => {
 
   it("on successful login with returnUrl redirects to returnUrl", async () => {
     (useSearchParams as jest.Mock).mockReturnValue(
-      new URLSearchParams({ returnUrl: "/agenda" }),
+      new URLSearchParams({ returnUrl: "/schedule" }),
     );
     (loginAction as jest.Mock).mockResolvedValue({
       success: true,
@@ -116,14 +116,14 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/agenda");
+      expect(mockPush).toHaveBeenCalledWith("/schedule");
       expect(mockRefresh).toHaveBeenCalled();
     });
   });
 
   it("on successful login with encoded returnUrl decodes and redirects", async () => {
     (useSearchParams as jest.Mock).mockReturnValue(
-      new URLSearchParams({ returnUrl: "%2Fagenda" }),
+      new URLSearchParams({ returnUrl: "%2Fschedule" }),
     );
     (loginAction as jest.Mock).mockResolvedValue({
       success: true,
@@ -146,13 +146,13 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/agenda");
+      expect(mockPush).toHaveBeenCalledWith("/schedule");
     });
   });
 
   it("on successful login with mustChangePassword redirects to /force-password-change", async () => {
     (useSearchParams as jest.Mock).mockReturnValue(
-      new URLSearchParams({ returnUrl: "/agenda" }),
+      new URLSearchParams({ returnUrl: "/schedule" }),
     );
     (loginAction as jest.Mock).mockResolvedValue({
       success: true,

@@ -4,19 +4,19 @@ import React, { useCallback } from "react";
 import { RefreshCw } from "lucide-react";
 import { useCommittedDateInput } from "@/hooks/useCommittedDateInput";
 import { getTodayClinic } from "@/utils/timezoneDate";
-import { AGENDA_DAY_WINDOW_OPTIONS, type AgendaDayWindowDays } from "@/stores";
+import { SCHEDULE_DAY_WINDOW_OPTIONS, type ScheduleDayWindowDays } from "@/stores";
 import { AttendanceStatus } from "@/api/types";
 import {
-  AGENDA_STATUS_CHECKBOX_LABELS,
-  ALL_AGENDA_FILTER_STATUSES,
-  AGENDA_FILTER_LABELS,
-} from "../utils/agendaFilterConstants";
+  SCHEDULE_STATUS_CHECKBOX_LABELS,
+  ALL_SCHEDULE_FILTER_STATUSES,
+  SCHEDULE_FILTER_LABELS,
+} from "../utils/scheduleFilterConstants";
 import { Button, Checkbox, Input, Select } from "@/components/ui";
-import AgendaAttendanceStatusIcon, {
-  AGENDA_STATUS_LEGEND_ITEMS,
-} from "./AgendaAttendanceStatusIcon";
+import ScheduleAttendanceStatusIcon, {
+  SCHEDULE_STATUS_LEGEND_ITEMS,
+} from "./ScheduleAttendanceStatusIcon";
 
-const WINDOW_LABELS: Record<AgendaDayWindowDays, string> = {
+const WINDOW_LABELS: Record<ScheduleDayWindowDays, string> = {
   1: "1 day",
   7: "7 days",
   15: "15 days",
@@ -25,42 +25,42 @@ const WINDOW_LABELS: Record<AgendaDayWindowDays, string> = {
   90: "90 days",
 };
 
-export interface AgendaCalendarFiltersProps {
+export interface ScheduleCalendarFiltersProps {
   selectedDate: string;
   setSelectedDate: (date: string) => void;
-  agendaDayWindowDays: AgendaDayWindowDays;
-  setAgendaDayWindowDays: (days: AgendaDayWindowDays) => void;
-  agendaStatusFilters: AttendanceStatus[];
-  setAgendaStatusFilters: (filters: AttendanceStatus[]) => void;
+  scheduleDayWindowDays: ScheduleDayWindowDays;
+  setScheduleDayWindowDays: (days: ScheduleDayWindowDays) => void;
+  scheduleStatusFilters: AttendanceStatus[];
+  setScheduleStatusFilters: (filters: AttendanceStatus[]) => void;
   patientFilter: string;
   setPatientFilter: (value: string) => void;
-  refreshAgenda: () => void;
+  refreshSchedule: () => void;
   isRefreshing: boolean;
   rangeSummaryText: string;
 }
 
-const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
+const ScheduleCalendarFilters: React.FC<ScheduleCalendarFiltersProps> = ({
   selectedDate,
   setSelectedDate,
-  agendaDayWindowDays,
-  setAgendaDayWindowDays,
-  agendaStatusFilters,
-  setAgendaStatusFilters,
+  scheduleDayWindowDays,
+  setScheduleDayWindowDays,
+  scheduleStatusFilters,
+  setScheduleStatusFilters,
   patientFilter,
   setPatientFilter,
-  refreshAgenda,
+  refreshSchedule,
   isRefreshing,
   rangeSummaryText,
 }) => {
-  const toggleAgendaStatus = useCallback(
+  const toggleScheduleStatus = useCallback(
     (status: AttendanceStatus) => {
-      if (agendaStatusFilters.includes(status)) {
-        setAgendaStatusFilters(agendaStatusFilters.filter((s) => s !== status));
+      if (scheduleStatusFilters.includes(status)) {
+        setScheduleStatusFilters(scheduleStatusFilters.filter((s) => s !== status));
       } else {
-        setAgendaStatusFilters([...agendaStatusFilters, status]);
+        setScheduleStatusFilters([...scheduleStatusFilters, status]);
       }
     },
-    [agendaStatusFilters, setAgendaStatusFilters],
+    [scheduleStatusFilters, setScheduleStatusFilters],
   );
 
   const {
@@ -82,14 +82,14 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
         <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_11rem]">
           <div className="w-full">
             <label
-              htmlFor="agenda-date"
+              htmlFor="schedule-date"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               Select a date to filter
             </label>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Input
-                id="agenda-date"
+                id="schedule-date"
                 ref={inputRef}
                 type="date"
                 className="flex-1"
@@ -111,21 +111,21 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
 
           <div className="w-full">
             <label
-              htmlFor="agenda-day-window"
+              htmlFor="schedule-day-window"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               Period
             </label>
             <Select
-              id="agenda-day-window"
-              value={agendaDayWindowDays}
+              id="schedule-day-window"
+              value={scheduleDayWindowDays}
               onChange={(e) =>
-                setAgendaDayWindowDays(
-                  Number(e.target.value) as AgendaDayWindowDays,
+                setScheduleDayWindowDays(
+                  Number(e.target.value) as ScheduleDayWindowDays,
                 )
               }
             >
-              {AGENDA_DAY_WINDOW_OPTIONS.map((days) => (
+              {SCHEDULE_DAY_WINDOW_OPTIONS.map((days) => (
                 <option key={days} value={days}>
                   {WINDOW_LABELS[days]}
                 </option>
@@ -139,14 +139,14 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
         <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_auto]">
           <div className="w-full">
             <label
-              htmlFor="agenda-patient-filter"
+              htmlFor="schedule-patient-filter"
               className="block text-sm font-medium text-gray-700 mb-2"
             >
               Filter by patient
             </label>
             <div className="flex flex-col gap-2 sm:flex-row">
               <Input
-                id="agenda-patient-filter"
+                id="schedule-patient-filter"
                 type="text"
                 className="flex-1"
                 value={patientFilter}
@@ -165,7 +165,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
           </div>
           <Button
             variant="outline"
-            onClick={refreshAgenda}
+            onClick={refreshSchedule}
             disabled={isRefreshing}
             className={`mt-0 flex items-center gap-1.5 md:mt-7 ${
               isRefreshing ? "opacity-50 cursor-not-allowed" : ""
@@ -186,7 +186,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
 
         <fieldset className="border border-gray-200 rounded-lg p-3">
           <legend className="text-sm font-medium text-gray-800 px-1">
-            {AGENDA_FILTER_LABELS.attendanceStatus}
+            {SCHEDULE_FILTER_LABELS.attendanceStatus}
           </legend>
           <div className="mb-3 flex flex-wrap gap-2">
             <Button
@@ -194,7 +194,7 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
               size="sm"
               className="min-h-[44px] px-3 py-2 text-xs sm:min-h-[32px] sm:px-2 sm:py-1"
               onClick={() =>
-                setAgendaStatusFilters([...ALL_AGENDA_FILTER_STATUSES])
+                setScheduleStatusFilters([...ALL_SCHEDULE_FILTER_STATUSES])
               }
               aria-label="Select all attendance statuses"
             >
@@ -204,29 +204,29 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
               variant="outline"
               size="sm"
               className="min-h-[44px] px-3 py-2 text-xs sm:min-h-[32px] sm:px-2 sm:py-1"
-              onClick={() => setAgendaStatusFilters([])}
+              onClick={() => setScheduleStatusFilters([])}
               aria-label="Clear attendance status selection"
             >
               Clear
             </Button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-            {ALL_AGENDA_FILTER_STATUSES.map((status) => (
+            {ALL_SCHEDULE_FILTER_STATUSES.map((status) => (
               <label
                 key={status}
                 className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer"
               >
                 <Checkbox
-                  checked={agendaStatusFilters.includes(status)}
-                  onChange={() => toggleAgendaStatus(status)}
+                  checked={scheduleStatusFilters.includes(status)}
+                  onChange={() => toggleScheduleStatus(status)}
                 />
-                <span>{AGENDA_STATUS_CHECKBOX_LABELS[status]}</span>
+                <span>{SCHEDULE_STATUS_CHECKBOX_LABELS[status]}</span>
               </label>
             ))}
           </div>
-          {agendaStatusFilters.length === 0 ? (
+          {scheduleStatusFilters.length === 0 ? (
             <p className="text-xs text-amber-800 mt-3 bg-amber-50 border border-amber-100 rounded px-2 py-1.5">
-              {AGENDA_FILTER_LABELS.noStatusSelected}
+              {SCHEDULE_FILTER_LABELS.noStatusSelected}
             </p>
           ) : null}
         </fieldset>
@@ -235,10 +235,10 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
           className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-600 border-t border-gray-100 pt-3"
           aria-label="Status legend"
         >
-          <span className="font-medium text-gray-700">{AGENDA_FILTER_LABELS.legend}</span>
-          {AGENDA_STATUS_LEGEND_ITEMS.map(({ status, label }) => (
+          <span className="font-medium text-gray-700">{SCHEDULE_FILTER_LABELS.legend}</span>
+          {SCHEDULE_STATUS_LEGEND_ITEMS.map(({ status, label }) => (
             <span key={status} className="inline-flex items-center gap-1">
-              <AgendaAttendanceStatusIcon status={status} />
+              <ScheduleAttendanceStatusIcon status={status} />
               {label}
             </span>
           ))}
@@ -248,4 +248,4 @@ const AgendaCalendarFilters: React.FC<AgendaCalendarFiltersProps> = ({
   );
 };
 
-export default AgendaCalendarFilters;
+export default ScheduleCalendarFilters;

@@ -79,7 +79,7 @@ Open http://localhost:3000 after the backend is available.
 ## Core Features
 
 - Protected routes with session-aware navigation
-- Attendance, agenda, patient, treatment, and settings flows
+- Attendance, schedule, patient, treatment, and settings flows
 - Clinic timezone formatting and read-only display
 - Drag-and-drop workflow for attendance management
 - Server-side authentication with secure cookie handling

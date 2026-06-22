@@ -89,4 +89,4 @@ export const isPatientAlreadyScheduledForAssessment = (
   return false;
 };
 
-// Future: Implement additional rules for agenda, absences, and scheduling conflicts as needed
+// Future: Implement additional rules for schedule, absences, and scheduling conflicts as needed

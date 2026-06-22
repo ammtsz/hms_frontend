@@ -29,7 +29,7 @@ alwaysApply: true
 - **Day Finalization Workflow** - End-of-day processing with undo
 - **Patient Management** (/patients) - CRUD operations, patient details
 - **Walk-In Check-In** - Unscheduled patient registration
-- **Calendar & Scheduling** (/agenda) - Monthly/weekly views
+- **Calendar & Scheduling** (/schedule) - Monthly/weekly views
 
 ### Cross-Cutting Features
 

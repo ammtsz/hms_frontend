@@ -8,7 +8,7 @@ import { getTodayClinic } from "@/utils/timezoneDate";
 import { getDefaultSchedulingDate } from "@/utils/dateUtils";
 import { transformPriorityToApi } from "@/utils/apiTransformers";
 import { useScheduleSettings } from "@/api/query/hooks/useScheduleSettingQueries";
-import { useInvalidateAgenda } from "@/api/query/hooks/useAgendaQueries";
+import { useInvalidateSchedule } from "@/api/query/hooks/useScheduleQueries";
 import { getDateSlotError } from "@/utils/scheduleTreatmentSlots";
 import { getNoScheduleReasonForNewPatient } from "@/utils/scheduleErrorMessages";
 import {
@@ -94,7 +94,7 @@ export const useAttendanceForm = ({
   selectedDate: selectedDateProp,
   showDateField = false,
 }: UseAttendanceFormProps = {}): UseAttendanceFormReturn => {
-  const invalidateAgenda = useInvalidateAgenda();
+  const invalidateSchedule = useInvalidateSchedule();
   const { data: patients = [] } = usePatients();
   const { refreshCurrentDate, attendancesByDate } = useAttendanceBoardState();
   const { data: scheduleSettings } = useScheduleSettings();
@@ -333,14 +333,14 @@ export const useAttendanceForm = ({
         }
 
         await refreshCurrentDate();
-        invalidateAgenda();
+        invalidateSchedule();
         return false;
       }
 
       // Success path
       setSuccess(buildSuccessMessage(selectedTypes.length, nextAvailableDate));
       await refreshCurrentDate();
-      invalidateAgenda();
+      invalidateSchedule();
 
       if (onRegisterNewAttendance) {
         onRegisterNewAttendance(name, selectedTypes, isNewPatient, priority, nextAvailableDate);
@@ -367,7 +367,7 @@ export const useAttendanceForm = ({
     showDateField,
     dateSlotError,
     refreshCurrentDate,
-    invalidateAgenda,
+    invalidateSchedule,
     onRegisterNewAttendance,
     onFormSuccess,
     resetForm,

@@ -1,18 +1,18 @@
 /**
- * Agenda React Query Hooks Tests
+ * Schedule React Query Hooks Tests
  */
 
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import {
-  useAgendaAttendances,
-  useAgenda,
-  useScheduledAgenda,
-  useRemovePatientFromAgenda,
-  useAddPatientToAgenda,
-  useRefreshAgenda,
-} from "../useAgendaQueries";
+  useScheduleAttendances,
+  useSchedule,
+  useScheduled,
+  useRemovePatientFromSchedule,
+  useAddPatientToSchedule,
+  useRefreshSchedule,
+} from "../useScheduleQueries";
 import * as attendancesApi from "@/api/attendances";
 import { AttendanceType, AttendanceStatus } from "@/api/types";
 import { Priority } from "@/types/types";
@@ -50,7 +50,7 @@ const createWrapper = () => {
 };
 
 // Mock data factories - using camelCase since axios interceptor transforms responses
-const createMockAttendanceAgendaDto = (overrides = {}) => ({
+const createMockAttendanceScheduleDto = (overrides = {}) => ({
   id: 1,
   patientId: 1,
   patientName: "Test Patient",
@@ -73,21 +73,21 @@ const createMockAttendanceResponseDto = (overrides = {}) => ({
   ...overrides,
 });
 
-describe("useAgendaQueries", () => {
+describe("useScheduleQueries", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe("useAgendaAttendances", () => {
-    it("should fetch agenda attendances successfully", async () => {
-      const mockData = [createMockAttendanceAgendaDto()];
+  describe("useScheduleAttendances", () => {
+    it("should fetch schedule attendances successfully", async () => {
+      const mockData = [createMockAttendanceScheduleDto()];
 
-      mockedAttendancesApi.getAttendancesForAgenda.mockResolvedValueOnce({
+      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
 
-      const { result } = renderHook(() => useAgendaAttendances(), {
+      const { result } = renderHook(() => useScheduleAttendances(), {
         wrapper: createWrapper(),
       });
 
@@ -96,12 +96,12 @@ describe("useAgendaQueries", () => {
       });
 
       expect(result.current.data).toEqual(mockData);
-      expect(mockedAttendancesApi.getAttendancesForAgenda).toHaveBeenCalledWith(
+      expect(mockedAttendancesApi.getAttendancesForSchedule).toHaveBeenCalledWith(
         undefined,
       );
     });
 
-    it("should fetch agenda attendances with filters", async () => {
+    it("should fetch schedule attendances with filters", async () => {
       const filters = {
         statuses: [AttendanceStatus.SCHEDULED],
         type: "assessment",
@@ -109,14 +109,14 @@ describe("useAgendaQueries", () => {
         fromDate: "2025-01-01",
         toDate: "2025-01-31",
       };
-      const mockData = [createMockAttendanceAgendaDto()];
+      const mockData = [createMockAttendanceScheduleDto()];
 
-      mockedAttendancesApi.getAttendancesForAgenda.mockResolvedValueOnce({
+      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
 
-      const { result } = renderHook(() => useAgendaAttendances(filters), {
+      const { result } = renderHook(() => useScheduleAttendances(filters), {
         wrapper: createWrapper(),
       });
 
@@ -125,7 +125,7 @@ describe("useAgendaQueries", () => {
       });
 
       expect(result.current.data).toEqual(mockData);
-      expect(mockedAttendancesApi.getAttendancesForAgenda).toHaveBeenCalledWith(
+      expect(mockedAttendancesApi.getAttendancesForSchedule).toHaveBeenCalledWith(
         filters,
       );
     });
@@ -136,7 +136,7 @@ describe("useAgendaQueries", () => {
         toDate: "2025-01-31",
       };
 
-      const { result } = renderHook(() => useAgendaAttendances(filters), {
+      const { result } = renderHook(() => useScheduleAttendances(filters), {
         wrapper: createWrapper(),
       });
 
@@ -145,13 +145,13 @@ describe("useAgendaQueries", () => {
       });
 
       expect(
-        mockedAttendancesApi.getAttendancesForAgenda,
+        mockedAttendancesApi.getAttendancesForSchedule,
       ).not.toHaveBeenCalled();
       expect(result.current.fetchStatus).toBe("idle");
     });
 
     it("should handle API error", async () => {
-      mockedAttendancesApi.getAttendancesForAgenda
+      mockedAttendancesApi.getAttendancesForSchedule
         .mockResolvedValueOnce({
           success: false,
           error: "API Error",
@@ -165,7 +165,7 @@ describe("useAgendaQueries", () => {
           error: "API Error",
         });
 
-      const { result } = renderHook(() => useAgendaAttendances(), {
+      const { result } = renderHook(() => useScheduleAttendances(), {
         wrapper: createWrapper(),
       });
 
@@ -180,7 +180,7 @@ describe("useAgendaQueries", () => {
     });
 
     it("should handle API error without message", async () => {
-      mockedAttendancesApi.getAttendancesForAgenda
+      mockedAttendancesApi.getAttendancesForSchedule
         .mockResolvedValueOnce({
           success: false,
         })
@@ -191,7 +191,7 @@ describe("useAgendaQueries", () => {
           success: false,
         });
 
-      const { result } = renderHook(() => useAgendaAttendances(), {
+      const { result } = renderHook(() => useScheduleAttendances(), {
         wrapper: createWrapper(),
       });
 
@@ -208,10 +208,10 @@ describe("useAgendaQueries", () => {
     });
   });
 
-  describe("useAgenda", () => {
+  describe("useSchedule", () => {
     it("should transform assessment attendances data", async () => {
       const mockData = [
-        createMockAttendanceAgendaDto({
+        createMockAttendanceScheduleDto({
           id: 1,
           patientId: 1,
           patientName: "Patient 1",
@@ -219,7 +219,7 @@ describe("useAgendaQueries", () => {
           type: AttendanceType.ASSESSMENT,
           scheduledDate: "2025-10-27",
         }),
-        createMockAttendanceAgendaDto({
+        createMockAttendanceScheduleDto({
           id: 2,
           patientId: 2,
           patientName: "Patient 2",
@@ -229,12 +229,12 @@ describe("useAgendaQueries", () => {
         }),
       ];
 
-      mockedAttendancesApi.getAttendancesForAgenda.mockResolvedValueOnce({
+      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
 
-      const { result } = renderHook(() => useAgenda(), {
+      const { result } = renderHook(() => useSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -274,7 +274,7 @@ describe("useAgendaQueries", () => {
         physiotherapy: [],
       });
 
-      expect(result.current.agenda).toEqual({
+      expect(result.current.schedule).toEqual({
         assessment: [
           {
             date: "2025-10-27", // String in YYYY-MM-DD format
@@ -309,7 +309,7 @@ describe("useAgendaQueries", () => {
 
     it("should transform physiotherapy and tens attendances data", async () => {
       const mockData = [
-        createMockAttendanceAgendaDto({
+        createMockAttendanceScheduleDto({
           id: 1,
           patientId: 1,
           patientName: "Physiotherapy Patient",
@@ -317,7 +317,7 @@ describe("useAgendaQueries", () => {
           type: AttendanceType.PHYSIOTHERAPY,
           scheduledDate: "2025-10-27",
         }),
-        createMockAttendanceAgendaDto({
+        createMockAttendanceScheduleDto({
           id: 2,
           patientId: 2,
           patientName: "TENS Patient",
@@ -327,12 +327,12 @@ describe("useAgendaQueries", () => {
         }),
       ];
 
-      mockedAttendancesApi.getAttendancesForAgenda.mockResolvedValueOnce({
+      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
 
-      const { result } = renderHook(() => useAgenda(), {
+      const { result } = renderHook(() => useSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -368,13 +368,13 @@ describe("useAgendaQueries", () => {
       });
     });
 
-    it("should return empty agenda when no data", async () => {
-      mockedAttendancesApi.getAttendancesForAgenda.mockResolvedValueOnce({
+    it("should return empty schedule when no data", async () => {
+      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
         success: true,
         value: [],
       });
 
-      const { result } = renderHook(() => useAgenda(), {
+      const { result } = renderHook(() => useSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -386,14 +386,14 @@ describe("useAgendaQueries", () => {
         assessment: [],
         physiotherapy: [],
       });
-      expect(result.current.agenda).toEqual({
+      expect(result.current.schedule).toEqual({
         assessment: [],
         physiotherapy: [],
       });
     });
 
-    it("should return default agenda when data is undefined", async () => {
-      mockedAttendancesApi.getAttendancesForAgenda
+    it("should return default schedule when data is undefined", async () => {
+      mockedAttendancesApi.getAttendancesForSchedule
         .mockResolvedValueOnce({
           success: false,
           error: "Network error",
@@ -407,7 +407,7 @@ describe("useAgendaQueries", () => {
           error: "Network error",
         });
 
-      const { result } = renderHook(() => useAgenda(), {
+      const { result } = renderHook(() => useSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -419,7 +419,7 @@ describe("useAgendaQueries", () => {
       );
 
       expect(result.current.data).toBeUndefined();
-      expect(result.current.agenda).toEqual({
+      expect(result.current.schedule).toEqual({
         assessment: [],
         physiotherapy: [],
       });
@@ -427,7 +427,7 @@ describe("useAgendaQueries", () => {
 
     it("should group multiple patients on same date", async () => {
       const mockData = [
-        createMockAttendanceAgendaDto({
+        createMockAttendanceScheduleDto({
           id: 1,
           patientId: 1,
           patientName: "Patient 1",
@@ -435,7 +435,7 @@ describe("useAgendaQueries", () => {
           type: AttendanceType.ASSESSMENT,
           scheduledDate: "2025-10-27",
         }),
-        createMockAttendanceAgendaDto({
+        createMockAttendanceScheduleDto({
           id: 2,
           patientId: 2,
           patientName: "Patient 2",
@@ -445,12 +445,12 @@ describe("useAgendaQueries", () => {
         }),
       ];
 
-      mockedAttendancesApi.getAttendancesForAgenda.mockResolvedValueOnce({
+      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
 
-      const { result } = renderHook(() => useAgenda(), {
+      const { result } = renderHook(() => useSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -463,20 +463,20 @@ describe("useAgendaQueries", () => {
     });
   });
 
-  describe("useScheduledAgenda", () => {
-    it("should fetch scheduled agenda with correct filters", async () => {
+  describe("useScheduled", () => {
+    it("should fetch scheduled schedule with correct filters", async () => {
       const mockData = [
-        createMockAttendanceAgendaDto({
+        createMockAttendanceScheduleDto({
           status: AttendanceStatus.SCHEDULED,
         }),
       ];
 
-      mockedAttendancesApi.getAttendancesForAgenda.mockResolvedValueOnce({
+      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
 
-      const { result } = renderHook(() => useScheduledAgenda(), {
+      const { result } = renderHook(() => useScheduled(), {
         wrapper: createWrapper(),
       });
 
@@ -484,7 +484,7 @@ describe("useAgendaQueries", () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockedAttendancesApi.getAttendancesForAgenda).toHaveBeenCalledWith(
+      expect(mockedAttendancesApi.getAttendancesForSchedule).toHaveBeenCalledWith(
         {
           statuses: [AttendanceStatus.SCHEDULED],
         },
@@ -492,7 +492,7 @@ describe("useAgendaQueries", () => {
     });
   });
 
-  describe("useRemovePatientFromAgenda", () => {
+  describe("useRemovePatientFromSchedule", () => {
     it("should remove patient successfully and invalidate queries", async () => {
       const queryClient = new QueryClient({
         defaultOptions: { mutations: { retry: false } },
@@ -510,7 +510,7 @@ describe("useAgendaQueries", () => {
         </QueryClientProvider>
       );
 
-      const { result } = renderHook(() => useRemovePatientFromAgenda(), {
+      const { result } = renderHook(() => useRemovePatientFromSchedule(), {
         wrapper,
       });
 
@@ -520,7 +520,7 @@ describe("useAgendaQueries", () => {
 
       expect(mockedAttendancesApi.deleteAttendance).toHaveBeenCalledWith("1");
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-        queryKey: ["agenda"],
+        queryKey: ["schedule"],
       });
     });
 
@@ -530,7 +530,7 @@ describe("useAgendaQueries", () => {
         error: "Delete failed",
       });
 
-      const { result } = renderHook(() => useRemovePatientFromAgenda(), {
+      const { result } = renderHook(() => useRemovePatientFromSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -544,12 +544,12 @@ describe("useAgendaQueries", () => {
         success: false,
       });
 
-      const { result } = renderHook(() => useRemovePatientFromAgenda(), {
+      const { result } = renderHook(() => useRemovePatientFromSchedule(), {
         wrapper: createWrapper(),
       });
 
       await expect(result.current.mutateAsync(1)).rejects.toThrow(
-        "Failed to remove patient from agenda",
+        "Failed to remove patient from schedule",
       );
     });
 
@@ -561,7 +561,7 @@ describe("useAgendaQueries", () => {
         error: "Delete failed",
       });
 
-      const { result } = renderHook(() => useRemovePatientFromAgenda(), {
+      const { result } = renderHook(() => useRemovePatientFromSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -573,7 +573,7 @@ describe("useAgendaQueries", () => {
 
       await waitFor(() => {
         expect(consoleSpy).toHaveBeenCalledWith(
-          "Error removing patient from agenda:",
+          "Error removing patient from schedule:",
           new Error("Delete failed"),
         );
       });
@@ -582,7 +582,7 @@ describe("useAgendaQueries", () => {
     });
   });
 
-  describe("useAddPatientToAgenda", () => {
+  describe("useAddPatientToSchedule", () => {
     const attendanceData = {
       patientId: 1,
       type: AttendanceType.ASSESSMENT,
@@ -607,7 +607,7 @@ describe("useAgendaQueries", () => {
         </QueryClientProvider>
       );
 
-      const { result } = renderHook(() => useAddPatientToAgenda(), {
+      const { result } = renderHook(() => useAddPatientToSchedule(), {
         wrapper,
       });
 
@@ -619,7 +619,7 @@ describe("useAgendaQueries", () => {
         attendanceData,
       );
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-        queryKey: ["agenda"],
+        queryKey: ["schedule"],
       });
     });
 
@@ -629,7 +629,7 @@ describe("useAgendaQueries", () => {
         error: "Creation failed",
       });
 
-      const { result } = renderHook(() => useAddPatientToAgenda(), {
+      const { result } = renderHook(() => useAddPatientToSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -643,12 +643,12 @@ describe("useAgendaQueries", () => {
         success: false,
       });
 
-      const { result } = renderHook(() => useAddPatientToAgenda(), {
+      const { result } = renderHook(() => useAddPatientToSchedule(), {
         wrapper: createWrapper(),
       });
 
       await expect(result.current.mutateAsync(attendanceData)).rejects.toThrow(
-        "Failed to add patient to agenda",
+        "Failed to add patient to schedule",
       );
     });
 
@@ -660,7 +660,7 @@ describe("useAgendaQueries", () => {
         error: "Creation failed",
       });
 
-      const { result } = renderHook(() => useAddPatientToAgenda(), {
+      const { result } = renderHook(() => useAddPatientToSchedule(), {
         wrapper: createWrapper(),
       });
 
@@ -672,7 +672,7 @@ describe("useAgendaQueries", () => {
 
       await waitFor(() => {
         expect(consoleSpy).toHaveBeenCalledWith(
-          "Error adding patient to agenda:",
+          "Error adding patient to schedule:",
           new Error("Creation failed"),
         );
       });
@@ -681,8 +681,8 @@ describe("useAgendaQueries", () => {
     });
   });
 
-  describe("useRefreshAgenda", () => {
-    it("should invalidate agenda queries", () => {
+  describe("useRefreshSchedule", () => {
+    it("should invalidate schedule queries", () => {
       const queryClient = new QueryClient();
       const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
 
@@ -692,14 +692,14 @@ describe("useAgendaQueries", () => {
         </QueryClientProvider>
       );
 
-      const { result } = renderHook(() => useRefreshAgenda(), { wrapper });
+      const { result } = renderHook(() => useRefreshSchedule(), { wrapper });
 
       act(() => {
         result.current();
       });
 
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-        queryKey: ["agenda"],
+        queryKey: ["schedule"],
       });
     });
   });

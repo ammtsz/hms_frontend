@@ -35,7 +35,7 @@ Always use **Conventional Commits** format when committing changes. Be concise a
 
 ### Scope (Optional)
 
-Use the affected area/module: `attendance`, `patient`, `treatment`, `agenda`, `api`, `components`, `hooks`, `stores`, `utils`, etc.
+Use the affected area/module: `attendance`, `patient`, `treatment`, `schedule`, `api`, `components`, `hooks`, `stores`, `utils`, etc.
 
 ### Subject
 

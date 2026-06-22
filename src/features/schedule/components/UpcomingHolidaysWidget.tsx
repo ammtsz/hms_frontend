@@ -8,7 +8,7 @@ import { useDateHelpers } from "@/hooks/useDateHelpers";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { UserRole } from "@/types/auth";
 import { Button, Card } from "@/components/ui";
-import { UPCOMING_HOLIDAYS_LABELS } from "../utils/agendaFilterConstants";
+import { UPCOMING_HOLIDAYS_LABELS } from "../utils/scheduleFilterConstants";
 
 const UpcomingHolidaysWidget: React.FC = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -38,7 +38,7 @@ const UpcomingHolidaysWidget: React.FC = () => {
           </Button>
           {isAdmin && (
             <Link
-              href="/agenda/holidays"
+              href="/schedule/holidays"
               className="ml-4 inline-flex min-h-[40px] items-center justify-center whitespace-nowrap rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
             >
               {UPCOMING_HOLIDAYS_LABELS.manageLink}

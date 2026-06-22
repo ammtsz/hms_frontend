@@ -12,7 +12,7 @@ import { transformPriorityToApi, transformStatusToApi } from "@/utils/apiTransfo
 import type { CreatePatientRequest, AttendanceType } from "@/api/types";
 import { formatDateClinic } from "@/utils/timezoneDate";
 import { useCreatePatient } from "@/api/query/hooks/usePatientQueries";
-import { useAddPatientToAgenda } from "@/api/query/hooks/useAgendaQueries";
+import { useAddPatientToSchedule } from "@/api/query/hooks/useScheduleQueries";
 import {
   useScheduleSettings,
   hasSlotsForAssessmentOnDate,
@@ -61,7 +61,7 @@ export function usePatientForm() {
   const router = useRouter();
   const fetchDayFinalizationStatus = useFetchDayFinalizationStatus();
   const createPatientMutation = useCreatePatient();
-  const addPatientToAgendaMutation = useAddPatientToAgenda();
+  const addPatientToScheduleMutation = useAddPatientToSchedule();
   const { data: scheduleSettings } = useScheduleSettings();
 
   // Comprehensive form validation
@@ -266,7 +266,7 @@ export function usePatientForm() {
             if (attendanceCreated) break;
 
             try {
-              await addPatientToAgendaMutation.mutateAsync({
+              await addPatientToScheduleMutation.mutateAsync({
                 patientId: createdPatient?.id || 0,
                 type: "assessment" as AttendanceType,
                 scheduledDate: attendanceDate,

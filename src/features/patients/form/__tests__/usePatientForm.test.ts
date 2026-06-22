@@ -6,13 +6,13 @@ import { PatientPriority, PatientStatus } from '@/api/types';
 // Create mock functions first
 const mockPush = jest.fn();
 const mockCreatePatientMutateAsync = jest.fn();
-const mockAddPatientToAgendaMutateAsync = jest.fn();
+const mockAddPatientToScheduleMutateAsync = jest.fn();
 const VALID_BIRTH_DATE = '1990-01-01';
 
 // Mock modules
 jest.mock('next/navigation');
 jest.mock('@/api/query/hooks/usePatientQueries');
-jest.mock('@/api/query/hooks/useAgendaQueries');
+jest.mock('@/api/query/hooks/useScheduleQueries');
 jest.mock('@/api/query/hooks/useScheduleSettingQueries');
 jest.mock('@/utils/formUtils');
 jest.mock('@/utils/apiTransformers');
@@ -32,7 +32,7 @@ jest.mock('@/api/query/hooks/useDayFinalizationQueries', () => ({
 // Import the mocked modules
 import { useRouter } from 'next/navigation';
 import { useCreatePatient } from '@/api/query/hooks/usePatientQueries';
-import { useAddPatientToAgenda } from '@/api/query/hooks/useAgendaQueries';
+import { useAddPatientToSchedule } from '@/api/query/hooks/useScheduleQueries';
 import { useScheduleSettings, hasSlotsForAssessmentOnDate } from '@/api/query/hooks/useScheduleSettingQueries';
 import { formatPhoneNumber } from '@/utils/formUtils';
 import { transformPriorityToApi, transformStatusToApi } from '@/utils/apiTransformers';
@@ -64,8 +64,8 @@ describe('usePatientForm', () => {
       isLoading: false,
     });
     
-    (useAddPatientToAgenda as jest.Mock).mockReturnValue({
-      mutateAsync: mockAddPatientToAgendaMutateAsync,
+    (useAddPatientToSchedule as jest.Mock).mockReturnValue({
+      mutateAsync: mockAddPatientToScheduleMutateAsync,
       isLoading: false,
     });
 
@@ -97,7 +97,7 @@ describe('usePatientForm', () => {
     
     // Reset mock implementations
     mockCreatePatientMutateAsync.mockResolvedValue({ id: 1, name: 'Test' });
-    mockAddPatientToAgendaMutateAsync.mockResolvedValue({});
+    mockAddPatientToScheduleMutateAsync.mockResolvedValue({});
     mockedFormatPhoneNumber.mockImplementation((phone: string) => phone);
     mockedTransformPriorityToApi.mockReturnValue('1' as any);
     mockedTransformStatusToApi.mockReturnValue('N' as any);
@@ -546,7 +546,7 @@ describe('usePatientForm', () => {
     it('should create attendance when next date is provided', async () => {
       const mockCreatedPatient = { id: 1, name: 'John Doe' };
       mockCreatePatientMutateAsync.mockResolvedValue(mockCreatedPatient);
-      mockAddPatientToAgendaMutateAsync.mockResolvedValue({});
+      mockAddPatientToScheduleMutateAsync.mockResolvedValue({});
 
       const { result } = renderHook(() => usePatientForm());
       const nextDate = '2024-02-01';
@@ -566,7 +566,7 @@ describe('usePatientForm', () => {
         await result.current.handleSubmit(mockEvent);
       });
 
-      expect(mockAddPatientToAgendaMutateAsync).toHaveBeenCalledWith({
+      expect(mockAddPatientToScheduleMutateAsync).toHaveBeenCalledWith({
         patientId: 1,
         type: 'assessment',
         scheduledDate: '2024-02-01',
@@ -580,7 +580,7 @@ describe('usePatientForm', () => {
       mockCreatePatientMutateAsync.mockResolvedValue(mockCreatedPatient);
       
       // First call fails, second succeeds
-      mockAddPatientToAgendaMutateAsync
+      mockAddPatientToScheduleMutateAsync
         .mockRejectedValueOnce(new Error('Time slot taken'))
         .mockResolvedValueOnce({});
 
@@ -602,15 +602,15 @@ describe('usePatientForm', () => {
         await result.current.handleSubmit(mockEvent);
       });
 
-      expect(mockAddPatientToAgendaMutateAsync).toHaveBeenCalledTimes(2);
-      expect(mockAddPatientToAgendaMutateAsync).toHaveBeenNthCalledWith(1, {
+      expect(mockAddPatientToScheduleMutateAsync).toHaveBeenCalledTimes(2);
+      expect(mockAddPatientToScheduleMutateAsync).toHaveBeenNthCalledWith(1, {
         patientId: 1,
         type: 'assessment',
         scheduledDate: '2024-02-01',
         scheduledTime: '20:00',
         notes: 'Appointment created during patient registration'
       });
-      expect(mockAddPatientToAgendaMutateAsync).toHaveBeenNthCalledWith(2, {
+      expect(mockAddPatientToScheduleMutateAsync).toHaveBeenNthCalledWith(2, {
         patientId: 1,
         type: 'assessment',
         scheduledDate: '2024-02-01',
@@ -622,7 +622,7 @@ describe('usePatientForm', () => {
     it('should set attendanceCreationFailed when no time slot succeeds', async () => {
       const mockCreatedPatient = { id: 1, name: 'John Doe' };
       mockCreatePatientMutateAsync.mockResolvedValue(mockCreatedPatient);
-      mockAddPatientToAgendaMutateAsync.mockRejectedValue(
+      mockAddPatientToScheduleMutateAsync.mockRejectedValue(
         new Error('No time slot available for the selected date.')
       );
 

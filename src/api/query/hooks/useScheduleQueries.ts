@@ -1,32 +1,32 @@
 /**
- * Agenda React Query Hooks
+ * Schedule React Query Hooks
  *
- * Server state management for agenda data using React Query.
+ * Server state management for schedule data using React Query.
  */
 
 import { useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  getAttendancesForAgenda,
+  getAttendancesForSchedule,
   deleteAttendance,
   createAttendance,
 } from "@/api/attendances";
 import {
-  AttendanceAgendaDto,
+  AttendanceScheduleDto,
   AttendanceStatus,
   AttendanceType,
   CreateAttendanceRequest,
 } from "@/api/types";
-import { Agenda, CalendarAgenda, Priority } from "@/types/types";
+import { Schedule, CalendarSchedule, Priority } from "@/types/types";
 import { transformAttendanceType } from "@/utils/apiTransformers";
 import { isValidDateString } from "@/utils/timezoneDate";
 
-// Transform backend data to frontend agenda format
-const transformToAgenda = (
-  attendances: AttendanceAgendaDto[],
-): CalendarAgenda => {
-  const assessment: Agenda["assessment"] = [];
-  const physiotherapy: Agenda["physiotherapy"] = [];
+// Transform backend data to frontend schedule format
+const transformToSchedule = (
+  attendances: AttendanceScheduleDto[],
+): CalendarSchedule => {
+  const assessment: Schedule["assessment"] = [];
+  const physiotherapy: Schedule["physiotherapy"] = [];
 
   const grouped = attendances.reduce(
     (acc, attendance) => {
@@ -94,14 +94,14 @@ const transformToAgenda = (
   return { assessment, physiotherapy };
 };
 
-import { agendaKeys, type AgendaApiFilters } from '@/api/query/keys/agendaKeys';
+import { scheduleKeys, type ScheduleApiFilters } from '@/api/query/keys/scheduleKeys';
 
-export type { AgendaApiFilters };
+export type { ScheduleApiFilters };
 
 /**
- * Hook to fetch agenda attendances with optional filters
+ * Hook to fetch schedule attendances with optional filters
  */
-export const useAgendaAttendances = (filters?: AgendaApiFilters) => {
+export const useScheduleAttendances = (filters?: ScheduleApiFilters) => {
   const hasDateRange = Boolean(filters?.fromDate || filters?.toDate);
   const datesValid =
     !hasDateRange ||
@@ -109,9 +109,9 @@ export const useAgendaAttendances = (filters?: AgendaApiFilters) => {
       isValidDateString(filters?.toDate ?? ""));
 
   return useQuery({
-    queryKey: agendaKeys.list(filters),
-    queryFn: async (): Promise<AttendanceAgendaDto[]> => {
-      const result = await getAttendancesForAgenda(
+    queryKey: scheduleKeys.list(filters),
+    queryFn: async (): Promise<AttendanceScheduleDto[]> => {
+      const result = await getAttendancesForSchedule(
         filters
           ? {
               statuses: filters.statuses,
@@ -137,31 +137,31 @@ export const useAgendaAttendances = (filters?: AgendaApiFilters) => {
 };
 
 /**
- * Hook to fetch transformed agenda data (calendar format)
+ * Hook to fetch transformed schedule data (calendar format)
  */
-export const useAgenda = (filters?: AgendaApiFilters) => {
-  const query = useAgendaAttendances(filters);
+export const useSchedule = (filters?: ScheduleApiFilters) => {
+  const query = useScheduleAttendances(filters);
 
   return {
     ...query,
-    data: query.data ? transformToAgenda(query.data) : undefined,
-    agenda: query.data
-      ? transformToAgenda(query.data)
+    data: query.data ? transformToSchedule(query.data) : undefined,
+    schedule: query.data
+      ? transformToSchedule(query.data)
       : { assessment: [], physiotherapy: [] },
   };
 };
 
 /**
- * Scheduled-only agenda (no date range) — for legacy callers.
+ * Scheduled-only schedule (no date range) — for legacy callers.
  */
-export const useScheduledAgenda = () => {
-  return useAgenda({ statuses: [AttendanceStatus.SCHEDULED] });
+export const useScheduled = () => {
+  return useSchedule({ statuses: [AttendanceStatus.SCHEDULED] });
 };
 
 /**
- * Mutation to remove patient from agenda
+ * Mutation to remove patient from schedule
  */
-export const useRemovePatientFromAgenda = () => {
+export const useRemovePatientFromSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -170,22 +170,22 @@ export const useRemovePatientFromAgenda = () => {
       if (result.success) {
         return result.value;
       } else {
-        throw new Error(result.error || "Failed to remove patient from agenda");
+        throw new Error(result.error || "Failed to remove patient from schedule");
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: agendaKeys.all });
+      queryClient.invalidateQueries({ queryKey: scheduleKeys.all });
     },
     onError: (error) => {
-      console.error("Error removing patient from agenda:", error);
+      console.error("Error removing patient from schedule:", error);
     },
   });
 };
 
 /**
- * Mutation to add patient to agenda
+ * Mutation to add patient to schedule
  */
-export const useAddPatientToAgenda = () => {
+export const useAddPatientToSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -194,26 +194,26 @@ export const useAddPatientToAgenda = () => {
       if (result.success) {
         return result.value;
       } else {
-        throw new Error(result.error || "Failed to add patient to agenda");
+        throw new Error(result.error || "Failed to add patient to schedule");
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: agendaKeys.all });
+      queryClient.invalidateQueries({ queryKey: scheduleKeys.all });
     },
     onError: (error) => {
-      console.error("Error adding patient to agenda:", error);
+      console.error("Error adding patient to schedule:", error);
     },
   });
 };
 
 /**
- * Utility hook for manual agenda refresh
+ * Utility hook for manual schedule refresh
  */
-export const useRefreshAgenda = () => {
+export const useRefreshSchedule = () => {
   const queryClient = useQueryClient();
 
   return useCallback(async () => {
-    await queryClient.invalidateQueries({ queryKey: agendaKeys.all });
+    await queryClient.invalidateQueries({ queryKey: scheduleKeys.all });
   }, [queryClient]);
 };
 
@@ -221,10 +221,10 @@ export const useRefreshAgenda = () => {
  * Hook that returns an imperative invalidation callback.
  * Use this instead of importing useQueryClient directly in feature hooks.
  */
-export const useInvalidateAgenda = () => {
+export const useInvalidateSchedule = () => {
   const queryClient = useQueryClient();
 
   return useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: agendaKeys.all });
+    queryClient.invalidateQueries({ queryKey: scheduleKeys.all });
   }, [queryClient]);
 };

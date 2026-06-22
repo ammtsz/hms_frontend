@@ -1,59 +1,59 @@
 import { renderHook, act } from '@testing-library/react';
-import { useAgendaCalendar } from "../hooks/useAgendaCalendar";
+import { useScheduleCalendar } from "../hooks/useScheduleCalendar";
 import { AttendanceStatus } from '@/api/types';
 
-jest.mock('@/api/query/hooks/useAgendaQueries', () => ({
-  useAgenda: jest.fn(),
-  useRemovePatientFromAgenda: jest.fn(),
-  useRefreshAgenda: jest.fn(),
+jest.mock('@/api/query/hooks/useScheduleQueries', () => ({
+  useSchedule: jest.fn(),
+  useRemovePatientFromSchedule: jest.fn(),
+  useRefreshSchedule: jest.fn(),
 }));
 
 jest.mock('@/stores', () => ({
   useSelectedDateString: jest.fn(),
-  useAgendaDayWindowDays: jest.fn(),
-  useAgendaStatusFilters: jest.fn(),
+  useScheduleDayWindowDays: jest.fn(),
+  useScheduleStatusFilters: jest.fn(),
   usePatientFilter: jest.fn(),
   useShowNewAttendance: jest.fn(),
   useOpenAssessmentIdx: jest.fn(),
   useOpenPhysiotherapyIdx: jest.fn(),
   useSetSelectedDateString: jest.fn(),
-  useSetAgendaDayWindowDays: jest.fn(),
-  useSetAgendaStatusFilters: jest.fn(),
+  useSetScheduleDayWindowDays: jest.fn(),
+  useSetScheduleStatusFilters: jest.fn(),
   useSetPatientFilter: jest.fn(),
   useSetShowNewAttendance: jest.fn(),
   useSetOpenAssessmentIdx: jest.fn(),
   useSetOpenPhysiotherapyIdx: jest.fn(),
 }));
 
-import { useAgenda, useRefreshAgenda } from '@/api/query/hooks/useAgendaQueries';
+import { useSchedule, useRefreshSchedule } from '@/api/query/hooks/useScheduleQueries';
 import {
   useSelectedDateString,
-  useAgendaDayWindowDays,
-  useAgendaStatusFilters,
+  useScheduleDayWindowDays,
+  useScheduleStatusFilters,
   usePatientFilter,
   useShowNewAttendance,
   useOpenAssessmentIdx,
   useOpenPhysiotherapyIdx,
   useSetSelectedDateString,
-  useSetAgendaDayWindowDays,
-  useSetAgendaStatusFilters,
+  useSetScheduleDayWindowDays,
+  useSetScheduleStatusFilters,
   useSetPatientFilter,
   useSetShowNewAttendance,
   useSetOpenAssessmentIdx,
   useSetOpenPhysiotherapyIdx,
 } from '@/stores';
 
-describe('useAgendaCalendar', () => {
+describe('useScheduleCalendar', () => {
   let mockSetSelectedDate: jest.Mock;
-  let mockSetAgendaDayWindowDays: jest.Mock;
-  let mockSetAgendaStatusFilters: jest.Mock;
+  let mockSetScheduleDayWindowDays: jest.Mock;
+  let mockSetScheduleStatusFilters: jest.Mock;
   let mockSetPatientFilter: jest.Mock;
   let mockSetShowNewAttendance: jest.Mock;
   let mockSetOpenAssessmentIdx: jest.Mock;
   let mockSetOpenPhysiotherapyIdx: jest.Mock;
-  let mockRefreshAgenda: jest.Mock;
+  let mockRefreshSchedule: jest.Mock;
 
-  const mockAgendaData = {
+  const mockScheduleData = {
     assessment: [
       {
         date: '2024-01-15',
@@ -103,17 +103,17 @@ describe('useAgendaCalendar', () => {
     jest.clearAllMocks();
 
     mockSetSelectedDate = jest.fn();
-    mockSetAgendaDayWindowDays = jest.fn();
-    mockSetAgendaStatusFilters = jest.fn();
+    mockSetScheduleDayWindowDays = jest.fn();
+    mockSetScheduleStatusFilters = jest.fn();
     mockSetPatientFilter = jest.fn();
     mockSetShowNewAttendance = jest.fn();
     mockSetOpenAssessmentIdx = jest.fn();
     mockSetOpenPhysiotherapyIdx = jest.fn();
-    mockRefreshAgenda = jest.fn();
+    mockRefreshSchedule = jest.fn();
 
     (useSelectedDateString as jest.Mock).mockReturnValue('2024-01-15');
-    (useAgendaDayWindowDays as jest.Mock).mockReturnValue(30);
-    (useAgendaStatusFilters as jest.Mock).mockReturnValue([
+    (useScheduleDayWindowDays as jest.Mock).mockReturnValue(30);
+    (useScheduleStatusFilters as jest.Mock).mockReturnValue([
       AttendanceStatus.SCHEDULED,
     ]);
     (usePatientFilter as jest.Mock).mockReturnValue('');
@@ -122,11 +122,11 @@ describe('useAgendaCalendar', () => {
     (useOpenPhysiotherapyIdx as jest.Mock).mockReturnValue([]);
 
     (useSetSelectedDateString as jest.Mock).mockReturnValue(mockSetSelectedDate);
-    (useSetAgendaDayWindowDays as jest.Mock).mockReturnValue(
-      mockSetAgendaDayWindowDays,
+    (useSetScheduleDayWindowDays as jest.Mock).mockReturnValue(
+      mockSetScheduleDayWindowDays,
     );
-    (useSetAgendaStatusFilters as jest.Mock).mockReturnValue(
-      mockSetAgendaStatusFilters,
+    (useSetScheduleStatusFilters as jest.Mock).mockReturnValue(
+      mockSetScheduleStatusFilters,
     );
     (useSetPatientFilter as jest.Mock).mockReturnValue(mockSetPatientFilter);
     (useSetShowNewAttendance as jest.Mock).mockReturnValue(
@@ -135,32 +135,32 @@ describe('useAgendaCalendar', () => {
     (useSetOpenAssessmentIdx as jest.Mock).mockReturnValue(mockSetOpenAssessmentIdx);
     (useSetOpenPhysiotherapyIdx as jest.Mock).mockReturnValue(mockSetOpenPhysiotherapyIdx);
 
-    (useAgenda as jest.Mock).mockReturnValue({
-      agenda: mockAgendaData,
+    (useSchedule as jest.Mock).mockReturnValue({
+      schedule: mockScheduleData,
       isLoading: false,
       error: null,
     });
 
-    (useRefreshAgenda as jest.Mock).mockReturnValue(mockRefreshAgenda);
+    (useRefreshSchedule as jest.Mock).mockReturnValue(mockRefreshSchedule);
   });
 
   describe('Hook Initialization', () => {
     it('returns expected properties', () => {
-      const { result } = renderHook(() => useAgendaCalendar());
+      const { result } = renderHook(() => useScheduleCalendar());
 
       expect(result.current.selectedDate).toBe('2024-01-15');
-      expect(result.current.agendaDayWindowDays).toBe(30);
-      expect(result.current.agendaStatusFilters).toEqual([
+      expect(result.current.scheduleDayWindowDays).toBe(30);
+      expect(result.current.scheduleStatusFilters).toEqual([
         AttendanceStatus.SCHEDULED,
       ]);
-      expect(result.current.filteredAgenda.assessment).toHaveLength(2);
+      expect(result.current.filteredSchedule.assessment).toHaveLength(2);
       expect(result.current.rangeSummaryText).toContain('Period:');
     });
 
-    it('calls useAgenda with date range and statuses', () => {
-      renderHook(() => useAgendaCalendar());
+    it('calls useSchedule with date range and statuses', () => {
+      renderHook(() => useScheduleCalendar());
 
-      expect(useAgenda).toHaveBeenCalledWith({
+      expect(useSchedule).toHaveBeenCalledWith({
         fromDate: '2024-01-15',
         toDate: '2024-02-13',
         statuses: [AttendanceStatus.SCHEDULED],
@@ -168,11 +168,11 @@ describe('useAgendaCalendar', () => {
     });
 
     it('omits statuses when filter list is empty (all statuses)', () => {
-      (useAgendaStatusFilters as jest.Mock).mockReturnValue([]);
+      (useScheduleStatusFilters as jest.Mock).mockReturnValue([]);
 
-      renderHook(() => useAgendaCalendar());
+      renderHook(() => useScheduleCalendar());
 
-      expect(useAgenda).toHaveBeenCalledWith({
+      expect(useSchedule).toHaveBeenCalledWith({
         fromDate: '2024-01-15',
         toDate: '2024-02-13',
         statuses: undefined,
@@ -184,8 +184,8 @@ describe('useAgendaCalendar', () => {
     it('filters patients accent-insensitively', () => {
       (usePatientFilter as jest.Mock).mockReturnValue('john');
 
-      (useAgenda as jest.Mock).mockReturnValue({
-        agenda: {
+      (useSchedule as jest.Mock).mockReturnValue({
+        schedule: {
           assessment: [
             {
               date: '2024-01-15',
@@ -207,37 +207,37 @@ describe('useAgendaCalendar', () => {
         error: null,
       });
 
-      const { result } = renderHook(() => useAgendaCalendar());
+      const { result } = renderHook(() => useScheduleCalendar());
 
-      expect(result.current.filteredAgenda.assessment).toHaveLength(1);
+      expect(result.current.filteredSchedule.assessment).toHaveLength(1);
       expect(
-        result.current.filteredAgenda.assessment[0]?.patients[0]?.name,
+        result.current.filteredSchedule.assessment[0]?.patients[0]?.name,
       ).toBe('John Smith');
     });
   });
 
   describe('Form Success Handler', () => {
     it('closes new attendance modal and triggers refresh on form success', async () => {
-      const { result } = renderHook(() => useAgendaCalendar());
+      const { result } = renderHook(() => useScheduleCalendar());
 
       await act(async () => {
         result.current.handleFormSuccess();
       });
 
       expect(mockSetShowNewAttendance).toHaveBeenCalledWith(false);
-      expect(mockRefreshAgenda).toHaveBeenCalled();
+      expect(mockRefreshSchedule).toHaveBeenCalled();
     });
   });
 
   describe('Refresh', () => {
     it('calls refresh query', async () => {
-      const { result } = renderHook(() => useAgendaCalendar());
+      const { result } = renderHook(() => useScheduleCalendar());
 
       await act(async () => {
-        await result.current.refreshAgenda();
+        await result.current.refreshSchedule();
       });
 
-      expect(mockRefreshAgenda).toHaveBeenCalled();
+      expect(mockRefreshSchedule).toHaveBeenCalled();
       expect(result.current.isRefreshing).toBe(false);
     });
   });

@@ -38,7 +38,7 @@ interface ManageAttendanceModalProps {
 
 /**
  * Manage Attendance Modal - Allows user to cancel or reschedule attendances
- * Used on both the attendance board page and the agenda page
+ * Used on both the attendance board page and the schedule page
  */
 export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
   onRefresh,

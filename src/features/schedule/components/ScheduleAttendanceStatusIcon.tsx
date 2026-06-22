@@ -42,12 +42,12 @@ const STATUS_ICON_CONFIG: Record<
   },
 };
 
-interface AgendaAttendanceStatusIconProps {
+interface ScheduleAttendanceStatusIconProps {
   status: AttendanceStatus;
   className?: string;
 }
 
-const AgendaAttendanceStatusIcon: React.FC<AgendaAttendanceStatusIconProps> = ({
+const ScheduleAttendanceStatusIcon: React.FC<ScheduleAttendanceStatusIconProps> = ({
   status,
   className = "h-5 w-5 shrink-0",
 }) => {
@@ -55,9 +55,9 @@ const AgendaAttendanceStatusIcon: React.FC<AgendaAttendanceStatusIconProps> = ({
   return <Icon className={`${className} ${colorClass}`} aria-hidden />;
 };
 
-export default AgendaAttendanceStatusIcon;
+export default ScheduleAttendanceStatusIcon;
 
-export const AGENDA_STATUS_LEGEND_ITEMS: Array<{
+export const SCHEDULE_STATUS_LEGEND_ITEMS: Array<{
   status: AttendanceStatus;
   label: string;
 }> = [

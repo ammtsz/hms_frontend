@@ -13,7 +13,7 @@ export {
   PatientStatus,
   type PatientResponseDto,
   type AttendanceResponseDto,
-  type AttendanceAgendaDto,
+  type AttendanceScheduleDto,
   type ConsultationResponseDto,
   type CreatePatientRequest,
   type UpdatePatientRequest,
@@ -72,7 +72,7 @@ export type AttendanceByDate = {
   [type in AttendanceType]: AttendanceStatus;
 };
 
-export interface AgendaItem {
+export interface ScheduleItem {
   date: string; // YYYY-MM-DD format
   patients: {
     id: string;
@@ -80,19 +80,19 @@ export interface AgendaItem {
     priority: Priority;
     attendanceId?: number; // Backend attendance ID for deletion
     attendanceType?: AttendanceType; // Specific attendance type for individual patients
-    /** Attendance workflow status from API (agenda list) */
+    /** Attendance workflow status from API (schedule list) */
     attendanceStatus?: import("@/api/types").AttendanceStatus;
   }[];
 }
 
-export type Agenda = {
-  [K in AttendanceType]: AgendaItem[];
+export type Schedule = {
+  [K in AttendanceType]: ScheduleItem[];
 };
 
-// Specialized agenda type for calendar view (combines physiotherapy and tens into physiotherapy)
-export type CalendarAgenda = {
-  assessment: AgendaItem[];
-  physiotherapy: AgendaItem[];
+// Specialized schedule type for calendar view (combines physiotherapy and tens into physiotherapy)
+export type CalendarSchedule = {
+  assessment: ScheduleItem[];
+  physiotherapy: ScheduleItem[];
 };
 
 export interface PatientBasic {

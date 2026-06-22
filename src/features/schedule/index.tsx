@@ -2,35 +2,35 @@
 
 import React, { lazy, Suspense } from "react";
 import ManageAttendanceModal from "@/features/attendance/components/AttendanceActions/ManageAttendanceModal";
-import AgendaColumn from "./components/AgendaColumn";
-import AgendaCalendarFilters from "./components/AgendaCalendarFilters";
+import ScheduleColumn from "./components/ScheduleColumn";
+import ScheduleCalendarFilters from "./components/ScheduleCalendarFilters";
 import UpcomingHolidaysWidget from "./components/UpcomingHolidaysWidget";
-import { useAgendaCalendar } from "./hooks/useAgendaCalendar";
+import { useScheduleCalendar } from "./hooks/useScheduleCalendar";
 import LoadingFallback from "@/components/common/LoadingFallback";
 import { getTodayClinic } from "@/utils/timezoneDate";
 import { Button, Card, CardBody, CardHeader } from "@/components/ui";
 import { PageHeader } from "@/components/layout";
 import {
-  AGENDA_COLUMN_TITLES,
-  AGENDA_PAGE_LABELS,
-} from "./utils/agendaFilterConstants";
+  SCHEDULE_COLUMN_TITLES,
+  SCHEDULE_PAGE_LABELS,
+} from "./utils/scheduleFilterConstants";
 
 // Lazy load heavy modal component for better bundle optimization
 const NewAttendanceFormModal = lazy(
-  () => import("@/features/agenda/components/NewAttendanceFormModal"),
+  () => import("@/features/schedule/components/NewAttendanceFormModal"),
 );
 
-const AgendaCalendar: React.FC = () => {
+const ScheduleCalendar: React.FC = () => {
   const {
     selectedDate,
     setSelectedDate,
-    agendaDayWindowDays,
-    setAgendaDayWindowDays,
-    agendaStatusFilters,
-    setAgendaStatusFilters,
+    scheduleDayWindowDays,
+    setScheduleDayWindowDays,
+    scheduleStatusFilters,
+    setScheduleStatusFilters,
     patientFilter,
     setPatientFilter,
-    filteredAgenda,
+    filteredSchedule,
     openAssessmentIdx,
     setOpenAssessmentIdx,
     openPhysiotherapyIdx,
@@ -39,75 +39,75 @@ const AgendaCalendar: React.FC = () => {
     setShowNewAttendance,
     handleFormSuccess,
     loading,
-    refreshAgenda,
+    refreshSchedule,
     isRefreshing,
     rangeSummaryText,
-  } = useAgendaCalendar();
+  } = useScheduleCalendar();
 
   return (
     <div className="flex flex-col gap-8 my-6 sm:my-16">
       <UpcomingHolidaysWidget />
 
-      {/* Agenda Calendar Management */}
+      {/* Schedule Calendar Management */}
       <Card>
         <CardHeader className="border-gray-100 p-4">
           <PageHeader
-            title={AGENDA_PAGE_LABELS.title}
-            description={AGENDA_PAGE_LABELS.description}
+            title={SCHEDULE_PAGE_LABELS.title}
+            description={SCHEDULE_PAGE_LABELS.description}
             actions={
               <Button
                 className="w-full sm:w-auto"
                 onClick={() => setShowNewAttendance(true)}
               >
-                {AGENDA_PAGE_LABELS.newAttendanceButton}
+                {SCHEDULE_PAGE_LABELS.newAttendanceButton}
               </Button>
             }
           />
         </CardHeader>
         <CardBody className="p-4">
-          <AgendaCalendarFilters
+          <ScheduleCalendarFilters
             selectedDate={selectedDate}
             setSelectedDate={setSelectedDate}
-            agendaDayWindowDays={agendaDayWindowDays}
-            setAgendaDayWindowDays={setAgendaDayWindowDays}
-            agendaStatusFilters={agendaStatusFilters}
-            setAgendaStatusFilters={setAgendaStatusFilters}
+            scheduleDayWindowDays={scheduleDayWindowDays}
+            setScheduleDayWindowDays={setScheduleDayWindowDays}
+            scheduleStatusFilters={scheduleStatusFilters}
+            setScheduleStatusFilters={setScheduleStatusFilters}
             patientFilter={patientFilter}
             setPatientFilter={setPatientFilter}
-            refreshAgenda={refreshAgenda}
+            refreshSchedule={refreshSchedule}
             isRefreshing={isRefreshing}
             rangeSummaryText={rangeSummaryText}
           />
 
           {/* Two Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <AgendaColumn
-              title={AGENDA_COLUMN_TITLES.assessment}
-              agendaItems={filteredAgenda.assessment.map((item) => ({
+            <ScheduleColumn
+              title={SCHEDULE_COLUMN_TITLES.assessment}
+              scheduleItems={filteredSchedule.assessment.map((item) => ({
                 ...item,
                 patients: item.patients.map((patient) => ({
                   ...patient,
                   attendanceType: patient.attendanceType ?? "assessment",
                 })),
               }))}
-              openAgendaIdx={openAssessmentIdx}
-              setOpenAgendaIdx={setOpenAssessmentIdx}
+              openScheduleIdx={openAssessmentIdx}
+              setOpenScheduleIdx={setOpenAssessmentIdx}
               columnType="assessment"
               isLoading={loading}
               isRefreshing={isRefreshing}
             />
 
-            <AgendaColumn
-              title={AGENDA_COLUMN_TITLES.physiotherapy}
-              agendaItems={filteredAgenda.physiotherapy.map((item) => ({
+            <ScheduleColumn
+              title={SCHEDULE_COLUMN_TITLES.physiotherapy}
+              scheduleItems={filteredSchedule.physiotherapy.map((item) => ({
                 ...item,
                 patients: item.patients.map((patient) => ({
                   ...patient,
                   attendanceType: patient.attendanceType ?? "physiotherapy",
                 })),
               }))}
-              openAgendaIdx={openPhysiotherapyIdx}
-              setOpenAgendaIdx={setOpenPhysiotherapyIdx}
+              openScheduleIdx={openPhysiotherapyIdx}
+              setOpenScheduleIdx={setOpenPhysiotherapyIdx}
               columnType="physiotherapy"
               isLoading={loading}
               isRefreshing={isRefreshing}
@@ -116,12 +116,12 @@ const AgendaCalendar: React.FC = () => {
         </CardBody>
       </Card>
 
-      <ManageAttendanceModal onRefresh={refreshAgenda} />
+      <ManageAttendanceModal onRefresh={refreshSchedule} />
       {showNewAttendance && (
         <Suspense
           fallback={
             <LoadingFallback
-              message={AGENDA_PAGE_LABELS.schedulingFormLoading}
+              message={SCHEDULE_PAGE_LABELS.schedulingFormLoading}
               size="small"
             />
           }
@@ -129,7 +129,7 @@ const AgendaCalendar: React.FC = () => {
           <NewAttendanceFormModal
             onClose={() => setShowNewAttendance(false)}
             onSuccess={handleFormSuccess}
-            title={AGENDA_PAGE_LABELS.schedulingModalTitle}
+            title={SCHEDULE_PAGE_LABELS.schedulingModalTitle}
             subtitle="Physiotherapy and TENS appointments must be created automatically after the assessment consultation."
             showDateField={true}
             validationDate={selectedDate || getTodayClinic()}
@@ -140,4 +140,4 @@ const AgendaCalendar: React.FC = () => {
   );
 };
 
-export default AgendaCalendar;
+export default ScheduleCalendar;

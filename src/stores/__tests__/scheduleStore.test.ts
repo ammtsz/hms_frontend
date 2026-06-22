@@ -1,19 +1,19 @@
 /**
- * Agenda Store Tests
+ * Schedule Store Tests
  */
 
 import { act, renderHook } from '@testing-library/react';
-import { useAgendaStore } from '../agendaStore';
+import { useScheduleStore } from '../scheduleStore';
 
-describe('useAgendaStore', () => {
+describe('useScheduleStore', () => {
   beforeEach(() => {
     // Reset store state before each test
-    useAgendaStore.getState().resetState();
+    useScheduleStore.getState().resetState();
   });
 
   describe('Initial State', () => {
     it('should have correct initial state', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       expect(result.current.selectedDate).toBeInstanceOf(Date);
       expect(result.current.selectedTimeSlot).toBe(null);
@@ -27,7 +27,7 @@ describe('useAgendaStore', () => {
 
   describe('View Management', () => {
     it('should set selected date and update month/year', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       const testDate = new Date('2025-12-25');
       
@@ -41,7 +41,7 @@ describe('useAgendaStore', () => {
     });
 
     it('should manage time slot selection', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       act(() => {
         result.current.setSelectedTimeSlot('14:00');
@@ -59,7 +59,7 @@ describe('useAgendaStore', () => {
 
   describe('Navigation', () => {
     it('should navigate to specific date', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       const testDate = new Date('2026-01-15');
       
@@ -73,7 +73,7 @@ describe('useAgendaStore', () => {
     });
 
     it('should navigate to today', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       // Set a different date first
       const futureDate = new Date('2026-06-15');
@@ -92,7 +92,7 @@ describe('useAgendaStore', () => {
     });
 
     it('should set current month and year separately', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       act(() => {
         result.current.setCurrentMonth(5); // June
@@ -106,7 +106,7 @@ describe('useAgendaStore', () => {
 
   describe('Modal Management', () => {
     it('should manage scheduling modal', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       act(() => {
         result.current.openSchedulingModal('10:00');
@@ -124,7 +124,7 @@ describe('useAgendaStore', () => {
     });
 
     it('should manage appointment editing', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       act(() => {
         result.current.startEditingAppointment('appointment-123');
@@ -144,7 +144,7 @@ describe('useAgendaStore', () => {
 
   describe('UI Loading States', () => {
     it('should manage navigation loading', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       act(() => {
         result.current.setIsNavigating(true);
@@ -160,7 +160,7 @@ describe('useAgendaStore', () => {
     });
 
     it('should manage schedule processing loading', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       act(() => {
         result.current.setIsProcessingSchedule(true);
@@ -178,7 +178,7 @@ describe('useAgendaStore', () => {
 
   describe('State Reset', () => {
     it('should reset state to initial values', () => {
-      const { result } = renderHook(() => useAgendaStore());
+      const { result } = renderHook(() => useScheduleStore());
       
       // Modify state
       act(() => {

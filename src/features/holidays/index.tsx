@@ -206,7 +206,7 @@ const HolidayManagementContent: React.FC = () => {
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: "Agenda", href: "/agenda" },
+          { label: "Schedule", href: "/schedule" },
           { label: "Holidays", isActive: true },
         ]}
       />

@@ -141,12 +141,12 @@ describe("CardStates Components", () => {
       expect(scheduleLink).toBeInTheDocument();
       expect(scheduleLink.closest("a")).toHaveAttribute(
         "href",
-        "/agenda?patient=123&action=schedule",
+        "/schedule?patient=123&action=schedule",
       );
 
-      const agendaLink = screen.getByText("View Schedule");
-      expect(agendaLink).toBeInTheDocument();
-      expect(agendaLink.closest("a")).toHaveAttribute("href", "/agenda");
+      const viewScheduleLink = screen.getByText("View Schedule");
+      expect(viewScheduleLink).toBeInTheDocument();
+      expect(viewScheduleLink.closest("a")).toHaveAttribute("href", "/schedule");
     });
   });
 

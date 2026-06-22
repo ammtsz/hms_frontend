@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import UpcomingHolidaysWidget from "../components/UpcomingHolidaysWidget";
-import { UPCOMING_HOLIDAYS_LABELS } from "../utils/agendaFilterConstants";
+import { UPCOMING_HOLIDAYS_LABELS } from "../utils/scheduleFilterConstants";
 import { useUpcomingHolidays } from "@/api/query/hooks/useHolidayQueries";
 import { useDateHelpers } from "@/hooks/useDateHelpers";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -197,7 +197,7 @@ describe("UpcomingHolidaysWidget", () => {
 
     const link = screen.getByText(UPCOMING_HOLIDAYS_LABELS.manageLink);
     expect(link).toBeInTheDocument();
-    expect(link.closest("a")).toHaveAttribute("href", "/agenda/holidays");
+    expect(link.closest("a")).toHaveAttribute("href", "/schedule/holidays");
   });
 
   it("does not display manage link for staff users", () => {

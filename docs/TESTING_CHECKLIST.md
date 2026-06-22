@@ -47,7 +47,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Tab Navigation
 
-- [ ] All tabs visible: Attendances, Agenda, Patients, Treatments
+- [ ] All tabs visible: Attendances, Schedule, Patients, Treatments
 - [ ] Active tab highlighted correctly
 - [ ] Tab navigation works (page switches)
 - [ ] `aria-current="page"` set on active tab
@@ -216,7 +216,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ---
 
-## 📅 6. Agenda Calendar (`/agenda`)
+## 📅 6. Schedule Calendar (`/schedule`)
 
 ### Calendar View
 
@@ -229,7 +229,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Click date to view attendances
 - [ ] Loading states during data fetch
 
-### Agenda Columns
+### Schedule Columns
 
 - [ ] Attendances grouped by date
 - [ ] All columns render: Assessment, Physiotherapy, TENS
@@ -245,9 +245,9 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Automatic scheduling skips holidays
 - [ ] Return weeks postpone if landing on holiday
 
-### New Attendance Form (from Agenda)
+### New Attendance Form (from Schedule)
 
-- [ ] Modal opens from agenda
+- [ ] Modal opens from schedule
 - [ ] Date pre-selected from calendar
 - [ ] Patient selection works
 - [ ] Parent attendance selector visible
@@ -258,7 +258,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ---
 
-## 🎄 7. Holiday Management (`/agenda/holidays`)
+## 🎄 7. Holiday Management (`/schedule/holidays`)
 
 ### Holiday List
 
@@ -313,7 +313,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Upcoming Holidays Widget
 
-- [ ] Widget displays on agenda page
+- [ ] Widget displays on schedule page
 - [ ] Shows next 5 upcoming holidays
 - [ ] Holiday name and date visible
 - [ ] Sorted by date (soonest first)
@@ -359,7 +359,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Start date selection
 - [ ] Auto-calculated end date
 - [ ] Batch submission (all locations with same params)
-- [ ] Automatic scheduling to agenda
+- [ ] Automatic scheduling to schedule
 - [ ] Sessions skip holidays during scheduling
 
 ### Session progress
@@ -377,7 +377,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Delete button visible on session cards
 - [ ] Confirmation modal shows
 - [ ] Delete removes session
-- [ ] Agenda updates after deletion
+- [ ] Schedule updates after deletion
 - [ ] Error handling on delete failure
 
 ---
@@ -387,7 +387,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 ### Parent Attendance Linking
 
 - [ ] Parent selector visible in walkIn form
-- [ ] Parent selector visible in agenda form
+- [ ] Parent selector visible in schedule form
 - [ ] Only root consultations shown as options
 - [ ] Options sorted by date (most recent first)
 - [ ] Format: "YYYY-MM-DD - Main Concern"
@@ -502,7 +502,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 | Attendance        | `grid-cols-1 md:2 lg:4` columns; `MobileDesktopDnDAlert` below `lg`; legend wrap                                       |
 | Modals            | `BaseModal` (`max-h-[90dvh]`); custom shells migrated; `TabbedModal` scrollable tabs                                   |
 | Patients          | List cards `< md`; detail FAB (menu opens upward) + desktop section rail `lg+`; card headers; forms `grid-cols-1 md:*` |
-| Agenda / holidays | Stacked columns; holiday/template cards; filter touch targets                                                          |
+| Schedule / holidays | Stacked columns; holiday/template cards; filter touch targets                                                          |
 | Settings / login  | User cards; stacked settings tables; login `max-w-sm`                                                                  |
 | Dense tables      | `stackedTableClasses` + `TableMobileLabel` in `@/components/ui/Table.tsx`                                              |
 
@@ -513,13 +513,13 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] `/attendance`: columns stack vertically; no page-level horizontal scroll; DnD banner visible below `lg`
 - [ ] `/patients`: card list readable; tap opens detail; sort toolbar works
 - [ ] `/patients/[id]`: section FAB reachable; FAB menu opens upward and all section labels visible; desktop rail (`lg+`) icons/labels align; cards and history items wrap; no clipped actions
-- [ ] `/agenda`: filters and columns usable; patient rows stack in columns
+- [ ] `/schedule`: filters and columns usable; patient rows stack in columns
 - [ ] Settings (`/settings/*`): user cards; system tables stack; profile tabs scroll
 - [ ] `/login`: form fits 320px; inputs and Sign In button usable
 - [ ] Modals: fit viewport; body scrolls inside modal; close control reachable
 - [ ] Touch targets: primary actions ≥ 44px (buttons, `IconButton`, tab nav)
 - [ ] Attendance status changes on phone: read-only layout OK; DnD remains desktop (`MobileDesktopDnDAlert`) — touch DnD **not** HMS (optional follow-up)
-- [ ] No unintended horizontal scroll on `/attendance`, `/agenda`, `/patients`
+- [ ] No unintended horizontal scroll on `/attendance`, `/schedule`, `/patients`
 
 ### Tablet (640px – 1024px) — release QA
 
@@ -630,7 +630,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Past holiday creation (validation)
 - [ ] Holiday on same date as attendance (scheduling postpones)
 
-### Calendar/Agenda
+### Calendar/Schedule
 
 - [ ] Month with no attendances
 - [ ] Date with 50+ attendances

@@ -15,7 +15,7 @@ import { priorityKeys } from "@/api/query/keys/priorityKeys";
 // Mock the API calls
 jest.mock("@/api/attendances", () => ({
   getAllAttendances: jest.fn(() => Promise.resolve({ data: [], error: null })),
-  getAttendancesForAgenda: jest.fn(() =>
+  getAttendancesForSchedule: jest.fn(() =>
     Promise.resolve({ data: [], error: null })
   ),
   getUnresolvedPastAttendances: jest.fn(() =>
@@ -106,9 +106,9 @@ jest.mock("@/api/patients", () => ({
   ),
 }));
 
-// Mock React Query agenda hooks
-jest.mock("@/api/query/hooks/useAgendaQueries", () => ({
-  useScheduledAgenda: () => ({
+// Mock React Query schedule hooks
+jest.mock("@/api/query/hooks/useScheduleQueries", () => ({
+  useScheduled: () => ({
     data: [],
     isLoading: false,
     error: null,

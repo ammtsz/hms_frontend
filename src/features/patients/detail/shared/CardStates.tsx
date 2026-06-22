@@ -158,13 +158,13 @@ export const ScheduledAttendancesEmpty: React.FC<
   >
     <div className="flex flex-col sm:flex-row gap-2 justify-center">
       <Link
-        href={`/agenda?patient=${patientId}&action=schedule`}
+        href={`/schedule?patient=${patientId}&action=schedule`}
         className="inline-flex items-center justify-center px-4 py-2 bg-blue-700 text-white hover:bg-blue-800 rounded-md text-sm font-semibold transition-colors min-h-[44px] flex-1 sm:flex-none text-center"
       >
         📅 Schedule Appointment
       </Link>
       <Link
-        href="/agenda"
+        href="/schedule"
         className="inline-flex items-center justify-center px-4 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md text-sm font-semibold transition-colors min-h-[44px] flex-1 sm:flex-none text-center"
       >
         View Schedule

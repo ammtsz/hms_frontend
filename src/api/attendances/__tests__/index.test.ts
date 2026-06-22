@@ -12,7 +12,7 @@ import {
   completeAttendance,
   cancelAttendance,
   markAttendanceAsMissed,
-  getAttendancesForAgenda,
+  getAttendancesForSchedule,
   getNextAttendanceDate,
   getAttendanceStats,
   updateAbsenceJustifications,
@@ -589,24 +589,24 @@ describe('Attendances API', () => {
     });
   });
 
-  describe('getAttendancesForAgenda', () => {
-    it('should return agenda attendances without filters', async () => {
-      const mockAgendaData = [{ id: 1, patientName: 'John', type: 'assessment', scheduledTime: '10:00' }];
-      const mockResponse = { data: mockAgendaData };
+  describe('getAttendancesForSchedule', () => {
+    it('should return schedule attendances without filters', async () => {
+      const mockScheduleData = [{ id: 1, patientName: 'John', type: 'assessment', scheduledTime: '10:00' }];
+      const mockResponse = { data: mockScheduleData };
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await getAttendancesForAgenda();
+      const result = await getAttendancesForSchedule();
 
-      expect(mockApi.get).toHaveBeenCalledWith('/attendances/agenda');
+      expect(mockApi.get).toHaveBeenCalledWith('/attendances/schedule');
       expect(result).toEqual({
         success: true,
-        value: mockAgendaData
+        value: mockScheduleData
       });
     });
 
-    it('should return agenda attendances with filters', async () => {
-      const mockAgendaData = [{ id: 1, patientName: 'John', type: 'assessment', scheduledTime: '10:00' }];
-      const mockResponse = { data: mockAgendaData };
+    it('should return schedule attendances with filters', async () => {
+      const mockScheduleData = [{ id: 1, patientName: 'John', type: 'assessment', scheduledTime: '10:00' }];
+      const mockResponse = { data: mockScheduleData };
       mockApi.get.mockResolvedValue(mockResponse);
 
       const filters = {
@@ -616,28 +616,28 @@ describe('Attendances API', () => {
         fromDate: '2025-01-01',
         toDate: '2025-01-31',
       };
-      const result = await getAttendancesForAgenda(filters);
+      const result = await getAttendancesForSchedule(filters);
 
       expect(mockApi.get).toHaveBeenCalledWith(
-        '/attendances/agenda?status=scheduled&status=completed&type=assessment&limit=10&from_date=2025-01-01&to_date=2025-01-31',
+        '/attendances/schedule?status=scheduled&status=completed&type=assessment&limit=10&from_date=2025-01-01&to_date=2025-01-31',
       );
       expect(result).toEqual({
         success: true,
-        value: mockAgendaData
+        value: mockScheduleData
       });
     });
 
     it('should encode a single selected status as one status query param', async () => {
-      const mockAgendaData = [{ id: 1, patientName: 'John', type: 'assessment' }];
-      mockApi.get.mockResolvedValue({ data: mockAgendaData });
+      const mockScheduleData = [{ id: 1, patientName: 'John', type: 'assessment' }];
+      mockApi.get.mockResolvedValue({ data: mockScheduleData });
 
-      await getAttendancesForAgenda({
+      await getAttendancesForSchedule({
         statuses: [AttendanceStatus.SCHEDULED],
         type: 'assessment',
       });
 
       expect(mockApi.get).toHaveBeenCalledWith(
-        '/attendances/agenda?status=scheduled&type=assessment',
+        '/attendances/schedule?status=scheduled&type=assessment',
       );
     });
 
@@ -645,7 +645,7 @@ describe('Attendances API', () => {
       const mockError = { status: 500 };
       mockApi.get.mockRejectedValue(mockError);
 
-      const result = await getAttendancesForAgenda();
+      const result = await getAttendancesForSchedule();
 
       expect(result).toEqual({
         success: false,

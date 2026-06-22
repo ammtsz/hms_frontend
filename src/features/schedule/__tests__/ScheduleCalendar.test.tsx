@@ -1,21 +1,21 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AgendaCalendar from "../index";
-import { useAgendaCalendar } from "../hooks/useAgendaCalendar";
+import ScheduleCalendar from "../index";
+import { useScheduleCalendar } from "../hooks/useScheduleCalendar";
 import {
-  AGENDA_COLUMN_MESSAGES,
-  AGENDA_COLUMN_TITLES,
-  AGENDA_PAGE_LABELS,
-} from "../utils/agendaFilterConstants";
+  SCHEDULE_COLUMN_MESSAGES,
+  SCHEDULE_COLUMN_TITLES,
+  SCHEDULE_PAGE_LABELS,
+} from "../utils/scheduleFilterConstants";
 import { Priority, AttendanceType } from "@/types/types";
 import { AttendanceStatus } from "@/api/types";
-import type { AgendaDayWindowDays } from "@/stores";
+import type { ScheduleDayWindowDays } from "@/stores";
 
 // Mock the hook
-jest.mock("../hooks/useAgendaCalendar");
-const mockUseAgendaCalendar = useAgendaCalendar as jest.MockedFunction<
-  typeof useAgendaCalendar
+jest.mock("../hooks/useScheduleCalendar");
+const mockUseScheduleCalendar = useScheduleCalendar as jest.MockedFunction<
+  typeof useScheduleCalendar
 >;
 
 jest.mock("../components/UpcomingHolidaysWidget", () => {
@@ -24,8 +24,8 @@ jest.mock("../components/UpcomingHolidaysWidget", () => {
   };
 });
 
-jest.mock("../components/AgendaColumn", () => {
-  return function MockAgendaColumn({
+jest.mock("../components/ScheduleColumn", () => {
+  return function MockScheduleColumn({
     title,
     isRefreshing,
   }: {
@@ -35,7 +35,7 @@ jest.mock("../components/AgendaColumn", () => {
     return (
       <div className={`border ${isRefreshing ? "opacity-75" : ""}`}>
         <span>{title}</span>
-        {isRefreshing ? <span>{AGENDA_COLUMN_MESSAGES.refreshing}</span> : null}
+        {isRefreshing ? <span>{SCHEDULE_COLUMN_MESSAGES.refreshing}</span> : null}
       </div>
     );
   };
@@ -78,8 +78,8 @@ jest.mock("@/utils/dateUtils", () => ({
   formatDisplayDateWithDayOfWeek: jest.fn(() => "Thursday, 08/07/2025"),
 }));
 
-describe("AgendaCalendar - Basic Functionality", () => {
-  const mockFilteredAgenda = {
+describe("ScheduleCalendar - Basic Functionality", () => {
+  const mockFilteredSchedule = {
     assessment: [
       {
         date: "2025-08-07",
@@ -100,13 +100,13 @@ describe("AgendaCalendar - Basic Functionality", () => {
   const defaultHookReturn = {
     selectedDate: "2025-08-07",
     setSelectedDate: jest.fn(),
-    agendaDayWindowDays: 30 as AgendaDayWindowDays,
-    setAgendaDayWindowDays: jest.fn(),
-    agendaStatusFilters: [] as AttendanceStatus[],
-    setAgendaStatusFilters: jest.fn(),
+    scheduleDayWindowDays: 30 as ScheduleDayWindowDays,
+    setScheduleDayWindowDays: jest.fn(),
+    scheduleStatusFilters: [] as AttendanceStatus[],
+    setScheduleStatusFilters: jest.fn(),
     patientFilter: "",
     setPatientFilter: jest.fn(),
-    filteredAgenda: mockFilteredAgenda,
+    filteredSchedule: mockFilteredSchedule,
     openAssessmentIdx: [],
     setOpenAssessmentIdx: jest.fn(),
     openPhysiotherapyIdx: [],
@@ -121,7 +121,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
     handleFormSuccess: jest.fn(),
     loading: false,
     error: null,
-    refreshAgenda: jest.fn(),
+    refreshSchedule: jest.fn(),
     isRefreshing: false,
     rangeSummaryText: "Period: 07/08/2025 — 05/09/2025 (30 days)",
     referenceDate: "2025-08-07",
@@ -130,40 +130,40 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseAgendaCalendar.mockReturnValue(defaultHookReturn);
+    mockUseScheduleCalendar.mockReturnValue(defaultHookReturn);
   });
 
   it("should render basic component structure", () => {
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
 
-    expect(screen.getByText(AGENDA_PAGE_LABELS.title)).toBeInTheDocument();
+    expect(screen.getByText(SCHEDULE_PAGE_LABELS.title)).toBeInTheDocument();
     expect(
-      screen.getByText(AGENDA_PAGE_LABELS.newAttendanceButton),
+      screen.getByText(SCHEDULE_PAGE_LABELS.newAttendanceButton),
     ).toBeInTheDocument();
   });
 
   it("should render loading state", () => {
-    mockUseAgendaCalendar.mockReturnValue({
+    mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
       loading: true,
     });
 
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
     expect(
-      screen.getByText(AGENDA_COLUMN_TITLES.assessment),
+      screen.getByText(SCHEDULE_COLUMN_TITLES.assessment),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(AGENDA_COLUMN_TITLES.physiotherapy),
+      screen.getByText(SCHEDULE_COLUMN_TITLES.physiotherapy),
     ).toBeInTheDocument();
   });
 
   it("should render error state", () => {
-    mockUseAgendaCalendar.mockReturnValue({
+    mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
-      error: "Failed to load agenda",
+      error: "Failed to load schedule",
     });
 
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
 
     // Error states show different messages, so let's check for any error indication
     // Looking at the HTML, errors might not have a specific text pattern
@@ -174,56 +174,56 @@ describe("AgendaCalendar - Basic Functionality", () => {
   });
 
   it("should render empty state", () => {
-    mockUseAgendaCalendar.mockReturnValue({
+    mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
-      filteredAgenda: {
+      filteredSchedule: {
         assessment: [],
         physiotherapy: [],
       },
     });
 
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
     expect(
-      screen.getByText(AGENDA_COLUMN_TITLES.assessment),
+      screen.getByText(SCHEDULE_COLUMN_TITLES.assessment),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(AGENDA_COLUMN_TITLES.physiotherapy),
+      screen.getByText(SCHEDULE_COLUMN_TITLES.physiotherapy),
     ).toBeInTheDocument();
   });
 
-  it("should render agenda items when data is available", () => {
-    render(<AgendaCalendar />);
+  it("should render schedule items when data is available", () => {
+    render(<ScheduleCalendar />);
 
     // Should show section headers
     expect(
-      screen.getByText(AGENDA_COLUMN_TITLES.assessment),
+      screen.getByText(SCHEDULE_COLUMN_TITLES.assessment),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(AGENDA_COLUMN_TITLES.physiotherapy),
+      screen.getByText(SCHEDULE_COLUMN_TITLES.physiotherapy),
     ).toBeInTheDocument();
   });
 
-  it("should render refresh button and call refreshAgenda when clicked", () => {
-    const mockRefreshAgenda = jest.fn();
-    mockUseAgendaCalendar.mockReturnValue({
+  it("should render refresh button and call refreshSchedule when clicked", () => {
+    const mockRefreshSchedule = jest.fn();
+    mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
-      refreshAgenda: mockRefreshAgenda,
+      refreshSchedule: mockRefreshSchedule,
     });
 
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
 
     // Should render the refresh button
     const refreshButton = screen.getByRole("button", { name: /Refresh/i });
     expect(refreshButton).toBeInTheDocument();
     expect(refreshButton).toHaveAttribute("title", "Refresh appointment data");
 
-    // Should call refreshAgenda when clicked
+    // Should call refreshSchedule when clicked
     refreshButton.click();
-    expect(mockRefreshAgenda).toHaveBeenCalledTimes(1);
+    expect(mockRefreshSchedule).toHaveBeenCalledTimes(1);
   });
 
   it("should render day window select and refresh button in controls area", () => {
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
 
     expect(screen.getByLabelText(/^Period$/)).toBeInTheDocument();
 
@@ -234,12 +234,12 @@ describe("AgendaCalendar - Basic Functionality", () => {
   });
 
   it("should show loading state when refreshing", () => {
-    mockUseAgendaCalendar.mockReturnValue({
+    mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
       isRefreshing: true,
     });
 
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
 
     // Should render the refresh button with loading state
     const refreshButton = screen.getByRole("button", { name: /Refreshing/i });
@@ -259,12 +259,12 @@ describe("AgendaCalendar - Basic Functionality", () => {
   });
 
   it("should show normal state when not refreshing", () => {
-    mockUseAgendaCalendar.mockReturnValue({
+    mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
       isRefreshing: false,
     });
 
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
 
     // Should render the refresh button in normal state
     const refreshButton = screen.getByRole("button", { name: /Refresh$/i });
@@ -285,17 +285,17 @@ describe("AgendaCalendar - Basic Functionality", () => {
   });
 
   it("should show refreshing overlay on attendance columns when refreshing", () => {
-    mockUseAgendaCalendar.mockReturnValue({
+    mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
       isRefreshing: true,
-      filteredAgenda: mockFilteredAgenda,
+      filteredSchedule: mockFilteredSchedule,
     });
 
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
 
     // Should show "Refreshing..." text in both columns
     const refreshingTexts = screen.getAllByText(
-      AGENDA_COLUMN_MESSAGES.refreshing,
+      SCHEDULE_COLUMN_MESSAGES.refreshing,
     );
 
     // Should have at least 2 instances - one in each column (plus the button makes 3)
@@ -303,10 +303,10 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     // Check that columns have reduced opacity when refreshing
     const assessmentColumnContent = screen
-      .getByText(AGENDA_COLUMN_TITLES.assessment)
+      .getByText(SCHEDULE_COLUMN_TITLES.assessment)
       .closest(".border");
     const physiotherapyColumnContent = screen
-      .getByText(AGENDA_COLUMN_TITLES.physiotherapy)
+      .getByText(SCHEDULE_COLUMN_TITLES.physiotherapy)
       .closest(".border");
 
     expect(assessmentColumnContent).toHaveClass("opacity-75");
@@ -314,17 +314,17 @@ describe("AgendaCalendar - Basic Functionality", () => {
   });
 
   it("should not show refreshing overlay when not refreshing", () => {
-    mockUseAgendaCalendar.mockReturnValue({
+    mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
       isRefreshing: false,
-      filteredAgenda: mockFilteredAgenda,
+      filteredSchedule: mockFilteredSchedule,
     });
 
-    render(<AgendaCalendar />);
+    render(<ScheduleCalendar />);
 
     // Should not show overlay "Refreshing..." text in columns
     const refreshingTexts = screen.queryAllByText(
-      AGENDA_COLUMN_MESSAGES.refreshing,
+      SCHEDULE_COLUMN_MESSAGES.refreshing,
     );
 
     // Should only have the button text, not column overlays
@@ -332,10 +332,10 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     // Check that columns don't have reduced opacity
     const assessmentColumnContent = screen
-      .getByText(AGENDA_COLUMN_TITLES.assessment)
+      .getByText(SCHEDULE_COLUMN_TITLES.assessment)
       .closest(".border");
     const physiotherapyColumnContent = screen
-      .getByText(AGENDA_COLUMN_TITLES.physiotherapy)
+      .getByText(SCHEDULE_COLUMN_TITLES.physiotherapy)
       .closest(".border");
 
     expect(assessmentColumnContent).not.toHaveClass("opacity-75");
@@ -344,7 +344,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
   describe("Date Input and Controls", () => {
     it("renders date input with correct value", () => {
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       const dateInput = screen.getByLabelText("Select a date to filter");
       expect(dateInput).toBeInTheDocument();
@@ -353,12 +353,12 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     it("renders patient filter input and updates value", () => {
       const mockSetPatientFilter = jest.fn();
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         setPatientFilter: mockSetPatientFilter,
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       const patientInput = screen.getByLabelText("Filter by patient");
       expect(patientInput).toBeInTheDocument();
@@ -369,12 +369,12 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     it("calls setSelectedDate when date is committed via blur after typing", () => {
       const mockSetSelectedDate = jest.fn();
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         setSelectedDate: mockSetSelectedDate,
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       const dateInput = screen.getByLabelText("Select a date to filter");
       fireEvent.change(dateInput, { target: { value: "2025-08-15" } });
@@ -386,12 +386,12 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     it('renders and handles "Today" button click', () => {
       const mockSetSelectedDate = jest.fn();
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         setSelectedDate: mockSetSelectedDate,
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       const todayButton = screen.getByRole("button", { name: /Today/i });
       expect(todayButton).toBeInTheDocument();
@@ -404,29 +404,29 @@ describe("AgendaCalendar - Basic Functionality", () => {
       );
     });
 
-    it("calls setAgendaDayWindowDays when period select changes", () => {
-      const mockSetAgendaDayWindowDays = jest.fn();
-      mockUseAgendaCalendar.mockReturnValue({
+    it("calls setScheduleDayWindowDays when period select changes", () => {
+      const mockSetScheduleDayWindowDays = jest.fn();
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
-        setAgendaDayWindowDays: mockSetAgendaDayWindowDays,
-        agendaDayWindowDays: 30,
+        setScheduleDayWindowDays: mockSetScheduleDayWindowDays,
+        scheduleDayWindowDays: 30,
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       const select = screen.getByLabelText(/^Period$/);
       fireEvent.change(select, { target: { value: "7" } });
 
-      expect(mockSetAgendaDayWindowDays).toHaveBeenCalledWith(7);
+      expect(mockSetScheduleDayWindowDays).toHaveBeenCalledWith(7);
     });
 
     it("displays range summary from hook", () => {
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         rangeSummaryText: "Period: 07/08/2025 — 13/08/2025 (7 days)",
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       expect(
         screen.getByText("Period: 07/08/2025 — 13/08/2025 (7 days)"),
@@ -434,39 +434,39 @@ describe("AgendaCalendar - Basic Functionality", () => {
     });
 
     it("renders status filter fieldset and select-all clears", () => {
-      const mockSetAgendaStatusFilters = jest.fn();
-      mockUseAgendaCalendar.mockReturnValue({
+      const mockSetScheduleStatusFilters = jest.fn();
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
-        setAgendaStatusFilters: mockSetAgendaStatusFilters,
-        agendaStatusFilters: [],
+        setScheduleStatusFilters: mockSetScheduleStatusFilters,
+        scheduleStatusFilters: [],
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       fireEvent.click(
         screen.getByRole("button", {
           name: /Select all attendance statuses/i,
         }),
       );
-      expect(mockSetAgendaStatusFilters.mock.calls[0]?.[0]).toHaveLength(6);
+      expect(mockSetScheduleStatusFilters.mock.calls[0]?.[0]).toHaveLength(6);
 
       fireEvent.click(
         screen.getByRole("button", {
           name: /Clear attendance status selection/i,
         }),
       );
-      expect(mockSetAgendaStatusFilters.mock.calls[1]?.[0]).toEqual([]);
+      expect(mockSetScheduleStatusFilters.mock.calls[1]?.[0]).toEqual([]);
     });
   });
 
   describe("Modal Rendering", () => {
     it("renders NewAttendanceFormModal when showNewAttendance is true", async () => {
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         showNewAttendance: true,
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       // First, it should show the loading fallback
       expect(
@@ -475,12 +475,12 @@ describe("AgendaCalendar - Basic Functionality", () => {
     });
 
     it("does not render NewAttendanceFormModal when showNewAttendance is false", () => {
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         showNewAttendance: false,
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       expect(
         screen.queryByText("Loading scheduling form..."),
@@ -489,15 +489,15 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     it("calls setShowNewAttendance(true) when new attendance button is clicked", () => {
       const mockSetShowNewAttendance = jest.fn();
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         setShowNewAttendance: mockSetShowNewAttendance,
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       const newAttendanceButton = screen.getByText(
-        AGENDA_PAGE_LABELS.newAttendanceButton,
+        SCHEDULE_PAGE_LABELS.newAttendanceButton,
       );
       newAttendanceButton.click();
 
@@ -507,7 +507,7 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
   describe("Patient Mapping Coverage", () => {
     it("renders physiotherapy patients with correct attendanceType mapping", () => {
-      const mockFilteredAgenda = {
+      const mockFilteredSchedule = {
         assessment: [],
         physiotherapy: [
           {
@@ -525,16 +525,16 @@ describe("AgendaCalendar - Basic Functionality", () => {
         ],
       };
 
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
-        filteredAgenda: mockFilteredAgenda,
+        filteredSchedule: mockFilteredSchedule,
       });
 
-      render(<AgendaCalendar />);
+      render(<ScheduleCalendar />);
 
       // Should render the physiotherapy column with the patient
       expect(
-        screen.getByText(AGENDA_COLUMN_TITLES.physiotherapy),
+        screen.getByText(SCHEDULE_COLUMN_TITLES.physiotherapy),
       ).toBeInTheDocument();
     });
   });
@@ -542,13 +542,13 @@ describe("AgendaCalendar - Basic Functionality", () => {
   describe("NewAttendanceFormModal Integration", () => {
     it("calls setShowNewAttendance(false) when modal onClose is triggered", async () => {
       const mockSetShowNewAttendance = jest.fn();
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         showNewAttendance: true,
         setShowNewAttendance: mockSetShowNewAttendance,
       });
 
-      const { findByTestId } = render(<AgendaCalendar />);
+      const { findByTestId } = render(<ScheduleCalendar />);
 
       // Wait for the modal to render (it's lazy loaded)
       const modal = await findByTestId("new-attendance-form-modal");
@@ -563,13 +563,13 @@ describe("AgendaCalendar - Basic Functionality", () => {
 
     it("calls handleFormSuccess when modal onSuccess is triggered", async () => {
       const mockHandleFormSuccess = jest.fn();
-      mockUseAgendaCalendar.mockReturnValue({
+      mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
         showNewAttendance: true,
         handleFormSuccess: mockHandleFormSuccess,
       });
 
-      const { findByTestId } = render(<AgendaCalendar />);
+      const { findByTestId } = render(<ScheduleCalendar />);
 
       // Wait for the modal to render (it's lazy loaded)
       const modal = await findByTestId("new-attendance-form-modal");

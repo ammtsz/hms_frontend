@@ -564,7 +564,7 @@ type ApiResponse<T> = {
 
 - **Home Page:** 102kB
 - **Attendance:** 132kB (was 170kB)
-- **Agenda:** 102kB (was 137kB)
+- **Schedule:** 102kB (was 137kB)
 - **Patients:** 102kB (was 130kB)
 
 ### Test Execution

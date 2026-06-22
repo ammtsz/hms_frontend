@@ -1,8 +1,8 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AgendaColumn from "../components/AgendaColumn";
-import { AGENDA_COLUMN_MESSAGES } from "../utils/agendaFilterConstants";
+import ScheduleColumn from "../components/ScheduleColumn";
+import { SCHEDULE_COLUMN_MESSAGES } from "../utils/scheduleFilterConstants";
 import { AttendanceType } from "@/types/types";
 import { AttendanceStatus } from "@/api/types";
 import { useOpenCancellation } from "@/stores/modalStore";
@@ -57,7 +57,7 @@ const mockUseOpenCancellation = useOpenCancellation as jest.MockedFunction<
   typeof useOpenCancellation
 >;
 
-describe("AgendaColumn", () => {
+describe("ScheduleColumn", () => {
   const mockOpenCancellation = jest.fn();
 
   const mockPatient1 = {
@@ -74,16 +74,16 @@ describe("AgendaColumn", () => {
     attendanceType: "physiotherapy" as AttendanceType,
   };
 
-  const defaultAgendaItem = {
+  const defaultScheduleItem = {
     date: "2024-01-15",
     patients: [mockPatient1, mockPatient2],
   };
 
   const defaultProps = {
     title: "Consultations",
-    agendaItems: [defaultAgendaItem],
-    openAgendaIdx: [] as number[],
-    setOpenAgendaIdx: jest.fn(),
+    scheduleItems: [defaultScheduleItem],
+    openScheduleIdx: [] as number[],
+    setOpenScheduleIdx: jest.fn(),
     columnType: "assessment" as const,
     isLoading: false,
     isRefreshing: false,
@@ -100,36 +100,36 @@ describe("AgendaColumn", () => {
 
   describe("Rendering", () => {
     it("renders without crashing", () => {
-      render(<AgendaColumn {...defaultProps} />);
+      render(<ScheduleColumn {...defaultProps} />);
 
       expect(screen.getByText("Consultations")).toBeInTheDocument();
     });
 
     it("displays column title correctly", () => {
       const customTitle = "Custom Column Title";
-      render(<AgendaColumn {...defaultProps} title={customTitle} />);
+      render(<ScheduleColumn {...defaultProps} title={customTitle} />);
 
       expect(screen.getByText(customTitle)).toBeInTheDocument();
     });
 
-    it("displays agenda items count correctly - singular", () => {
-      render(<AgendaColumn {...defaultProps} />);
+    it("displays schedule items count correctly - singular", () => {
+      render(<ScheduleColumn {...defaultProps} />);
 
       expect(screen.getByText("1 date with appointments")).toBeInTheDocument();
     });
 
-    it("displays agenda items count correctly - plural", () => {
+    it("displays schedule items count correctly - plural", () => {
       const multipleItems = [
-        defaultAgendaItem,
-        { ...defaultAgendaItem, date: "2024-01-16" },
+        defaultScheduleItem,
+        { ...defaultScheduleItem, date: "2024-01-16" },
       ];
-      render(<AgendaColumn {...defaultProps} agendaItems={multipleItems} />);
+      render(<ScheduleColumn {...defaultProps} scheduleItems={multipleItems} />);
 
       expect(screen.getByText("2 dates with appointments")).toBeInTheDocument();
     });
 
     it("applies correct styling classes", () => {
-      const { container } = render(<AgendaColumn {...defaultProps} />);
+      const { container } = render(<ScheduleColumn {...defaultProps} />);
 
       const columnDiv = container.firstChild as HTMLElement;
       expect(columnDiv).toHaveClass(
@@ -147,17 +147,17 @@ describe("AgendaColumn", () => {
 
   describe("Refreshing State", () => {
     it("shows refreshing overlay when isRefreshing is true", () => {
-      render(<AgendaColumn {...defaultProps} isRefreshing={true} />);
+      render(<ScheduleColumn {...defaultProps} isRefreshing={true} />);
 
       expect(screen.getAllByTestId("spinner").length).toBeGreaterThan(0);
       expect(
-        screen.getByText(AGENDA_COLUMN_MESSAGES.refreshing),
+        screen.getByText(SCHEDULE_COLUMN_MESSAGES.refreshing),
       ).toBeInTheDocument();
     });
 
     it("applies opacity class when refreshing", () => {
       const { container } = render(
-        <AgendaColumn {...defaultProps} isRefreshing={true} />,
+        <ScheduleColumn {...defaultProps} isRefreshing={true} />,
       );
 
       const columnDiv = container.firstChild as HTMLElement;
@@ -165,7 +165,7 @@ describe("AgendaColumn", () => {
     });
 
     it("does not show refreshing overlay when isRefreshing is false", () => {
-      render(<AgendaColumn {...defaultProps} isRefreshing={false} />);
+      render(<ScheduleColumn {...defaultProps} isRefreshing={false} />);
 
       const spinners = screen.queryAllByTestId("spinner");
       const overlaySpinners = spinners.filter(
@@ -173,13 +173,13 @@ describe("AgendaColumn", () => {
       );
       expect(overlaySpinners).toHaveLength(0);
       expect(
-        screen.queryByText(AGENDA_COLUMN_MESSAGES.refreshing),
+        screen.queryByText(SCHEDULE_COLUMN_MESSAGES.refreshing),
       ).not.toBeInTheDocument();
     });
 
     it("does not apply opacity class when not refreshing", () => {
       const { container } = render(
-        <AgendaColumn {...defaultProps} isRefreshing={false} />,
+        <ScheduleColumn {...defaultProps} isRefreshing={false} />,
       );
 
       const columnDiv = container.firstChild as HTMLElement;
@@ -187,41 +187,41 @@ describe("AgendaColumn", () => {
     });
   });
 
-  describe("Agenda Items Display", () => {
-    it("displays agenda item date correctly", () => {
-      render(<AgendaColumn {...defaultProps} />);
+  describe("Schedule Items Display", () => {
+    it("displays schedule item date correctly", () => {
+      render(<ScheduleColumn {...defaultProps} />);
 
       expect(screen.getByText("Formatted 2024-01-15")).toBeInTheDocument();
     });
 
     it("displays patient count correctly - singular", () => {
       const singlePatientItem = {
-        ...defaultAgendaItem,
+        ...defaultScheduleItem,
         patients: [mockPatient1],
       };
       render(
-        <AgendaColumn {...defaultProps} agendaItems={[singlePatientItem]} />,
+        <ScheduleColumn {...defaultProps} scheduleItems={[singlePatientItem]} />,
       );
 
       expect(screen.getByText("1 patient scheduled")).toBeInTheDocument();
     });
 
     it("displays patient count correctly - plural", () => {
-      render(<AgendaColumn {...defaultProps} />);
+      render(<ScheduleColumn {...defaultProps} />);
 
       expect(screen.getByText("2 patients scheduled")).toBeInTheDocument();
     });
 
     it("shows collapsed state by default", () => {
-      render(<AgendaColumn {...defaultProps} />);
+      render(<ScheduleColumn {...defaultProps} />);
 
       const expandButton = rowExpandButtons()[0];
       expect(expandButton).toBeInTheDocument();
       expect(screen.queryByText("John Smith")).not.toBeInTheDocument();
     });
 
-    it("shows expanded state when openAgendaIdx matches", () => {
-      render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
+    it("shows expanded state when openScheduleIdx matches", () => {
+      render(<ScheduleColumn {...defaultProps} openScheduleIdx={[0]} />);
 
       expect(screen.getByText("John Smith")).toBeInTheDocument();
       expect(screen.getByText("Emily Williams")).toBeInTheDocument();
@@ -229,39 +229,39 @@ describe("AgendaColumn", () => {
   });
 
   describe("Interactive Behavior", () => {
-    it("calls setOpenAgendaIdx with index appended when agenda row is expanded", () => {
-      const setOpenAgendaIdxMock = jest.fn();
+    it("calls setOpenScheduleIdx with index appended when schedule row is expanded", () => {
+      const setOpenScheduleIdxMock = jest.fn();
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          setOpenAgendaIdx={setOpenAgendaIdxMock}
+          setOpenScheduleIdx={setOpenScheduleIdxMock}
         />,
       );
 
       fireEvent.click(rowExpandButtons()[0]);
 
-      expect(setOpenAgendaIdxMock).toHaveBeenCalledWith([0]);
+      expect(setOpenScheduleIdxMock).toHaveBeenCalledWith([0]);
     });
 
-    it("calls setOpenAgendaIdx with index removed when expanded row is collapsed", () => {
-      const setOpenAgendaIdxMock = jest.fn();
+    it("calls setOpenScheduleIdx with index removed when expanded row is collapsed", () => {
+      const setOpenScheduleIdxMock = jest.fn();
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          openAgendaIdx={[0]}
-          setOpenAgendaIdx={setOpenAgendaIdxMock}
+          openScheduleIdx={[0]}
+          setOpenScheduleIdx={setOpenScheduleIdxMock}
         />,
       );
 
       const collapseButton = screen.getByRole("button", { expanded: true });
       fireEvent.click(collapseButton);
 
-      expect(setOpenAgendaIdxMock).toHaveBeenCalledWith([]);
+      expect(setOpenScheduleIdxMock).toHaveBeenCalledWith([]);
     });
 
     it("shows rotate arrow when expanded", () => {
       const { container } = render(
-        <AgendaColumn {...defaultProps} openAgendaIdx={[0]} />,
+        <ScheduleColumn {...defaultProps} openScheduleIdx={[0]} />,
       );
 
       const arrow = container.querySelector(".rotate-90");
@@ -270,7 +270,7 @@ describe("AgendaColumn", () => {
 
     it("does not show rotate arrow when collapsed", () => {
       const { container } = render(
-        <AgendaColumn {...defaultProps} openAgendaIdx={[]} />,
+        <ScheduleColumn {...defaultProps} openScheduleIdx={[]} />,
       );
 
       const arrow = container.querySelector(".rotate-90");
@@ -280,7 +280,7 @@ describe("AgendaColumn", () => {
 
   describe("Patient List Display", () => {
     beforeEach(() => {
-      render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
+      render(<ScheduleColumn {...defaultProps} openScheduleIdx={[0]} />);
     });
 
     it("displays patient names when expanded", () => {
@@ -315,12 +315,12 @@ describe("AgendaColumn", () => {
         ],
       };
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
           title="Treatments"
           columnType="physiotherapy"
-          agendaItems={[physiotherapyItem]}
-          openAgendaIdx={[0]}
+          scheduleItems={[physiotherapyItem]}
+          openScheduleIdx={[0]}
         />,
       );
 
@@ -333,7 +333,7 @@ describe("AgendaColumn", () => {
 
   describe("Manage / cancellation flow", () => {
     it("calls openCancellation when Manage is clicked for scheduled rows", () => {
-      render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
+      render(<ScheduleColumn {...defaultProps} openScheduleIdx={[0]} />);
 
       const manageButtons = screen.getAllByRole("button", {
         name: "Manage appointment",
@@ -353,10 +353,10 @@ describe("AgendaColumn", () => {
         attendanceStatus: AttendanceStatus.COMPLETED,
       };
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          agendaItems={[{ date: "2024-01-15", patients: [completedPatient] }]}
-          openAgendaIdx={[0]}
+          scheduleItems={[{ date: "2024-01-15", patients: [completedPatient] }]}
+          openScheduleIdx={[0]}
         />,
       );
 
@@ -367,20 +367,20 @@ describe("AgendaColumn", () => {
   });
 
   describe("Loading State", () => {
-    it("shows loading spinner when isLoading is true and no agenda items", () => {
+    it("shows loading spinner when isLoading is true and no schedule items", () => {
       render(
-        <AgendaColumn {...defaultProps} agendaItems={[]} isLoading={true} />,
+        <ScheduleColumn {...defaultProps} scheduleItems={[]} isLoading={true} />,
       );
 
       expect(screen.getByTestId("spinner")).toBeInTheDocument();
       expect(
-        screen.getByText(AGENDA_COLUMN_MESSAGES.loading),
+        screen.getByText(SCHEDULE_COLUMN_MESSAGES.loading),
       ).toBeInTheDocument();
     });
 
     it("shows loading spinner with correct props", () => {
       render(
-        <AgendaColumn {...defaultProps} agendaItems={[]} isLoading={true} />,
+        <ScheduleColumn {...defaultProps} scheduleItems={[]} isLoading={true} />,
       );
 
       const spinner = screen.getByTestId("spinner");
@@ -392,48 +392,48 @@ describe("AgendaColumn", () => {
   describe("Empty State", () => {
     it("shows assessment empty message when no items and columnType is assessment", () => {
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          agendaItems={[]}
+          scheduleItems={[]}
           columnType="assessment"
         />,
       );
 
       expect(
-        screen.getByText(AGENDA_COLUMN_MESSAGES.emptyAssessment),
+        screen.getByText(SCHEDULE_COLUMN_MESSAGES.emptyAssessment),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(AGENDA_COLUMN_MESSAGES.emptyHint),
+        screen.getByText(SCHEDULE_COLUMN_MESSAGES.emptyHint),
       ).toBeInTheDocument();
     });
 
     it("shows physiotherapy empty message when no items and columnType is physiotherapy", () => {
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          agendaItems={[]}
+          scheduleItems={[]}
           columnType="physiotherapy"
         />,
       );
 
       expect(
-        screen.getByText(AGENDA_COLUMN_MESSAGES.emptyPhysiotherapy),
+        screen.getByText(SCHEDULE_COLUMN_MESSAGES.emptyPhysiotherapy),
       ).toBeInTheDocument();
       expect(
-        screen.getByText(AGENDA_COLUMN_MESSAGES.emptyHint),
+        screen.getByText(SCHEDULE_COLUMN_MESSAGES.emptyHint),
       ).toBeInTheDocument();
     });
   });
 
-  describe("Multiple Agenda Items", () => {
+  describe("Multiple Schedule Items", () => {
     const multipleItems = [
-      defaultAgendaItem,
+      defaultScheduleItem,
       { date: "2024-01-16", patients: [mockPatient1] },
       { date: "2024-01-17", patients: [mockPatient2] },
     ];
 
     it("renders one expand-all control and one row toggle per date", () => {
-      render(<AgendaColumn {...defaultProps} agendaItems={multipleItems} />);
+      render(<ScheduleColumn {...defaultProps} scheduleItems={multipleItems} />);
 
       expect(
         screen.getByRole("button", {
@@ -443,67 +443,67 @@ describe("AgendaColumn", () => {
       expect(rowExpandButtons()).toHaveLength(3);
     });
 
-    it("handles opening different agenda items independently", () => {
-      const setOpenAgendaIdxMock = jest.fn();
+    it("handles opening different schedule items independently", () => {
+      const setOpenScheduleIdxMock = jest.fn();
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          agendaItems={multipleItems}
-          setOpenAgendaIdx={setOpenAgendaIdxMock}
+          scheduleItems={multipleItems}
+          setOpenScheduleIdx={setOpenScheduleIdxMock}
         />,
       );
 
       fireEvent.click(rowExpandButtons()[1]);
 
-      expect(setOpenAgendaIdxMock).toHaveBeenCalledWith([1]);
+      expect(setOpenScheduleIdxMock).toHaveBeenCalledWith([1]);
     });
 
     it("shows correct styling for open vs closed items", () => {
       const { container } = render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          agendaItems={multipleItems}
-          openAgendaIdx={[1]}
+          scheduleItems={multipleItems}
+          openScheduleIdx={[1]}
         />,
       );
 
-      const agendaBlocks = container.querySelectorAll(
+      const scheduleBlocks = container.querySelectorAll(
         ".mb-4.border.border-gray-200.rounded-lg.shadow-sm",
       );
-      expect(agendaBlocks[0]).toHaveClass("bg-white");
-      expect(agendaBlocks[1]).toHaveClass("bg-gray-100");
-      expect(agendaBlocks[2]).toHaveClass("bg-white");
+      expect(scheduleBlocks[0]).toHaveClass("bg-white");
+      expect(scheduleBlocks[1]).toHaveClass("bg-gray-100");
+      expect(scheduleBlocks[2]).toHaveClass("bg-white");
     });
   });
 
   describe("Accessibility", () => {
     it("has proper ARIA attributes for expandable content", () => {
-      render(<AgendaColumn {...defaultProps} />);
+      render(<ScheduleColumn {...defaultProps} />);
 
       const button = rowExpandButtons()[0];
       expect(button).toHaveAttribute("aria-expanded", "false");
       expect(button).toHaveAttribute(
         "aria-controls",
-        "agenda-patients-assessment-0",
+        "schedule-patients-assessment-0",
       );
     });
 
     it("updates ARIA attributes when expanded", () => {
-      render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
+      render(<ScheduleColumn {...defaultProps} openScheduleIdx={[0]} />);
 
       const expandButton = screen.getByRole("button", { expanded: true });
       expect(expandButton).toHaveAttribute("aria-expanded", "true");
     });
 
     it("has proper id for controlled content", () => {
-      render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
+      render(<ScheduleColumn {...defaultProps} openScheduleIdx={[0]} />);
 
-      const content = document.getElementById("agenda-patients-assessment-0");
+      const content = document.getElementById("schedule-patients-assessment-0");
       expect(content).toBeInTheDocument();
     });
 
     it("has aria-label for Manage buttons", () => {
-      render(<AgendaColumn {...defaultProps} openAgendaIdx={[0]} />);
+      render(<ScheduleColumn {...defaultProps} openScheduleIdx={[0]} />);
 
       const manageButtons = screen.getAllByLabelText("Manage appointment");
       expect(manageButtons).toHaveLength(2);
@@ -512,12 +512,12 @@ describe("AgendaColumn", () => {
 
   describe("Edge Cases", () => {
     it("handles empty patients array", () => {
-      const emptyAgenda = { date: "2024-01-15", patients: [] };
+      const emptySchedule = { date: "2024-01-15", patients: [] };
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          agendaItems={[emptyAgenda]}
-          openAgendaIdx={[0]}
+          scheduleItems={[emptySchedule]}
+          openScheduleIdx={[0]}
         />,
       );
 
@@ -532,16 +532,16 @@ describe("AgendaColumn", () => {
         ...mockPatient1,
         attendanceType: undefined as unknown as AttendanceType,
       };
-      const agendaWithoutType = {
-        ...defaultAgendaItem,
+      const scheduleWithoutType = {
+        ...defaultScheduleItem,
         patients: [patientWithoutType],
       };
 
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          agendaItems={[agendaWithoutType]}
-          openAgendaIdx={[0]}
+          scheduleItems={[scheduleWithoutType]}
+          openScheduleIdx={[0]}
         />,
       );
 
@@ -556,16 +556,16 @@ describe("AgendaColumn", () => {
         ...mockPatient1,
         name: "John Smith Miller Williams Taylor Davis",
       };
-      const agendaWithLongName = {
-        ...defaultAgendaItem,
+      const scheduleWithLongName = {
+        ...defaultScheduleItem,
         patients: [longNamePatient],
       };
 
       render(
-        <AgendaColumn
+        <ScheduleColumn
           {...defaultProps}
-          agendaItems={[agendaWithLongName]}
-          openAgendaIdx={[0]}
+          scheduleItems={[scheduleWithLongName]}
+          openScheduleIdx={[0]}
         />,
       );
 

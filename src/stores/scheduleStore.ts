@@ -1,8 +1,8 @@
 /**
- * Agenda Store - Zustand
+ * Schedule Store - Zustand
  *
  * Manages calendar and scheduling UI state that was previously
- * mixed with server state in AgendaContext.
+ * mixed with server state in ScheduleContext.
  */
 
 import { create } from 'zustand';
@@ -10,12 +10,12 @@ import { devtools, persist } from 'zustand/middleware';
 import { AttendanceStatus } from '@/api/types';
 import { AttendanceType } from '@/types/types';
 
-export const AGENDA_DAY_WINDOW_OPTIONS = [1, 7, 15, 30, 60, 90] as const;
-export type AgendaDayWindowDays = (typeof AGENDA_DAY_WINDOW_OPTIONS)[number];
+export const SCHEDULE_DAY_WINDOW_OPTIONS = [1, 7, 15, 30, 60, 90] as const;
+export type ScheduleDayWindowDays = (typeof SCHEDULE_DAY_WINDOW_OPTIONS)[number];
 
-const ALLOWED_DAY_WINDOWS = new Set<number>(AGENDA_DAY_WINDOW_OPTIONS);
+const ALLOWED_DAY_WINDOWS = new Set<number>(SCHEDULE_DAY_WINDOW_OPTIONS);
 
-export const defaultAgendaCalendarStatusFilters = (): AttendanceStatus[] => [
+export const defaultScheduleCalendarStatusFilters = (): AttendanceStatus[] => [
   AttendanceStatus.SCHEDULED,
   AttendanceStatus.CHECKED_IN,
   AttendanceStatus.IN_PROGRESS,
@@ -30,7 +30,7 @@ interface ConfirmRemoveState {
   attendanceIds: number[]; // Changed from single attendanceId to array
 }
 
-export interface AgendaStore {
+export interface ScheduleStore {
   // UI State
   selectedDate: Date;
   selectedTimeSlot: string | null;
@@ -51,9 +51,9 @@ export interface AgendaStore {
   // Calendar-specific state
   selectedDateString: string;
   /** Forward-only window length in days from selected date (inclusive). */
-  agendaDayWindowDays: AgendaDayWindowDays;
+  scheduleDayWindowDays: ScheduleDayWindowDays;
   /** Empty array = request all statuses on the API. */
-  agendaStatusFilters: AttendanceStatus[];
+  scheduleStatusFilters: AttendanceStatus[];
   patientFilter: string;
   confirmRemove: ConfirmRemoveState | null;
   showNewAttendance: boolean;
@@ -82,8 +82,8 @@ export interface AgendaStore {
 
   // Calendar-specific actions
   setSelectedDateString: (date: string) => void;
-  setAgendaDayWindowDays: (days: AgendaDayWindowDays) => void;
-  setAgendaStatusFilters: (filters: AttendanceStatus[]) => void;
+  setScheduleDayWindowDays: (days: ScheduleDayWindowDays) => void;
+  setScheduleStatusFilters: (filters: AttendanceStatus[]) => void;
   setPatientFilter: (filter: string) => void;
   setConfirmRemove: (confirmRemove: ConfirmRemoveState | null) => void;
   setShowNewAttendance: (show: boolean) => void;
@@ -107,8 +107,8 @@ const initialState = {
   isProcessingSchedule: false,
   // Calendar-specific defaults
   selectedDateString: '',
-  agendaDayWindowDays: 30 as AgendaDayWindowDays,
-  agendaStatusFilters: defaultAgendaCalendarStatusFilters(),
+  scheduleDayWindowDays: 30 as ScheduleDayWindowDays,
+  scheduleStatusFilters: defaultScheduleCalendarStatusFilters(),
   patientFilter: '',
   confirmRemove: null,
   showNewAttendance: false,
@@ -116,7 +116,7 @@ const initialState = {
   openPhysiotherapyIdx: [],
 };
 
-export const useAgendaStore = create<AgendaStore>()(
+export const useScheduleStore = create<ScheduleStore>()(
   devtools(
     persist(
       (set) => ({
@@ -220,19 +220,19 @@ export const useAgendaStore = create<AgendaStore>()(
         setSelectedDateString: (selectedDateString: string) =>
           set({ selectedDateString }, false, 'setSelectedDateString'),
 
-        setAgendaDayWindowDays: (agendaDayWindowDays: AgendaDayWindowDays) =>
+        setScheduleDayWindowDays: (scheduleDayWindowDays: ScheduleDayWindowDays) =>
           set(
             {
-              agendaDayWindowDays: ALLOWED_DAY_WINDOWS.has(agendaDayWindowDays)
-                ? agendaDayWindowDays
-                : (30 as AgendaDayWindowDays),
+              scheduleDayWindowDays: ALLOWED_DAY_WINDOWS.has(scheduleDayWindowDays)
+                ? scheduleDayWindowDays
+                : (30 as ScheduleDayWindowDays),
             },
             false,
-            'setAgendaDayWindowDays',
+            'setScheduleDayWindowDays',
           ),
 
-        setAgendaStatusFilters: (agendaStatusFilters: AttendanceStatus[]) =>
-          set({ agendaStatusFilters }, false, 'setAgendaStatusFilters'),
+        setScheduleStatusFilters: (scheduleStatusFilters: AttendanceStatus[]) =>
+          set({ scheduleStatusFilters }, false, 'setScheduleStatusFilters'),
 
         setPatientFilter: (patientFilter: string) =>
           set({ patientFilter }, false, 'setPatientFilter'),
@@ -254,22 +254,22 @@ export const useAgendaStore = create<AgendaStore>()(
           set(
             {
               ...initialState,
-              agendaStatusFilters: defaultAgendaCalendarStatusFilters(),
+              scheduleStatusFilters: defaultScheduleCalendarStatusFilters(),
             },
             false,
             'resetState',
           ),
       }),
       {
-        name: 'hms-frontend-agenda-calendar-ui',
+        name: 'hms-frontend-schedule-calendar-ui',
         partialize: (state) => ({
-          agendaDayWindowDays: state.agendaDayWindowDays,
-          agendaStatusFilters: state.agendaStatusFilters,
+          scheduleDayWindowDays: state.scheduleDayWindowDays,
+          scheduleStatusFilters: state.scheduleStatusFilters,
         }),
       },
     ),
     {
-      name: 'agenda-store',
+      name: 'schedule-store',
     },
   ),
 );

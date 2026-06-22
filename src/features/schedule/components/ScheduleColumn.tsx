@@ -3,11 +3,11 @@ import AttendanceTypeTag from "@/features/attendance/components/Cards/Attendance
 import { AttendanceType } from "@/types/types";
 import { AttendanceStatus } from "@/api/types";
 import Spinner from "@/components/common/Spinner";
-import AgendaDateHeader from "./AgendaDateHeader";
+import ScheduleDateHeader from "./ScheduleDateHeader";
 import { useOpenCancellation } from "@/stores/modalStore";
-import AgendaAttendanceStatusIcon from "./AgendaAttendanceStatusIcon";
+import ScheduleAttendanceStatusIcon from "./ScheduleAttendanceStatusIcon";
 import { Button } from "@/components/ui";
-import { AGENDA_COLUMN_MESSAGES } from "../utils/agendaFilterConstants";
+import { SCHEDULE_COLUMN_MESSAGES } from "../utils/scheduleFilterConstants";
 
 interface Patient {
   id: string;
@@ -28,16 +28,16 @@ interface PatientWithTreatmentsCounts {
   tens: number;
 }
 
-interface AgendaItem {
+interface ScheduleItem {
   date: string; // YYYY-MM-DD format
   patients: Patient[];
 }
 
-interface AgendaColumnProps {
+interface ScheduleColumnProps {
   title: string;
-  agendaItems: AgendaItem[];
-  openAgendaIdx: number[];
-  setOpenAgendaIdx: (indices: number[]) => void;
+  scheduleItems: ScheduleItem[];
+  openScheduleIdx: number[];
+  setOpenScheduleIdx: (indices: number[]) => void;
   columnType: "assessment" | "physiotherapy";
   isLoading?: boolean;
   isRefreshing?: boolean;
@@ -54,21 +54,21 @@ function patientNameTextClass(status: AttendanceStatus): string {
   return "font-medium text-gray-800 line-clamp-2";
 }
 
-const AgendaColumn: React.FC<AgendaColumnProps> = ({
+const ScheduleColumn: React.FC<ScheduleColumnProps> = ({
   title,
-  agendaItems,
-  openAgendaIdx,
-  setOpenAgendaIdx,
+  scheduleItems,
+  openScheduleIdx,
+  setOpenScheduleIdx,
   columnType,
   isLoading = false,
   isRefreshing = false,
 }) => {
   const openCancellation = useOpenCancellation();
-  const allIndices = agendaItems.map((_, idx) => idx);
+  const allIndices = scheduleItems.map((_, idx) => idx);
   const allExpanded =
-    agendaItems.length > 0 && openAgendaIdx.length === agendaItems.length;
+    scheduleItems.length > 0 && openScheduleIdx.length === scheduleItems.length;
   const handleToggleAll = () => {
-    setOpenAgendaIdx(allExpanded ? [] : allIndices);
+    setOpenScheduleIdx(allExpanded ? [] : allIndices);
   };
 
   const getPatientsWithTreatmentsCounts = (patients: Patient[]) => {
@@ -119,7 +119,7 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
         <div className="absolute inset-0 bg-white/60 flex items-center justify-center rounded-lg z-10">
           <div className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg shadow-md border">
             <Spinner size="sm" className="text-blue-500" />
-            <span className="text-sm text-gray-600">{AGENDA_COLUMN_MESSAGES.refreshing}</span>
+            <span className="text-sm text-gray-600">{SCHEDULE_COLUMN_MESSAGES.refreshing}</span>
           </div>
         </div>
       )}
@@ -129,11 +129,11 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
           <div className="min-w-0">
             <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
             <p className="mt-1 text-sm text-gray-600">
-              {agendaItems.length} date{agendaItems.length !== 1 ? "s" : ""}{" "}
+              {scheduleItems.length} date{scheduleItems.length !== 1 ? "s" : ""}{" "}
               with appointments
             </p>
           </div>
-          {agendaItems.length > 0 && (
+          {scheduleItems.length > 0 && (
             <Button
               variant="outline"
               size="sm"
@@ -151,9 +151,9 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
         </div>
       </div>
 
-      {agendaItems.length > 0 ? (
-        agendaItems.map(({ date, patients }, idx: number) => {
-          const isExpanded = openAgendaIdx.includes(idx);
+      {scheduleItems.length > 0 ? (
+        scheduleItems.map(({ date, patients }, idx: number) => {
+          const isExpanded = openScheduleIdx.includes(idx);
           const patientsWithTreatmentsCounts =
             getPatientsWithTreatmentsCounts(patients);
 
@@ -169,18 +169,18 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
                 className="h-auto min-h-[44px] w-full justify-between rounded-t-lg p-4 text-gray-800 hover:bg-gray-50"
                 onClick={() => {
                   if (isExpanded) {
-                    setOpenAgendaIdx(
-                      openAgendaIdx.filter((openIdx) => openIdx !== idx),
+                    setOpenScheduleIdx(
+                      openScheduleIdx.filter((openIdx) => openIdx !== idx),
                     );
                     return;
                   }
-                  setOpenAgendaIdx([...openAgendaIdx, idx]);
+                  setOpenScheduleIdx([...openScheduleIdx, idx]);
                 }}
                 aria-expanded={isExpanded}
-                aria-controls={`agenda-patients-${columnType}-${idx}`}
+                aria-controls={`schedule-patients-${columnType}-${idx}`}
               >
                 <span className="text-left w-full">
-                  <AgendaDateHeader date={date} />
+                  <ScheduleDateHeader date={date} />
                   <div className="text-sm text-gray-600 mt-1">
                     {patientsWithTreatmentsCounts.length} patient
                     {patientsWithTreatmentsCounts.length !== 1 ? "s" : ""}{" "}
@@ -199,7 +199,7 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
               </Button>
               {isExpanded && (
                 <div
-                  id={`agenda-patients-${columnType}-${idx}`}
+                  id={`schedule-patients-${columnType}-${idx}`}
                   className="p-4 pt-0 border-t border-gray-200 bg-gray-100"
                 >
                   <div className="space-y-2 mt-4">
@@ -216,7 +216,7 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
                           key={`${id}-${attendanceStatus}`}
                           className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-3 transition-all hover:shadow-sm sm:flex-row sm:items-center"
                         >
-                          <AgendaAttendanceStatusIcon
+                          <ScheduleAttendanceStatusIcon
                             status={attendanceStatus}
                             className="shrink-0"
                           />
@@ -266,18 +266,18 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
         <div className="text-center py-8 text-gray-500 bg-white border border-gray-200 rounded-lg">
           <div className="flex flex-col items-center justify-center">
             <Spinner size="md" className="text-blue-500 mb-3" />
-            <div className="text-sm">{AGENDA_COLUMN_MESSAGES.loading}</div>
+            <div className="text-sm">{SCHEDULE_COLUMN_MESSAGES.loading}</div>
           </div>
         </div>
       ) : (
         <div className="text-center py-8 text-gray-500 bg-white border border-gray-200 rounded-lg">
           <div className="text-sm">
             {columnType === "assessment"
-              ? AGENDA_COLUMN_MESSAGES.emptyAssessment
-              : AGENDA_COLUMN_MESSAGES.emptyPhysiotherapy}
+              ? SCHEDULE_COLUMN_MESSAGES.emptyAssessment
+              : SCHEDULE_COLUMN_MESSAGES.emptyPhysiotherapy}
           </div>
           <div className="text-xs mt-1">
-            {AGENDA_COLUMN_MESSAGES.emptyHint}
+            {SCHEDULE_COLUMN_MESSAGES.emptyHint}
           </div>
         </div>
       )}
@@ -285,4 +285,4 @@ const AgendaColumn: React.FC<AgendaColumnProps> = ({
   );
 };
 
-export default AgendaColumn;
+export default ScheduleColumn;

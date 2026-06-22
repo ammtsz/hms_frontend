@@ -5,7 +5,7 @@ import type {
   CreateAttendanceRequest,
   UpdateAttendanceRequest,
   AttendanceResponseDto,
-  AttendanceAgendaDto,
+  AttendanceScheduleDto,
   NextAttendanceDateDto,
   ApiResponse
 } from '../types';
@@ -180,13 +180,13 @@ export const markAttendanceAsMissed = async (id: string, justified: boolean = fa
 };
 
 /**
- * Query key the agenda endpoint expects for status filters (one `status=` per value).
- * The TS filter field is {@link GetAttendancesForAgendaFilters.statuses}; the wire format
+ * Query key the schedule endpoint expects for status filters (one `status=` per value).
+ * The TS filter field is {@link GetAttendancesForScheduleFilters.statuses}; the wire format
  * stays `status` to match the backend (`@Query('status')`).
  */
-const AGENDA_STATUS_QUERY_KEY = 'status' as const;
+const SCHEDULE_STATUS_QUERY_KEY = 'status' as const;
 
-export interface GetAttendancesForAgendaFilters {
+export interface GetAttendancesForScheduleFilters {
   /**
    * Statuses to include. Each value is appended as the backend query key
    * `status` (repeated), not `statuses`. Omit or empty = all statuses.
@@ -199,14 +199,14 @@ export interface GetAttendancesForAgendaFilters {
 }
 
 // Optimized endpoints for specific use cases
-export const getAttendancesForAgenda = async (
-  filters?: GetAttendancesForAgendaFilters
-): Promise<ApiResponse<AttendanceAgendaDto[]>> => {
+export const getAttendancesForSchedule = async (
+  filters?: GetAttendancesForScheduleFilters
+): Promise<ApiResponse<AttendanceScheduleDto[]>> => {
   try {
     const params = new URLSearchParams();
     if (filters?.statuses?.length) {
       for (const s of filters.statuses) {
-        params.append(AGENDA_STATUS_QUERY_KEY, s);
+        params.append(SCHEDULE_STATUS_QUERY_KEY, s);
       }
     }
     if (filters?.type) params.append('type', filters.type);
@@ -220,7 +220,7 @@ export const getAttendancesForAgenda = async (
       params.append('to_date', filters.toDate);
     }
 
-    const url = `/attendances/agenda${params.toString() ? `?${params.toString()}` : ''}`;
+    const url = `/attendances/schedule${params.toString() ? `?${params.toString()}` : ''}`;
     const { data } = await api.get(url);
     return { success: true, value: data };
   } catch (error) {

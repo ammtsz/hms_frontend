@@ -393,7 +393,7 @@ describe('useAttendanceForm', () => {
       // The function should return true and make the expected calls
       expect(defaultMockContext.refreshCurrentDate).toHaveBeenCalled();
       expect(mockQueryClient.invalidateQueries).toHaveBeenCalledWith({
-        queryKey: ['agenda']
+        queryKey: ['schedule']
       });
     });
 

@@ -1,10 +1,10 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import AgendaCalendarFilters from "../components/AgendaCalendarFilters";
-import { AGENDA_FILTER_LABELS } from "../utils/agendaFilterConstants";
+import ScheduleCalendarFilters from "../components/ScheduleCalendarFilters";
+import { SCHEDULE_FILTER_LABELS } from "../utils/scheduleFilterConstants";
 import { AttendanceStatus } from "@/api/types";
-import type { AgendaDayWindowDays } from "@/stores";
+import type { ScheduleDayWindowDays } from "@/stores";
 
 jest.mock("@/utils/timezoneDate", () => ({
   ...jest.requireActual<typeof import("@/utils/timezoneDate")>(
@@ -13,20 +13,20 @@ jest.mock("@/utils/timezoneDate", () => ({
   getTodayClinic: jest.fn(() => "2026-03-23"),
 }));
 
-describe("AgendaCalendarFilters", () => {
+describe("ScheduleCalendarFilters", () => {
   const defaultProps = {
     selectedDate: "2026-03-20",
     setSelectedDate: jest.fn(),
-    agendaDayWindowDays: 7 as AgendaDayWindowDays,
-    setAgendaDayWindowDays: jest.fn(),
-    agendaStatusFilters: [
+    scheduleDayWindowDays: 7 as ScheduleDayWindowDays,
+    setScheduleDayWindowDays: jest.fn(),
+    scheduleStatusFilters: [
       AttendanceStatus.SCHEDULED,
       AttendanceStatus.COMPLETED,
     ] as AttendanceStatus[],
-    setAgendaStatusFilters: jest.fn(),
+    setScheduleStatusFilters: jest.fn(),
     patientFilter: "",
     setPatientFilter: jest.fn(),
-    refreshAgenda: jest.fn(),
+    refreshSchedule: jest.fn(),
     isRefreshing: false,
     rangeSummaryText: "Period: 03/20/2026 — 03/26/2026 (7 days)",
   };
@@ -36,19 +36,19 @@ describe("AgendaCalendarFilters", () => {
   });
 
   it("renders range summary and filter labels", () => {
-    render(<AgendaCalendarFilters {...defaultProps} />);
+    render(<ScheduleCalendarFilters {...defaultProps} />);
 
     expect(screen.getByText(defaultProps.rangeSummaryText)).toBeInTheDocument();
     expect(
       screen.getByLabelText("Select a date to filter"),
     ).toBeInTheDocument();
-    expect(screen.getByText(AGENDA_FILTER_LABELS.attendanceStatus)).toBeInTheDocument();
-    expect(screen.getByText(AGENDA_FILTER_LABELS.legend)).toBeInTheDocument();
+    expect(screen.getByText(SCHEDULE_FILTER_LABELS.attendanceStatus)).toBeInTheDocument();
+    expect(screen.getByText(SCHEDULE_FILTER_LABELS.legend)).toBeInTheDocument();
   });
 
   it("calls setSelectedDate with today when Today is clicked", () => {
     render(
-      <AgendaCalendarFilters {...defaultProps} selectedDate="2026-03-01" />,
+      <ScheduleCalendarFilters {...defaultProps} selectedDate="2026-03-01" />,
     );
 
     fireEvent.click(screen.getByRole("button", { name: "Today" }));
@@ -58,7 +58,7 @@ describe("AgendaCalendarFilters", () => {
 
   it("does not call setSelectedDate for draft-only date input changes", () => {
     jest.useFakeTimers();
-    render(<AgendaCalendarFilters {...defaultProps} />);
+    render(<ScheduleCalendarFilters {...defaultProps} />);
 
     const dateInput = screen.getByLabelText("Select a date to filter");
     fireEvent.change(dateInput, { target: { value: "2026-03-25" } });
@@ -68,7 +68,7 @@ describe("AgendaCalendarFilters", () => {
   });
 
   it("calls setSelectedDate when date is committed via blur after typing", () => {
-    render(<AgendaCalendarFilters {...defaultProps} />);
+    render(<ScheduleCalendarFilters {...defaultProps} />);
 
     const dateInput = screen.getByLabelText("Select a date to filter");
     fireEvent.change(dateInput, { target: { value: "2026-03-25" } });
@@ -78,30 +78,30 @@ describe("AgendaCalendarFilters", () => {
     expect(defaultProps.setSelectedDate).toHaveBeenCalledWith("2026-03-25");
   });
 
-  it("calls refreshAgenda when Refresh is clicked", () => {
-    render(<AgendaCalendarFilters {...defaultProps} />);
+  it("calls refreshSchedule when Refresh is clicked", () => {
+    render(<ScheduleCalendarFilters {...defaultProps} />);
 
     fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
 
-    expect(defaultProps.refreshAgenda).toHaveBeenCalledTimes(1);
+    expect(defaultProps.refreshSchedule).toHaveBeenCalledTimes(1);
   });
 
   it("shows empty-status warning when no status filters are selected", () => {
     render(
-      <AgendaCalendarFilters {...defaultProps} agendaStatusFilters={[]} />,
+      <ScheduleCalendarFilters {...defaultProps} scheduleStatusFilters={[]} />,
     );
 
-    expect(screen.getByText(AGENDA_FILTER_LABELS.noStatusSelected)).toBeInTheDocument();
+    expect(screen.getByText(SCHEDULE_FILTER_LABELS.noStatusSelected)).toBeInTheDocument();
   });
 
   it("toggles a status checkbox and updates filters", () => {
-    render(<AgendaCalendarFilters {...defaultProps} />);
+    render(<ScheduleCalendarFilters {...defaultProps} />);
 
     const scheduledCheckbox = screen.getByRole("checkbox", {
       name: /Scheduled/i,
     });
     fireEvent.click(scheduledCheckbox);
 
-    expect(defaultProps.setAgendaStatusFilters).toHaveBeenCalled();
+    expect(defaultProps.setScheduleStatusFilters).toHaveBeenCalled();
   });
 });

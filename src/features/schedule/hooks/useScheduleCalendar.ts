@@ -1,78 +1,78 @@
 import { useEffect, useMemo, useState } from "react";
-import { useAgenda, useRefreshAgenda } from "@/api/query/hooks/useAgendaQueries";
+import { useSchedule, useRefreshSchedule } from "@/api/query/hooks/useScheduleQueries";
 import { addCalendarDaysToLocalYmd, getTodayClinic, isValidDateString } from "@/utils/timezoneDate";
 import {
   useSelectedDateString,
-  useAgendaDayWindowDays,
-  useAgendaStatusFilters,
+  useScheduleDayWindowDays,
+  useScheduleStatusFilters,
   usePatientFilter,
   useShowNewAttendance,
   useOpenAssessmentIdx,
   useOpenPhysiotherapyIdx,
   useSetSelectedDateString,
-  useSetAgendaDayWindowDays,
-  useSetAgendaStatusFilters,
+  useSetScheduleDayWindowDays,
+  useSetScheduleStatusFilters,
   useSetPatientFilter,
   useSetShowNewAttendance,
   useSetOpenAssessmentIdx,
   useSetOpenPhysiotherapyIdx,
 } from "@/stores";
 import { formatDisplayDate } from "@/utils/dateUtils";
-import type { AgendaItem } from "@/types/types";
+import type { ScheduleItem } from "@/types/types";
 
-export function useAgendaCalendar() {
+export function useScheduleCalendar() {
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const selectedDate = useSelectedDateString();
-  const agendaDayWindowDays = useAgendaDayWindowDays();
-  const agendaStatusFilters = useAgendaStatusFilters();
+  const scheduleDayWindowDays = useScheduleDayWindowDays();
+  const scheduleStatusFilters = useScheduleStatusFilters();
   const patientFilter = usePatientFilter();
   const showNewAttendance = useShowNewAttendance();
   const openAssessmentIdx = useOpenAssessmentIdx();
   const openPhysiotherapyIdx = useOpenPhysiotherapyIdx();
 
   const setSelectedDate = useSetSelectedDateString();
-  const setAgendaDayWindowDays = useSetAgendaDayWindowDays();
-  const setAgendaStatusFilters = useSetAgendaStatusFilters();
+  const setScheduleDayWindowDays = useSetScheduleDayWindowDays();
+  const setScheduleStatusFilters = useSetScheduleStatusFilters();
   const setPatientFilter = useSetPatientFilter();
   const setShowNewAttendance = useSetShowNewAttendance();
   const setOpenAssessmentIdx = useSetOpenAssessmentIdx();
   const setOpenPhysiotherapyIdx = useSetOpenPhysiotherapyIdx();
 
-  const refreshAgendaQuery = useRefreshAgenda();
+  const refreshScheduleQuery = useRefreshSchedule();
 
   const referenceDate = isValidDateString(selectedDate.trim())
     ? selectedDate.trim()
     : getTodayClinic();
   const rangeEndDate = useMemo(
-    () => addCalendarDaysToLocalYmd(referenceDate, agendaDayWindowDays - 1),
-    [referenceDate, agendaDayWindowDays],
+    () => addCalendarDaysToLocalYmd(referenceDate, scheduleDayWindowDays - 1),
+    [referenceDate, scheduleDayWindowDays],
   );
 
   const statusesForApi =
-    agendaStatusFilters.length > 0 ? agendaStatusFilters : undefined;
+    scheduleStatusFilters.length > 0 ? scheduleStatusFilters : undefined;
 
-  const { agenda, isLoading: loading, error } = useAgenda({
+  const { schedule, isLoading: loading, error } = useSchedule({
     fromDate: referenceDate,
     toDate: rangeEndDate,
     statuses: statusesForApi,
   });
 
-  const agendaStatusFiltersKey = agendaStatusFilters.join(",");
+  const scheduleStatusFiltersKey = scheduleStatusFilters.join(",");
 
   useEffect(() => {
     setOpenAssessmentIdx([]);
     setOpenPhysiotherapyIdx([]);
   }, [
     selectedDate,
-    agendaDayWindowDays,
-    agendaStatusFiltersKey,
+    scheduleDayWindowDays,
+    scheduleStatusFiltersKey,
     patientFilter,
     setOpenPhysiotherapyIdx,
     setOpenAssessmentIdx,
   ]);
 
-  const filteredAgenda = useMemo(() => {
+  const filteredSchedule = useMemo(() => {
     const normalizeText = (value: string): string =>
       value
         .normalize("NFD")
@@ -83,8 +83,8 @@ export function useAgendaCalendar() {
     const normalizedPatientFilter = normalizeText(patientFilter);
     const hasPatientFilter = normalizedPatientFilter.length > 0;
 
-    const applyFilters = (agendaItems: AgendaItem[]): AgendaItem[] =>
-      agendaItems
+    const applyFilters = (scheduleItems: ScheduleItem[]): ScheduleItem[] =>
+      scheduleItems
         .map((item) => ({
           ...item,
           patients: hasPatientFilter
@@ -96,38 +96,38 @@ export function useAgendaCalendar() {
         .filter((item) => item.patients.length > 0);
 
     return {
-      assessment: applyFilters(agenda.assessment),
-      physiotherapy: applyFilters(agenda.physiotherapy),
+      assessment: applyFilters(schedule.assessment),
+      physiotherapy: applyFilters(schedule.physiotherapy),
     };
-  }, [agenda.assessment, agenda.physiotherapy, patientFilter]);
+  }, [schedule.assessment, schedule.physiotherapy, patientFilter]);
 
   useEffect(() => {
     const validAssessmentIdx = openAssessmentIdx.filter(
-      (idx) => idx < filteredAgenda.assessment.length,
+      (idx) => idx < filteredSchedule.assessment.length,
     );
     if (validAssessmentIdx.length !== openAssessmentIdx.length) {
       setOpenAssessmentIdx(validAssessmentIdx);
     }
 
     const validPhysiotherapyIdx = openPhysiotherapyIdx.filter(
-      (idx) => idx < filteredAgenda.physiotherapy.length,
+      (idx) => idx < filteredSchedule.physiotherapy.length,
     );
     if (validPhysiotherapyIdx.length !== openPhysiotherapyIdx.length) {
       setOpenPhysiotherapyIdx(validPhysiotherapyIdx);
     }
   }, [
-    filteredAgenda.physiotherapy.length,
-    filteredAgenda.assessment.length,
+    filteredSchedule.physiotherapy.length,
+    filteredSchedule.assessment.length,
     openPhysiotherapyIdx,
     openAssessmentIdx,
     setOpenPhysiotherapyIdx,
     setOpenAssessmentIdx,
   ]);
 
-  const handleRefreshAgenda = async () => {
+  const handleRefreshSchedule = async () => {
     setIsRefreshing(true);
     try {
-      await refreshAgendaQuery();
+      await refreshScheduleQuery();
     } finally {
       setIsRefreshing(false);
     }
@@ -135,22 +135,22 @@ export function useAgendaCalendar() {
 
   const handleFormSuccess = () => {
     setShowNewAttendance(false);
-    handleRefreshAgenda();
+    handleRefreshSchedule();
   };
 
   const rangeSummaryText = useMemo(() => {
     const fromLabel = formatDisplayDate(referenceDate);
     const toLabel = formatDisplayDate(rangeEndDate);
-    return `Period: ${fromLabel} — ${toLabel} (${agendaDayWindowDays} day${agendaDayWindowDays !== 1 ? "s" : ""})`;
-  }, [referenceDate, rangeEndDate, agendaDayWindowDays]);
+    return `Period: ${fromLabel} — ${toLabel} (${scheduleDayWindowDays} day${scheduleDayWindowDays !== 1 ? "s" : ""})`;
+  }, [referenceDate, rangeEndDate, scheduleDayWindowDays]);
 
   return {
     selectedDate,
     setSelectedDate,
-    agendaDayWindowDays,
-    setAgendaDayWindowDays,
-    agendaStatusFilters,
-    setAgendaStatusFilters,
+    scheduleDayWindowDays,
+    setScheduleDayWindowDays,
+    scheduleStatusFilters,
+    setScheduleStatusFilters,
     patientFilter,
     setPatientFilter,
     showNewAttendance,
@@ -159,11 +159,11 @@ export function useAgendaCalendar() {
     setOpenAssessmentIdx,
     openPhysiotherapyIdx,
     setOpenPhysiotherapyIdx,
-    filteredAgenda,
+    filteredSchedule,
     handleFormSuccess,
     loading,
     error: error?.message || null,
-    refreshAgenda: handleRefreshAgenda,
+    refreshSchedule: handleRefreshSchedule,
     isRefreshing,
     rangeSummaryText,
     referenceDate,

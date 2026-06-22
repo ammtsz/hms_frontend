@@ -69,7 +69,7 @@ export interface AttendanceResponseDto {
 }
 
 // Optimized DTOs for specific use cases
-export interface AttendanceAgendaDto {
+export interface AttendanceScheduleDto {
   id: number;
   patientId: number;
   type: AttendanceType;

@@ -149,8 +149,8 @@ describe("useAttendanceBoardState", () => {
     mockUsePathname.mockReturnValue("/");
   });
 
-  it("should NOT redirect when used on a different page (e.g. agenda)", () => {
-    mockUsePathname.mockReturnValue("/agenda");
+  it("should NOT redirect when used on a different page (e.g. schedule)", () => {
+    mockUsePathname.mockReturnValue("/schedule");
 
     const { result, rerender } = renderHook(() => useAttendanceBoardState(), {
       wrapper: createWrapper,

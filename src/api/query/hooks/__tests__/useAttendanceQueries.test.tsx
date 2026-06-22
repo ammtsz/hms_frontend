@@ -778,9 +778,9 @@ describe("useAttendanceQueries", () => {
         queryKey: attendanceKeys.all,
       });
 
-      // Should also invalidate agenda queries
+      // Should also invalidate schedule queries
       expect(invalidateSpy).toHaveBeenCalledWith({
-        queryKey: ["agenda"],
+        queryKey: ["schedule"],
       });
     });
 

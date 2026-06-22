@@ -72,7 +72,7 @@ describe("LoginPage", () => {
 
   it("redirects to returnUrl when authenticated with returnUrl in query", () => {
     (useSearchParams as jest.Mock).mockReturnValue(
-      new URLSearchParams({ returnUrl: "/agenda" }),
+      new URLSearchParams({ returnUrl: "/schedule" }),
     );
     (useAuthContext as jest.Mock).mockReturnValue({
       isAuthenticated: true,
@@ -85,7 +85,7 @@ describe("LoginPage", () => {
 
     render(<LoginPage />, { wrapper });
 
-    expect(mockReplace).toHaveBeenCalledWith("/agenda");
+    expect(mockReplace).toHaveBeenCalledWith("/schedule");
   });
 
   it("redirects to /force-password-change when user must change password", () => {

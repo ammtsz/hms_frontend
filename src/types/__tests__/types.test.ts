@@ -7,8 +7,8 @@ import {
   AttendanceStatusDetail,
   AttendanceStatus,
   AttendanceByDate,
-  Agenda,
-  CalendarAgenda,
+  Schedule,
+  CalendarSchedule,
   Patient,
   PatientPriority,
   PatientStatus,
@@ -200,8 +200,8 @@ describe('Type System', () => {
       expect(attendanceByDate.physiotherapy).toHaveProperty('checkedIn');
     });
 
-    it('should create Agenda structure correctly', () => {
-      const agenda: Agenda = {
+    it('should create Schedule structure correctly', () => {
+      const schedule: Schedule = {
         assessment: [{
           date: "2025-01-15",
           patients: [{
@@ -217,12 +217,12 @@ describe('Type System', () => {
         combined: []
       };
       
-      expect(agenda.assessment).toHaveLength(1);
-      expect(agenda.assessment[0].patients[0].name).toBe("Patient 1");
+      expect(schedule.assessment).toHaveLength(1);
+      expect(schedule.assessment[0].patients[0].name).toBe("Patient 1");
     });
 
-    it('should create CalendarAgenda structure correctly', () => {
-      const calendarAgenda: CalendarAgenda = {
+    it('should create CalendarSchedule structure correctly', () => {
+      const calendarSchedule: CalendarSchedule = {
         assessment: [{
           date: "2025-01-15",
           patients: []
@@ -233,8 +233,8 @@ describe('Type System', () => {
         }]
       };
       
-      expect(calendarAgenda.assessment).toHaveLength(1);
-      expect(calendarAgenda.physiotherapy).toHaveLength(1);
+      expect(calendarSchedule.assessment).toHaveLength(1);
+      expect(calendarSchedule.physiotherapy).toHaveLength(1);
     });
   });
 });

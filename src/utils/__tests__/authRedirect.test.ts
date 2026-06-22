@@ -23,7 +23,7 @@ describe("authRedirect", () => {
     });
 
     it("returns decoded returnUrl when it is a safe relative path", () => {
-      expect(getSafeRedirectPath("/agenda", "/attendance")).toBe("/agenda");
+      expect(getSafeRedirectPath("/schedule", "/attendance")).toBe("/schedule");
       expect(getSafeRedirectPath("/patients", "/attendance")).toBe("/patients");
       expect(getSafeRedirectPath("/patients/1/edit", "/attendance")).toBe(
         "/patients/1/edit",
@@ -31,14 +31,14 @@ describe("authRedirect", () => {
     });
 
     it("decodes URL-encoded returnUrl", () => {
-      expect(getSafeRedirectPath("%2Fagenda", "/attendance")).toBe("/agenda");
+      expect(getSafeRedirectPath("%2Fschedule", "/attendance")).toBe("/schedule");
       expect(getSafeRedirectPath("%2Fpatients%2F1", "/attendance")).toBe(
         "/patients/1",
       );
     });
 
     it("trims whitespace from returnUrl", () => {
-      expect(getSafeRedirectPath("  /agenda  ", "/attendance")).toBe("/agenda");
+      expect(getSafeRedirectPath("  /schedule  ", "/attendance")).toBe("/schedule");
     });
 
     it("returns default path when returnUrl starts with // (protocol-relative)", () => {
@@ -48,7 +48,7 @@ describe("authRedirect", () => {
     });
 
     it("returns default path when returnUrl does not start with /", () => {
-      expect(getSafeRedirectPath("agenda", "/attendance")).toBe("/attendance");
+      expect(getSafeRedirectPath("schedule", "/attendance")).toBe("/attendance");
       expect(getSafeRedirectPath("https://evil.com/", "/attendance")).toBe(
         "/attendance",
       );
@@ -58,7 +58,7 @@ describe("authRedirect", () => {
       expect(getSafeRedirectPath(null, "/force-password-change")).toBe(
         "/force-password-change",
       );
-      expect(getSafeRedirectPath("/agenda", "/attendance")).toBe("/agenda");
+      expect(getSafeRedirectPath("/schedule", "/attendance")).toBe("/schedule");
     });
   });
 });

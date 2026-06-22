@@ -11,21 +11,21 @@ describe('stores/index', () => {
       expect(typeof storesIndex.useAttendanceStore).toBe('function');
     });
 
-    it('should export useAgendaStore', () => {
-      expect(storesIndex.useAgendaStore).toBeDefined();
-      expect(typeof storesIndex.useAgendaStore).toBe('function');
+    it('should export useScheduleStore', () => {
+      expect(storesIndex.useScheduleStore).toBeDefined();
+      expect(typeof storesIndex.useScheduleStore).toBe('function');
     });
 
-    it('should export agenda selectors', () => {
+    it('should export schedule selectors', () => {
       // State selectors
       expect(storesIndex.useSelectedDateString).toBeDefined();
       expect(typeof storesIndex.useSelectedDateString).toBe('function');
       
-      expect(storesIndex.useAgendaDayWindowDays).toBeDefined();
-      expect(typeof storesIndex.useAgendaDayWindowDays).toBe('function');
+      expect(storesIndex.useScheduleDayWindowDays).toBeDefined();
+      expect(typeof storesIndex.useScheduleDayWindowDays).toBe('function');
 
-      expect(storesIndex.useAgendaStatusFilters).toBeDefined();
-      expect(typeof storesIndex.useAgendaStatusFilters).toBe('function');
+      expect(storesIndex.useScheduleStatusFilters).toBeDefined();
+      expect(typeof storesIndex.useScheduleStatusFilters).toBe('function');
 
       expect(storesIndex.usePatientFilter).toBeDefined();
       expect(typeof storesIndex.usePatientFilter).toBe('function');
@@ -43,15 +43,15 @@ describe('stores/index', () => {
       expect(typeof storesIndex.useOpenPhysiotherapyIdx).toBe('function');
     });
 
-    it('should export agenda action selectors', () => {
+    it('should export schedule action selectors', () => {
       expect(storesIndex.useSetSelectedDateString).toBeDefined();
       expect(typeof storesIndex.useSetSelectedDateString).toBe('function');
       
-      expect(storesIndex.useSetAgendaDayWindowDays).toBeDefined();
-      expect(typeof storesIndex.useSetAgendaDayWindowDays).toBe('function');
+      expect(storesIndex.useSetScheduleDayWindowDays).toBeDefined();
+      expect(typeof storesIndex.useSetScheduleDayWindowDays).toBe('function');
 
-      expect(storesIndex.useSetAgendaStatusFilters).toBeDefined();
-      expect(typeof storesIndex.useSetAgendaStatusFilters).toBe('function');
+      expect(storesIndex.useSetScheduleStatusFilters).toBeDefined();
+      expect(typeof storesIndex.useSetScheduleStatusFilters).toBe('function');
 
       expect(storesIndex.useSetPatientFilter).toBeDefined();
       expect(typeof storesIndex.useSetPatientFilter).toBe('function');
@@ -68,8 +68,8 @@ describe('stores/index', () => {
       expect(storesIndex.useSetOpenPhysiotherapyIdx).toBeDefined();
       expect(typeof storesIndex.useSetOpenPhysiotherapyIdx).toBe('function');
       
-      expect(storesIndex.useAgendaActions).toBeDefined();
-      expect(typeof storesIndex.useAgendaActions).toBe('function');
+      expect(storesIndex.useScheduleActions).toBeDefined();
+      expect(typeof storesIndex.useScheduleActions).toBe('function');
     });
 
     it('should export attendance selectors', () => {
@@ -155,12 +155,12 @@ describe('stores/index', () => {
       const expectedExports = [
         // Core stores
         'useAttendanceStore',
-        'useAgendaStore',
+        'useScheduleStore',
         
         // Calendar selectors - state
         'useSelectedDateString',
-        'useAgendaDayWindowDays',
-        'useAgendaStatusFilters',
+        'useScheduleDayWindowDays',
+        'useScheduleStatusFilters',
         'usePatientFilter',
         'useConfirmRemove',
         'useShowNewAttendance',
@@ -169,14 +169,14 @@ describe('stores/index', () => {
         
         // Calendar selectors - actions
         'useSetSelectedDateString',
-        'useSetAgendaDayWindowDays',
-        'useSetAgendaStatusFilters',
+        'useSetScheduleDayWindowDays',
+        'useSetScheduleStatusFilters',
         'useSetPatientFilter',
         'useSetConfirmRemove',
         'useSetShowNewAttendance',
         'useSetOpenAssessmentIdx',
         'useSetOpenPhysiotherapyIdx',
-        'useAgendaActions',
+        'useScheduleActions',
         
         // Attendance selectors - composite
         'useAttendanceDateState',

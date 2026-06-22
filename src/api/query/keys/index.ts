@@ -12,5 +12,5 @@ export { priorityKeys } from '@/api/query/keys/priorityKeys';
 export { patientNotesKeys } from '@/api/query/keys/patientNotesKeys';
 export { noteCategoryKeys } from '@/api/query/keys/noteCategoryKeys';
 export { HOLIDAY_QUERY_KEYS } from '@/api/query/keys/holidayKeys';
-export { agendaKeys, type AgendaApiFilters } from '@/api/query/keys/agendaKeys';
+export { scheduleKeys, type ScheduleApiFilters } from '@/api/query/keys/scheduleKeys';
 export { appointmentsThresholdKeys } from '@/api/query/keys/appointmentsThresholdKeys';

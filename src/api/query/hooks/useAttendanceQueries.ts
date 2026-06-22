@@ -237,9 +237,9 @@ export function useCreateAttendance() {
         queryKey: attendanceKeys.nextDate()
       });
 
-      // Invalidate agenda queries so agenda page refreshes automatically
+      // Invalidate schedule queries so schedule page refreshes automatically
       queryClient.invalidateQueries({
-        queryKey: ['agenda']
+        queryKey: ['schedule']
       });
     },
     onError: (error) => {
@@ -275,9 +275,9 @@ export function useUpdateAttendance() {
         queryKey: attendanceKeys.all
       });
 
-      // Also invalidate agenda queries since attendance updates can affect agenda view
+      // Also invalidate schedule queries since attendance updates can affect schedule view
       queryClient.invalidateQueries({
-        queryKey: ['agenda']
+        queryKey: ['schedule']
       });
     },
     onError: (error) => {
@@ -365,9 +365,9 @@ export function useDeleteAttendance() {
         queryKey: attendanceKeys.all
       });
 
-      // Also invalidate agenda queries since deleting attendances affects agenda view
+      // Also invalidate schedule queries since deleting attendances affects schedule view
       queryClient.invalidateQueries({
-        queryKey: ['agenda']
+        queryKey: ['schedule']
       });
 
       invalidateAttendanceTreatmentCaches(queryClient);
@@ -399,9 +399,9 @@ export function usePostponeAttendance() {
         queryKey: attendanceKeys.all
       });
 
-      // Also invalidate agenda queries since postponing affects agenda view
+      // Also invalidate schedule queries since postponing affects schedule view
       queryClient.invalidateQueries({
-        queryKey: ['agenda']
+        queryKey: ['schedule']
       });
 
       invalidateAttendanceTreatmentCaches(queryClient);
@@ -549,7 +549,7 @@ export function useBulkCancelAttendances() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ['agenda']
+        queryKey: ['schedule']
       });
     },
     onError: (error) => {
@@ -590,7 +590,7 @@ export function useBulkPostponeAttendances() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ['agenda']
+        queryKey: ['schedule']
       });
 
       invalidateAttendanceTreatmentCaches(queryClient);
@@ -641,7 +641,7 @@ export function useRescheduleAttendances() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.all });
       queryClient.invalidateQueries({ queryKey: ['attendances', 'patient'] });
-      queryClient.invalidateQueries({ queryKey: ['agenda'] });
+      queryClient.invalidateQueries({ queryKey: ['schedule'] });
       invalidateAttendanceTreatmentCaches(queryClient);
     },
     onError: (error) => {
@@ -668,7 +668,7 @@ export function useRecomputeReturnForEpisode() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: attendanceKeys.all });
-      queryClient.invalidateQueries({ queryKey: ['agenda'] });
+      queryClient.invalidateQueries({ queryKey: ['schedule'] });
       invalidateAttendanceTreatmentCaches(queryClient);
     },
     onError: (error) => {
