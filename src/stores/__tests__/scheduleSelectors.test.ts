@@ -10,7 +10,7 @@ import {
   useScheduleAccordions,
 } from '../scheduleSelectors';
 import { useScheduleStore, defaultScheduleCalendarStatusFilters } from '../scheduleStore';
-import { AttendanceStatus } from '@/api/types';
+import { AppointmentStatus } from '@/api/types';
 
 describe('scheduleSelectors', () => {
   beforeEach(() => {
@@ -25,7 +25,7 @@ describe('scheduleSelectors', () => {
       expect(typeof result.current.setScheduleDayWindowDays).toBe('function');
       expect(typeof result.current.setScheduleStatusFilters).toBe('function');
       expect(typeof result.current.setConfirmRemove).toBe('function');
-      expect(typeof result.current.setShowNewAttendance).toBe('function');
+      expect(typeof result.current.setShowNewAppointment).toBe('function');
       expect(typeof result.current.setOpenAssessmentIdx).toBe('function');
       expect(typeof result.current.setOpenPhysiotherapyIdx).toBe('function');
     });
@@ -37,15 +37,15 @@ describe('scheduleSelectors', () => {
 
       act(() => {
         actionsResult.current.setSelectedDateString('2025-12-25');
-        actionsResult.current.setShowNewAttendance(true);
-        actionsResult.current.setScheduleStatusFilters([AttendanceStatus.COMPLETED]);
+        actionsResult.current.setShowNewAppointment(true);
+        actionsResult.current.setScheduleStatusFilters([AppointmentStatus.COMPLETED]);
       });
 
       expect(dateResult.current.selectedDate).toBe('2025-12-25');
       expect(dateResult.current.scheduleStatusFilters).toEqual([
-        AttendanceStatus.COMPLETED,
+        AppointmentStatus.COMPLETED,
       ]);
-      expect(modalsResult.current.showNewAttendance).toBe(true);
+      expect(modalsResult.current.showNewAppointment).toBe(true);
     });
   });
 
@@ -65,7 +65,7 @@ describe('scheduleSelectors', () => {
       const { result } = renderHook(() => useScheduleDateFilter());
 
       expect(result.current).not.toHaveProperty('confirmRemove');
-      expect(result.current).not.toHaveProperty('showNewAttendance');
+      expect(result.current).not.toHaveProperty('showNewAppointment');
       expect(result.current).not.toHaveProperty('openAssessmentIdx');
     });
   });
@@ -98,7 +98,7 @@ describe('scheduleSelectors', () => {
       expect(modalsRenders).toBe(1);
 
       act(() => {
-        actionsResult.current.setShowNewAttendance(true);
+        actionsResult.current.setShowNewAppointment(true);
       });
 
       expect(dateFilterRenders).toBe(2);
@@ -112,7 +112,7 @@ describe('scheduleSelectors', () => {
 
       expect(result.current).toEqual({
         confirmRemove: null,
-        showNewAttendance: false,
+        showNewAppointment: false,
       });
     });
 
@@ -125,16 +125,16 @@ describe('scheduleSelectors', () => {
         date: '2024-01-01',
         name: 'Test',
         type: 'assessment' as const,
-        attendanceIds: [456],
+        appointmentIds: [456],
       };
 
       act(() => {
         actionsResult.current.setConfirmRemove(confirmRemoveData);
-        actionsResult.current.setShowNewAttendance(true);
+        actionsResult.current.setShowNewAppointment(true);
       });
 
       expect(modalsResult.current.confirmRemove).toEqual(confirmRemoveData);
-      expect(modalsResult.current.showNewAttendance).toBe(true);
+      expect(modalsResult.current.showNewAppointment).toBe(true);
     });
   });
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { ATTENDANCE_HISTORY_STATUS_LABELS } from "@/utils/attendanceStatusLabels";
+import { APPOINTMENT_HISTORY_STATUS_LABELS } from "@/utils/appointmentStatusLabels";
 
 interface TreatmentCompletionBadgeProps {
   /** Completion percentage (0-100) */
@@ -36,34 +36,34 @@ export const TreatmentCompletionBadge: React.FC<
           color:
             "bg-gray-100 text-gray-700 border-l-4 border-l-green-500 border-gray-200",
           icon: "✅",
-          label: ATTENDANCE_HISTORY_STATUS_LABELS.completed,
+          label: APPOINTMENT_HISTORY_STATUS_LABELS.completed,
         };
       case "in_progress":
         return {
           color:
             "bg-gray-100 text-gray-700 border-l-4 border-l-blue-500 border-gray-200",
           icon: "▶️",
-          label: ATTENDANCE_HISTORY_STATUS_LABELS.inProgress,
+          label: APPOINTMENT_HISTORY_STATUS_LABELS.inProgress,
         };
       case "suspended":
         return {
           color:
             "bg-gray-100 text-gray-700 border-l-4 border-l-orange-500 border-gray-200",
           icon: "⏸️",
-          label: ATTENDANCE_HISTORY_STATUS_LABELS.suspended,
+          label: APPOINTMENT_HISTORY_STATUS_LABELS.suspended,
         };
       case "cancelled":
         return {
           color:
             "bg-gray-100 text-gray-700 border-l-4 border-l-red-500 border-gray-200",
           icon: "❌",
-          label: ATTENDANCE_HISTORY_STATUS_LABELS.cancelled,
+          label: APPOINTMENT_HISTORY_STATUS_LABELS.cancelled,
         };
       default: // scheduled
         return {
           color: "bg-gray-100 text-gray-700 border-gray-200",
           icon: "📅",
-          label: ATTENDANCE_HISTORY_STATUS_LABELS.scheduled,
+          label: APPOINTMENT_HISTORY_STATUS_LABELS.scheduled,
         };
     }
   };

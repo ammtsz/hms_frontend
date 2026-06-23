@@ -62,7 +62,7 @@ const DeletePatientModal: React.FC<DeletePatientModalProps> = ({
           </p>
           <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside">
             <li>
-              All patient data will be deleted, including attendance history and
+              All patient data will be deleted, including appointment history and
               treatment records if present
             </li>
             <li>This action cannot be undone</li>

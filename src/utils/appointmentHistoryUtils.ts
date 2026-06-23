@@ -1,0 +1,726 @@
+import type {
+  TreatmentResponseDto,
+  ConsultationResponseDto,
+  SessionResponseDto,
+} from "@/api/types";
+import type { PreviousAppointment, AppointmentType } from "@/types/types";
+import { formatDateClinic, getTodayClinic } from "@/utils/timezoneDate";
+
+// Grouped appointment by date and treatment type
+export interface GroupedAppointment {
+  date: string; // YYYY-MM-DD format
+  appointmentId: string; // Primary (first) appointment id for backward compatibility
+  /** All appointment IDs in this group (same date); use for reschedule (send all). */
+  appointmentIds: string[];
+  notes: string;
+  status?: 'completed' | 'missed' | 'cancelled'; // Appointment status
+  absenceNotes?: string; // Absence justification
+  absenceJustified?: boolean; // Whether absence was justified
+  createdDate: string; // YY-MM-DD
+  updatedDate: string; // YY-MM-DD
+  cancelledDate?: string; // YYYY-MM-DD (only for cancelled appointments)
+  treatments: {
+    assessment?: {
+      notes?: string; // Appointment notes
+      /** Notes from the assessment consultation (`hms_consultation`). */
+      consultationNotes?: string;
+      consultationId?: number;
+      recommendations?: {
+        food?: string;
+        water?: string;
+        ointment?: string;
+        physiotherapy?: boolean;
+        tens?: boolean;
+        returnWeeks?: number;
+        returnWhenTreatmentComplete?: boolean;
+      };
+    };
+    physiotherapy?: {
+      /** Per body location (same order as first seen when merging sessions). */
+      bodyLocationsWithColors: Array<{ bodyLocation: string; color?: string }>;
+      color?: string;
+      duration?: number;
+      /** Display fraction completed/total (e.g. `"2/5"`). */
+      sessionNumber: string;
+      notes?: string; // Treatment notes
+      appointmentNotes?: string; // Notes from the appointment
+      /** Per-visit rows for this day (from `TreatmentResponseDto.sessions`). */
+      sessions?: SessionResponseDto[];
+    };
+    tens?: {
+      bodyLocations: string[];
+      sessionNumber: string; // Format: "2/5" (completed/total)
+      notes?: string; // Treatment notes
+      appointmentNotes?: string; // Notes from the appointment
+      sessions?: SessionResponseDto[];
+    };
+  };
+}
+
+/** Build map key from date and status so same-day appointments with different statuses stay separate */
+const dateStatusKey = (date: string, status?: string): string =>
+  `${date}-${status ?? "completed"}`;
+
+/** Combine notes from different appointments on the same date */
+const combineNotes = (existingNotes: string | undefined, newNotes: string | undefined) => {
+  if(existingNotes && newNotes) {
+    return existingNotes.includes(newNotes) ? existingNotes : `${existingNotes}\n${newNotes}`;
+  } else if(existingNotes) {
+    return existingNotes;
+  } else if(newNotes) {
+    return newNotes;
+  }
+  return undefined;
+}
+
+const buildPhysiotherapyLocationFieldsFromMap = (
+  bodyLocationColors: Map<string, string | undefined>
+): {
+  bodyLocationsWithColors: Array<{ bodyLocation: string; color?: string }>;
+  color?: string;
+} => {
+  const bodyLocationsWithColors = Array.from(bodyLocationColors.entries()).map(
+    ([bodyLocation, c]) => ({
+      bodyLocation,
+      ...(c !== undefined && c !== "" ? { color: c } : {}),
+    })
+  );
+  const distinctColors: string[] = [];
+  for (const e of bodyLocationsWithColors) {
+    const t = e.color?.trim();
+    if (t && !distinctColors.includes(t)) distinctColors.push(t);
+  }
+  return {
+    bodyLocationsWithColors,
+    color: distinctColors.length === 1 ? distinctColors[0] : undefined,
+  };
+};
+
+/** Format notes to be displayed in the UI. Deduplicates lines and numbers multi-line notes. */
+export const formatNotes = (notes: string) => {
+  if (notes.includes("\n")) {
+    const lines = notes.split("\n").map((line) => line.trim()).filter(Boolean);
+    const unique: string[] = [];
+    for (const line of lines) {
+      if (!unique.includes(line)) unique.push(line);
+    }
+    const formattedNotes = unique.map((line, index) => `${index + 1}. ${line}`).join("\n");
+    return `\n${formattedNotes};`
+  }
+  return notes;
+};
+/**
+ * Create base appointment entries from appointment data.
+ * Groups by date + status so e.g. same-day "completed" assessment and "cancelled" physiotherapy appear as separate items.
+ */
+const createBaseAppointments = (
+  appointments: PreviousAppointment[]
+): Map<string, GroupedAppointment> => {
+  const appointmentMap = new Map<string, GroupedAppointment>();
+
+  appointments.forEach((appointment) => {
+    const key = dateStatusKey(appointment.date, appointment.status);
+
+    if (!appointmentMap.has(key)) {
+      appointmentMap.set(key, {
+        date: appointment.date,
+        appointmentId: appointment.appointmentId,
+        appointmentIds: [appointment.appointmentId],
+        notes: appointment.notes,
+        status: appointment.status,
+        absenceNotes: appointment.absenceNotes,
+        absenceJustified: appointment.absenceJustified,
+        createdDate: appointment.createdDate,
+        updatedDate: appointment.updatedDate,
+        cancelledDate: appointment.cancelledDate,
+        treatments: {},
+      });
+    } else {
+      const grouped = appointmentMap.get(key)!;
+      if (!grouped.appointmentIds.includes(appointment.appointmentId)) {
+        grouped.appointmentIds.push(appointment.appointmentId);
+      }
+    }
+  });
+
+  return appointmentMap;
+};
+
+/**
+ * Attach consultation snapshot (recommendations, notes) to grouped assessment appointments.
+ */
+const mergeConsultationIntoGroupedAppointments = (
+  appointmentMap: Map<string, GroupedAppointment>,
+  appointments: PreviousAppointment[],
+  consultations: ConsultationResponseDto[]
+): void => {
+  appointments.forEach((appointment) => {
+    if (appointment.type !== "assessment") return;
+
+    const key = dateStatusKey(appointment.date, appointment.status);
+    const grouped = appointmentMap.get(key);
+    if (!grouped) return;
+
+    const consultation = consultations.find(
+      (c) => c.appointmentId === Number(appointment.appointmentId),
+    );
+
+    grouped.treatments.assessment = {
+      notes: appointment.notes,
+      consultationNotes: consultation?.notes,
+      consultationId: consultation?.id,
+      recommendations: consultation
+        ? {
+            food: consultation.food || "",
+            water: consultation.water || "",
+            ointment: consultation.ointments || "",
+            physiotherapy: consultation.physiotherapy || false,
+            tens: consultation.tens || false,
+            returnWeeks: consultation.returnWeeks || 0,
+            returnWhenTreatmentComplete: consultation.returnWhenTreatmentComplete || false,
+          }
+        : appointment.recommendations || undefined,
+    };
+  });
+};
+
+/**
+ * Type definition for treatment data grouped by date
+ */
+interface TreatmentDataByDate {
+  physiotherapy?: {
+    /** Body location → color for that session row (last write wins if duplicated). */
+    bodyLocationColors: Map<string, string | undefined>;
+    sessionNumber: number; // Single session number for this date
+    duration?: number;
+    plannedSessions: number;
+    appointmentId: number;
+    notes: string;
+    appointmentNotes?: string; // Notes from the appointment
+    absenceNotes?: string; // Absence justification
+    sessions: SessionResponseDto[];
+    status?: 'completed' | 'missed' | 'cancelled';
+  };
+  tens?: {
+    bodyLocations: Set<string>;
+    sessionNumber: number; // Single session number for this date
+    plannedSessions: number;
+    appointmentId: number;
+    notes: string;
+    appointmentNotes?: string; // Notes from the appointment
+    absenceNotes?: string; // Absence justification
+    sessions: SessionResponseDto[];
+    status?: 'completed' | 'missed' | 'cancelled';
+  };
+}
+
+/**
+ * Group treatments (with session rows) by date + status so they merge into the correct appointment group.
+ */
+const groupTreatmentsByDateForHistory = (
+  treatments: TreatmentResponseDto[],
+  appointments: PreviousAppointment[]
+): Map<string, TreatmentDataByDate> => {
+  const treatmentDataByDate = new Map<string, TreatmentDataByDate>();
+  const clinicToday = getTodayClinic();
+
+  treatments.forEach((treatment) => {
+    const treatmentStatus = treatment.status as 'completed' | 'missed' | 'cancelled';
+
+    treatment.sessions?.forEach((sessionRow) => {
+      const sessionRowStatus = sessionRow.status;
+      const sessionDate = formatDateClinic(sessionRow.scheduledDate);
+
+      if (sessionDate <= clinicToday) {
+        const dateKey = dateStatusKey(sessionDate, sessionRowStatus);
+
+        if (!treatmentDataByDate.has(dateKey)) {
+          treatmentDataByDate.set(dateKey, {});
+        }
+
+        const dateData = treatmentDataByDate.get(dateKey)!;
+
+        if (treatment.treatmentType === "physiotherapy") {
+          if (!dateData.physiotherapy) {
+            // Find matching appointment notes
+            const matchingAppointment = appointments.find(
+              (a) => a.date === sessionDate && a.type === "physiotherapy"
+            );
+            dateData.physiotherapy = {
+              bodyLocationColors: new Map(),
+              sessionNumber: sessionRow.sessionNumber, // All treatments on same date have same session number
+              duration: treatment.durationMinutes,
+              plannedSessions: treatment.plannedSessions,
+              appointmentId: treatment.appointmentId,
+              notes: treatment.notes || "",
+              appointmentNotes: matchingAppointment?.notes,
+              absenceNotes: matchingAppointment?.absenceNotes,
+              sessions: treatment.sessions || [],
+              status: treatmentStatus,
+            };
+          }
+          dateData.physiotherapy.bodyLocationColors.set(
+            treatment.bodyLocation,
+            treatment.color
+          );
+        } else if (treatment.treatmentType === "tens") {
+          if (!dateData.tens) {
+            // Find matching appointment notes
+            const matchingAppointment = appointments.find(
+              (a) => a.date === sessionDate && a.type === 'tens'
+            );
+            dateData.tens = {
+              bodyLocations: new Set(),
+              sessionNumber: sessionRow.sessionNumber, // All treatments on same date have same session number
+              plannedSessions: treatment.plannedSessions,
+              appointmentId: treatment.appointmentId,
+              notes: treatment.notes || "",
+              appointmentNotes: matchingAppointment?.notes,
+              absenceNotes: matchingAppointment?.absenceNotes,
+              sessions: treatment.sessions || [],
+              status: treatmentStatus,
+            };
+          }
+          dateData.tens.bodyLocations.add(treatment.bodyLocation);
+        }
+      }
+    });
+  });
+
+  return treatmentDataByDate;
+};
+
+/**
+ * Merge treatment plan data into appointment map
+ */
+const mergeTreatmentDataIntoAppointments = (
+  appointmentMap: Map<string, GroupedAppointment>,
+  treatmentDataByDate: Map<string, TreatmentDataByDate>
+): void => {
+  treatmentDataByDate.forEach((treatmentData, dateKey) => {
+    let grouped = appointmentMap.get(dateKey);
+
+    // Create appointment entry if it doesn't exist
+    if (!grouped) {
+      const appointmentId =
+        treatmentData.physiotherapy?.appointmentId || treatmentData.tens?.appointmentId || 0;
+      const notes = treatmentData.physiotherapy?.notes || treatmentData.tens?.notes || "";
+      
+      const ids: string[] = [];
+      if (treatmentData.physiotherapy?.appointmentId && !ids.includes(String(treatmentData.physiotherapy.appointmentId)))
+        ids.push(String(treatmentData.physiotherapy.appointmentId));
+      if (treatmentData.tens?.appointmentId && !ids.includes(String(treatmentData.tens.appointmentId)))
+        ids.push(String(treatmentData.tens.appointmentId));
+
+      grouped = {
+        date: dateKey.split("-")[0],
+        appointmentId: appointmentId.toString(),
+        appointmentIds: ids.length > 0 ? ids : [appointmentId.toString()],
+        notes,
+        absenceNotes: treatmentData.physiotherapy?.appointmentNotes || treatmentData.tens?.appointmentNotes,
+        createdDate: dateKey.split("-")[0],
+        updatedDate: dateKey.split("-")[0],
+        cancelledDate: undefined,
+        treatments: {},
+      };
+      appointmentMap.set(dateKey, grouped);
+    }
+
+    // Add physiotherapy treatment data
+    if (treatmentData.physiotherapy) {
+      grouped.absenceNotes = combineNotes(grouped.absenceNotes, treatmentData.physiotherapy.absenceNotes);
+      const locFields = buildPhysiotherapyLocationFieldsFromMap(
+        treatmentData.physiotherapy.bodyLocationColors
+      );
+      grouped.treatments.physiotherapy = {
+        ...locFields,
+        duration: treatmentData.physiotherapy.duration,
+        sessionNumber: `${treatmentData.physiotherapy.sessionNumber}/${treatmentData.physiotherapy.plannedSessions}`,
+        notes: treatmentData.physiotherapy.notes,
+        appointmentNotes: treatmentData.physiotherapy.appointmentNotes,
+        sessions: treatmentData.physiotherapy.sessions,
+      };
+    }
+
+    // Add tens treatment data
+    if (treatmentData.tens) {
+      grouped.absenceNotes = combineNotes(grouped.absenceNotes, treatmentData.tens.absenceNotes);
+      grouped.treatments.tens = {
+        bodyLocations: Array.from(treatmentData.tens.bodyLocations),
+        sessionNumber: `${treatmentData.tens.sessionNumber}/${treatmentData.tens.plannedSessions}`,
+        notes: treatmentData.tens.notes,
+        appointmentNotes: treatmentData.tens.appointmentNotes,
+        sessions: treatmentData.tens.sessions,
+      };
+    }
+  });
+};
+
+/**
+ * Group appointment history by date and combine treatment data
+ * @param appointments - Array of previous appointments
+ * @param treatments - Treatment plans (`TreatmentResponseDto`) linked to appointments
+ * @param consultations - Assessment consultations for recommendation snapshots
+ * @returns Array of grouped appointments sorted by date (most recent first)
+ */
+export const groupHistoryAppointmentsByDate = (
+  appointments: PreviousAppointment[],
+  treatments: TreatmentResponseDto[],
+  consultations: ConsultationResponseDto[]
+): GroupedAppointment[] => {
+  // Step 1: Create base appointment entries
+  const appointmentMap = createBaseAppointments(appointments);
+
+  // Step 2: Add assessment treatment data
+  mergeConsultationIntoGroupedAppointments(appointmentMap, appointments, consultations);
+
+  // Step 3: Filter treatments to only include those in filtered appointments
+  const allowedAppointmentIds = new Set(
+    appointments.map((a) => Number(a.appointmentId))
+  );
+  const filteredTreatments = treatments.filter((session) =>
+    allowedAppointmentIds.has(session.appointmentId)
+  );
+
+  // Step 4: Group treatments by date + session row status
+  const treatmentDataByDate = groupTreatmentsByDateForHistory(filteredTreatments, appointments);
+
+  // Step 5: Merge treatment data into appointments
+  mergeTreatmentDataIntoAppointments(appointmentMap, treatmentDataByDate);
+
+  // Step 5: Filter to only include past dates or today's non-scheduled statuses
+  const today = getTodayClinic();
+  const filteredAppointments = Array.from(appointmentMap.values()).filter((appointment) => {
+    if (appointment.date < today) return true; // Past dates
+    if (appointment.date === today) {
+      // Today: only show if completed, missed, cancelled, checked_in, or in_progress
+      return appointment.status && ['completed', 'missed', 'cancelled', 'checked_in', 'in_progress'].includes(appointment.status);
+    }
+    return false; // Future dates excluded
+  });
+
+  // Step 6: Return sorted array (most recent first)
+  return filteredAppointments.sort((a, b) => b.date.localeCompare(a.date));
+};
+
+
+// Grouped scheduled appointment by date and treatment type
+export interface GroupedScheduledAppointment {
+  date: string; // YYYY-MM-DD format
+  appointmentId: string;
+  /** All appointment IDs in this group (same date); use for reschedule (send all). */
+  appointmentIds: string[];
+  parentAppointmentId?: number; // Links follow-ups to original consultation
+  status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+  absenceNotes?: string; // Cancellation reason
+  createdDate: string; // YYYY-MM-DD
+  updatedDate: string; // YYYY-MM-DD
+  cancelledDate?: string; // YYYY-MM-DD (only for cancelled appointments)
+  treatments: {
+    assessment?: {
+      isScheduled: boolean;
+      notes?: string; // Appointment notes (reason for scheduling)
+    };
+    physiotherapy?: {
+      bodyLocationsWithColors: Array<{ bodyLocation: string; color?: string }>;
+      color?: string;
+      duration?: number;
+      sessionNumber: string;
+      notes?: string;
+      appointmentNotes?: string; // Notes from the scheduled appointment
+    };
+    tens?: {
+      bodyLocations: string[];
+      sessionNumber: string;
+      notes?: string;
+      appointmentNotes?: string; // Notes from the scheduled appointment
+    };
+  };
+}
+
+/**
+ * Create base scheduled appointment entries
+ */
+const createBaseScheduledAppointments = (
+  scheduledAppointments: {
+    appointmentId?: string;
+    date: string;
+    type: AppointmentType;
+    parentAppointmentId?: number;
+    status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+    absenceNotes?: string;
+    notes?: string;
+    updatedDate: string;
+    createdDate: string;
+    cancelledDate?: string;
+  }[],
+  treatments: TreatmentResponseDto[]
+): Map<string, GroupedScheduledAppointment> => {
+  const appointmentMap = new Map<string, GroupedScheduledAppointment>();
+
+  scheduledAppointments.forEach((appointment, index) => {
+    const dateKey = dateStatusKey(appointment.date, appointment.status);
+    const id = appointment.appointmentId ?? treatments[0]?.appointmentId?.toString() ?? `scheduled-${index}`;
+
+    if (!appointmentMap.has(dateKey)) {
+      appointmentMap.set(dateKey, {
+        date: appointment.date,
+        appointmentId: id,
+        appointmentIds: [id],
+        parentAppointmentId: appointment.parentAppointmentId,
+        status: appointment.status,
+        absenceNotes: appointment.absenceNotes,
+        createdDate: appointment.createdDate,
+        updatedDate: appointment.updatedDate,
+        cancelledDate: appointment.cancelledDate,
+        treatments: {},
+      });
+    } else {
+      const existing = appointmentMap.get(dateKey)!;
+      if (!existing.appointmentIds.includes(id)) {
+        existing.appointmentIds.push(id);
+      }
+      if (appointment.parentAppointmentId && !existing.parentAppointmentId) {
+        existing.parentAppointmentId = appointment.parentAppointmentId;
+      }
+      if (appointment.updatedDate >= existing.updatedDate) {
+        existing.status = appointment.status;
+        existing.absenceNotes = combineNotes(existing.absenceNotes,appointment.absenceNotes);
+        existing.updatedDate = appointment.updatedDate;
+      }
+    }
+  });
+
+  return appointmentMap;
+};
+
+/**
+ * Add scheduled assessment treatment data
+ */
+const addScheduledAssessmentData = (
+  appointmentMap: Map<string, GroupedScheduledAppointment>,
+  scheduledAppointments: {
+    date: string;
+    type: AppointmentType;
+    notes?: string;
+    status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+  }[]
+): void => {
+  scheduledAppointments.forEach((appointment) => {
+    if (appointment.type !== "assessment") return;
+
+    const grouped = appointmentMap.get(dateStatusKey(appointment.date, appointment.status));
+    if (!grouped) return;
+
+    grouped.treatments.assessment = {
+      isScheduled: true,
+      notes: appointment.notes,
+    };
+  });
+};
+
+/**
+ * Type definition for scheduled treatment data grouped by date
+ */
+interface ScheduledTreatmentDataByDate {
+  physiotherapy?: {
+    bodyLocationColors: Map<string, string | undefined>;
+    sessionNumber: number; // Single session number for this date
+    duration?: number;
+    plannedSessions: number;
+    notes: string;
+    appointmentNotes?: string; // Notes from the scheduled appointment
+    status?: 'completed' | 'missed' | 'cancelled';
+  };
+  tens?: {
+    bodyLocations: Set<string>;
+    sessionNumber: number; // Single session number for this date
+    plannedSessions: number;
+    notes: string;
+    appointmentNotes?: string; // Notes from the scheduled appointment
+    status?: 'completed' | 'missed' | 'cancelled';
+  };
+}
+
+/**
+ * Group scheduled treatments by date (future session rows only)
+ */
+const groupScheduledTreatmentsByDate = (
+  treatments: TreatmentResponseDto[],
+  scheduledAppointments: { date: string; type: AppointmentType; notes?: string }[]
+): Map<string, ScheduledTreatmentDataByDate> => {
+  const treatmentDataByDate = new Map<string, ScheduledTreatmentDataByDate>();
+  const todayStr = getTodayClinic();
+  const today = new Date(todayStr + "T00:00:00");
+
+  treatments.forEach((treatment) => {
+    const treatmentStatus = treatment.status as 'completed' | 'missed' | 'cancelled';
+
+    treatment.sessions?.forEach((sessionRow) => {
+        // Use the session row's scheduled date
+        const date = sessionRow.scheduledDate.split("T")[0];
+        const dateKey = dateStatusKey(date, sessionRow.status);
+        const sessionDate = new Date(date + "T00:00:00");
+
+        // Only include future/scheduled sessions
+        if (sessionDate >= today) {
+
+          if (!treatmentDataByDate.has(dateKey)) {
+            treatmentDataByDate.set(dateKey, {});
+          }
+
+          const dateData = treatmentDataByDate.get(dateKey)!;
+
+          if (treatment.treatmentType === "physiotherapy") {
+            if (!dateData.physiotherapy) {
+              // Find matching scheduled appointment notes
+              const matchingAppointment = scheduledAppointments.find(
+                (a) => a.date === date && a.type === 'physiotherapy'
+              );
+              dateData.physiotherapy = {
+                bodyLocationColors: new Map(),
+                sessionNumber: sessionRow.sessionNumber, // Use actual session number
+                duration: treatment.durationMinutes,
+                plannedSessions: treatment.plannedSessions,
+                notes: treatment.notes || "",
+                appointmentNotes: matchingAppointment?.notes,
+                status: treatmentStatus,
+              };
+            }
+            dateData.physiotherapy.bodyLocationColors.set(
+              treatment.bodyLocation,
+              treatment.color
+            );
+          } else if (treatment.treatmentType === "tens") {
+            if (!dateData.tens) {
+              // Find matching scheduled appointment notes
+              const matchingAppointment = scheduledAppointments.find(
+                (a) => a.date === date && a.type === 'tens'
+              );
+              dateData.tens = {
+                bodyLocations: new Set(),
+                sessionNumber: sessionRow.sessionNumber, // Use actual session number
+                plannedSessions: treatment.plannedSessions,
+                notes: treatment.notes || "",
+                appointmentNotes: matchingAppointment?.notes,
+                status: treatmentStatus,
+              };
+            }
+            dateData.tens.bodyLocations.add(treatment.bodyLocation);
+          }
+        }
+      });
+  });
+
+  return treatmentDataByDate;
+};
+
+/**
+ * Merge scheduled treatment data into appointment map
+ */
+const mergeScheduledTreatmentDataIntoAppointments = (
+  appointmentMap: Map<string, GroupedScheduledAppointment>,
+  treatmentDataByDate: Map<string, ScheduledTreatmentDataByDate>
+): void => {
+  treatmentDataByDate.forEach((treatmentData, dateKey) => {
+    const grouped = appointmentMap.get(dateKey);
+    if (!grouped) return;
+
+    // Add physiotherapy treatment data
+    if (treatmentData.physiotherapy) {
+      const locFields = buildPhysiotherapyLocationFieldsFromMap(
+        treatmentData.physiotherapy.bodyLocationColors
+      );
+      grouped.treatments.physiotherapy = {
+        ...locFields,
+        duration: treatmentData.physiotherapy.duration,
+        sessionNumber: `${treatmentData.physiotherapy.sessionNumber}/${treatmentData.physiotherapy.plannedSessions}`,
+        notes: treatmentData.physiotherapy.notes,
+        appointmentNotes: treatmentData.physiotherapy.appointmentNotes,
+      };
+    }
+
+    // Add tens treatment data
+    if (treatmentData.tens) {
+      grouped.treatments.tens = {
+        bodyLocations: Array.from(treatmentData.tens.bodyLocations),
+        sessionNumber: `${treatmentData.tens.sessionNumber}/${treatmentData.tens.plannedSessions}`,
+        notes: treatmentData.tens.notes,
+        appointmentNotes: treatmentData.tens.appointmentNotes,
+      };
+    }
+  });
+};
+
+/**
+ * Group scheduled appointments by date and combine treatment data
+ * @param scheduledAppointments - Array of scheduled appointments
+ * @param treatments - Treatment plans (`TreatmentResponseDto`) linked to appointments
+ * @returns Array of grouped scheduled appointments sorted by date (earliest first)
+ */
+export const groupScheduledAppointmentsByDate = (
+  scheduledAppointments: {
+    appointmentId?: string;
+    date: string;
+    type: AppointmentType;
+    parentAppointmentId?: number;
+    status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+    absenceNotes?: string;
+    notes?: string;
+    updatedDate: string;
+    createdDate: string;
+    cancelledDate?: string;
+  }[],
+  treatments: TreatmentResponseDto[]
+): GroupedScheduledAppointment[] => {
+  // Step 1: Create base scheduled appointment entries
+  const appointmentMap = createBaseScheduledAppointments(scheduledAppointments, treatments);
+
+  // Step 2: Add assessment treatment data
+  addScheduledAssessmentData(appointmentMap, scheduledAppointments);
+
+  // Step 3: Group scheduled treatments by date (future session rows)
+  const treatmentDataByDate = groupScheduledTreatmentsByDate(treatments, scheduledAppointments);
+
+  // Step 4: Merge treatment data into appointments
+  mergeScheduledTreatmentDataIntoAppointments(appointmentMap, treatmentDataByDate);
+
+  // Step 5: Filter to only include future dates or today's scheduled status
+  const today = getTodayClinic();
+  const filteredAppointments = Array.from(appointmentMap.values()).filter((appointment) => {
+    if (appointment.date > today) return true; // Future dates
+    if (appointment.date === today) {
+      // Today: only show if still scheduled
+      return appointment.status === 'scheduled';
+    }
+    return false; // Past dates excluded
+  });
+
+  // Step 6: Return sorted array (earliest first for scheduled)
+  return filteredAppointments.sort((a, b) => a.date.localeCompare(b.date));
+};
+
+/**
+ * Get treatment types label from appointment treatments
+ * @param treatments - Treatment data from grouped appointment (history or scheduled)
+ * @param fallbackLabel - Optional fallback label when no treatments found
+ * @returns Formatted string with treatment types
+ */
+export const getTreatmentTypesLabel = (
+  treatments: GroupedAppointment["treatments"] | GroupedScheduledAppointment["treatments"],
+  fallbackLabel: string = "Unspecified type"
+): string => {
+  const types: string[] = [];
+
+  if (treatments.assessment) {
+    types.push("Assessment Consultation");
+  }
+  if (treatments.physiotherapy) {
+    types.push("Physiotherapy");
+  }
+  if (treatments.tens) {
+    types.push("TENS");
+  }
+
+  return types.length > 0 ? types.join(" + ") : fallbackLabel;
+};

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { lazy, Suspense } from "react";
-import ManageAttendanceModal from "@/features/board/components/AttendanceActions/ManageAttendanceModal";
+import ManageAppointmentsModal from "@/features/board/components/AppointmentActions/ManageAppointmentsModal";
 import ScheduleColumn from "./components/ScheduleColumn";
 import ScheduleCalendarFilters from "./components/ScheduleCalendarFilters";
 import UpcomingHolidaysWidget from "./components/UpcomingHolidaysWidget";
@@ -16,8 +16,8 @@ import {
 } from "./utils/scheduleFilterConstants";
 
 // Lazy load heavy modal component for better bundle optimization
-const NewAttendanceFormModal = lazy(
-  () => import("@/features/schedule/components/NewAttendanceFormModal"),
+const NewAppointmentFormModal = lazy(
+  () => import("@/features/schedule/components/NewAppointmentFormModal"),
 );
 
 const ScheduleCalendar: React.FC = () => {
@@ -35,8 +35,8 @@ const ScheduleCalendar: React.FC = () => {
     setOpenAssessmentIdx,
     openPhysiotherapyIdx,
     setOpenPhysiotherapyIdx,
-    showNewAttendance,
-    setShowNewAttendance,
+    showNewAppointment,
+    setShowNewAppointment,
     handleFormSuccess,
     loading,
     refreshSchedule,
@@ -57,9 +57,9 @@ const ScheduleCalendar: React.FC = () => {
             actions={
               <Button
                 className="w-full sm:w-auto"
-                onClick={() => setShowNewAttendance(true)}
+                onClick={() => setShowNewAppointment(true)}
               >
-                {SCHEDULE_PAGE_LABELS.newAttendanceButton}
+                {SCHEDULE_PAGE_LABELS.newAppointmentButton}
               </Button>
             }
           />
@@ -87,7 +87,7 @@ const ScheduleCalendar: React.FC = () => {
                 ...item,
                 patients: item.patients.map((patient) => ({
                   ...patient,
-                  attendanceType: patient.attendanceType ?? "assessment",
+                  appointmentType: patient.appointmentType ?? "assessment",
                 })),
               }))}
               openScheduleIdx={openAssessmentIdx}
@@ -103,7 +103,7 @@ const ScheduleCalendar: React.FC = () => {
                 ...item,
                 patients: item.patients.map((patient) => ({
                   ...patient,
-                  attendanceType: patient.attendanceType ?? "physiotherapy",
+                  appointmentType: patient.appointmentType ?? "physiotherapy",
                 })),
               }))}
               openScheduleIdx={openPhysiotherapyIdx}
@@ -116,8 +116,8 @@ const ScheduleCalendar: React.FC = () => {
         </CardBody>
       </Card>
 
-      <ManageAttendanceModal onRefresh={refreshSchedule} />
-      {showNewAttendance && (
+      <ManageAppointmentsModal onRefresh={refreshSchedule} />
+      {showNewAppointment && (
         <Suspense
           fallback={
             <LoadingFallback
@@ -126,8 +126,8 @@ const ScheduleCalendar: React.FC = () => {
             />
           }
         >
-          <NewAttendanceFormModal
-            onClose={() => setShowNewAttendance(false)}
+          <NewAppointmentFormModal
+            onClose={() => setShowNewAppointment(false)}
             onSuccess={handleFormSuccess}
             title={SCHEDULE_PAGE_LABELS.schedulingModalTitle}
             subtitle="Physiotherapy and TENS appointments must be created automatically after the assessment consultation."

@@ -1,6 +1,6 @@
 /**
  * Utility functions for absence/cancellation styling
- * Provides consistent styling across attendance components
+ * Provides consistent styling across appointment components
  */
 
 export type AbsenceStatus = "missed" | "cancelled" | "none";
@@ -58,7 +58,7 @@ export function getAbsenceStyles(status: AbsenceStatus): AbsenceStyles {
 }
 
 /**
- * Determine absence status from attendance status string
+ * Determine absence status from appointment status string
  */
 export function getAbsenceStatus(status: string): AbsenceStatus {
   if (status === "missed") return "missed";

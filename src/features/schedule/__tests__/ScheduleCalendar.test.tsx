@@ -8,8 +8,8 @@ import {
   SCHEDULE_COLUMN_TITLES,
   SCHEDULE_PAGE_LABELS,
 } from "../utils/scheduleFilterConstants";
-import { Priority, AttendanceType } from "@/types/types";
-import { AttendanceStatus } from "@/api/types";
+import { Priority, AppointmentType } from "@/types/types";
+import { AppointmentStatus } from "@/api/types";
 import type { ScheduleDayWindowDays } from "@/stores";
 
 // Mock the hook
@@ -42,17 +42,17 @@ jest.mock("../components/ScheduleColumn", () => {
 });
 
 jest.mock(
-  "@/features/board/components/AttendanceActions/ManageAttendanceModal",
+  "@/features/board/components/AppointmentActions/ManageAppointmentsModal",
   () => {
-    return function MockManageAttendanceModal() {
+    return function MockManageAppointmentsModal() {
       return null;
     };
   },
 );
 
-// Mock the NewAttendanceFormModal component to test integration
-jest.mock("../components/NewAttendanceFormModal", () => {
-  return function MockNewAttendanceFormModal({
+// Mock the NewAppointmentFormModal component to test integration
+jest.mock("../components/NewAppointmentFormModal", () => {
+  return function MockNewAppointmentFormModal({
     onClose,
     onSuccess,
   }: {
@@ -60,7 +60,7 @@ jest.mock("../components/NewAttendanceFormModal", () => {
     onSuccess: () => void;
   }) {
     return (
-      <div data-testid="new-attendance-form-modal">
+      <div data-testid="new-appointment-form-modal">
         <button onClick={onClose} data-testid="modal-close">
           Close Modal
         </button>
@@ -87,9 +87,9 @@ describe("ScheduleCalendar - Basic Functionality", () => {
           {
             id: "1",
             name: "John Doe",
-            attendanceId: 1,
+            appointmentId: 1,
             priority: "3" as Priority,
-            attendanceType: "assessment" as AttendanceType,
+            appointmentType: "assessment" as AppointmentType,
           },
         ],
       },
@@ -102,7 +102,7 @@ describe("ScheduleCalendar - Basic Functionality", () => {
     setSelectedDate: jest.fn(),
     scheduleDayWindowDays: 30 as ScheduleDayWindowDays,
     setScheduleDayWindowDays: jest.fn(),
-    scheduleStatusFilters: [] as AttendanceStatus[],
+    scheduleStatusFilters: [] as AppointmentStatus[],
     setScheduleStatusFilters: jest.fn(),
     patientFilter: "",
     setPatientFilter: jest.fn(),
@@ -113,11 +113,11 @@ describe("ScheduleCalendar - Basic Functionality", () => {
     setOpenPhysiotherapyIdx: jest.fn(),
     confirmRemove: null,
     setConfirmRemove: jest.fn(),
-    showNewAttendance: false,
-    setShowNewAttendance: jest.fn(),
+    showNewAppointment: false,
+    setShowNewAppointment: jest.fn(),
     handleRemovePatient: jest.fn(),
     handleConfirmRemove: jest.fn(),
-    handleNewAttendance: jest.fn(),
+    handleNewAppointment: jest.fn(),
     handleFormSuccess: jest.fn(),
     loading: false,
     error: null,
@@ -138,7 +138,7 @@ describe("ScheduleCalendar - Basic Functionality", () => {
 
     expect(screen.getByText(SCHEDULE_PAGE_LABELS.title)).toBeInTheDocument();
     expect(
-      screen.getByText(SCHEDULE_PAGE_LABELS.newAttendanceButton),
+      screen.getByText(SCHEDULE_PAGE_LABELS.newAppointmentButton),
     ).toBeInTheDocument();
   });
 
@@ -169,7 +169,7 @@ describe("ScheduleCalendar - Basic Functionality", () => {
     // Looking at the HTML, errors might not have a specific text pattern
     // Let's just check the component renders without the loading state
     expect(
-      screen.queryByText("Loading attendances..."),
+      screen.queryByText("Loading appointments..."),
     ).not.toBeInTheDocument();
   });
 
@@ -284,7 +284,7 @@ describe("ScheduleCalendar - Basic Functionality", () => {
     expect(icon).not.toHaveClass("animate-spin");
   });
 
-  it("should show refreshing overlay on attendance columns when refreshing", () => {
+  it("should show refreshing overlay on appointment columns when refreshing", () => {
     mockUseScheduleCalendar.mockReturnValue({
       ...defaultHookReturn,
       isRefreshing: true,
@@ -445,14 +445,14 @@ describe("ScheduleCalendar - Basic Functionality", () => {
 
       fireEvent.click(
         screen.getByRole("button", {
-          name: /Select all attendance statuses/i,
+          name: /Select all appointment statuses/i,
         }),
       );
       expect(mockSetScheduleStatusFilters.mock.calls[0]?.[0]).toHaveLength(6);
 
       fireEvent.click(
         screen.getByRole("button", {
-          name: /Clear attendance status selection/i,
+          name: /Clear appointment status selection/i,
         }),
       );
       expect(mockSetScheduleStatusFilters.mock.calls[1]?.[0]).toEqual([]);
@@ -460,10 +460,10 @@ describe("ScheduleCalendar - Basic Functionality", () => {
   });
 
   describe("Modal Rendering", () => {
-    it("renders NewAttendanceFormModal when showNewAttendance is true", async () => {
+    it("renders NewAppointmentFormModal when showNewAppointment is true", async () => {
       mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
-        showNewAttendance: true,
+        showNewAppointment: true,
       });
 
       render(<ScheduleCalendar />);
@@ -474,10 +474,10 @@ describe("ScheduleCalendar - Basic Functionality", () => {
       ).toBeInTheDocument();
     });
 
-    it("does not render NewAttendanceFormModal when showNewAttendance is false", () => {
+    it("does not render NewAppointmentFormModal when showNewAppointment is false", () => {
       mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
-        showNewAttendance: false,
+        showNewAppointment: false,
       });
 
       render(<ScheduleCalendar />);
@@ -487,26 +487,26 @@ describe("ScheduleCalendar - Basic Functionality", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("calls setShowNewAttendance(true) when new attendance button is clicked", () => {
-      const mockSetShowNewAttendance = jest.fn();
+    it("calls setShowNewAppointment(true) when new appointment button is clicked", () => {
+      const mockSetShowNewAppointment = jest.fn();
       mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
-        setShowNewAttendance: mockSetShowNewAttendance,
+        setShowNewAppointment: mockSetShowNewAppointment,
       });
 
       render(<ScheduleCalendar />);
 
-      const newAttendanceButton = screen.getByText(
-        SCHEDULE_PAGE_LABELS.newAttendanceButton,
+      const newAppointmentButton = screen.getByText(
+        SCHEDULE_PAGE_LABELS.newAppointmentButton,
       );
-      newAttendanceButton.click();
+      newAppointmentButton.click();
 
-      expect(mockSetShowNewAttendance).toHaveBeenCalledWith(true);
+      expect(mockSetShowNewAppointment).toHaveBeenCalledWith(true);
     });
   });
 
   describe("Patient Mapping Coverage", () => {
-    it("renders physiotherapy patients with correct attendanceType mapping", () => {
+    it("renders physiotherapy patients with correct appointmentType mapping", () => {
       const mockFilteredSchedule = {
         assessment: [],
         physiotherapy: [
@@ -516,9 +516,9 @@ describe("ScheduleCalendar - Basic Functionality", () => {
               {
                 id: "1",
                 name: "Emily Williams",
-                attendanceId: 2,
+                appointmentId: 2,
                 priority: "2" as Priority,
-                // No attendanceType - should default to 'physiotherapy'
+                // No appointmentType - should default to 'physiotherapy'
               },
             ],
           },
@@ -539,40 +539,40 @@ describe("ScheduleCalendar - Basic Functionality", () => {
     });
   });
 
-  describe("NewAttendanceFormModal Integration", () => {
-    it("calls setShowNewAttendance(false) when modal onClose is triggered", async () => {
-      const mockSetShowNewAttendance = jest.fn();
+  describe("NewAppointmentFormModal Integration", () => {
+    it("calls setShowNewAppointment(false) when modal onClose is triggered", async () => {
+      const mockSetShowNewAppointment = jest.fn();
       mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
-        showNewAttendance: true,
-        setShowNewAttendance: mockSetShowNewAttendance,
+        showNewAppointment: true,
+        setShowNewAppointment: mockSetShowNewAppointment,
       });
 
       const { findByTestId } = render(<ScheduleCalendar />);
 
       // Wait for the modal to render (it's lazy loaded)
-      const modal = await findByTestId("new-attendance-form-modal");
+      const modal = await findByTestId("new-appointment-form-modal");
       expect(modal).toBeInTheDocument();
 
       // Click the close button
       const closeButton = await findByTestId("modal-close");
       closeButton.click();
 
-      expect(mockSetShowNewAttendance).toHaveBeenCalledWith(false);
+      expect(mockSetShowNewAppointment).toHaveBeenCalledWith(false);
     });
 
     it("calls handleFormSuccess when modal onSuccess is triggered", async () => {
       const mockHandleFormSuccess = jest.fn();
       mockUseScheduleCalendar.mockReturnValue({
         ...defaultHookReturn,
-        showNewAttendance: true,
+        showNewAppointment: true,
         handleFormSuccess: mockHandleFormSuccess,
       });
 
       const { findByTestId } = render(<ScheduleCalendar />);
 
       // Wait for the modal to render (it's lazy loaded)
-      const modal = await findByTestId("new-attendance-form-modal");
+      const modal = await findByTestId("new-appointment-form-modal");
       expect(modal).toBeInTheDocument();
 
       // Click the success button

@@ -16,8 +16,8 @@ const PatientForm: React.FC = () => {
     validationErrors,
     isFormValid,
     showSuccessModal,
-    scheduledAttendanceDate,
-    attendanceCreationFailed,
+    scheduledAppointmentDate,
+    appointmentCreationFailed,
     handleSuccessModalConfirm,
   } = usePatientForm();
 
@@ -71,26 +71,26 @@ const PatientForm: React.FC = () => {
         additionalInfo={
           <div
             className={`p-3 rounded-lg text-sm text-center ${
-              scheduledAttendanceDate
+              scheduledAppointmentDate
                 ? "bg-blue-50 text-blue-800 border border-blue-200"
-                : attendanceCreationFailed
+                : appointmentCreationFailed
                   ? "bg-red-50 text-red-800 border border-red-200"
                   : "bg-yellow-50 text-yellow-800 border border-yellow-200"
             }`}
           >
-            {scheduledAttendanceDate ? (
+            {scheduledAppointmentDate ? (
               <div>
                 <div>✓ Appointment scheduled automatically.</div>
                 <div className="mt-1 font-semibold">
-                  Date: {formatDisplayDate(scheduledAttendanceDate)}
+                  Date: {formatDisplayDate(scheduledAppointmentDate)}
                 </div>
               </div>
-            ) : attendanceCreationFailed ? (
+            ) : appointmentCreationFailed ? (
               <div>
                 <div className="font-medium">
                   Unable to schedule the first consultation.
                 </div>
-                <div className="mt-1">{attendanceCreationFailed.message}</div>
+                <div className="mt-1">{appointmentCreationFailed.message}</div>
                 <div className="mt-2 text-red-700">
                   You can schedule it manually in the schedule.
                 </div>

@@ -52,10 +52,10 @@ export interface EditTreatmentModalProps {
   patientId: number;
   patientName: string;
   onSuccess?: () => void;
-  /** Visit attendance ID (from the session row). Used so that any
-   *  newly added body location is linked to this attendance and immediately
-   *  visible in the card. Differs from treatmentPlan.attendanceId (prescription). */
-  currentAttendanceId?: number;
+  /** Visit appointment ID (from the session row). Used so that any
+   *  newly added body location is linked to this appointment and immediately
+   *  visible in the card. Differs from treatmentPlan.appointmentId (prescription). */
+  currentAppointmentId?: number;
 }
 
 export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
@@ -66,7 +66,7 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
   patientId,
   patientName,
   onSuccess,
-  currentAttendanceId,
+  currentAppointmentId,
 }) => {
   const treatmentFormRef = useRef<TreatmentRecommendationTableRef>(null);
   const firstSession = treatmentPlans[0];
@@ -91,7 +91,7 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
     treatmentType,
     firstSession,
     patientId,
-    currentAttendanceId,
+    currentAppointmentId,
     onSuccess,
     onClose,
     setSubmitError,

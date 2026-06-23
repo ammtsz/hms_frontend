@@ -110,7 +110,7 @@ describe("TopNavigation", () => {
       ).toBeInTheDocument();
 
       const subtitle = screen.getByText(
-        "Attendance and physiotherapy treatment management system",
+        "Appointment and physiotherapy treatment management system",
       );
       expect(subtitle).toBeInTheDocument();
 
@@ -249,7 +249,7 @@ describe("TopNavigation", () => {
       );
 
       const subtitle = screen.getByText(
-        "Attendance and physiotherapy treatment management system",
+        "Appointment and physiotherapy treatment management system",
       );
       expect(subtitle).toHaveClass(
         "hidden",

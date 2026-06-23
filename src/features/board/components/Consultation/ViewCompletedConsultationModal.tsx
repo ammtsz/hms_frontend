@@ -8,8 +8,8 @@ import {
   useViewCompletedConsultationModal,
   useCloseModal,
 } from "@/stores/modalStore";
-import { useConsultationByAttendance } from "@/api/query/hooks/useConsultationQueries";
-import { useNewlyScheduledAttendances } from "@/api/query/hooks/usePatientQueries";
+import { useConsultationByAppointment } from "@/api/query/hooks/useConsultationQueries";
+import { useNewlyScheduledAppointments } from "@/api/query/hooks/usePatientQueries";
 import { useTreatmentsByPatient } from "@/api/query/hooks/useTreatmentsQueries";
 import { SuccessHeader } from "./components/CreatedTreatmentsConfirmation/SuccessHeader";
 
@@ -21,14 +21,14 @@ const ViewCompletedConsultationModal: React.FC = () => {
   const modal = useViewCompletedConsultationModal();
   const closeModal = useCloseModal();
 
-  const { attendanceId, patientId, patientName, isOpen } = modal;
+  const { appointmentId, patientId, patientName, isOpen } = modal;
 
-  // Consultation persisted for this attendance (`hms_consultation`)
+  // Consultation persisted for this appointment (`hms_consultation`)
   const {
     data: consultation,
     isLoading: loadingConsultation,
     error: consultationError,
-  } = useConsultationByAttendance(attendanceId?.toString() || "");
+  } = useConsultationByAppointment(appointmentId?.toString() || "");
 
   // Treatment plans for this patient (`GET /treatments/patient/:id`)
   const {
@@ -37,12 +37,12 @@ const ViewCompletedConsultationModal: React.FC = () => {
     error: treatmentsError,
   } = useTreatmentsByPatient(patientId || 0);
 
-  // Fetch newly scheduled attendances for this patient
+  // Fetch newly scheduled appointments for this patient
   const {
-    data: scheduledAttendances,
-    isLoading: loadingAttendances,
-    error: attendancesError,
-  } = useNewlyScheduledAttendances(
+    data: scheduledAppointments,
+    isLoading: loadingAppointments,
+    error: appointmentsError,
+  } = useNewlyScheduledAppointments(
     patientId?.toString(),
     isOpen && !!patientId,
   );
@@ -51,18 +51,18 @@ const ViewCompletedConsultationModal: React.FC = () => {
     closeModal("viewCompletedConsultation");
   };
 
-  // Treatment plans linked to this attendance, in the shape expected by CreatedTreatmentsConfirmation
+  // Treatment plans linked to this appointment, in the shape expected by CreatedTreatmentsConfirmation
   const formattedSessions: CreatedTreatment[] = React.useMemo(() => {
     if (!treatments || treatments.length === 0) {
       return [];
     }
 
     return treatments
-      .filter((treatment) => treatment.attendanceId === attendanceId)
+      .filter((treatment) => treatment.appointmentId === appointmentId)
       .map((treatment) => ({
         id: treatment.id,
         consultationId: treatment.consultationId,
-        attendanceId: treatment.attendanceId,
+        appointmentId: treatment.appointmentId,
         patientId: treatment.patientId,
         treatmentType: treatment.treatmentType,
         bodyLocation: treatment.bodyLocation,
@@ -80,11 +80,11 @@ const ViewCompletedConsultationModal: React.FC = () => {
         updatedDate: treatment.updatedDate,
         updatedTime: treatment.updatedTime,
       }));
-  }, [treatments, attendanceId]);
+  }, [treatments, appointmentId]);
 
   const isLoading =
-    loadingConsultation || loadingTreatments || loadingAttendances;
-  const error = consultationError || treatmentsError || attendancesError;
+    loadingConsultation || loadingTreatments || loadingAppointments;
+  const error = consultationError || treatmentsError || appointmentsError;
 
   if (!isOpen) {
     return null;
@@ -95,7 +95,7 @@ const ViewCompletedConsultationModal: React.FC = () => {
       isOpen={isOpen}
       onClose={handleClose}
       title={`Completed Consultation - ${patientName || "Patient"}`}
-      subtitle={`Recommended treatments • Attendance #${attendanceId}`}
+      subtitle={`Recommended treatments • Appointment #${appointmentId}`}
       maxWidth="2xl"
     >
       <div className="p-6">
@@ -179,13 +179,13 @@ const ViewCompletedConsultationModal: React.FC = () => {
                 returnWhenTreatmentComplete={
                   consultation.returnWhenTreatmentComplete
                 }
-                newlyScheduledAttendances={scheduledAttendances}
-                fetchingAttendances={loadingAttendances}
-                attendancesError={
-                  attendancesError
-                    ? typeof attendancesError === "string"
-                      ? attendancesError
-                      : (attendancesError as Error)?.message
+                newlyScheduledAppointments={scheduledAppointments}
+                fetchingAppointments={loadingAppointments}
+                appointmentsError={
+                  appointmentsError
+                    ? typeof appointmentsError === "string"
+                      ? appointmentsError
+                      : (appointmentsError as Error)?.message
                     : undefined
                 }
                 patientStatus={
@@ -207,7 +207,7 @@ const ViewCompletedConsultationModal: React.FC = () => {
         {!isLoading && !error && !consultation && (
           <div className="py-12 text-center">
             <p className="text-gray-600">
-              No consultation found for this attendance.
+              No consultation found for this appointment.
             </p>
           </div>
         )}

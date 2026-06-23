@@ -6,9 +6,9 @@ import * as storesIndex from '../index';
 
 describe('stores/index', () => {
   describe('Exports', () => {
-    it('should export useAttendanceStore', () => {
-      expect(storesIndex.useAttendanceStore).toBeDefined();
-      expect(typeof storesIndex.useAttendanceStore).toBe('function');
+    it('should export useBoardStore', () => {
+      expect(storesIndex.useBoardStore).toBeDefined();
+      expect(typeof storesIndex.useBoardStore).toBe('function');
     });
 
     it('should export useScheduleStore', () => {
@@ -33,8 +33,8 @@ describe('stores/index', () => {
       expect(storesIndex.useConfirmRemove).toBeDefined();
       expect(typeof storesIndex.useConfirmRemove).toBe('function');
       
-      expect(storesIndex.useShowNewAttendance).toBeDefined();
-      expect(typeof storesIndex.useShowNewAttendance).toBe('function');
+      expect(storesIndex.useShowNewAppointment).toBeDefined();
+      expect(typeof storesIndex.useShowNewAppointment).toBe('function');
       
       expect(storesIndex.useOpenAssessmentIdx).toBeDefined();
       expect(typeof storesIndex.useOpenAssessmentIdx).toBe('function');
@@ -59,8 +59,8 @@ describe('stores/index', () => {
       expect(storesIndex.useSetConfirmRemove).toBeDefined();
       expect(typeof storesIndex.useSetConfirmRemove).toBe('function');
       
-      expect(storesIndex.useSetShowNewAttendance).toBeDefined();
-      expect(typeof storesIndex.useSetShowNewAttendance).toBe('function');
+      expect(storesIndex.useSetShowNewAppointment).toBeDefined();
+      expect(typeof storesIndex.useSetShowNewAppointment).toBe('function');
       
       expect(storesIndex.useSetOpenAssessmentIdx).toBeDefined();
       expect(typeof storesIndex.useSetOpenAssessmentIdx).toBe('function');
@@ -72,33 +72,33 @@ describe('stores/index', () => {
       expect(typeof storesIndex.useScheduleActions).toBe('function');
     });
 
-    it('should export attendance selectors', () => {
-      expect(storesIndex.useAttendanceActions).toBeDefined();
-      expect(typeof storesIndex.useAttendanceActions).toBe('function');
+    it('should export appointment selectors', () => {
+      expect(storesIndex.useAppointmentActions).toBeDefined();
+      expect(typeof storesIndex.useAppointmentActions).toBe('function');
       
       // Composite selectors
-      expect(storesIndex.useAttendanceDateState).toBeDefined();
-      expect(typeof storesIndex.useAttendanceDateState).toBe('function');
+      expect(storesIndex.useBoardDateState).toBeDefined();
+      expect(typeof storesIndex.useBoardDateState).toBe('function');
       
-      expect(storesIndex.useAttendanceDragState).toBeDefined();
-      expect(typeof storesIndex.useAttendanceDragState).toBe('function');
+      expect(storesIndex.useAppointmentDragState).toBeDefined();
+      expect(typeof storesIndex.useAppointmentDragState).toBe('function');
       
-      expect(storesIndex.useAttendanceEndOfDayState).toBeDefined();
-      expect(typeof storesIndex.useAttendanceEndOfDayState).toBe('function');
+      expect(storesIndex.useAppointmentEndOfDayState).toBeDefined();
+      expect(typeof storesIndex.useAppointmentEndOfDayState).toBe('function');
     });
 
-    it('should export attendance state selectors', () => {
+    it('should export appointment state selectors', () => {
       expect(storesIndex.useSelectedDate).toBeDefined();
       expect(typeof storesIndex.useSelectedDate).toBe('function');
       
-      expect(storesIndex.useAttendanceLoading).toBeDefined();
-      expect(typeof storesIndex.useAttendanceLoading).toBe('function');
+      expect(storesIndex.useAppointmentLoading).toBeDefined();
+      expect(typeof storesIndex.useAppointmentLoading).toBe('function');
       
-      expect(storesIndex.useAttendanceDataLoading).toBeDefined();
-      expect(typeof storesIndex.useAttendanceDataLoading).toBe('function');
+      expect(storesIndex.useBoardDataLoading).toBeDefined();
+      expect(typeof storesIndex.useBoardDataLoading).toBe('function');
       
-      expect(storesIndex.useAttendanceError).toBeDefined();
-      expect(typeof storesIndex.useAttendanceError).toBe('function');
+      expect(storesIndex.useAppointmentError).toBeDefined();
+      expect(typeof storesIndex.useAppointmentError).toBe('function');
       
       expect(storesIndex.useDraggedItem).toBeDefined();
       expect(typeof storesIndex.useDraggedItem).toBe('function');
@@ -113,18 +113,18 @@ describe('stores/index', () => {
       expect(typeof storesIndex.useEndOfDayStatus).toBe('function');
     });
 
-    it('should export attendance action selectors', () => {
+    it('should export appointment action selectors', () => {
       expect(storesIndex.useSetSelectedDate).toBeDefined();
       expect(typeof storesIndex.useSetSelectedDate).toBe('function');
       
-      expect(storesIndex.useSetAttendanceLoading).toBeDefined();
-      expect(typeof storesIndex.useSetAttendanceLoading).toBe('function');
+      expect(storesIndex.useSetAppointmentLoading).toBeDefined();
+      expect(typeof storesIndex.useSetAppointmentLoading).toBe('function');
       
-      expect(storesIndex.useSetAttendanceDataLoading).toBeDefined();
-      expect(typeof storesIndex.useSetAttendanceDataLoading).toBe('function');
+      expect(storesIndex.useSetAppointmentDataLoading).toBeDefined();
+      expect(typeof storesIndex.useSetAppointmentDataLoading).toBe('function');
       
-      expect(storesIndex.useSetAttendanceError).toBeDefined();
-      expect(typeof storesIndex.useSetAttendanceError).toBe('function');
+      expect(storesIndex.useSetAppointmentError).toBeDefined();
+      expect(typeof storesIndex.useSetAppointmentError).toBe('function');
       
       expect(storesIndex.useSetDraggedItem).toBeDefined();
       expect(typeof storesIndex.useSetDraggedItem).toBe('function');
@@ -154,7 +154,7 @@ describe('stores/index', () => {
     it('should have all expected exports', () => {
       const expectedExports = [
         // Core stores
-        'useAttendanceStore',
+        'useBoardStore',
         'useScheduleStore',
         
         // Calendar selectors - state
@@ -163,7 +163,7 @@ describe('stores/index', () => {
         'useScheduleStatusFilters',
         'usePatientFilter',
         'useConfirmRemove',
-        'useShowNewAttendance',
+        'useShowNewAppointment',
         'useOpenAssessmentIdx',
         'useOpenPhysiotherapyIdx',
         
@@ -173,31 +173,31 @@ describe('stores/index', () => {
         'useSetScheduleStatusFilters',
         'useSetPatientFilter',
         'useSetConfirmRemove',
-        'useSetShowNewAttendance',
+        'useSetShowNewAppointment',
         'useSetOpenAssessmentIdx',
         'useSetOpenPhysiotherapyIdx',
         'useScheduleActions',
         
-        // Attendance selectors - composite
-        'useAttendanceDateState',
-        'useAttendanceDragState',
-        'useAttendanceEndOfDayState',
+        // Appointment selectors - composite
+        'useBoardDateState',
+        'useAppointmentDragState',
+        'useAppointmentEndOfDayState',
         
-        // Attendance selectors - individual state
+        // Appointment selectors - individual state
         'useSelectedDate',
-        'useAttendanceLoading',
-        'useAttendanceDataLoading',
-        'useAttendanceError',
+        'useAppointmentLoading',
+        'useBoardDataLoading',
+        'useAppointmentError',
         'useDraggedItem',
         'useIsDragging',
         'useDayFinalized',
         'useEndOfDayStatus',
         
-        // Attendance selectors - individual actions
+        // Appointment selectors - individual actions
         'useSetSelectedDate',
-        'useSetAttendanceLoading',
-        'useSetAttendanceDataLoading',
-        'useSetAttendanceError',
+        'useSetAppointmentLoading',
+        'useSetAppointmentDataLoading',
+        'useSetAppointmentError',
         'useSetDraggedItem',
         'useSetIsDragging',
         'useSetDayFinalized',

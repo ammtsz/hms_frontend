@@ -3,8 +3,8 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import {
   EmptyState,
   ErrorState,
-  AttendanceHistoryEmpty,
-  ScheduledAttendancesEmpty,
+  AppointmentHistoryEmpty,
+  ScheduledAppointmentsEmpty,
   TreatmentRecommendationsEmpty,
   CurrentTreatmentEmpty,
 } from "../CardStates";
@@ -101,29 +101,29 @@ describe("CardStates Components", () => {
     });
   });
 
-  describe("AttendanceHistoryEmpty", () => {
-    it("renders when patient has no next attendance dates", () => {
-      const mockPatient = { nextAttendanceDates: [] };
+  describe("AppointmentHistoryEmpty", () => {
+    it("renders when patient has no next appointment dates", () => {
+      const mockPatient = { nextAppointmentDates: [] };
 
-      render(<AttendanceHistoryEmpty patient={mockPatient} />);
+      render(<AppointmentHistoryEmpty patient={mockPatient} />);
 
       expect(
-        screen.getByText("No attendances recorded"),
+        screen.getByText("No appointments recorded"),
       ).toBeInTheDocument();
       expect(
         screen.getByText(/Schedule the first appointment/),
       ).toBeInTheDocument();
     });
 
-    it("renders with next attendance date information", () => {
+    it("renders with next appointment date information", () => {
       const mockPatient = {
-        nextAttendanceDates: [{ date: "2024-12-15" }],
+        nextAppointmentDates: [{ date: "2024-12-15" }],
       };
 
-      render(<AttendanceHistoryEmpty patient={mockPatient} />);
+      render(<AppointmentHistoryEmpty patient={mockPatient} />);
 
       expect(
-        screen.getByText("No attendances recorded"),
+        screen.getByText("No appointments recorded"),
       ).toBeInTheDocument();
       expect(
         screen.getByText(/Next appointment scheduled for/),
@@ -131,9 +131,9 @@ describe("CardStates Components", () => {
     });
   });
 
-  describe("ScheduledAttendancesEmpty", () => {
+  describe("ScheduledAppointmentsEmpty", () => {
     it("renders with correct links", () => {
-      render(<ScheduledAttendancesEmpty patientId="123" />);
+      render(<ScheduledAppointmentsEmpty patientId="123" />);
 
       expect(screen.getByText("No upcoming appointments")).toBeInTheDocument();
 

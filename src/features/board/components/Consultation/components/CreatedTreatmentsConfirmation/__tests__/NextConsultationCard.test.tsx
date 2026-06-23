@@ -2,17 +2,17 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import { NextConsultationCard } from "../NextConsultationCard";
 import type {
-  AttendanceResponseDto,
-  AttendanceType,
-  AttendanceStatus,
+  AppointmentResponseDto,
+  AppointmentType,
+  AppointmentStatus,
 } from "@/api/types";
 
 describe("NextConsultationCard", () => {
-  const mockNextConsultation: AttendanceResponseDto = {
+  const mockNextConsultation: AppointmentResponseDto = {
     id: 103,
     patientId: 1,
-    type: "assessment" as AttendanceType,
-    status: "scheduled" as AttendanceStatus,
+    type: "assessment" as AppointmentType,
+    status: "scheduled" as AppointmentStatus,
     scheduledDate: "2026-02-19",
     scheduledTime: "15:00",
     createdAt: "2026-01-15T00:00:00.000Z",
@@ -27,7 +27,7 @@ describe("NextConsultationCard", () => {
       render(
         <NextConsultationCard
           nextAssessmentConsultation={null}
-          fetchingAttendances={true}
+          fetchingAppointments={true}
         />,
       );
 
@@ -43,7 +43,7 @@ describe("NextConsultationCard", () => {
       render(
         <NextConsultationCard
           nextAssessmentConsultation={null}
-          attendancesError="Failed to load attendances"
+          appointmentsError="Failed to load appointments"
         />,
       );
 
@@ -51,7 +51,7 @@ describe("NextConsultationCard", () => {
         screen.getByText(/Error fetching appointments/i),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("Failed to load attendances"),
+        screen.getByText("Failed to load appointments"),
       ).toBeInTheDocument();
     });
   });
@@ -65,7 +65,7 @@ describe("NextConsultationCard", () => {
       );
 
       expect(
-        screen.getByText(/Return of Assessment Consultation/i),
+        screen.getByText(/Assessment Consultation Return/i),
       ).toBeInTheDocument();
 
       expect(screen.getByText("02/19/2026")).toBeInTheDocument();
@@ -84,7 +84,7 @@ describe("NextConsultationCard", () => {
     });
 
     it("should use singular form for 1 week", () => {
-      const oneWeekLater: AttendanceResponseDto = {
+      const oneWeekLater: AppointmentResponseDto = {
         ...mockNextConsultation,
         scheduledDate: "2026-02-02",
       };

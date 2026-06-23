@@ -2,17 +2,17 @@ import React, { useMemo } from "react";
 import { AlertTriangle, Info } from "lucide-react";
 import type { AbsenceJustification, ScheduledAbsence } from "../../types";
 import { formatDisplayDate } from "@/utils/dateUtils";
-import type { IAttendanceStatusDetailWithType } from "../../../../utils/attendanceDataUtils";
+import type { IAppointmentStatusDetailWithType } from "../../../../utils/appointmentDataUtils";
 import {
   groupAbsenceJustificationsByCard,
   getAbsenceCardLabelParts,
-  groupAttendancesForDisplayWithBodyLocation,
+  groupAppointmentsForDisplayWithBodyLocation,
 } from "../../utils/confirmationStepUtils";
 import { Button } from "@/components/ui";
 
 interface ConfirmationStepProps {
   selectedDate: string;
-  completedAttendances: IAttendanceStatusDetailWithType[];
+  completedAppointments: IAppointmentStatusDetailWithType[];
   scheduledAbsences: ScheduledAbsence[];
   absenceJustifications: AbsenceJustification[];
   isSubmitting: boolean;
@@ -22,7 +22,7 @@ interface ConfirmationStepProps {
 
 const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
   selectedDate,
-  completedAttendances,
+  completedAppointments,
   scheduledAbsences,
   absenceJustifications,
   isSubmitting,
@@ -42,10 +42,10 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
   const justifiedCards = absenceCards.filter((c) => c.justified);
   const unjustifiedCards = absenceCards.filter((c) => !c.justified);
 
-  // Group completed attendances with body location counts
-  const groupedCompletedAttendances = useMemo(
-    () => groupAttendancesForDisplayWithBodyLocation(completedAttendances),
-    [completedAttendances],
+  // Group completed appointments with body location counts
+  const groupedCompletedAppointments = useMemo(
+    () => groupAppointmentsForDisplayWithBodyLocation(completedAppointments),
+    [completedAppointments],
   );
 
   return (
@@ -60,10 +60,10 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
           <div className="bg-green-50 border border-green-200 rounded-md p-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-green-600">
-                {groupedCompletedAttendances.length}
+                {groupedCompletedAppointments.length}
               </div>
               <div className="text-sm text-green-800">
-                Completed Attendances
+                Completed Appointments
               </div>
             </div>
           </div>
@@ -88,15 +88,15 @@ const ConfirmationStep: React.FC<ConfirmationStepProps> = ({
         </div>
 
         {/* Detailed Lists */}
-        {groupedCompletedAttendances.length > 0 && (
+        {groupedCompletedAppointments.length > 0 && (
           <div className="bg-white border border-gray-200 rounded-md p-4">
             <h4 className="text-md font-medium text-gray-900 mb-3">
-              Completed Attendances
+              Completed Appointments
             </h4>
             <ul className="space-y-2">
-              {groupedCompletedAttendances.map((attendance, index) => (
+              {groupedCompletedAppointments.map((appointment, index) => (
                 <li key={index} className="text-sm text-gray-600">
-                  • {attendance.patientName} ({attendance.label})
+                  • {appointment.patientName} ({appointment.label})
                 </li>
               ))}
             </ul>

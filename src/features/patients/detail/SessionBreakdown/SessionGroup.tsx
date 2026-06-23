@@ -7,7 +7,7 @@ import {
   getTreatmentTypeLabel,
   determineGroupStatus,
 } from "@/utils/sessionBreakdownUtils";
-import { formatNotes } from "@/utils/attendanceHistoryUtils";
+import { formatNotes } from "@/utils/appointmentHistoryUtils";
 
 interface SessionGroupProps {
   group: SessionGroupType;

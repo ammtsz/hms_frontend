@@ -2,12 +2,12 @@ import { useQuery, useQueries, useMutation, useQueryClient } from '@tanstack/rea
 import {
   getSessionsByTreatment,
   getSessionsByPatient,
-  getSessionsByAttendance,
+  getSessionsByAppointment,
   completeSession,
 } from '@/api/sessions';
 import { updateTreatment } from '@/api/treatments';
 import type { CompleteSessionRequest, SessionResponseDto, TreatmentResponseDto } from '@/api/types';
-import { invalidateAttendanceTreatmentCaches } from '@/api/query/invalidation/invalidateAttendanceTreatmentCaches';
+import { invalidateAppointmentTreatmentCaches } from '@/api/query/invalidation/invalidateAppointmentTreatmentCaches';
 
 import { sessionsQueryKeys } from '@/api/query/keys/sessionsQueryKeys';
 
@@ -49,26 +49,26 @@ export const useSessionsByPatient = (patientId: string) => {
   });
 };
 
-export interface AttendanceSessionsInfo {
-  attendanceId: number;
+export interface AppointmentSessionsInfo {
+  appointmentId: number;
   sessions: SessionResponseDto[];
 }
 
 /**
- * Session rows grouped by attendance (parallel `GET /sessions/attendance/:id`).
+ * Session rows grouped by appointment (parallel `GET /sessions/appointment/:id`).
  */
-export const useSessionsByAttendances = (attendanceIds: number[]) => {
+export const useSessionsByAppointments = (appointmentIds: number[]) => {
   const results = useQueries({
-    queries: attendanceIds.map((attendanceId) => ({
-      queryKey: sessionsQueryKeys.byAttendance(attendanceId),
+    queries: appointmentIds.map((appointmentId) => ({
+      queryKey: sessionsQueryKeys.byAppointment(appointmentId),
       queryFn: async () => {
-        const response = await getSessionsByAttendance(attendanceId);
+        const response = await getSessionsByAppointment(appointmentId);
         if (!response.success) {
           throw new Error(response.error || 'Error loading sessions');
         }
-        return { attendanceId, sessions: response.value || [] } as AttendanceSessionsInfo;
+        return { appointmentId, sessions: response.value || [] } as AppointmentSessionsInfo;
       },
-      enabled: attendanceIds.length > 0,
+      enabled: appointmentIds.length > 0,
       staleTime: 5 * 60 * 1000,
       retry: process.env.NODE_ENV === 'test' ? false : 2,
     })),
@@ -80,7 +80,7 @@ export const useSessionsByAttendances = (attendanceIds: number[]) => {
   const dataMap = new Map<number, SessionResponseDto[]>();
   results.forEach((r) => {
     if (r.data) {
-      dataMap.set(r.data.attendanceId, r.data.sessions);
+      dataMap.set(r.data.appointmentId, r.data.sessions);
     }
   });
 
@@ -89,7 +89,7 @@ export const useSessionsByAttendances = (attendanceIds: number[]) => {
   };
 
   return {
-    dataByAttendance: dataMap,
+    dataByAppointment: dataMap,
     isLoading,
     isError,
     error,
@@ -138,7 +138,7 @@ export const useCompleteSession = () => {
         queryKey: sessionsQueryKeys.byTreatment(variables.treatmentId),
       });
       queryClient.invalidateQueries({ queryKey: sessionsQueryKeys.all });
-      invalidateAttendanceTreatmentCaches(queryClient);
+      invalidateAppointmentTreatmentCaches(queryClient);
     },
     onError: (err) => {
       console.error('Error completing session:', err);
@@ -236,7 +236,7 @@ export const useBulkCompleteSessions = () => {
           queryKey: sessionsQueryKeys.byTreatment(id),
         });
       });
-      invalidateAttendanceTreatmentCaches(queryClient);
+      invalidateAppointmentTreatmentCaches(queryClient);
     },
     onError: (err) => {
       console.error('Error in bulk complete sessions:', err);

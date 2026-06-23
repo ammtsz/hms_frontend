@@ -19,8 +19,8 @@ const { data: patients, isLoading } = usePatientQueries();
 
 ```typescript
 // ✅ CORRECT: UI state with Zustand
-const selectedDate = useAttendanceStore((state) => state.selectedDate);
-const setSelectedDate = useAttendanceStore((state) => state.setSelectedDate);
+const selectedDate = useBoardStore((state) => state.selectedDate);
+const setSelectedDate = useBoardStore((state) => state.setSelectedDate);
 ```
 
 ### Global Settings → React Context
@@ -125,28 +125,28 @@ const { data: patient, isLoading, error } = usePatient(id);
 
 ## Domain-Specific Patterns
 
-### Attendance Grouping Pattern
+### Appointment Grouping Pattern
 
-**CRITICAL**: This project uses a specific grouping approach for attendances. See [11-attendance-grouping.mdc](mdc:.cursor/rules/11-attendance-grouping.mdc) for complete rules.
+**CRITICAL**: This project uses a specific grouping approach for appointments. See [11-appointment-grouping.mdc](mdc:.cursor/rules/11-appointment-grouping.mdc) for complete rules.
 
 **Quick Reference:**
 
 - Physiotherapy and tens treatments are **always grouped together** for the same patient
 - Patient with assessment + treatments: show as **2 entries**
 - Patient with only treatments: show as **1 entry** (combined if both)
-- Use `groupAttendancesForDisplayWithBodyLocation()` from `confirmationStepUtils.ts`
+- Use `groupAppointmentsForDisplayWithBodyLocation()` from `confirmationStepUtils.ts`
 
 ```typescript
 // ✅ CORRECT: Use the utility function
-import { groupAttendancesForDisplayWithBodyLocation } from "@/features/board/components/EndOfDay/utils/confirmationStepUtils";
+import { groupAppointmentsForDisplayWithBodyLocation } from "@/features/board/components/EndOfDay/utils/confirmationStepUtils";
 
-const groupedAttendances = useMemo(
-  () => groupAttendancesForDisplayWithBodyLocation(attendances),
-  [attendances]
+const groupedAppointments = useMemo(
+  () => groupAppointmentsForDisplayWithBodyLocation(appointments),
+  [appointments]
 );
 
 // ❌ WRONG: Manually implementing grouping logic
-attendances.map(attendance => ...)
+appointments.map(appointment => ...)
 ```
 
 ## Folder Structure

@@ -1,5 +1,5 @@
 export interface RescheduledItem {
-  attendanceId: number;
+  appointmentId: number;
   patientId: number;
   patientName: string;
   type: string;
@@ -17,17 +17,17 @@ export interface AggregatedRescheduledItem {
 export interface CancelledForFItem {
   patientId: number;
   patientName: string;
-  attendances: Array<{ id: number; type: string; scheduledDate: string }>;
+  appointments: Array<{ id: number; type: string; scheduledDate: string }>;
 }
 
-export interface AggregatedCancelledAttendance {
+export interface AggregatedCancelledAppointment {
   type: string;
   scheduledDate: string;
   count: number;
 }
 
 export interface CouldNotRescheduleItem {
-  attendanceId: number;
+  appointmentId: number;
   patientId: number;
   patientName: string;
   type: string;
@@ -76,7 +76,7 @@ export function aggregateByKey<T, R>(
 export function groupRescheduledByPatient(items: RescheduledItem[]): Array<{
   patientName: string;
   patientId: number;
-  attendances: AggregatedRescheduledItem[];
+  appointments: AggregatedRescheduledItem[];
 }> {
   const byPatient = new Map<number, RescheduledItem[]>();
   for (const item of items) {
@@ -85,10 +85,10 @@ export function groupRescheduledByPatient(items: RescheduledItem[]): Array<{
     byPatient.set(item.patientId, list);
   }
   const groups = Array.from(byPatient.entries()).map(
-    ([patientId, attendances]) => {
-      const patientName = attendances[0]?.patientName?.trim() || "Patient";
+    ([patientId, appointments]) => {
+      const patientName = appointments[0]?.patientName?.trim() || "Patient";
       const aggregated = aggregateByKey(
-        attendances,
+        appointments,
         (att) => `${att.type}|${att.oldDate}|${att.newDate}`,
         (att, count) => ({
           type: att.type,
@@ -99,12 +99,12 @@ export function groupRescheduledByPatient(items: RescheduledItem[]): Array<{
         (a, b) =>
           a.oldDate.localeCompare(b.oldDate) || a.type.localeCompare(b.type),
       );
-      return { patientName, patientId, attendances: aggregated };
+      return { patientName, patientId, appointments: aggregated };
     },
   );
   groups.sort((a, b) =>
-    (a.attendances[0]?.oldDate ?? "").localeCompare(
-      b.attendances[0]?.oldDate ?? "",
+    (a.appointments[0]?.oldDate ?? "").localeCompare(
+      b.appointments[0]?.oldDate ?? "",
     ),
   );
   return groups;
@@ -114,12 +114,12 @@ export function groupRescheduledByPatient(items: RescheduledItem[]): Array<{
 export function groupCancelledByPatient(items: CancelledForFItem[]): Array<{
   patientId: number;
   patientName: string;
-  attendances: AggregatedCancelledAttendance[];
+  appointments: AggregatedCancelledAppointment[];
 }> {
   return items
     .map((item) => {
       const aggregated = aggregateByKey(
-        item.attendances,
+        item.appointments,
         (att) => `${att.type}|${att.scheduledDate}`,
         (att, count) => ({
           type: att.type,
@@ -133,7 +133,7 @@ export function groupCancelledByPatient(items: CancelledForFItem[]): Array<{
       return {
         patientId: item.patientId,
         patientName: item.patientName,
-        attendances: aggregated,
+        appointments: aggregated,
       };
     })
     .sort((a, b) => a.patientName.localeCompare(b.patientName));
@@ -145,7 +145,7 @@ export function groupCouldNotRescheduleByPatient(
 ): Array<{
   patientId: number;
   patientName: string;
-  attendances: AggregatedCouldNotRescheduleItem[];
+  appointments: AggregatedCouldNotRescheduleItem[];
 }> {
   const byPatient = new Map<number, CouldNotRescheduleItem[]>();
   for (const item of items) {
@@ -154,10 +154,10 @@ export function groupCouldNotRescheduleByPatient(
     byPatient.set(item.patientId, list);
   }
   const groups = Array.from(byPatient.entries()).map(
-    ([patientId, attendances]) => {
-      const patientName = attendances[0]?.patientName?.trim() || "Patient";
+    ([patientId, appointments]) => {
+      const patientName = appointments[0]?.patientName?.trim() || "Patient";
       const aggregated = aggregateByKey(
-        attendances,
+        appointments,
         (att) => `${att.type}|${att.reason}`,
         (att, count) => ({
           type: att.type,
@@ -167,7 +167,7 @@ export function groupCouldNotRescheduleByPatient(
         (a, b) =>
           a.type.localeCompare(b.type) || a.reason.localeCompare(b.reason),
       );
-      return { patientId, patientName, attendances: aggregated };
+      return { patientId, patientName, appointments: aggregated };
     },
   );
   groups.sort((a, b) => a.patientName.localeCompare(b.patientName));

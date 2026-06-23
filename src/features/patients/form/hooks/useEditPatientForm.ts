@@ -14,10 +14,10 @@ export interface EditPatientFormData {
   status: string;
   mainConcern: string;
   dischargeDate: string | null; // YYYY-MM-DD format
-  nextAttendanceDates: { date: string; type: string }[]; // dates as YYYY-MM-DD strings
+  nextAppointmentDates: { date: string; type: string }[]; // dates as YYYY-MM-DD strings
 }
 
-/** Shown when user tries to change status to D or C and there are open attendances to cancel */
+/** Shown when user tries to change status to D or C and there are open appointments to cancel */
 export interface PendingStatusChange {
   newStatus: "D" | "C";
   openCount: number;
@@ -26,10 +26,10 @@ export interface PendingStatusChange {
 interface UseEditPatientFormProps {
   patientId: string;
   initialData: EditPatientFormData;
-  /** YYYY-MM-DD: discharge date cannot be earlier than this (e.g. last completed attendance date) */
+  /** YYYY-MM-DD: discharge date cannot be earlier than this (e.g. last completed appointment date) */
   minDischargeDate?: string | null;
-  /** Count of open (scheduled/checked_in/in_progress) attendances; used to confirm status change to D or C */
-  openAttendancesCount?: number;
+  /** Count of open (scheduled/checked_in/in_progress) appointments; used to confirm status change to D or C */
+  openAppointmentsCount?: number;
   onClose: () => void;
   onSuccess?: (updatedPatient: PatientResponseDto) => void;
   onDeleteSuccess?: () => void;
@@ -40,7 +40,7 @@ export const useEditPatientForm = ({
   patientId,
   initialData,
   minDischargeDate = null,
-  openAttendancesCount = 0,
+  openAppointmentsCount = 0,
   onClose,
   onSuccess,
   onDeleteSuccess,
@@ -110,7 +110,7 @@ export const useEditPatientForm = ({
       const date = value || null; // Keep as YYYY-MM-DD string
       setPatient((prev) => ({
         ...prev,
-        nextAttendanceDates: date 
+        nextAppointmentDates: date 
           ? [{ date, type: "assessment" }]
           : [],
       }));
@@ -134,14 +134,14 @@ export const useEditPatientForm = ({
       return false;
     }
 
-    // Discharge date cannot be earlier than last completed attendance
+    // Discharge date cannot be earlier than last completed appointment
     if (
       patient.dischargeDate &&
       minDischargeDate &&
       patient.dischargeDate < minDischargeDate
     ) {
       setError(        
-        `The discharge date cannot be earlier than the date of the last completed attendance (${formatDisplayDate(minDischargeDate)}).`,
+        `The discharge date cannot be earlier than the date of the last completed appointment (${formatDisplayDate(minDischargeDate)}).`,
       );
       return false;
     }
@@ -161,15 +161,15 @@ export const useEditPatientForm = ({
       return;
     }
 
-    // When changing to Discharged (D) or Consecutive no-shows (C), confirm cancellation of open attendances
+    // When changing to Discharged (D) or Consecutive no-shows (C), confirm cancellation of open appointments
     if (
       !skipStatusChangeConfirm &&
       (patient.status === "D" || patient.status === "C") &&
-      openAttendancesCount > 0
+      openAppointmentsCount > 0
     ) {
       setPendingStatusChange({
         newStatus: patient.status as "D" | "C",
-        openCount: openAttendancesCount,
+        openCount: openAppointmentsCount,
       });
       return;
     }
@@ -283,9 +283,9 @@ export const useEditPatientForm = ({
       
       let friendlyError = errorMessage;
       if (
-        errorMessage.toLowerCase().includes("active attendances") ||
+        errorMessage.toLowerCase().includes("active appointments") ||
         (errorMessage.toLowerCase().includes("cannot delete patient") &&
-          errorMessage.toLowerCase().includes("attendances"))
+          errorMessage.toLowerCase().includes("appointments"))
       ) {
         friendlyError =
           "It is not possible to delete this patient because he has ongoing or completed appointments. " +

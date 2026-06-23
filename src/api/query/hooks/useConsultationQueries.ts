@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   getConsultations,
-  getConsultationByAttendance,
+  getConsultationByAppointment,
   getLatestConsultationByPatient,
   createConsultation,
   updateConsultation,
   deleteConsultation,
-  scheduleReturnAttendance,
+  scheduleReturnAppointment,
 } from '@/api/consultations';
 import type {
   ConsultationResponseDto,
@@ -36,13 +36,13 @@ export function useConsultations() {
   });
 }
 
-export function useConsultationByAttendance(attendanceId: string | number) {
-  const attendanceIdStr = attendanceId.toString();
+export function useConsultationByAppointment(appointmentId: string | number) {
+  const appointmentIdStr = appointmentId.toString();
 
   return useQuery({
-    queryKey: consultationKeys.byAttendance(attendanceIdStr),
+    queryKey: consultationKeys.byAppointment(appointmentIdStr),
     queryFn: async () => {
-      const result = await getConsultationByAttendance(attendanceIdStr);
+      const result = await getConsultationByAppointment(appointmentIdStr);
 
       if (!result.success) {
         if (
@@ -67,7 +67,7 @@ export function useConsultationByAttendance(attendanceId: string | number) {
       }
       return failureCount < 3;
     },
-    enabled: !!attendanceId,
+    enabled: !!appointmentId,
   });
 }
 
@@ -106,15 +106,15 @@ export function useLatestConsultationByPatient(patientId: string | number) {
   });
 }
 
-export function useFetchConsultationByAttendance() {
+export function useFetchConsultationByAppointment() {
   const queryClient = useQueryClient();
 
   return useCallback(
-    (attendanceId: string | number, options?: { staleTime?: number }) => {
-      const idStr = attendanceId.toString();
+    (appointmentId: string | number, options?: { staleTime?: number }) => {
+      const idStr = appointmentId.toString();
       return queryClient.fetchQuery({
-        queryKey: consultationKeys.byAttendance(idStr),
-        queryFn: () => getConsultationByAttendance(idStr),
+        queryKey: consultationKeys.byAppointment(idStr),
+        queryFn: () => getConsultationByAppointment(idStr),
         staleTime: options?.staleTime,
       });
     },
@@ -142,10 +142,10 @@ export function useCreateConsultation() {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: consultationKeys.lists() });
 
-      if (variables.attendanceId) {
+      if (variables.appointmentId) {
         queryClient.invalidateQueries({
-          queryKey: consultationKeys.byAttendance(
-            variables.attendanceId.toString(),
+          queryKey: consultationKeys.byAppointment(
+            variables.appointmentId.toString(),
           ),
         });
       }
@@ -181,10 +181,10 @@ export function useUpdateConsultation() {
         queryKey: consultationKeys.detail(id.toString()),
       });
 
-      const attendanceId = data.consultation?.attendanceId;
-      if (attendanceId != null) {
+      const appointmentId = data.consultation?.appointmentId;
+      if (appointmentId != null) {
         queryClient.invalidateQueries({
-          queryKey: consultationKeys.byAttendance(attendanceId.toString()),
+          queryKey: consultationKeys.byAppointment(appointmentId.toString()),
         });
       }
     },
@@ -222,7 +222,7 @@ export function useDeleteConsultation() {
   });
 }
 
-export function useScheduleReturnAttendance() {
+export function useScheduleReturnAppointment() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -233,7 +233,7 @@ export function useScheduleReturnAttendance() {
       consultationId: number;
       mode: 'legacy' | 'auto-return';
     }) => {
-      const result = await scheduleReturnAttendance(consultationId, mode);
+      const result = await scheduleReturnAppointment(consultationId, mode);
 
       if (!result.success || !result.value) {
         throw new Error(result.error || 'Failed to schedule follow-up');
@@ -242,10 +242,10 @@ export function useScheduleReturnAttendance() {
       return result.value;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['attendances'] });
+      queryClient.invalidateQueries({ queryKey: ['appointments'] });
     },
     onError: (error) => {
-      console.error('Error scheduling return attendance:', error);
+      console.error('Error scheduling return appointment:', error);
     },
   });
 }
@@ -267,14 +267,14 @@ export function useConsultationsCompat() {
     await queryClient.invalidateQueries({ queryKey: consultationKeys.lists() });
   };
 
-  const getConsultationForAttendance = async (
-    attendanceId: number,
+  const getConsultationForAppointment = async (
+    appointmentId: number,
   ): Promise<ConsultationResponseDto | null> => {
     const result = await queryClient.fetchQuery({
-      queryKey: consultationKeys.byAttendance(attendanceId.toString()),
+      queryKey: consultationKeys.byAppointment(appointmentId.toString()),
       queryFn: async () => {
-        const apiResult = await getConsultationByAttendance(
-          attendanceId.toString(),
+        const apiResult = await getConsultationByAppointment(
+          appointmentId.toString(),
         );
         return apiResult.success ? apiResult.value || null : null;
       },
@@ -322,7 +322,7 @@ export function useConsultationsCompat() {
     loading,
     error,
     refreshConsultations,
-    getConsultationForAttendance,
+    getConsultationForAppointment,
     createConsultation,
     updateConsultation,
     deleteConsultation,

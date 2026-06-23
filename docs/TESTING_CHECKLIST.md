@@ -111,7 +111,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Active treatments section shows
 - [ ] Completed treatments section shows
 - [ ] Main concern displays for consultations
-- [ ] Parent attendance links visible
+- [ ] Parent appointment links visible
 - [ ] Loading states show during fetch
 - [ ] Error handling for invalid patient ID
 - [ ] Delete patient functionality (if implemented)
@@ -134,28 +134,28 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Walk-in panel visible on left side
 - [ ] "New Patient" toggle works
 - [ ] Patient search/select works for existing patients
-- [ ] All attendance types available (Assessment, Physiotherapy, TENS)
+- [ ] All appointment types available (Assessment, Physiotherapy, TENS)
 - [ ] Priority selection works (Emergency=1, Intermediate=2, Normal=3)
-- [ ] Parent attendance selector visible for existing patients
-- [ ] Parent attendance selector hidden for new patients
-- [ ] Parent attendance options load correctly
+- [ ] Parent appointment selector visible for existing patients
+- [ ] Parent appointment selector hidden for new patients
+- [ ] Parent appointment options load correctly
 - [ ] Form validation works
 - [ ] Create new patient + check-in flow works
 - [ ] Check-in existing patient works
 - [ ] Success feedback after check-in
 - [ ] Error handling on failure
 
-### Attendance Board
+### Appointment Board
 
 - [ ] All 4 sections render: Scheduled, Checked In, In Progress, Completed
-- [ ] Attendances grouped by date (today, future dates)
+- [ ] Appointments grouped by date (today, future dates)
 - [ ] Manual refresh button works
 - [ ] Loading states show during refresh
 - [ ] Empty states show in empty sections
 
 ### Drag & Drop
 
-- [ ] Drag attendance cards between sections
+- [ ] Drag appointment cards between sections
 - [ ] Drop zones highlight on drag
 - [ ] Status updates on drop (backend sync)
 - [ ] Confirmation modal for multi-section moves
@@ -174,10 +174,10 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Cancelled → Scheduled (rescheduling)
 - [ ] Backend timestamps update correctly
 
-### Attendance Cards
+### Appointment Cards
 
 - [ ] Patient name displays
-- [ ] Attendance type badge shows
+- [ ] Appointment type badge shows
 - [ ] Priority indicator visible
 - [ ] Time/date displays correctly
 - [ ] Main concern shows (if consultation)
@@ -223,19 +223,19 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Calendar displays current month
 - [ ] Navigate between months works
 - [ ] Today's date highlighted
-- [ ] Dates with attendances show count badges
+- [ ] Dates with appointments show count badges
 - [ ] Holiday indicators show (amber badge with sparkles)
 - [ ] Holiday tooltip shows name on hover
-- [ ] Click date to view attendances
+- [ ] Click date to view appointments
 - [ ] Loading states during data fetch
 
 ### Schedule Columns
 
-- [ ] Attendances grouped by date
+- [ ] Appointments grouped by date
 - [ ] All columns render: Assessment, Physiotherapy, TENS
 - [ ] Time slots display correctly
 - [ ] Drag & drop between dates (if implemented)
-- [ ] Empty states show when no attendances
+- [ ] Empty states show when no appointments
 
 ### Holiday Integration
 
@@ -245,15 +245,15 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Automatic scheduling skips holidays
 - [ ] Return weeks postpone if landing on holiday
 
-### New Attendance Form (from Schedule)
+### New Appointment Form (from Schedule)
 
 - [ ] Modal opens from schedule
 - [ ] Date pre-selected from calendar
 - [ ] Patient selection works
-- [ ] Parent attendance selector visible
-- [ ] Parent attendance options load
+- [ ] Parent appointment selector visible
+- [ ] Parent appointment options load
 - [ ] All fields validate correctly
-- [ ] Create attendance succeeds
+- [ ] Create appointment succeeds
 - [ ] Calendar updates after creation
 
 ---
@@ -326,7 +326,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Assessment Consultation Workflow
 
-- [ ] Post-attendance modal opens after completion
+- [ ] Post-appointment modal opens after completion
 - [ ] Tabbed form displays: Basic Info, General Recommendations, Treatment Recommendations
 - [ ] Basic Info tab validates:
   - [ ] Main concern required
@@ -382,9 +382,9 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ---
 
-## 🔄 9. Parent Attendance Tracking
+## 🔄 9. Parent Appointment Tracking
 
-### Parent Attendance Linking
+### Parent Appointment Linking
 
 - [ ] Parent selector visible in walkIn form
 - [ ] Parent selector visible in schedule form
@@ -402,7 +402,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Follow-ups link to original consultation
 - [ ] Physiotherapy sessions link to parent consultation
 - [ ] TENS sessions link to parent consultation
-- [ ] Children inherit parent (not intermediate attendance)
+- [ ] Children inherit parent (not intermediate appointment)
 - [ ] Backend maintains parent chain automatically
 
 ---
@@ -492,14 +492,14 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ## 📱 13. Responsive Design
 
-> Mobile HMS patterns are in [.cursor/rules/09-styling-responsive.mdc](../.cursor/rules/09-styling-responsive.mdc) and [ARCHITECTURE.md](./ARCHITECTURE.md) § Responsive Rules. **Layout work is implemented in code** (2026-06-01). Use the checklists below for **manual QA before each release** at **320px, 375px, 768px, and 1024px** (Chrome device mode + one real device when possible). HMS does **not** require touch drag-and-drop on attendance (optional follow-up).
+> Mobile HMS patterns are in [.cursor/rules/09-styling-responsive.mdc](../.cursor/rules/09-styling-responsive.mdc) and [ARCHITECTURE.md](./ARCHITECTURE.md) § Responsive Rules. **Layout work is implemented in code** (2026-06-01). Use the checklists below for **manual QA before each release** at **320px, 375px, 768px, and 1024px** (Chrome device mode + one real device when possible). HMS does **not** require touch drag-and-drop on appointment (optional follow-up).
 
 ### Implemented in codebase (mobile HMS)
 
 | Area                | What shipped                                                                                                           |
 | ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | Shell               | `TabNav` 44px + scroll-snap; `TopNavigation` touch targets; `main` flex min-height                                     |
-| Attendance          | `grid-cols-1 md:2 lg:4` columns; `MobileDesktopDnDAlert` below `lg`; legend wrap                                       |
+| Appointment          | `grid-cols-1 md:2 lg:4` columns; `MobileDesktopDnDAlert` below `lg`; legend wrap                                       |
 | Modals              | `BaseModal` (`max-h-[90dvh]`); custom shells migrated; `TabbedModal` scrollable tabs                                   |
 | Patients            | List cards `< md`; detail FAB (menu opens upward) + desktop section rail `lg+`; card headers; forms `grid-cols-1 md:*` |
 | Schedule / holidays | Stacked columns; holiday/template cards; filter touch targets                                                          |
@@ -518,12 +518,12 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] `/login`: form fits 320px; inputs and Sign In button usable
 - [ ] Modals: fit viewport; body scrolls inside modal; close control reachable
 - [ ] Touch targets: primary actions ≥ 44px (buttons, `IconButton`, tab nav)
-- [ ] Attendance status changes on phone: read-only layout OK; DnD remains desktop (`MobileDesktopDnDAlert`) — touch DnD **not** HMS (optional follow-up)
+- [ ] Appointment status changes on phone: read-only layout OK; DnD remains desktop (`MobileDesktopDnDAlert`) — touch DnD **not** HMS (optional follow-up)
 - [ ] No unintended horizontal scroll on `/board`, `/schedule`, `/patients`
 
 ### Tablet (640px – 1024px) — release QA
 
-- [ ] Attendance: two-column board at `md`; four columns at `lg`
+- [ ] Appointment: two-column board at `md`; four columns at `lg`
 - [ ] Patient list: table from `md`; ID column from `sm`
 - [ ] Touch targets adequate on filters and toolbars
 - [ ] Navigation and modals usable in portrait and landscape
@@ -532,7 +532,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 - [ ] Full Kanban (four columns) and desktop patient side nav
 - [ ] Max-width constraint (`max-w-[1200px]`) centered
-- [ ] Drag & drop smooth on attendance board
+- [ ] Drag & drop smooth on appointment board
 - [ ] Hover states on tables and cards
 
 ---
@@ -585,7 +585,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Backend Sync
 
-- [ ] Attendance status updates sync
+- [ ] Appointment status updates sync
 - [ ] Patient data updates sync
 - [ ] Treatments and sessions sync
 - [ ] Timestamps accurate
@@ -595,22 +595,22 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ## 🧩 16. Edge Cases
 
-### Attendance Management
+### Appointment Management
 
 - [ ] Empty sections display correctly
 - [ ] Drag to same section (no-op)
 - [ ] Drag while loading (disabled)
 - [ ] Concurrent updates handled
 - [ ] Invalid status transitions rejected
-- [ ] Delete last attendance in section
-- [ ] Multiple attendances same patient/date
+- [ ] Delete last appointment in section
+- [ ] Multiple appointments same patient/date
 
 ### Patient Management
 
-- [ ] Patient with no attendances
-- [ ] Patient with 100+ attendances
+- [ ] Patient with no appointments
+- [ ] Patient with 100+ appointments
 - [ ] Duplicate patient names allowed
-- [ ] Patient deletion with active attendances blocked
+- [ ] Patient deletion with active appointments blocked
 - [ ] Patient with no timezone defaults to the clinic timezone
 
 ### Treatments and sessions
@@ -628,12 +628,12 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Template with Feb 31 (skipped during apply)
 - [ ] Duplicate holiday dates prevented
 - [ ] Past holiday creation (validation)
-- [ ] Holiday on same date as attendance (scheduling postpones)
+- [ ] Holiday on same date as appointment (scheduling postpones)
 
 ### Calendar/Schedule
 
-- [ ] Month with no attendances
-- [ ] Date with 50+ attendances
+- [ ] Month with no appointments
+- [ ] Date with 50+ appointments
 - [ ] Navigate to future years
 - [ ] Navigate to past years
 - [ ] Leap year handling (Feb 29)

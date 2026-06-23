@@ -1,22 +1,22 @@
 import { useCallback } from 'react';
 import {
-  useHandleIncompleteAttendances,
+  useHandleIncompleteAppointments,
   useHandleAbsenceJustifications,
-} from '@/api/query/hooks/useAttendanceQueries';
+} from '@/api/query/hooks/useAppointmentQueries';
 import {
   useCheckEndOfDayStatus,
   useDayFinalized,
   useEndOfDayStatus,
 } from '@/stores';
-import type { AttendanceByDate, AttendanceStatusDetail } from '@/types/types';
-import type { AbsenceJustification, EndOfDayResult } from './attendanceBoardTypes';
+import type { AppointmentByDate, AppointmentStatusDetail } from '@/types/types';
+import type { AbsenceJustification, EndOfDayResult } from './boardTypes';
 
 export interface UseEndOfDayBridgeReturn {
   dayFinalized: boolean;
   endOfDayStatus: EndOfDayResult | null;
   checkEndOfDayStatus: () => EndOfDayResult;
-  handleIncompleteAttendances: (
-    attendances: AttendanceStatusDetail[],
+  handleIncompleteAppointments: (
+    appointments: AppointmentStatusDetail[],
     action: 'complete' | 'reschedule',
   ) => Promise<boolean>;
   handleAbsenceJustifications: (
@@ -25,29 +25,29 @@ export interface UseEndOfDayBridgeReturn {
 }
 
 export function useEndOfDayBridge(
-  attendancesByDate: AttendanceByDate | null,
+  appointmentsByDate: AppointmentByDate | null,
 ): UseEndOfDayBridgeReturn {
   const dayFinalized = useDayFinalized();
   const endOfDayStatus = useEndOfDayStatus();
   const checkEndOfDayStatusAction = useCheckEndOfDayStatus();
 
-  const handleIncompletesMutation = useHandleIncompleteAttendances();
+  const handleIncompletesMutation = useHandleIncompleteAppointments();
   const handleAbsencesMutation = useHandleAbsenceJustifications();
 
   const checkEndOfDayStatus = useCallback((): EndOfDayResult => {
-    return checkEndOfDayStatusAction(attendancesByDate || null);
-  }, [checkEndOfDayStatusAction, attendancesByDate]);
+    return checkEndOfDayStatusAction(appointmentsByDate || null);
+  }, [checkEndOfDayStatusAction, appointmentsByDate]);
 
-  const handleIncompleteAttendances = useCallback(
+  const handleIncompleteAppointments = useCallback(
     async (
-      attendances: AttendanceStatusDetail[],
+      appointments: AppointmentStatusDetail[],
       action: 'complete' | 'reschedule',
     ): Promise<boolean> => {
       try {
-        await handleIncompletesMutation.mutateAsync({ attendances, action });
+        await handleIncompletesMutation.mutateAsync({ appointments, action });
         return true;
       } catch (err) {
-        console.error('Error handling incomplete attendances:', err);
+        console.error('Error handling incomplete appointments:', err);
         return false;
       }
     },
@@ -71,7 +71,7 @@ export function useEndOfDayBridge(
     dayFinalized,
     endOfDayStatus,
     checkEndOfDayStatus,
-    handleIncompleteAttendances,
+    handleIncompleteAppointments,
     handleAbsenceJustifications,
   };
 }

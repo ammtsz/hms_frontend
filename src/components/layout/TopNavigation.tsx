@@ -92,7 +92,7 @@ export function TopNavigation() {
               Healthcare Management System
             </h1>
             <p className="hidden text-xs text-gray-500 sm:block">
-              Attendance and physiotherapy treatment management system
+              Appointment and physiotherapy treatment management system
             </p>
           </div>
         </div>

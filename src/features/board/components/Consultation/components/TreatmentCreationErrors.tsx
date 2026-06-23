@@ -21,7 +21,7 @@ interface TreatmentCreationErrorsProps {
 
 /**
  * TreatmentCreationErrors - Displays detailed error information when treatment sessions
- * or their automatic attendances fail to be created
+ * or their automatic appointments fail to be created
  */
 const TreatmentCreationErrors: React.FC<TreatmentCreationErrorsProps> = ({
   errors,

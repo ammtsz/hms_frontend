@@ -1,5 +1,5 @@
-import { AttendanceType } from "@/types/types";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { AppointmentType } from "@/types/types";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 
 export const HOLIDAY_LIST_EMPTY_STATE = {
   title: "No holidays registered",
@@ -16,7 +16,7 @@ export const HOLIDAY_LIST_TABLE_HEADERS = {
   actions: "Actions",
 } as const;
 
-const HOLIDAY_BLOCKED_TREATMENT_TYPES: AttendanceType[] = [
+const HOLIDAY_BLOCKED_TREATMENT_TYPES: AppointmentType[] = [
   "assessment",
   "physiotherapy",
   "tens",
@@ -25,7 +25,7 @@ const HOLIDAY_BLOCKED_TREATMENT_TYPES: AttendanceType[] = [
 export const HOLIDAY_TREATMENT_TYPE_OPTIONS = HOLIDAY_BLOCKED_TREATMENT_TYPES.map(
   (value) => ({
     value,
-    label: getAttendanceTypeLabel(value),
+    label: getAppointmentTypeLabel(value),
   }),
 );
 
@@ -34,7 +34,7 @@ export function formatBlockedTreatmentTypes(
   blockedTypes?: string[] | null,
 ): string {
   if (!blockedTypes || blockedTypes.length === 0) {
-    return HOLIDAY_BLOCKED_TREATMENT_TYPES.map(getAttendanceTypeLabel).join(
+    return HOLIDAY_BLOCKED_TREATMENT_TYPES.map(getAppointmentTypeLabel).join(
       ", ",
     );
   }
@@ -46,7 +46,7 @@ export function formatBlockedTreatmentTypes(
         type === "physiotherapy" ||
         type === "tens"
       ) {
-        return getAttendanceTypeLabel(type);
+        return getAppointmentTypeLabel(type);
       }
       return type;
     })

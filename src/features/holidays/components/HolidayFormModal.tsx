@@ -247,7 +247,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
 
         if (conflictData?.hasConflict) {
           setConflictError(
-            `This date has ${conflictData.attendanceCount} attendance(s) scheduled. Cannot create holiday.`,
+            `This date has ${conflictData.appointmentCount} appointment(s) scheduled. Cannot create holiday.`,
           );
           return;
         }

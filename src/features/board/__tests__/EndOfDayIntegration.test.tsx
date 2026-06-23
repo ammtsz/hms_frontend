@@ -7,21 +7,24 @@ import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { ClinicTimezoneProvider } from "@/contexts/ClinicTimezoneContext";
 import { ToastProvider } from "@/contexts/ToastContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import AttendanceBoard from "@/features/board/AttendanceBoard";
-import { attendanceKeys } from "@/api/query/keys/attendanceKeys";
+import AppointmentsBoard from "@/features/board/AppointmentsBoard";
+import { appointmentKeys } from "@/api/query/keys/appointmentKeys";
 import { patientKeys } from "@/api/query/keys/patientKeys";
 import { priorityKeys } from "@/api/query/keys/priorityKeys";
 
 // Mock the API calls
-jest.mock("@/api/attendances", () => ({
-  getAllAttendances: jest.fn(() => Promise.resolve({ data: [], error: null })),
-  getAttendancesForSchedule: jest.fn(() =>
-    Promise.resolve({ data: [], error: null })
+jest.mock("@/api/appointments", () => ({
+  getAllAppointments: jest.fn(() => Promise.resolve({ data: [], error: null })),
+  getAppointmentsForSchedule: jest.fn(() =>
+    Promise.resolve({ data: [], error: null }),
   ),
-  getUnresolvedPastAttendances: jest.fn(() =>
-    Promise.resolve({ success: true, value: { hasUnresolved: false, dates: [] } })
+  getUnresolvedPastAppointments: jest.fn(() =>
+    Promise.resolve({
+      success: true,
+      value: { hasUnresolved: false, dates: [] },
+    }),
   ),
-  getAttendancesByDate: jest.fn(() =>
+  getAppointmentsByDate: jest.fn(() =>
     Promise.resolve({
       success: true,
       value: [
@@ -50,13 +53,13 @@ jest.mock("@/api/attendances", () => ({
           scheduledTime: "10:00",
         },
       ],
-    })
+    }),
   ),
-  getNextAttendanceDate: jest.fn(() =>
+  getNextAppointmentDate: jest.fn(() =>
     Promise.resolve({
       success: true,
-      value: { next_attendance_date: "2025-10-17" },
-    })
+      value: { next_appointment_date: "2025-10-17" },
+    }),
   ),
 }));
 
@@ -102,7 +105,7 @@ jest.mock("@/api/patients", () => ({
           updatedAt: "2025-01-01T00:00:00Z",
         },
       ],
-    })
+    }),
   ),
 }));
 
@@ -123,35 +126,37 @@ jest.mock("@/api/query/hooks/useDayFinalizationQueries", () => ({
     isLoading: false,
     error: null,
   }),
-  useFetchDayFinalizationStatus: jest.fn().mockReturnValue(
-    jest.fn().mockResolvedValue({ isFinalized: false })
-  ),
+  useFetchDayFinalizationStatus: jest
+    .fn()
+    .mockReturnValue(jest.fn().mockResolvedValue({ isFinalized: false })),
 }));
 
-jest.mock("@/api/query/hooks/useAttendanceQueries", () => {
+jest.mock("@/api/query/hooks/useAppointmentQueries", () => {
   const actual = jest.requireActual(
-    "@/api/query/hooks/useAttendanceQueries",
-  ) as typeof import("@/api/query/hooks/useAttendanceQueries");
+    "@/api/query/hooks/useAppointmentQueries",
+  ) as typeof import("@/api/query/hooks/useAppointmentQueries");
   const { useQuery } = jest.requireActual(
     "@tanstack/react-query",
   ) as typeof import("@tanstack/react-query");
-  const { getAttendancesByDate, getUnresolvedPastAttendances } =
-    jest.requireMock("@/api/attendances") as typeof import("@/api/attendances");
-  const { transformAttendanceWithPatientByDate } = jest.requireActual(
+  const { getAppointmentsByDate, getUnresolvedPastAppointments } =
+    jest.requireMock(
+      "@/api/appointments",
+    ) as typeof import("@/api/appointments");
+  const { transformAppointmentWithPatientByDate } = jest.requireActual(
     "@/utils/apiTransformers",
   ) as typeof import("@/utils/apiTransformers");
 
   return {
     ...actual,
-    useAttendancesByDate: (date: string) =>
+    useAppointmentsByDate: (date: string) =>
       useQuery({
-        queryKey: attendanceKeys.byDate(date),
+        queryKey: appointmentKeys.byDate(date),
         queryFn: async () => {
-          const response = await getAttendancesByDate(date);
+          const response = await getAppointmentsByDate(date);
           if (!response.success) {
-            throw new Error(response.error || "Failed to fetch attendances");
+            throw new Error(response.error || "Failed to fetch appointments");
           }
-          return transformAttendanceWithPatientByDate(
+          return transformAppointmentWithPatientByDate(
             response.value || [],
             date,
           );
@@ -162,14 +167,14 @@ jest.mock("@/api/query/hooks/useAttendanceQueries", () => {
         refetchOnWindowFocus: false,
         refetchOnMount: false,
       }),
-    useUnresolvedPastAttendances: () =>
+    useUnresolvedPastAppointments: () =>
       useQuery({
-        queryKey: attendanceKeys.unresolvedPast(),
+        queryKey: appointmentKeys.unresolvedPast(),
         queryFn: async () => {
-          const response = await getUnresolvedPastAttendances();
+          const response = await getUnresolvedPastAppointments();
           if (!response.success) {
             throw new Error(
-              response.error || "Failed to fetch unresolved past attendances",
+              response.error || "Failed to fetch unresolved past appointments",
             );
           }
           return response.value;
@@ -226,8 +231,8 @@ jest.mock("@/api/query/hooks/useScheduleSettingQueries", () => ({
   hasInvalidTreatmentStartDates: () => false,
 }));
 
-jest.mock("@/features/board/hooks/useAttendanceHolidayForDate", () => ({
-  useAttendanceHolidayForDate: () => ({
+jest.mock("@/features/board/hooks/useBoardHolidayForDate", () => ({
+  useBoardHolidayForDate: () => ({
     isHolidayForAll: false,
     holidayMessage: null,
     isLoading: false,
@@ -328,20 +333,20 @@ describe("EndOfDayModal Integration - Completed Count Fix", () => {
     testQueryClient = null;
   });
 
-  it("should correctly show completed attendances count in end of day modal", async () => {
+  it("should correctly show completed appointments count in end of day modal", async () => {
     render(
       <TestWrapper>
-        <AttendanceBoard />
-      </TestWrapper>
+        <AppointmentsBoard />
+      </TestWrapper>,
     );
 
     await waitFor(
       () => {
         expect(
-          screen.getByText(/▼\s*Consultation\s*\(\d+\)/)
+          screen.getByText(/▼\s*Assessment Consultations\s*\(\d+\)/),
         ).toBeInTheDocument();
       },
-      { timeout: 15000 }
+      { timeout: 15000 },
     );
 
     // Verify the component structure is correct
@@ -351,7 +356,7 @@ describe("EndOfDayModal Integration - Completed Count Fix", () => {
     // Check that the End of Day button exists
     expect(screen.getByText("End of Day")).toBeInTheDocument();
 
-    // Verify there are completed attendances (text includes priority numbers)
+    // Verify there are completed appointments (text includes priority numbers)
     expect(screen.getByText(/Patient 1/)).toBeInTheDocument();
     expect(screen.getByText(/Patient 2/)).toBeInTheDocument();
     expect(screen.getByText(/Patient 3/)).toBeInTheDocument();

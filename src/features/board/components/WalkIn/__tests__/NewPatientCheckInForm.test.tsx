@@ -9,23 +9,23 @@ import { useSelectablePrioritiesForForm } from "@/features/board/hooks/useSelect
 import {
   PatientPriority,
   PatientStatus,
-  AttendanceType,
-  AttendanceStatus,
+  AppointmentType,
+  AppointmentStatus,
 } from "@/api/types";
 import { SystemOptionType } from "@/types/systemOptions";
 // Mock the APIs
 jest.mock("@/api/patients");
 
 // Create mock functions for React Query mutations
-const mockCreateAttendanceMutateAsync = jest.fn();
-const mockCheckInAttendanceMutateAsync = jest.fn();
+const mockCreateAppointmentMutateAsync = jest.fn();
+const mockCheckInAppointmentMutateAsync = jest.fn();
 
-jest.mock("@/api/query/hooks/useAttendanceQueries", () => ({
-  useCreateAttendance: () => ({
-    mutateAsync: mockCreateAttendanceMutateAsync,
+jest.mock("@/api/query/hooks/useAppointmentQueries", () => ({
+  useCreateAppointment: () => ({
+    mutateAsync: mockCreateAppointmentMutateAsync,
   }),
-  useCheckInAttendance: () => ({
-    mutateAsync: mockCheckInAttendanceMutateAsync,
+  useCheckInAppointment: () => ({
+    mutateAsync: mockCheckInAppointmentMutateAsync,
   }),
 }));
 
@@ -51,7 +51,7 @@ const mockPatient: Patient = {
   mainConcern: "Test complaint",
   startDate: "2026-01-29",
   dischargeDate: null,
-  nextAttendanceDates: [],
+  nextAppointmentDates: [],
   currentRecommendations: {
     date: "2026-01-29",
     food: "",
@@ -61,7 +61,7 @@ const mockPatient: Patient = {
     tens: false,
     returnWeeks: 0,
   },
-  previousAttendances: [],
+  previousAppointments: [],
   missingAppointmentsStreak: 0,
 };
 
@@ -143,22 +143,22 @@ describe("NewPatientCheckInForm", () => {
       },
     });
 
-    // Mock successful attendance creation
-    mockCreateAttendanceMutateAsync.mockResolvedValue({
+    // Mock successful appointment creation
+    mockCreateAppointmentMutateAsync.mockResolvedValue({
       id: 123,
       patientId: 1,
-      type: AttendanceType.ASSESSMENT,
-      status: AttendanceStatus.SCHEDULED,
+      type: AppointmentType.ASSESSMENT,
+      status: AppointmentStatus.SCHEDULED,
       scheduledDate: "2025-01-15",
       scheduledTime: "09:00",
     });
 
     // Mock successful check-in
-    mockCheckInAttendanceMutateAsync.mockResolvedValue({
+    mockCheckInAppointmentMutateAsync.mockResolvedValue({
       id: 123,
       patientId: 1,
-      type: AttendanceType.ASSESSMENT,
-      status: AttendanceStatus.CHECKED_IN,
+      type: AppointmentType.ASSESSMENT,
+      status: AppointmentStatus.CHECKED_IN,
       scheduledDate: "2025-01-15",
       scheduledTime: "09:00",
       checkedInTime: "09:00:00",
@@ -251,7 +251,7 @@ describe("NewPatientCheckInForm", () => {
     expect(birthDateInput).toHaveValue("1985-05-15");
   });
 
-  it("creates new attendance when no attendanceId provided", async () => {
+  it("creates new appointment when no appointmentId provided", async () => {
     renderComponent();
 
     fireEvent.click(screen.getByText("Check In"));
@@ -265,21 +265,21 @@ describe("NewPatientCheckInForm", () => {
           birthDate: "1990-01-01",
         }),
       });
-      expect(mockCreateAttendanceMutateAsync).toHaveBeenCalled();
-      expect(mockCheckInAttendanceMutateAsync).toHaveBeenCalled();
+      expect(mockCreateAppointmentMutateAsync).toHaveBeenCalled();
+      expect(mockCheckInAppointmentMutateAsync).toHaveBeenCalled();
     });
   });
 
-  it("checks in existing attendance when attendanceId provided", async () => {
-    renderComponent({ attendanceId: 123 });
+  it("checks in existing appointment when appointmentId provided", async () => {
+    renderComponent({ appointmentId: 123 });
 
     fireEvent.click(screen.getByText("Check In"));
 
     await waitFor(() => {
       expect(mockUpdatePatientMutateAsync).toHaveBeenCalled();
-      expect(mockCreateAttendanceMutateAsync).not.toHaveBeenCalled();
-      expect(mockCheckInAttendanceMutateAsync).toHaveBeenCalledWith({
-        attendanceId: 123,
+      expect(mockCreateAppointmentMutateAsync).not.toHaveBeenCalled();
+      expect(mockCheckInAppointmentMutateAsync).toHaveBeenCalledWith({
+        appointmentId: 123,
         patientName: "John Smith",
       });
     });

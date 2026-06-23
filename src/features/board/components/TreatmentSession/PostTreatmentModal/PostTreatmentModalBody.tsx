@@ -9,13 +9,13 @@ interface PostTreatmentModalBodyProps {
   error: Error | unknown | null | undefined;
   rows: PostTreatmentRow[];
   rowsByType: { physiotherapy: PostTreatmentRow[]; tens: PostTreatmentRow[] };
-  completedAttendanceIds: Set<number>;
+  completedAppointmentIds: Set<number>;
   cancellationReasons: Map<number, string>;
   generalNotes: string;
   setGeneralNotes: (value: string) => void;
   isSubmitting: boolean;
-  onToggle: (attendanceId: number) => void;
-  onCancellationReasonChange: (attendanceId: number, value: string) => void;
+  onToggle: (appointmentId: number) => void;
+  onCancellationReasonChange: (appointmentId: number, value: string) => void;
   onRetry: () => void | Promise<void>;
 }
 
@@ -24,7 +24,7 @@ export const PostTreatmentModalBody: React.FC<PostTreatmentModalBodyProps> = ({
   error,
   rows,
   rowsByType,
-  completedAttendanceIds,
+  completedAppointmentIds,
   cancellationReasons,
   generalNotes,
   setGeneralNotes,
@@ -50,7 +50,7 @@ export const PostTreatmentModalBody: React.FC<PostTreatmentModalBodyProps> = ({
       </div>
     ) : rows.length === 0 ? (
       <div className="py-8 text-gray-500 text-center space-y-3">
-        <p>No treatments found for these attendances.</p>
+        <p>No treatments found for these appointments.</p>
         <Button type="button" onClick={onRetry} variant="secondary">
           Try Again
         </Button>
@@ -72,7 +72,7 @@ export const PostTreatmentModalBody: React.FC<PostTreatmentModalBodyProps> = ({
                 key={treatmentType}
                 treatmentType={treatmentType}
                 rows={typeRows}
-                completedAttendanceIds={completedAttendanceIds}
+                completedAppointmentIds={completedAppointmentIds}
                 cancellationReasons={cancellationReasons}
                 isSubmitting={isSubmitting}
                 onToggle={onToggle}

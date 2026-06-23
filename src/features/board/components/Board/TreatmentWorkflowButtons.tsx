@@ -25,7 +25,7 @@ export const TreatmentWorkflowButtons: React.FC<
         {isDayFinalized
           ? "Day finalized"
           : noSlotsForDay
-            ? "No attendances on this day"
+            ? "No appointments on this day"
             : "End of Day"}
       </Button>
     </div>

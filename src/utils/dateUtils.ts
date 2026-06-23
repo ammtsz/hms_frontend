@@ -1,6 +1,6 @@
 // Date helper functions
 
-import { getNextAttendanceDate } from "@/api/attendances";
+import { getNextAppointmentDate } from "@/api/appointments";
 import { getTodayClinic } from "@/utils/timezoneDate";
 
 const DISPLAY_LOCALE = "en-US";
@@ -68,7 +68,7 @@ export function formatDisplayDateWithDayOfWeek(dateStr: string): string {
 // Get the default scheduling date based on clinic schedule settings
 export const getDefaultSchedulingDate = async (): Promise<string> => {
   try {
-    const result = await getNextAttendanceDate();
+    const result = await getNextAppointmentDate();
     if (result.success && result.value?.nextDate) {
       return result.value.nextDate;
     }

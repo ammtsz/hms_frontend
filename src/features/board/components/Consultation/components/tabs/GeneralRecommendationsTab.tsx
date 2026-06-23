@@ -1,5 +1,5 @@
 import React from "react";
-import type { PostConsultationFormData } from "../../hooks/usePostAttendanceForm";
+import type { PostConsultationFormData } from "../../hooks/usePostConsultationForm";
 import { Checkbox, Field, Input, Textarea } from "@/components/ui";
 
 interface GeneralRecommendationsTabProps {

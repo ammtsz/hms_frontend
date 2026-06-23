@@ -27,7 +27,7 @@ describe("QuickActions", () => {
     startDate: "2025-01-01",
     dischargeDate: null,
     timezone: "America/Sao_Paulo",
-    nextAttendanceDates: [],
+    nextAppointmentDates: [],
     currentRecommendations: {
       date: "2025-01-01",
       food: "",
@@ -37,7 +37,7 @@ describe("QuickActions", () => {
       tens: false,
       returnWeeks: 2,
     },
-    previousAttendances: [],
+    previousAppointments: [],
     missingAppointmentsStreak: 0,
   };
 

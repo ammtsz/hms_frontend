@@ -5,16 +5,16 @@ import { RefreshCw } from "lucide-react";
 import { useCommittedDateInput } from "@/hooks/useCommittedDateInput";
 import { getTodayClinic } from "@/utils/timezoneDate";
 import { SCHEDULE_DAY_WINDOW_OPTIONS, type ScheduleDayWindowDays } from "@/stores";
-import { AttendanceStatus } from "@/api/types";
+import { AppointmentStatus } from "@/api/types";
 import {
   SCHEDULE_STATUS_CHECKBOX_LABELS,
   ALL_SCHEDULE_FILTER_STATUSES,
   SCHEDULE_FILTER_LABELS,
 } from "../utils/scheduleFilterConstants";
 import { Button, Checkbox, Input, Select } from "@/components/ui";
-import ScheduleAttendanceStatusIcon, {
+import ScheduleAppointmentStatusIcon, {
   SCHEDULE_STATUS_LEGEND_ITEMS,
-} from "./ScheduleAttendanceStatusIcon";
+} from "./ScheduleAppointmentStatusIcon";
 
 const WINDOW_LABELS: Record<ScheduleDayWindowDays, string> = {
   1: "1 day",
@@ -30,8 +30,8 @@ export interface ScheduleCalendarFiltersProps {
   setSelectedDate: (date: string) => void;
   scheduleDayWindowDays: ScheduleDayWindowDays;
   setScheduleDayWindowDays: (days: ScheduleDayWindowDays) => void;
-  scheduleStatusFilters: AttendanceStatus[];
-  setScheduleStatusFilters: (filters: AttendanceStatus[]) => void;
+  scheduleStatusFilters: AppointmentStatus[];
+  setScheduleStatusFilters: (filters: AppointmentStatus[]) => void;
   patientFilter: string;
   setPatientFilter: (value: string) => void;
   refreshSchedule: () => void;
@@ -53,7 +53,7 @@ const ScheduleCalendarFilters: React.FC<ScheduleCalendarFiltersProps> = ({
   rangeSummaryText,
 }) => {
   const toggleScheduleStatus = useCallback(
-    (status: AttendanceStatus) => {
+    (status: AppointmentStatus) => {
       if (scheduleStatusFilters.includes(status)) {
         setScheduleStatusFilters(scheduleStatusFilters.filter((s) => s !== status));
       } else {
@@ -186,7 +186,7 @@ const ScheduleCalendarFilters: React.FC<ScheduleCalendarFiltersProps> = ({
 
         <fieldset className="border border-gray-200 rounded-lg p-3">
           <legend className="text-sm font-medium text-gray-800 px-1">
-            {SCHEDULE_FILTER_LABELS.attendanceStatus}
+            {SCHEDULE_FILTER_LABELS.appointmentStatus}
           </legend>
           <div className="mb-3 flex flex-wrap gap-2">
             <Button
@@ -196,7 +196,7 @@ const ScheduleCalendarFilters: React.FC<ScheduleCalendarFiltersProps> = ({
               onClick={() =>
                 setScheduleStatusFilters([...ALL_SCHEDULE_FILTER_STATUSES])
               }
-              aria-label="Select all attendance statuses"
+              aria-label="Select all appointment statuses"
             >
               Select All
             </Button>
@@ -205,7 +205,7 @@ const ScheduleCalendarFilters: React.FC<ScheduleCalendarFiltersProps> = ({
               size="sm"
               className="min-h-[44px] px-3 py-2 text-xs sm:min-h-[32px] sm:px-2 sm:py-1"
               onClick={() => setScheduleStatusFilters([])}
-              aria-label="Clear attendance status selection"
+              aria-label="Clear appointment status selection"
             >
               Clear
             </Button>
@@ -238,7 +238,7 @@ const ScheduleCalendarFilters: React.FC<ScheduleCalendarFiltersProps> = ({
           <span className="font-medium text-gray-700">{SCHEDULE_FILTER_LABELS.legend}</span>
           {SCHEDULE_STATUS_LEGEND_ITEMS.map(({ status, label }) => (
             <span key={status} className="inline-flex items-center gap-1">
-              <ScheduleAttendanceStatusIcon status={status} />
+              <ScheduleAppointmentStatusIcon status={status} />
               {label}
             </span>
           ))}

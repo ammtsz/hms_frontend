@@ -4,8 +4,8 @@
  * Centralized exports for all Zustand stores
  */
 
-// Attendance Store - Core drag & drop and workflow management
-export { useAttendanceStore } from './attendanceStore';
+// Board Store - Core drag & drop and workflow UI state
+export { useBoardStore } from './boardStore';
 
 // Calendar store - scheduling UI state  
 export {
@@ -23,7 +23,7 @@ export {
   useScheduleStatusFilters,
   usePatientFilter,
   useConfirmRemove,
-  useShowNewAttendance,
+  useShowNewAppointment,
   useOpenAssessmentIdx,
   useOpenPhysiotherapyIdx,
   
@@ -33,7 +33,7 @@ export {
   useSetScheduleStatusFilters,
   useSetPatientFilter,
   useSetConfirmRemove,
-  useSetShowNewAttendance,
+  useSetShowNewAppointment,
   useSetOpenAssessmentIdx,
   useSetOpenPhysiotherapyIdx,
   
@@ -41,20 +41,20 @@ export {
   useScheduleActions,
 } from './scheduleSelectors';
 
-// Attendance Selectors - Optimized selectors for drag & drop performance
+// Appointment Selectors - Optimized selectors for drag & drop performance
 export {
-  useAttendanceActions,
+  useAppointmentActions,
   
   // Composite selectors (when you need multiple related values)
-  useAttendanceDateState,
-  useAttendanceDragState,
-  useAttendanceEndOfDayState,
+  useBoardDateState,
+  useAppointmentDragState,
+  useAppointmentEndOfDayState,
   
   // Individual state selectors (optimal performance)
   useSelectedDate,
-  useAttendanceLoading,
-  useAttendanceDataLoading,
-  useAttendanceError,
+  useAppointmentLoading,
+  useBoardDataLoading,
+  useAppointmentError,
   useDraggedItem,
   useIsDragging,
   useDayFinalized,
@@ -62,16 +62,16 @@ export {
   
   // Individual action selectors (stable references)
   useSetSelectedDate,
-  useSetAttendanceLoading,
-  useSetAttendanceDataLoading,
-  useSetAttendanceError,
+  useSetAppointmentLoading,
+  useSetAppointmentDataLoading,
+  useSetAppointmentError,
   useSetDraggedItem,
   useSetIsDragging,
   useSetDayFinalized,
   useCheckEndOfDayStatus,
   useFinalizeEndOfDay,
-} from './attendanceSelectors';
+} from './boardSelectors';
 
 // Export store types for convenience
-export type { AttendanceStore } from './attendanceStore';
+export type { BoardStore } from './boardStore';
 export type { ScheduleStore } from './scheduleStore';

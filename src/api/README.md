@@ -12,7 +12,7 @@ src/api/
 │   ├── hooks/        # React Query hooks
 │   ├── keys/         # Query key factories
 │   └── invalidation/ # Shared cache invalidation helpers
-├── <resource>/       # Resource clients such as patients, attendances, treatments
+├── <resource>/       # Resource clients such as patients, appointments, treatments
 └── utils/            # Shared API helpers and messages
 ```
 
@@ -29,8 +29,8 @@ src/api/
 ```typescript
 import { getPatients, createPatient } from "@/api/patients";
 import { usePatients } from "@/api/query/hooks/usePatientQueries";
-import { attendanceKeys } from "@/api/query/keys/attendanceKeys";
-import { ApiResponse, AttendanceType, PatientPriority } from "@/api/types";
+import { appointmentKeys } from "@/api/query/keys/appointmentKeys";
+import { ApiResponse, AppointmentType, PatientPriority } from "@/api/types";
 ```
 
 ## Data flow

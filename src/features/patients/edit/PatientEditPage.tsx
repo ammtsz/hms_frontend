@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Breadcrumb from "@/components/common/Breadcrumb";
 import PatientFormFields from "@/features/patients/form/PatientFormFields";
-import { usePatientWithAttendances } from "@/api/query/hooks/usePatientQueries";
+import { usePatientWithAppointments } from "@/api/query/hooks/usePatientQueries";
 import { useEditPatientForm } from "@/features/patients/form/hooks/useEditPatientForm";
 import ErrorDisplay from "@/components/common/ErrorDisplay";
 import { PageError } from "@/components/common/PageError";
@@ -35,7 +35,7 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
     isLoading,
     error,
     refetch,
-  } = usePatientWithAttendances(patientId);
+  } = usePatientWithAppointments(patientId);
 
   // Transform patient data when it's available
   const initialData = useMemo(() => {
@@ -48,17 +48,17 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
         status: patient.status,
         mainConcern: patient.mainConcern || "",
         dischargeDate: patient.dischargeDate || null,
-        nextAttendanceDates: [],
+        nextAppointmentDates: [],
       };
     }
     return null;
   }, [patient]);
 
-  // Last completed attendance date (previousAttendances sorted by date desc)
-  const minDischargeDate = patient?.previousAttendances?.[0]?.date ?? null;
-  const hasKnownAttendanceHistory =
-    (patient?.previousAttendances?.length ?? 0) > 0 ||
-    (patient?.openAttendancesCount ?? 0) > 0;
+  // Last completed appointment date (previousAppointments sorted by date desc)
+  const minDischargeDate = patient?.previousAppointments?.[0]?.date ?? null;
+  const hasKnownAppointmentHistory =
+    (patient?.previousAppointments?.length ?? 0) > 0 ||
+    (patient?.openAppointmentsCount ?? 0) > 0;
 
   // Form hook with business logic
   const {
@@ -90,10 +90,10 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
       status: "T",
       mainConcern: "",
       dischargeDate: null,
-      nextAttendanceDates: [],
+      nextAppointmentDates: [],
     },
     minDischargeDate,
-    openAttendancesCount: patient?.openAttendancesCount ?? 0,
+    openAppointmentsCount: patient?.openAppointmentsCount ?? 0,
     onClose: () => {
       showToast("Patient updated successfully!", "success", 5000);
       router.push(`/patients/${patientId}`);
@@ -237,10 +237,10 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
                 variant="outline"
                 onClick={() => setShowDeleteModal(true)}
                 className="w-full border-red-500 text-red-600 hover:border-red-700 hover:text-red-700 sm:w-auto"
-                disabled={isSaving || isDeleting || hasKnownAttendanceHistory}
+                disabled={isSaving || isDeleting || hasKnownAppointmentHistory}
                 title={
-                  hasKnownAttendanceHistory
-                    ? "Deletion is only allowed for patients without attendance history or with only canceled or missed appointments."
+                  hasKnownAppointmentHistory
+                    ? "Deletion is only allowed for patients without appointment history or with only canceled or missed appointments."
                     : undefined
                 }
               >
@@ -291,8 +291,8 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
                   showDischargeDate={true}
                   statusConfig={{
                     currentStatus: patient.status,
-                    hasCompletedAttendances:
-                      (patient.previousAttendances?.length ?? 0) > 0,
+                    hasCompletedAppointments:
+                      (patient.previousAppointments?.length ?? 0) > 0,
                   }}
                   isEdit={true}
                 />
@@ -348,7 +348,7 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
         onStay={handleStayOnPage}
       />
 
-      {/* Confirm status change (Discharged (D) / Consecutive no-shows (C)) – cancels open attendances */}
+      {/* Confirm status change (Discharged (D) / Consecutive no-shows (C)) – cancels open appointments */}
       <ConfirmStatusChangeModal
         isOpen={pendingStatusChange !== null}
         onClose={cancelStatusChange}

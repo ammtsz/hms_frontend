@@ -1,29 +1,29 @@
 import React from "react";
-import AttendanceTypeTag from "@/features/board/components/Cards/AttendanceTypeTag";
-import { AttendanceType } from "@/types/types";
-import { AttendanceStatus } from "@/api/types";
+import AppointmentTypeTag from "@/features/board/components/Cards/AppointmentTypeTag";
+import { AppointmentType } from "@/types/types";
+import { AppointmentStatus } from "@/api/types";
 import Spinner from "@/components/common/Spinner";
 import ScheduleDateHeader from "./ScheduleDateHeader";
 import { useOpenCancellation } from "@/stores/modalStore";
-import ScheduleAttendanceStatusIcon from "./ScheduleAttendanceStatusIcon";
+import ScheduleAppointmentStatusIcon from "./ScheduleAppointmentStatusIcon";
 import { Button } from "@/components/ui";
 import { SCHEDULE_COLUMN_MESSAGES } from "../utils/scheduleFilterConstants";
 
 interface Patient {
   id: string;
   name: string;
-  attendanceId?: number;
-  attendanceType: AttendanceType;
-  attendanceStatus?: AttendanceStatus;
+  appointmentId?: number;
+  appointmentType: AppointmentType;
+  appointmentStatus?: AppointmentStatus;
 }
 
 interface PatientWithTreatmentsCounts {
   id: string;
   name: string;
-  attendanceType: AttendanceType;
+  appointmentType: AppointmentType;
   /** Resolved row status (defaults to scheduled when missing on raw patient) */
-  attendanceStatus: AttendanceStatus;
-  attendanceIds: number[];
+  appointmentStatus: AppointmentStatus;
+  appointmentIds: number[];
   physiotherapy: number;
   tens: number;
 }
@@ -43,11 +43,11 @@ interface ScheduleColumnProps {
   isRefreshing?: boolean;
 }
 
-function patientNameTextClass(status: AttendanceStatus): string {
+function patientNameTextClass(status: AppointmentStatus): string {
   if (
-    status === AttendanceStatus.COMPLETED ||
-    status === AttendanceStatus.MISSED ||
-    status === AttendanceStatus.CANCELLED
+    status === AppointmentStatus.COMPLETED ||
+    status === AppointmentStatus.MISSED ||
+    status === AppointmentStatus.CANCELLED
   ) {
     return "font-medium text-gray-500 line-clamp-2";
   }
@@ -75,30 +75,30 @@ const ScheduleColumn: React.FC<ScheduleColumnProps> = ({
     const groupedPatients = patients.reduce(
       (acc: PatientWithTreatmentsCounts[], patient: Patient) => {
         const rowStatus =
-          patient.attendanceStatus ?? AttendanceStatus.SCHEDULED;
+          patient.appointmentStatus ?? AppointmentStatus.SCHEDULED;
         const existingPatient = acc.find(
-          (p) => p.id === patient.id && p.attendanceStatus === rowStatus,
+          (p) => p.id === patient.id && p.appointmentStatus === rowStatus,
         );
 
         if (existingPatient) {
-          if (patient.attendanceId) {
-            existingPatient.attendanceIds.push(patient.attendanceId);
+          if (patient.appointmentId) {
+            existingPatient.appointmentIds.push(patient.appointmentId);
           }
 
-          if (patient.attendanceType === "physiotherapy") {
+          if (patient.appointmentType === "physiotherapy") {
             existingPatient.physiotherapy += 1;
-          } else if (patient.attendanceType === "tens") {
+          } else if (patient.appointmentType === "tens") {
             existingPatient.tens += 1;
           }
         } else {
           acc.push({
             id: patient.id,
             name: patient.name,
-            attendanceType: patient.attendanceType,
-            attendanceStatus: rowStatus,
-            attendanceIds: patient.attendanceId ? [patient.attendanceId] : [],
-            physiotherapy: patient.attendanceType === "physiotherapy" ? 1 : 0,
-            tens: patient.attendanceType === "tens" ? 1 : 0,
+            appointmentType: patient.appointmentType,
+            appointmentStatus: rowStatus,
+            appointmentIds: patient.appointmentId ? [patient.appointmentId] : [],
+            physiotherapy: patient.appointmentType === "physiotherapy" ? 1 : 0,
+            tens: patient.appointmentType === "tens" ? 1 : 0,
           });
         }
         return acc;
@@ -207,46 +207,46 @@ const ScheduleColumn: React.FC<ScheduleColumnProps> = ({
                       ({
                         name,
                         id,
-                        attendanceIds,
+                        appointmentIds,
                         physiotherapy,
                         tens,
-                        attendanceStatus,
+                        appointmentStatus,
                       }) => (
                         <div
-                          key={`${id}-${attendanceStatus}`}
+                          key={`${id}-${appointmentStatus}`}
                           className="flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-3 transition-all hover:shadow-sm sm:flex-row sm:items-center"
                         >
-                          <ScheduleAttendanceStatusIcon
-                            status={attendanceStatus}
+                          <ScheduleAppointmentStatusIcon
+                            status={appointmentStatus}
                             className="shrink-0"
                           />
                           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                             <span
-                              className={patientNameTextClass(attendanceStatus)}
+                              className={patientNameTextClass(appointmentStatus)}
                             >
                               {name}
                             </span>
                             {columnType == "physiotherapy" && (
                               <div className="flex shrink-0 flex-wrap items-end gap-2 sm:ml-auto">
                                 {physiotherapy > 0 && (
-                                  <AttendanceTypeTag
+                                  <AppointmentTypeTag
                                     type="physiotherapy"
                                     count={physiotherapy}
                                   />
                                 )}
                                 {tens > 0 && (
-                                  <AttendanceTypeTag type="tens" count={tens} />
+                                  <AppointmentTypeTag type="tens" count={tens} />
                                 )}
                               </div>
                             )}
                           </div>
-                          {attendanceStatus === AttendanceStatus.SCHEDULED ? (
+                          {appointmentStatus === AppointmentStatus.SCHEDULED ? (
                             <Button
                               variant="outline"
                               size="sm"
                               className="min-h-[44px] w-full shrink-0 text-gray-600 hover:text-gray-800 sm:w-auto"
                               onClick={() =>
-                                openCancellation(attendanceIds, name, date)
+                                openCancellation(appointmentIds, name, date)
                               }
                               aria-label="Manage appointment"
                             >

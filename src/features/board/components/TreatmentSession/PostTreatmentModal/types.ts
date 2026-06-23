@@ -4,7 +4,7 @@ import type {
 } from "@/api/types";
 
 export interface PostTreatmentRow {
-  attendanceId: number;
+  appointmentId: number;
   treatmentType: "physiotherapy" | "tens";
   bodyLocation: string;
   color?: string;
@@ -14,7 +14,7 @@ export interface PostTreatmentRow {
   sessionNumber: number;
   /** Parent treatment plan row (`hms_treatment.id`) */
   treatmentId: number;
-  /** The scheduled `hms_session` row for this attendance */
+  /** The scheduled `hms_session` row for this appointment */
   sessionRow: SessionResponseDto;
   /** Parent treatment plan (`hms_treatment`) */
   treatment: TreatmentResponseDto;

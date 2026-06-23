@@ -104,14 +104,14 @@ export const useDeleteTreatment = () => {
 };
 
 /**
- * Imperative invalidation for treatment queries and attendance-scoped treatment fetches.
+ * Imperative invalidation for treatment queries and appointment-scoped treatment fetches.
  */
 export const useInvalidateTreatments = () => {
   const queryClient = useQueryClient();
 
   return useCallback(() => {
     queryClient.invalidateQueries({ queryKey: treatmentsQueryKeys.all });
-    queryClient.refetchQueries({ queryKey: ['treatmentsByAttendance'] });
+    queryClient.refetchQueries({ queryKey: ['treatmentsByAppointment'] });
   }, [queryClient]);
 };
 
@@ -120,11 +120,11 @@ interface UseEditTreatmentsOptions {
   firstSession: TreatmentResponseDto | undefined;
   patientId: number;
   /**
-   * Visit attendance ID from the session row (`hms_session`), so the first created
-   * row links to this card’s attendance. Differs from `firstSession.attendanceId`
-   * (prescription attendance on the treatment plan).
+   * Visit appointment ID from the session row (`hms_session`), so the first created
+   * row links to this card’s appointment. Differs from `firstSession.appointmentId`
+   * (prescription appointment on the treatment plan).
    */
-  currentAttendanceId?: number;
+  currentAppointmentId?: number;
   onSuccess?: () => void;
   onClose: () => void;
   setSubmitError: (error: string | null) => void;
@@ -137,7 +137,7 @@ export function useEditTreatments({
   treatmentType,
   firstSession,
   patientId,
-  currentAttendanceId,
+  currentAppointmentId,
   onSuccess,
   onClose,
   setSubmitError,
@@ -175,16 +175,16 @@ export function useEditTreatments({
         } else {
           const createPayload = {
             consultationId: firstSession.consultationId,
-            attendanceId: firstSession.attendanceId,
+            appointmentId: firstSession.appointmentId,
             patientId,
             treatmentType:
               treatmentType === 'physiotherapy' ? ('physiotherapy' as const) : ('tens' as const),
             bodyLocation,
             startDate: firstSession.startDate,
             plannedSessions: firstSession.plannedSessions,
-            reuseAttendanceForFirstSession: true,
-            ...(currentAttendanceId !== undefined && {
-              firstSessionAttendanceId: currentAttendanceId,
+            reuseAppointmentForFirstSession: true,
+            ...(currentAppointmentId !== undefined && {
+              firstSessionAppointmentId: currentAppointmentId,
             }),
           };
           if (treatmentType === 'physiotherapy') {

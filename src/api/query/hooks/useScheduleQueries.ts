@@ -7,43 +7,43 @@
 import { useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  getAttendancesForSchedule,
-  deleteAttendance,
-  createAttendance,
-} from "@/api/attendances";
+  getAppointmentsForSchedule,
+  deleteAppointment,
+  createAppointment,
+} from "@/api/appointments";
 import {
-  AttendanceScheduleDto,
-  AttendanceStatus,
-  AttendanceType,
-  CreateAttendanceRequest,
+  AppointmentScheduleDto,
+  AppointmentStatus,
+  AppointmentType,
+  CreateAppointmentRequest,
 } from "@/api/types";
 import { Schedule, CalendarSchedule, Priority } from "@/types/types";
-import { transformAttendanceType } from "@/utils/apiTransformers";
+import { transformAppointmentType } from "@/utils/apiTransformers";
 import { isValidDateString } from "@/utils/timezoneDate";
 
 // Transform backend data to frontend schedule format
 const transformToSchedule = (
-  attendances: AttendanceScheduleDto[],
+  appointments: AppointmentScheduleDto[],
 ): CalendarSchedule => {
   const assessment: Schedule["assessment"] = [];
   const physiotherapy: Schedule["physiotherapy"] = [];
 
-  const grouped = attendances.reduce(
-    (acc, attendance) => {
-      const dateKey = attendance.scheduledDate;
+  const grouped = appointments.reduce(
+    (acc, appointment) => {
+      const dateKey = appointment.scheduledDate;
       const type =
-        attendance.type === AttendanceType.ASSESSMENT ? "assessment" : "physiotherapy";
+        appointment.type === AppointmentType.ASSESSMENT ? "assessment" : "physiotherapy";
 
       if (!acc[type]) acc[type] = {};
       if (!acc[type][dateKey]) acc[type][dateKey] = [];
 
       acc[type][dateKey].push({
-        id: attendance.patientId.toString(),
-        name: attendance.patientName,
-        priority: attendance.patientPriority as Priority,
-        attendanceId: attendance.id,
-        type: attendance.type,
-        status: attendance.status,
+        id: appointment.patientId.toString(),
+        name: appointment.patientName,
+        priority: appointment.patientPriority as Priority,
+        appointmentId: appointment.id,
+        type: appointment.type,
+        status: appointment.status,
       });
       return acc;
     },
@@ -55,9 +55,9 @@ const transformToSchedule = (
           id: string;
           name: string;
           priority: Priority;
-          attendanceId: number;
-          type: AttendanceType;
-          status: AttendanceStatus;
+          appointmentId: number;
+          type: AppointmentType;
+          status: AppointmentStatus;
         }>
       >
     >,
@@ -70,9 +70,9 @@ const transformToSchedule = (
         id: p.id,
         name: p.name,
         priority: p.priority,
-        attendanceId: p.attendanceId,
-        attendanceType: transformAttendanceType(p.type),
-        attendanceStatus: p.status,
+        appointmentId: p.appointmentId,
+        appointmentType: transformAppointmentType(p.type),
+        appointmentStatus: p.status,
       })),
     });
   });
@@ -84,9 +84,9 @@ const transformToSchedule = (
         id: p.id,
         name: p.name,
         priority: p.priority,
-        attendanceId: p.attendanceId,
-        attendanceType: transformAttendanceType(p.type),
-        attendanceStatus: p.status,
+        appointmentId: p.appointmentId,
+        appointmentType: transformAppointmentType(p.type),
+        appointmentStatus: p.status,
       })),
     });
   });
@@ -99,9 +99,9 @@ import { scheduleKeys, type ScheduleApiFilters } from '@/api/query/keys/schedule
 export type { ScheduleApiFilters };
 
 /**
- * Hook to fetch schedule attendances with optional filters
+ * Hook to fetch schedule appointments with optional filters
  */
-export const useScheduleAttendances = (filters?: ScheduleApiFilters) => {
+export const useScheduleAppointments = (filters?: ScheduleApiFilters) => {
   const hasDateRange = Boolean(filters?.fromDate || filters?.toDate);
   const datesValid =
     !hasDateRange ||
@@ -110,8 +110,8 @@ export const useScheduleAttendances = (filters?: ScheduleApiFilters) => {
 
   return useQuery({
     queryKey: scheduleKeys.list(filters),
-    queryFn: async (): Promise<AttendanceScheduleDto[]> => {
-      const result = await getAttendancesForSchedule(
+    queryFn: async (): Promise<AppointmentScheduleDto[]> => {
+      const result = await getAppointmentsForSchedule(
         filters
           ? {
               statuses: filters.statuses,
@@ -140,7 +140,7 @@ export const useScheduleAttendances = (filters?: ScheduleApiFilters) => {
  * Hook to fetch transformed schedule data (calendar format)
  */
 export const useSchedule = (filters?: ScheduleApiFilters) => {
-  const query = useScheduleAttendances(filters);
+  const query = useScheduleAppointments(filters);
 
   return {
     ...query,
@@ -155,7 +155,7 @@ export const useSchedule = (filters?: ScheduleApiFilters) => {
  * Scheduled-only schedule (no date range) — for legacy callers.
  */
 export const useScheduled = () => {
-  return useSchedule({ statuses: [AttendanceStatus.SCHEDULED] });
+  return useSchedule({ statuses: [AppointmentStatus.SCHEDULED] });
 };
 
 /**
@@ -165,8 +165,8 @@ export const useRemovePatientFromSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (attendanceId: number) => {
-      const result = await deleteAttendance(attendanceId.toString());
+    mutationFn: async (appointmentId: number) => {
+      const result = await deleteAppointment(appointmentId.toString());
       if (result.success) {
         return result.value;
       } else {
@@ -189,8 +189,8 @@ export const useAddPatientToSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (attendanceData: CreateAttendanceRequest) => {
-      const result = await createAttendance(attendanceData);
+    mutationFn: async (appointmentData: CreateAppointmentRequest) => {
+      const result = await createAppointment(appointmentData);
       if (result.success) {
         return result.value;
       } else {

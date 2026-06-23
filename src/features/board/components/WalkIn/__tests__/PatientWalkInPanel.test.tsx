@@ -13,10 +13,10 @@ import { Priority } from "@/types/types";
 // Mock the PatientWalkInForm component
 jest.mock("../PatientWalkInForm", () => {
   return function MockPatientWalkInForm({
-    onRegisterNewAttendance,
+    onRegisterNewAppointment,
     isDropdown,
   }: {
-    onRegisterNewAttendance?: (
+    onRegisterNewAppointment?: (
       patientName: string,
       types: string[],
       isNew: boolean,
@@ -31,7 +31,7 @@ jest.mock("../PatientWalkInForm", () => {
         <button
           data-testid="mock-check-in-button"
           onClick={() =>
-            onRegisterNewAttendance?.("Test Patient", ["assessment"], true, "3")
+            onRegisterNewAppointment?.("Test Patient", ["assessment"], true, "3")
           }
         >
           Mock Check In
@@ -102,7 +102,7 @@ const createTestWrapper = () => {
 };
 
 describe("PatientWalkInPanel", () => {
-  const mockOnRegisterNewAttendance = jest.fn();
+  const mockOnRegisterNewAppointment = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -113,7 +113,7 @@ describe("PatientWalkInPanel", () => {
     return render(
       <Wrapper>
         <PatientWalkInPanel
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
           {...props}
         />
       </Wrapper>,
@@ -275,7 +275,7 @@ describe("PatientWalkInPanel", () => {
   });
 
   describe("Form Integration", () => {
-    it("should pass onRegisterNewAttendance callback to PatientWalkInForm", async () => {
+    it("should pass onRegisterNewAppointment callback to PatientWalkInForm", async () => {
       const user = userEvent.setup();
       renderComponent();
 
@@ -302,7 +302,7 @@ describe("PatientWalkInPanel", () => {
   });
 
   describe("Callback Handling", () => {
-    it("should call onRegisterNewAttendance when form triggers callback", async () => {
+    it("should call onRegisterNewAppointment when form triggers callback", async () => {
       const user = userEvent.setup();
       renderComponent();
 
@@ -316,7 +316,7 @@ describe("PatientWalkInPanel", () => {
       const checkInButton = screen.getByTestId("mock-check-in-button");
       await user.click(checkInButton);
 
-      expect(mockOnRegisterNewAttendance).toHaveBeenCalledWith(
+      expect(mockOnRegisterNewAppointment).toHaveBeenCalledWith(
         "Test Patient",
         ["assessment"],
         true,
@@ -348,9 +348,9 @@ describe("PatientWalkInPanel", () => {
       expect(expandableContent).toHaveClass("max-h-0", "opacity-0");
     });
 
-    it("should handle missing onRegisterNewAttendance callback gracefully", async () => {
+    it("should handle missing onRegisterNewAppointment callback gracefully", async () => {
       const user = userEvent.setup();
-      renderComponent({ onRegisterNewAttendance: undefined });
+      renderComponent({ onRegisterNewAppointment: undefined });
 
       // Expand the panel
       const header = screen

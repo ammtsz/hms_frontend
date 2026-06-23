@@ -1,16 +1,16 @@
 import { useCallback, useState, useEffect, useMemo } from "react";
-import type { AttendanceType } from "@/types/types";
+import type { AppointmentType } from "@/types/types";
 import type { AbsenceJustification, ScheduledAbsence } from "../types";
 import { useCloseModal } from "@/stores/modalStore";
-import { useAttendanceData } from "@/features/board/hooks/useAttendanceData";
+import { useBoardData } from "@/features/board/hooks/useBoardData";
 import { useProcessEndOfDay } from "@/api/query/hooks/useDayFinalizationQueries";
 import type { ProcessEndOfDayResponse } from "@/api/day-finalization";
 
 import {
-  getIncompleteAttendances,
-  getCompletedAttendances,
+  getIncompleteAppointments,
+  getCompletedAppointments,
   getScheduledAbsences,
-} from "../../../utils/attendanceDataUtils";
+} from "../../../utils/appointmentDataUtils";
 
 interface UseEndOfDayProps {
   selectedDate: string;
@@ -19,23 +19,23 @@ interface UseEndOfDayProps {
 export const useEndOfDay = ({
   selectedDate,
 }: UseEndOfDayProps) => {
-  const { attendancesByDate, refreshData } = useAttendanceData();
+  const { appointmentsByDate, refreshData } = useBoardData();
   const processEndOfDayMutation = useProcessEndOfDay();
 
-  // Memoize all attendance data calculations to prevent infinite loops
-  const incompleteAttendances = useMemo(() => 
-    getIncompleteAttendances(attendancesByDate), 
-    [attendancesByDate]
+  // Memoize all appointment data calculations to prevent infinite loops
+  const incompleteAppointments = useMemo(() => 
+    getIncompleteAppointments(appointmentsByDate), 
+    [appointmentsByDate]
   );
   
-  const completedAttendances = useMemo(() => 
-    getCompletedAttendances(attendancesByDate), 
-    [attendancesByDate]
+  const completedAppointments = useMemo(() => 
+    getCompletedAppointments(appointmentsByDate), 
+    [appointmentsByDate]
   );
   
   const scheduledAbsencesOriginal = useMemo(() => 
-    getScheduledAbsences(attendancesByDate), 
-    [attendancesByDate]
+    getScheduledAbsences(appointmentsByDate), 
+    [appointmentsByDate]
   );
     
   // Memoize the transformation to prevent infinite loops
@@ -43,7 +43,7 @@ export const useEndOfDay = ({
     return scheduledAbsencesOriginal.map((absence) => ({
       patientId: absence.patientId ?? 0,
       patientName: absence.name,
-      attendanceType: absence.attendanceType,
+      appointmentType: absence.appointmentType,
     }));
   }, [scheduledAbsencesOriginal]);
 
@@ -52,16 +52,16 @@ export const useEndOfDay = ({
     return scheduledAbsences.map((absence) => ({
       patientId: absence.patientId,
       patientName: absence.patientName,
-      attendanceType: absence.attendanceType,
+      appointmentType: absence.appointmentType,
       // justified is undefined until user selects
     }));
   }, [scheduledAbsences]);
 
-  // Stable key so attendance refetches with the same absences do not reset user input
+  // Stable key so appointment refetches with the same absences do not reset user input
   const scheduledAbsencesKey = useMemo(
     () =>
       scheduledAbsences
-        .map((a) => `${a.patientId}:${a.attendanceType}`)
+        .map((a) => `${a.patientId}:${a.appointmentType}`)
         .join(","),
     [scheduledAbsences],
   );
@@ -79,17 +79,17 @@ export const useEndOfDay = ({
 
   const closeModal = useCloseModal();
 
-  // Sync when the absence list actually changes (not on every attendances refetch)
+  // Sync when the absence list actually changes (not on every appointments refetch)
   useEffect(() => {
     setAbsenceJustifications(initialAbsenceJustifications);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- key tracks list content; initial rows match current scheduledAbsences
   }, [scheduledAbsencesKey]);
 
   const handleJustificationChange = useCallback(
-    (patientId: number, attendanceType: AttendanceType, justified: boolean, justification?: string) => {
+    (patientId: number, appointmentType: AppointmentType, justified: boolean, justification?: string) => {
       setAbsenceJustifications((prev) => {
         return prev.map((item) =>
-          item.patientId === patientId && item.attendanceType === attendanceType
+          item.patientId === patientId && item.appointmentType === appointmentType
             ? { ...item, justified, justification }
             : item
         );
@@ -124,15 +124,15 @@ export const useEndOfDay = ({
     async () => {
       try {
         const absenceJustificationsPayload = scheduledAbsencesOriginal
-          .filter((absence) => absence.attendanceId)
+          .filter((absence) => absence.appointmentId)
           .map((absence) => {
             const justification = absenceJustifications.find(
               (j) =>
                 j.patientId === (absence.patientId ?? 0) &&
-                j.attendanceType === absence.attendanceType
+                j.appointmentType === absence.appointmentType
             );
             return {
-              attendanceId: absence.attendanceId!,
+              appointmentId: absence.appointmentId!,
               justified: justification?.justified ?? false,
               notes: justification?.justification ?? "",
             };
@@ -174,7 +174,7 @@ export const useEndOfDay = ({
     }
   }, [handleEndOfDaySubmit]);
 
-  const canProceedFromIncomplete = incompleteAttendances.length === 0;
+  const canProceedFromIncomplete = incompleteAppointments.length === 0;
   const canProceedFromAbsences = scheduledAbsences.length === 0 || 
     absenceJustifications.every((j) => j.justified !== undefined);
 
@@ -186,8 +186,8 @@ export const useEndOfDay = ({
     canProceedFromIncomplete,
     canProceedFromAbsences,
     scheduledAbsences,
-    completedAttendances,
-    incompleteAttendances,
+    completedAppointments,
+    incompleteAppointments,
     handleJustificationChange,
     handleNext,
     handleBack,

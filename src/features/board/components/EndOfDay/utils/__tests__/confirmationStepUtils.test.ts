@@ -1,19 +1,19 @@
 import {
   groupAbsenceJustificationsByCard,
   getAbsenceCardLabelParts,
-  groupAttendancesForDisplayWithBodyLocation,
+  groupAppointmentsForDisplayWithBodyLocation,
   type AbsenceCard,
 } from "../confirmationStepUtils";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import type { AbsenceJustification, ScheduledAbsence } from "../../types";
-import type { IAttendanceStatusDetailWithType } from "../../../../utils/attendanceDataUtils";
+import type { IAppointmentStatusDetailWithType } from "../../../../utils/appointmentDataUtils";
 
 const createScheduledAbsence = (
   overrides: Partial<ScheduledAbsence> = {},
 ): ScheduledAbsence => ({
   patientId: 1,
   patientName: "John Doe",
-  attendanceType: "assessment",
+  appointmentType: "assessment",
   ...overrides,
 });
 
@@ -22,19 +22,19 @@ const createAbsenceJustification = (
 ): AbsenceJustification => ({
   patientId: 1,
   patientName: "John Doe",
-  attendanceType: "assessment",
+  appointmentType: "assessment",
   justified: true,
   justification: "Medical appointment",
   ...overrides,
 });
 
-const createAttendance = (
-  overrides: Partial<IAttendanceStatusDetailWithType> = {},
-): IAttendanceStatusDetailWithType => ({
+const createAppointment = (
+  overrides: Partial<IAppointmentStatusDetailWithType> = {},
+): IAppointmentStatusDetailWithType => ({
   name: "John Doe",
   priority: "3",
   patientId: 1,
-  attendanceType: "assessment",
+  appointmentType: "assessment",
   ...overrides,
 });
 
@@ -42,10 +42,10 @@ describe("confirmationStepUtils", () => {
   describe("groupAbsenceJustificationsByCard", () => {
     it("groups assessment absences as one card", () => {
       const scheduledAbsences = [
-        createScheduledAbsence({ patientId: 1, patientName: "John", attendanceType: "assessment" }),
+        createScheduledAbsence({ patientId: 1, patientName: "John", appointmentType: "assessment" }),
       ];
       const justifications = [
-        createAbsenceJustification({ patientId: 1, attendanceType: "assessment", justified: true }),
+        createAbsenceJustification({ patientId: 1, appointmentType: "assessment", justified: true }),
       ];
 
       const result = groupAbsenceJustificationsByCard(scheduledAbsences, justifications);
@@ -63,11 +63,11 @@ describe("confirmationStepUtils", () => {
 
     it("groups treatments (physiotherapy + tens) as one card", () => {
       const scheduledAbsences = [
-        createScheduledAbsence({ patientId: 1, attendanceType: "physiotherapy" }),
-        createScheduledAbsence({ patientId: 1, attendanceType: "tens" }),
+        createScheduledAbsence({ patientId: 1, appointmentType: "physiotherapy" }),
+        createScheduledAbsence({ patientId: 1, appointmentType: "tens" }),
       ];
       const justifications = [
-        createAbsenceJustification({ patientId: 1, attendanceType: "physiotherapy", justified: false }),
+        createAbsenceJustification({ patientId: 1, appointmentType: "physiotherapy", justified: false }),
       ];
 
       const result = groupAbsenceJustificationsByCard(scheduledAbsences, justifications);
@@ -84,12 +84,12 @@ describe("confirmationStepUtils", () => {
 
     it("creates two cards when patient has assessment and treatments", () => {
       const scheduledAbsences = [
-        createScheduledAbsence({ patientId: 1, attendanceType: "assessment" }),
-        createScheduledAbsence({ patientId: 1, attendanceType: "physiotherapy" }),
+        createScheduledAbsence({ patientId: 1, appointmentType: "assessment" }),
+        createScheduledAbsence({ patientId: 1, appointmentType: "physiotherapy" }),
       ];
       const justifications = [
-        createAbsenceJustification({ patientId: 1, attendanceType: "assessment", justified: true }),
-        createAbsenceJustification({ patientId: 1, attendanceType: "physiotherapy", justified: false }),
+        createAbsenceJustification({ patientId: 1, appointmentType: "assessment", justified: true }),
+        createAbsenceJustification({ patientId: 1, appointmentType: "physiotherapy", justified: false }),
       ];
 
       const result = groupAbsenceJustificationsByCard(scheduledAbsences, justifications);
@@ -102,7 +102,7 @@ describe("confirmationStepUtils", () => {
     it("derives from justifications when scheduledAbsences is empty", () => {
       const scheduledAbsences: ScheduledAbsence[] = [];
       const justifications = [
-        createAbsenceJustification({ patientId: 1, attendanceType: "assessment", justified: true }),
+        createAbsenceJustification({ patientId: 1, appointmentType: "assessment", justified: true }),
       ];
 
       const result = groupAbsenceJustificationsByCard(scheduledAbsences, justifications);
@@ -135,7 +135,7 @@ describe("confirmationStepUtils", () => {
 
       const result = getAbsenceCardLabelParts(card);
 
-      expect(result).toEqual([getAttendanceTypeLabel("assessment")]);
+      expect(result).toEqual([getAppointmentTypeLabel("assessment")]);
     });
 
     it("returns Physiotherapy with locations for physiotherapy-only card", () => {
@@ -151,7 +151,7 @@ describe("confirmationStepUtils", () => {
       const result = getAbsenceCardLabelParts(card);
 
       expect(result).toEqual([
-        `${getAttendanceTypeLabel("physiotherapy")} (1 location)`,
+        `${getAppointmentTypeLabel("physiotherapy")} (1 location)`,
       ]);
     });
 
@@ -168,7 +168,7 @@ describe("confirmationStepUtils", () => {
       const result = getAbsenceCardLabelParts(card);
 
       expect(result).toEqual([
-        `${getAttendanceTypeLabel("tens")} (2 locations)`,
+        `${getAppointmentTypeLabel("tens")} (2 locations)`,
       ]);
     });
 
@@ -186,108 +186,108 @@ describe("confirmationStepUtils", () => {
 
       expect(result).toHaveLength(2);
       expect(result).toContain(
-        `${getAttendanceTypeLabel("physiotherapy")} (1 location)`,
+        `${getAppointmentTypeLabel("physiotherapy")} (1 location)`,
       );
-      expect(result).toContain(`${getAttendanceTypeLabel("tens")} (1 location)`);
+      expect(result).toContain(`${getAppointmentTypeLabel("tens")} (1 location)`);
     });
   });
 
-  describe("groupAttendancesForDisplayWithBodyLocation", () => {
-    it("groups assessment attendance as one entry", () => {
-      const attendances = [
-        createAttendance({ name: "John", patientId: 1, attendanceType: "assessment" }),
+  describe("groupAppointmentsForDisplayWithBodyLocation", () => {
+    it("groups assessment appointment as one entry", () => {
+      const appointments = [
+        createAppointment({ name: "John", patientId: 1, appointmentType: "assessment" }),
       ];
 
-      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+      const result = groupAppointmentsForDisplayWithBodyLocation(appointments);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({
         patientName: "John",
-        label: getAttendanceTypeLabel("assessment"),
+        label: getAppointmentTypeLabel("assessment"),
       });
     });
 
-    it("groups physiotherapy attendance with locations count", () => {
-      const attendances = [
-        createAttendance({ name: "Jane", patientId: 2, attendanceType: "physiotherapy" }),
+    it("groups physiotherapy appointment with locations count", () => {
+      const appointments = [
+        createAppointment({ name: "Jane", patientId: 2, appointmentType: "physiotherapy" }),
       ];
 
-      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+      const result = groupAppointmentsForDisplayWithBodyLocation(appointments);
 
       expect(result).toHaveLength(1);
       expect(result[0].label).toBe(
-        `${getAttendanceTypeLabel("physiotherapy")} - 1 location`,
+        `${getAppointmentTypeLabel("physiotherapy")} - 1 location`,
       );
     });
 
-    it("groups tens attendance with locations count", () => {
-      const attendances = [
-        createAttendance({ name: "Bob", patientId: 3, attendanceType: "tens" }),
+    it("groups tens appointment with locations count", () => {
+      const appointments = [
+        createAppointment({ name: "Bob", patientId: 3, appointmentType: "tens" }),
       ];
 
-      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+      const result = groupAppointmentsForDisplayWithBodyLocation(appointments);
 
       expect(result).toHaveLength(1);
-      expect(result[0].label).toBe(`${getAttendanceTypeLabel("tens")} - 1 location`);
+      expect(result[0].label).toBe(`${getAppointmentTypeLabel("tens")} - 1 location`);
     });
 
     it("groups patient with assessment and treatments as two entries", () => {
-      const attendances = [
-        createAttendance({ name: "Patient 10", patientId: 10, attendanceType: "assessment" }),
-        createAttendance({ name: "Patient 10", patientId: 10, attendanceType: "physiotherapy" }),
-        createAttendance({ name: "Patient 10", patientId: 10, attendanceType: "tens" }),
+      const appointments = [
+        createAppointment({ name: "Patient 10", patientId: 10, appointmentType: "assessment" }),
+        createAppointment({ name: "Patient 10", patientId: 10, appointmentType: "physiotherapy" }),
+        createAppointment({ name: "Patient 10", patientId: 10, appointmentType: "tens" }),
       ];
 
-      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+      const result = groupAppointmentsForDisplayWithBodyLocation(appointments);
 
       expect(result).toHaveLength(2);
-      expect(result[0].label).toBe(getAttendanceTypeLabel("assessment"));
+      expect(result[0].label).toBe(getAppointmentTypeLabel("assessment"));
       expect(result[1].label).toBe(
-        `${getAttendanceTypeLabel("physiotherapy")} - 1 location and ${getAttendanceTypeLabel("tens")} - 1 location`,
+        `${getAppointmentTypeLabel("physiotherapy")} - 1 location and ${getAppointmentTypeLabel("tens")} - 1 location`,
       );
     });
 
     it("groups patient with both physiotherapy and tens as one entry", () => {
-      const attendances = [
-        createAttendance({ name: "Patient D", patientId: 4, attendanceType: "physiotherapy" }),
-        createAttendance({ name: "Patient D", patientId: 4, attendanceType: "tens" }),
+      const appointments = [
+        createAppointment({ name: "Patient D", patientId: 4, appointmentType: "physiotherapy" }),
+        createAppointment({ name: "Patient D", patientId: 4, appointmentType: "tens" }),
       ];
 
-      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+      const result = groupAppointmentsForDisplayWithBodyLocation(appointments);
 
       expect(result).toHaveLength(1);
       expect(result[0].label).toBe(
-        `${getAttendanceTypeLabel("physiotherapy")} - 1 location and ${getAttendanceTypeLabel("tens")} - 1 location`,
+        `${getAppointmentTypeLabel("physiotherapy")} - 1 location and ${getAppointmentTypeLabel("tens")} - 1 location`,
       );
     });
 
     it("uses plural locations for multiple treatments of same type", () => {
-      const attendances = [
-        createAttendance({ name: "Patient", patientId: 5, attendanceType: "physiotherapy" }),
-        createAttendance({ name: "Patient", patientId: 5, attendanceType: "physiotherapy" }),
+      const appointments = [
+        createAppointment({ name: "Patient", patientId: 5, appointmentType: "physiotherapy" }),
+        createAppointment({ name: "Patient", patientId: 5, appointmentType: "physiotherapy" }),
       ];
 
-      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+      const result = groupAppointmentsForDisplayWithBodyLocation(appointments);
 
       expect(result).toHaveLength(1);
       expect(result[0].label).toBe(
-        `${getAttendanceTypeLabel("physiotherapy")} - 2 locations`,
+        `${getAppointmentTypeLabel("physiotherapy")} - 2 locations`,
       );
     });
 
-    it("handles attendances without patientId using name as key", () => {
-      const attendances = [
-        createAttendance({ name: "Unknown", patientId: undefined, attendanceType: "assessment" }),
+    it("handles appointments without patientId using name as key", () => {
+      const appointments = [
+        createAppointment({ name: "Unknown", patientId: undefined, appointmentType: "assessment" }),
       ];
 
-      const result = groupAttendancesForDisplayWithBodyLocation(attendances);
+      const result = groupAppointmentsForDisplayWithBodyLocation(appointments);
 
       expect(result).toHaveLength(1);
       expect(result[0].patientName).toBe("Unknown");
     });
 
     it("returns empty array for empty input", () => {
-      const result = groupAttendancesForDisplayWithBodyLocation([]);
+      const result = groupAppointmentsForDisplayWithBodyLocation([]);
 
       expect(result).toEqual([]);
     });

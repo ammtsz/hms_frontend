@@ -13,8 +13,8 @@ export const PATIENT_PAGE_SECTION_IDS = {
   notes: "patient-section-notes",
   currentTreatment: "patient-section-current-treatment",
   sessionBreakdown: "patient-section-session-breakdown",
-  attendanceHistory: "patient-section-attendance-history",
-  scheduledAttendances: "patient-section-scheduled-attendances",
+  appointmentHistory: "patient-section-appointment-history",
+  scheduledAppointments: "patient-section-scheduled-appointments",
 } as const;
 
 export type PatientPageSectionId =
@@ -38,12 +38,12 @@ export const PATIENT_PAGE_SECTIONS: ReadonlyArray<{
     iconName: "Activity",
   },
   {
-    id: PATIENT_PAGE_SECTION_IDS.attendanceHistory,
+    id: PATIENT_PAGE_SECTION_IDS.appointmentHistory,
     label: "History",
     iconName: "History",
   },
   {
-    id: PATIENT_PAGE_SECTION_IDS.scheduledAttendances,
+    id: PATIENT_PAGE_SECTION_IDS.scheduledAppointments,
     label: "Appointments",
     iconName: "CalendarDays",
   },

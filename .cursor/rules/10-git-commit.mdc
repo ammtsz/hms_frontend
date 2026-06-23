@@ -35,7 +35,7 @@ Always use **Conventional Commits** format when committing changes. Be concise a
 
 ### Scope (Optional)
 
-Use the affected area/module: `attendance`, `patient`, `treatment`, `schedule`, `api`, `components`, `hooks`, `stores`, `utils`, etc.
+Use the affected area/module: `appointment`, `patient`, `treatment`, `schedule`, `api`, `components`, `hooks`, `stores`, `utils`, etc.
 
 ### Subject
 
@@ -47,7 +47,7 @@ Use the affected area/module: `attendance`, `patient`, `treatment`, `schedule`, 
 ### Examples
 
 ```
-feat(attendance): add drag and drop functionality
+feat(appointment): add drag and drop functionality
 fix(patient): resolve form validation error
 docs: update architecture patterns
 refactor(hooks): extract business logic to custom hook

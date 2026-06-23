@@ -6,21 +6,21 @@ import { renderHook, waitFor, act } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import {
-  useScheduleAttendances,
+  useScheduleAppointments,
   useSchedule,
   useScheduled,
   useRemovePatientFromSchedule,
   useAddPatientToSchedule,
   useRefreshSchedule,
 } from "../useScheduleQueries";
-import * as attendancesApi from "@/api/attendances";
-import { AttendanceType, AttendanceStatus } from "@/api/types";
+import * as appointmentsApi from "@/api/appointments";
+import { AppointmentType, AppointmentStatus } from "@/api/types";
 import { Priority } from "@/types/types";
 
 // Mock the API
-jest.mock("@/api/attendances");
-const mockedAttendancesApi = attendancesApi as jest.Mocked<
-  typeof attendancesApi
+jest.mock("@/api/appointments");
+const mockedAppointmentsApi = appointmentsApi as jest.Mocked<
+  typeof appointmentsApi
 >;
 
 // Mock console methods
@@ -50,24 +50,24 @@ const createWrapper = () => {
 };
 
 // Mock data factories - using camelCase since axios interceptor transforms responses
-const createMockAttendanceScheduleDto = (overrides = {}) => ({
+const createMockAppointmentScheduleDto = (overrides = {}) => ({
   id: 1,
   patientId: 1,
   patientName: "Test Patient",
   patientPriority: "1" as Priority,
-  type: AttendanceType.ASSESSMENT,
+  type: AppointmentType.ASSESSMENT,
   scheduledDate: "2025-10-27",
-  status: AttendanceStatus.SCHEDULED,
+  status: AppointmentStatus.SCHEDULED,
   ...overrides,
 });
 
-const createMockAttendanceResponseDto = (overrides = {}) => ({
+const createMockAppointmentResponseDto = (overrides = {}) => ({
   id: 1,
   patientId: 1,
-  type: AttendanceType.ASSESSMENT,
+  type: AppointmentType.ASSESSMENT,
   scheduledDate: "2025-10-27",
   scheduledTime: "09:00",
-  status: AttendanceStatus.SCHEDULED,
+  status: AppointmentStatus.SCHEDULED,
   createdAt: "2025-10-27T08:00:00Z",
   updatedAt: "2025-10-27T08:00:00Z",
   ...overrides,
@@ -78,16 +78,16 @@ describe("useScheduleQueries", () => {
     jest.clearAllMocks();
   });
 
-  describe("useScheduleAttendances", () => {
-    it("should fetch schedule attendances successfully", async () => {
-      const mockData = [createMockAttendanceScheduleDto()];
+  describe("useScheduleAppointments", () => {
+    it("should fetch schedule appointments successfully", async () => {
+      const mockData = [createMockAppointmentScheduleDto()];
 
-      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
+      mockedAppointmentsApi.getAppointmentsForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
 
-      const { result } = renderHook(() => useScheduleAttendances(), {
+      const { result } = renderHook(() => useScheduleAppointments(), {
         wrapper: createWrapper(),
       });
 
@@ -96,27 +96,27 @@ describe("useScheduleQueries", () => {
       });
 
       expect(result.current.data).toEqual(mockData);
-      expect(mockedAttendancesApi.getAttendancesForSchedule).toHaveBeenCalledWith(
+      expect(mockedAppointmentsApi.getAppointmentsForSchedule).toHaveBeenCalledWith(
         undefined,
       );
     });
 
-    it("should fetch schedule attendances with filters", async () => {
+    it("should fetch schedule appointments with filters", async () => {
       const filters = {
-        statuses: [AttendanceStatus.SCHEDULED],
+        statuses: [AppointmentStatus.SCHEDULED],
         type: "assessment",
         limit: 10,
         fromDate: "2025-01-01",
         toDate: "2025-01-31",
       };
-      const mockData = [createMockAttendanceScheduleDto()];
+      const mockData = [createMockAppointmentScheduleDto()];
 
-      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
+      mockedAppointmentsApi.getAppointmentsForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
 
-      const { result } = renderHook(() => useScheduleAttendances(filters), {
+      const { result } = renderHook(() => useScheduleAppointments(filters), {
         wrapper: createWrapper(),
       });
 
@@ -125,7 +125,7 @@ describe("useScheduleQueries", () => {
       });
 
       expect(result.current.data).toEqual(mockData);
-      expect(mockedAttendancesApi.getAttendancesForSchedule).toHaveBeenCalledWith(
+      expect(mockedAppointmentsApi.getAppointmentsForSchedule).toHaveBeenCalledWith(
         filters,
       );
     });
@@ -136,7 +136,7 @@ describe("useScheduleQueries", () => {
         toDate: "2025-01-31",
       };
 
-      const { result } = renderHook(() => useScheduleAttendances(filters), {
+      const { result } = renderHook(() => useScheduleAppointments(filters), {
         wrapper: createWrapper(),
       });
 
@@ -145,13 +145,13 @@ describe("useScheduleQueries", () => {
       });
 
       expect(
-        mockedAttendancesApi.getAttendancesForSchedule,
+        mockedAppointmentsApi.getAppointmentsForSchedule,
       ).not.toHaveBeenCalled();
       expect(result.current.fetchStatus).toBe("idle");
     });
 
     it("should handle API error", async () => {
-      mockedAttendancesApi.getAttendancesForSchedule
+      mockedAppointmentsApi.getAppointmentsForSchedule
         .mockResolvedValueOnce({
           success: false,
           error: "API Error",
@@ -165,7 +165,7 @@ describe("useScheduleQueries", () => {
           error: "API Error",
         });
 
-      const { result } = renderHook(() => useScheduleAttendances(), {
+      const { result } = renderHook(() => useScheduleAppointments(), {
         wrapper: createWrapper(),
       });
 
@@ -180,7 +180,7 @@ describe("useScheduleQueries", () => {
     });
 
     it("should handle API error without message", async () => {
-      mockedAttendancesApi.getAttendancesForSchedule
+      mockedAppointmentsApi.getAppointmentsForSchedule
         .mockResolvedValueOnce({
           success: false,
         })
@@ -191,7 +191,7 @@ describe("useScheduleQueries", () => {
           success: false,
         });
 
-      const { result } = renderHook(() => useScheduleAttendances(), {
+      const { result } = renderHook(() => useScheduleAppointments(), {
         wrapper: createWrapper(),
       });
 
@@ -209,27 +209,27 @@ describe("useScheduleQueries", () => {
   });
 
   describe("useSchedule", () => {
-    it("should transform assessment attendances data", async () => {
+    it("should transform assessment appointments data", async () => {
       const mockData = [
-        createMockAttendanceScheduleDto({
+        createMockAppointmentScheduleDto({
           id: 1,
           patientId: 1,
           patientName: "Patient 1",
           patientPriority: "1",
-          type: AttendanceType.ASSESSMENT,
+          type: AppointmentType.ASSESSMENT,
           scheduledDate: "2025-10-27",
         }),
-        createMockAttendanceScheduleDto({
+        createMockAppointmentScheduleDto({
           id: 2,
           patientId: 2,
           patientName: "Patient 2",
           patientPriority: "2",
-          type: AttendanceType.ASSESSMENT,
+          type: AppointmentType.ASSESSMENT,
           scheduledDate: "2025-10-28",
         }),
       ];
 
-      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
+      mockedAppointmentsApi.getAppointmentsForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
@@ -251,9 +251,9 @@ describe("useScheduleQueries", () => {
                 id: "1",
                 name: "Patient 1",
                 priority: "1",
-                attendanceId: 1,
-                attendanceType: "assessment",
-                attendanceStatus: AttendanceStatus.SCHEDULED,
+                appointmentId: 1,
+                appointmentType: "assessment",
+                appointmentStatus: AppointmentStatus.SCHEDULED,
               },
             ],
           },
@@ -264,9 +264,9 @@ describe("useScheduleQueries", () => {
                 id: "2",
                 name: "Patient 2",
                 priority: "2",
-                attendanceId: 2,
-                attendanceType: "assessment",
-                attendanceStatus: AttendanceStatus.SCHEDULED,
+                appointmentId: 2,
+                appointmentType: "assessment",
+                appointmentStatus: AppointmentStatus.SCHEDULED,
               },
             ],
           },
@@ -283,9 +283,9 @@ describe("useScheduleQueries", () => {
                 id: "1",
                 name: "Patient 1",
                 priority: "1",
-                attendanceId: 1,
-                attendanceType: "assessment",
-                attendanceStatus: AttendanceStatus.SCHEDULED,
+                appointmentId: 1,
+                appointmentType: "assessment",
+                appointmentStatus: AppointmentStatus.SCHEDULED,
               },
             ],
           },
@@ -296,9 +296,9 @@ describe("useScheduleQueries", () => {
                 id: "2",
                 name: "Patient 2",
                 priority: "2",
-                attendanceId: 2,
-                attendanceType: "assessment",
-                attendanceStatus: AttendanceStatus.SCHEDULED,
+                appointmentId: 2,
+                appointmentType: "assessment",
+                appointmentStatus: AppointmentStatus.SCHEDULED,
               },
             ],
           },
@@ -307,27 +307,27 @@ describe("useScheduleQueries", () => {
       });
     });
 
-    it("should transform physiotherapy and tens attendances data", async () => {
+    it("should transform physiotherapy and tens appointments data", async () => {
       const mockData = [
-        createMockAttendanceScheduleDto({
+        createMockAppointmentScheduleDto({
           id: 1,
           patientId: 1,
           patientName: "Physiotherapy Patient",
           patientPriority: "1",
-          type: AttendanceType.PHYSIOTHERAPY,
+          type: AppointmentType.PHYSIOTHERAPY,
           scheduledDate: "2025-10-27",
         }),
-        createMockAttendanceScheduleDto({
+        createMockAppointmentScheduleDto({
           id: 2,
           patientId: 2,
           patientName: "TENS Patient",
           patientPriority: "2",
-          type: AttendanceType.TENS,
+          type: AppointmentType.TENS,
           scheduledDate: "2025-10-27",
         }),
       ];
 
-      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
+      mockedAppointmentsApi.getAppointmentsForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
@@ -350,17 +350,17 @@ describe("useScheduleQueries", () => {
                 id: "1",
                 name: "Physiotherapy Patient",
                 priority: "1",
-                attendanceId: 1,
-                attendanceType: "physiotherapy",
-                attendanceStatus: AttendanceStatus.SCHEDULED,
+                appointmentId: 1,
+                appointmentType: "physiotherapy",
+                appointmentStatus: AppointmentStatus.SCHEDULED,
               },
               {
                 id: "2",
                 name: "TENS Patient",
                 priority: "2",
-                attendanceId: 2,
-                attendanceType: "tens",
-                attendanceStatus: AttendanceStatus.SCHEDULED,
+                appointmentId: 2,
+                appointmentType: "tens",
+                appointmentStatus: AppointmentStatus.SCHEDULED,
               },
             ],
           },
@@ -369,7 +369,7 @@ describe("useScheduleQueries", () => {
     });
 
     it("should return empty schedule when no data", async () => {
-      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
+      mockedAppointmentsApi.getAppointmentsForSchedule.mockResolvedValueOnce({
         success: true,
         value: [],
       });
@@ -393,7 +393,7 @@ describe("useScheduleQueries", () => {
     });
 
     it("should return default schedule when data is undefined", async () => {
-      mockedAttendancesApi.getAttendancesForSchedule
+      mockedAppointmentsApi.getAppointmentsForSchedule
         .mockResolvedValueOnce({
           success: false,
           error: "Network error",
@@ -427,25 +427,25 @@ describe("useScheduleQueries", () => {
 
     it("should group multiple patients on same date", async () => {
       const mockData = [
-        createMockAttendanceScheduleDto({
+        createMockAppointmentScheduleDto({
           id: 1,
           patientId: 1,
           patientName: "Patient 1",
           patientPriority: "1",
-          type: AttendanceType.ASSESSMENT,
+          type: AppointmentType.ASSESSMENT,
           scheduledDate: "2025-10-27",
         }),
-        createMockAttendanceScheduleDto({
+        createMockAppointmentScheduleDto({
           id: 2,
           patientId: 2,
           patientName: "Patient 2",
           patientPriority: "2",
-          type: AttendanceType.ASSESSMENT,
+          type: AppointmentType.ASSESSMENT,
           scheduledDate: "2025-10-27",
         }),
       ];
 
-      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
+      mockedAppointmentsApi.getAppointmentsForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
@@ -466,12 +466,12 @@ describe("useScheduleQueries", () => {
   describe("useScheduled", () => {
     it("should fetch scheduled schedule with correct filters", async () => {
       const mockData = [
-        createMockAttendanceScheduleDto({
-          status: AttendanceStatus.SCHEDULED,
+        createMockAppointmentScheduleDto({
+          status: AppointmentStatus.SCHEDULED,
         }),
       ];
 
-      mockedAttendancesApi.getAttendancesForSchedule.mockResolvedValueOnce({
+      mockedAppointmentsApi.getAppointmentsForSchedule.mockResolvedValueOnce({
         success: true,
         value: mockData,
       });
@@ -484,9 +484,9 @@ describe("useScheduleQueries", () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockedAttendancesApi.getAttendancesForSchedule).toHaveBeenCalledWith(
+      expect(mockedAppointmentsApi.getAppointmentsForSchedule).toHaveBeenCalledWith(
         {
-          statuses: [AttendanceStatus.SCHEDULED],
+          statuses: [AppointmentStatus.SCHEDULED],
         },
       );
     });
@@ -499,7 +499,7 @@ describe("useScheduleQueries", () => {
       });
       const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
 
-      mockedAttendancesApi.deleteAttendance.mockResolvedValueOnce({
+      mockedAppointmentsApi.deleteAppointment.mockResolvedValueOnce({
         success: true,
         value: undefined,
       });
@@ -518,14 +518,14 @@ describe("useScheduleQueries", () => {
         await result.current.mutateAsync(1);
       });
 
-      expect(mockedAttendancesApi.deleteAttendance).toHaveBeenCalledWith("1");
+      expect(mockedAppointmentsApi.deleteAppointment).toHaveBeenCalledWith("1");
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
         queryKey: ["schedule"],
       });
     });
 
     it("should handle API error", async () => {
-      mockedAttendancesApi.deleteAttendance.mockResolvedValueOnce({
+      mockedAppointmentsApi.deleteAppointment.mockResolvedValueOnce({
         success: false,
         error: "Delete failed",
       });
@@ -540,7 +540,7 @@ describe("useScheduleQueries", () => {
     });
 
     it("should handle API error without message", async () => {
-      mockedAttendancesApi.deleteAttendance.mockResolvedValueOnce({
+      mockedAppointmentsApi.deleteAppointment.mockResolvedValueOnce({
         success: false,
       });
 
@@ -556,7 +556,7 @@ describe("useScheduleQueries", () => {
     it("should handle onError callback", async () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
-      mockedAttendancesApi.deleteAttendance.mockResolvedValueOnce({
+      mockedAppointmentsApi.deleteAppointment.mockResolvedValueOnce({
         success: false,
         error: "Delete failed",
       });
@@ -583,9 +583,9 @@ describe("useScheduleQueries", () => {
   });
 
   describe("useAddPatientToSchedule", () => {
-    const attendanceData = {
+    const appointmentData = {
       patientId: 1,
-      type: AttendanceType.ASSESSMENT,
+      type: AppointmentType.ASSESSMENT,
       scheduledDate: "2025-10-27",
       scheduledTime: "09:00",
     };
@@ -596,9 +596,9 @@ describe("useScheduleQueries", () => {
       });
       const invalidateQueriesSpy = jest.spyOn(queryClient, "invalidateQueries");
 
-      mockedAttendancesApi.createAttendance.mockResolvedValueOnce({
+      mockedAppointmentsApi.createAppointment.mockResolvedValueOnce({
         success: true,
-        value: createMockAttendanceResponseDto(),
+        value: createMockAppointmentResponseDto(),
       });
 
       const wrapper = ({ children }: { children: ReactNode }) => (
@@ -612,11 +612,11 @@ describe("useScheduleQueries", () => {
       });
 
       await act(async () => {
-        await result.current.mutateAsync(attendanceData);
+        await result.current.mutateAsync(appointmentData);
       });
 
-      expect(mockedAttendancesApi.createAttendance).toHaveBeenCalledWith(
-        attendanceData,
+      expect(mockedAppointmentsApi.createAppointment).toHaveBeenCalledWith(
+        appointmentData,
       );
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
         queryKey: ["schedule"],
@@ -624,7 +624,7 @@ describe("useScheduleQueries", () => {
     });
 
     it("should handle API error", async () => {
-      mockedAttendancesApi.createAttendance.mockResolvedValueOnce({
+      mockedAppointmentsApi.createAppointment.mockResolvedValueOnce({
         success: false,
         error: "Creation failed",
       });
@@ -633,13 +633,13 @@ describe("useScheduleQueries", () => {
         wrapper: createWrapper(),
       });
 
-      await expect(result.current.mutateAsync(attendanceData)).rejects.toThrow(
+      await expect(result.current.mutateAsync(appointmentData)).rejects.toThrow(
         "Creation failed",
       );
     });
 
     it("should handle API error without message", async () => {
-      mockedAttendancesApi.createAttendance.mockResolvedValueOnce({
+      mockedAppointmentsApi.createAppointment.mockResolvedValueOnce({
         success: false,
       });
 
@@ -647,7 +647,7 @@ describe("useScheduleQueries", () => {
         wrapper: createWrapper(),
       });
 
-      await expect(result.current.mutateAsync(attendanceData)).rejects.toThrow(
+      await expect(result.current.mutateAsync(appointmentData)).rejects.toThrow(
         "Failed to add patient to schedule",
       );
     });
@@ -655,7 +655,7 @@ describe("useScheduleQueries", () => {
     it("should handle onError callback", async () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
-      mockedAttendancesApi.createAttendance.mockResolvedValueOnce({
+      mockedAppointmentsApi.createAppointment.mockResolvedValueOnce({
         success: false,
         error: "Creation failed",
       });
@@ -665,7 +665,7 @@ describe("useScheduleQueries", () => {
       });
 
       try {
-        await result.current.mutateAsync(attendanceData);
+        await result.current.mutateAsync(appointmentData);
       } catch {
         // Error expected
       }

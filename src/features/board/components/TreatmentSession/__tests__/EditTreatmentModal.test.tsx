@@ -119,7 +119,7 @@ const defaultSessions = [
   {
     id: 1,
     consultationId: 10,
-    attendanceId: 20,
+    appointmentId: 20,
     patientId: 1,
     treatmentType: "physiotherapy" as const,
     bodyLocation: "Head",
@@ -257,7 +257,7 @@ describe("EditTreatmentModal", () => {
       queryKey: ["treatments"],
     });
     expect(mockRefetchQueries).toHaveBeenCalledWith({
-      queryKey: ["treatmentsByAttendance"],
+      queryKey: ["treatmentsByAppointment"],
     });
     expect(onSuccess).toHaveBeenCalled();
     expect(onClose).toHaveBeenCalled();

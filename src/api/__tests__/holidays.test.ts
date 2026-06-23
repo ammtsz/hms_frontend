@@ -45,11 +45,11 @@ describe('holidays API', () => {
     });
   });
 
-  it('should return attendance conflict message for period creation', async () => {
+  it('should return appointment conflict message for period creation', async () => {
     (api as unknown as MockedApi).post.mockRejectedValue({
       response: {
         status: 409,
-        data: { message: 'ATTENDANCE_CONFLICT:2' },
+        data: { message: 'APPOINTMENT_CONFLICT:2' },
       },
     });
 

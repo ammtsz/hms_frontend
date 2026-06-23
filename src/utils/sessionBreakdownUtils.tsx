@@ -1,8 +1,8 @@
 import React from "react";
 import { CheckCircle, XCircle, Clock, Ban } from "lucide-react";
 import { SessionResponseDto } from "@/api/types";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
-import { ATTENDANCE_HISTORY_STATUS_LABELS } from "@/utils/attendanceStatusLabels";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
+import { APPOINTMENT_HISTORY_STATUS_LABELS } from "@/utils/appointmentStatusLabels";
 
 export const getStatusIcon = (status: string) => {
   switch (status) {
@@ -22,13 +22,13 @@ export const getStatusIcon = (status: string) => {
 export const getStatusLabel = (status: string) => {
   switch (status) {
     case "completed":
-      return ATTENDANCE_HISTORY_STATUS_LABELS.completed;
+      return APPOINTMENT_HISTORY_STATUS_LABELS.completed;
     case "missed":
-      return ATTENDANCE_HISTORY_STATUS_LABELS.missed;
+      return APPOINTMENT_HISTORY_STATUS_LABELS.missed;
     case "scheduled":
-      return ATTENDANCE_HISTORY_STATUS_LABELS.scheduled;
+      return APPOINTMENT_HISTORY_STATUS_LABELS.scheduled;
     case "cancelled":
-      return ATTENDANCE_HISTORY_STATUS_LABELS.cancelled;
+      return APPOINTMENT_HISTORY_STATUS_LABELS.cancelled;
     default:
       return status;
   }
@@ -49,8 +49,8 @@ export const formatDate = (dateStr: string) => {
 
 export const getTreatmentTypeLabel = (type?: string) => {
   if (!type) return "";
-  if (type === "physiotherapy") return getAttendanceTypeLabel("physiotherapy");
-  if (type === "tens") return getAttendanceTypeLabel("tens");
+  if (type === "physiotherapy") return getAppointmentTypeLabel("physiotherapy");
+  if (type === "tens") return getAppointmentTypeLabel("tens");
   return type;
 };
 

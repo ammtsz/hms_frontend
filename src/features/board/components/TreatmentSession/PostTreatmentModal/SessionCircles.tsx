@@ -1,20 +1,20 @@
 import React from "react";
-import type { SessionAttendanceStatus } from "@/api/types";
+import type { SessionAppointmentStatus } from "@/api/types";
 
 interface SessionCirclesProps {
   /** Session numbers and statuses for circles, ordered by sessionNumber */
   sessionStatuses: Array<{
     sessionNumber: number;
-    status: SessionAttendanceStatus;
+    status: SessionAppointmentStatus;
   }>;
   plannedSessions: number;
-  /** Session number of the row for this attendance (being completed/cancelled) */
+  /** Session number of the row for this appointment (being completed/cancelled) */
   currentSessionNumber: number;
   /** When true, the current session circle is green (will be completed); when false, red (will be cancelled) */
   currentSessionMarkedAsCompleted: boolean;
 }
 
-const statusToColor = (status: SessionAttendanceStatus): string => {
+const statusToColor = (status: SessionAppointmentStatus): string => {
   switch (status) {
     case "completed":
       return "bg-green-500";

@@ -68,20 +68,20 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
     refetch: refetchTreatments,
   } = useTreatmentsByPatient(Number(patient.id));
 
-  // Consultations list (latest assessment recommendations by attendance)
+  // Consultations list (latest assessment recommendations by appointment)
   const { data: consultations = [] } = useConsultations();
 
   // Hook for cancelling treatment plans
   const cancelTreatmentsMutation = useCancelTreatments();
 
-  // Latest consultation for this patient (by attendances linked to them)
+  // Latest consultation for this patient (by appointments linked to them)
   const latestConsultation = useMemo(() => {
-    const patientAttendanceIds = new Set(
-      patient.previousAttendances.map((att) => Number(att.attendanceId)),
+    const patientAppointmentIds = new Set(
+      patient.previousAppointments.map((att) => Number(att.appointmentId)),
     );
 
     const patientConsultations = consultations.filter((consultation) =>
-      patientAttendanceIds.has(consultation.attendanceId),
+      patientAppointmentIds.has(consultation.appointmentId),
     );
 
     if (patientConsultations.length === 0) return null;
@@ -91,7 +91,7 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
         new Date(b.createdDate).getTime() - new Date(a.createdDate).getTime()
       );
     })[0];
-  }, [consultations, patient.previousAttendances]);
+  }, [consultations, patient.previousAppointments]);
 
   // Map persisted consultation fields into the “current recommendations” card shape
   const currentRecommendations = useMemo(() => {
@@ -99,11 +99,11 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
       return patient.currentRecommendations;
     }
 
-    // Prefer the attendance calendar date over consultation `createdDate` for the header
-    const attendance = patient.previousAttendances.find(
-      (att) => Number(att.attendanceId) === latestConsultation.attendanceId,
+    // Prefer the appointment calendar date over consultation `createdDate` for the header
+    const appointment = patient.previousAppointments.find(
+      (att) => Number(att.appointmentId) === latestConsultation.appointmentId,
     );
-    const date = attendance?.date || latestConsultation.createdDate || "";
+    const date = appointment?.date || latestConsultation.createdDate || "";
 
     return {
       date, // Keep as YYYY-MM-DD string
@@ -120,7 +120,7 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
   }, [
     latestConsultation,
     patient.currentRecommendations,
-    patient.previousAttendances,
+    patient.previousAppointments,
   ]);
 
   // Cancel flow: child passes treatment plan IDs (not session rows)

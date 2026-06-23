@@ -44,7 +44,7 @@ const defaultProps = {
     physiotherapy: [] as PostTreatmentRow[],
     tens: [] as PostTreatmentRow[],
   },
-  completedAttendanceIds: new Set<number>(),
+  completedAppointmentIds: new Set<number>(),
   cancellationReasons: new Map<number, string>(),
   generalNotes: "",
   setGeneralNotes: jest.fn(),
@@ -95,7 +95,7 @@ describe("PostTreatmentModalBody", () => {
     const onRetry = jest.fn();
     render(<PostTreatmentModalBody {...defaultProps} onRetry={onRetry} />);
     expect(
-      screen.getByText(/no treatments found for these attendances/i),
+      screen.getByText(/no treatments found for these appointments/i),
     ).toBeInTheDocument();
     const retryButton = screen.getByRole("button", {
       name: /try again/i,
@@ -106,7 +106,7 @@ describe("PostTreatmentModalBody", () => {
 
   it("renders treatment sections and general notes when rows exist", () => {
     const rowsByType = {
-      physiotherapy: [{ attendanceId: 1 }] as unknown as PostTreatmentRow[],
+      physiotherapy: [{ appointmentId: 1 }] as unknown as PostTreatmentRow[],
       tens: [] as PostTreatmentRow[],
     };
     const rows = rowsByType.physiotherapy;
@@ -127,7 +127,7 @@ describe("PostTreatmentModalBody", () => {
   it("calls setGeneralNotes when general notes change", () => {
     const setGeneralNotes = jest.fn();
     const rowsByType = {
-      physiotherapy: [{ attendanceId: 1 }] as unknown as PostTreatmentRow[],
+      physiotherapy: [{ appointmentId: 1 }] as unknown as PostTreatmentRow[],
       tens: [] as PostTreatmentRow[],
     };
     const rows = rowsByType.physiotherapy;

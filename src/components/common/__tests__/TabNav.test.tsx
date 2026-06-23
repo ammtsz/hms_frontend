@@ -92,14 +92,14 @@ describe("TabNav Component", () => {
   });
 
   describe("Active State", () => {
-    it("should mark attendance tab as active when on attendance page", () => {
+    it("should mark appointment tab as active when on appointment page", () => {
       mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
-      const attendanceTab = screen.getByText("Board").closest("a");
-      expect(attendanceTab).toHaveClass("active");
-      expect(attendanceTab).toHaveAttribute("aria-current", "page");
+      const appointmentTab = screen.getByText("Board").closest("a");
+      expect(appointmentTab).toHaveClass("active");
+      expect(appointmentTab).toHaveAttribute("aria-current", "page");
     });
 
     it("should mark schedule tab as active when on schedule page", () => {
@@ -222,10 +222,10 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const attendanceTab = screen.getByText("Board").closest("a");
+      const appointmentTab = screen.getByText("Board").closest("a");
       const scheduleTab = screen.getByText("Schedule").closest("a");
 
-      expect(attendanceTab).not.toHaveAttribute("aria-current");
+      expect(appointmentTab).not.toHaveAttribute("aria-current");
       expect(scheduleTab).not.toHaveAttribute("aria-current");
     });
 

@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import type { AbsenceJustification, ScheduledAbsence } from "../types";
-import type { AttendanceType } from "@/types/types";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import type { AppointmentType } from "@/types/types";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 
 export interface GroupedAbsence {
   patientId: number;
@@ -15,7 +15,7 @@ interface UseAbsenceJustificationProps {
   absenceJustifications: AbsenceJustification[];
   onJustificationChange: (
     patientId: number,
-    attendanceType: AttendanceType,
+    appointmentType: AppointmentType,
     justified: boolean,
     justification?: string,
   ) => void;
@@ -44,7 +44,7 @@ export const useAbsenceJustification = ({
         };
       }
 
-      if (absence.attendanceType === "assessment") {
+      if (absence.appointmentType === "assessment") {
         grouped[absence.patientId].assessment.push(absence);
       } else {
         grouped[absence.patientId].treatments.push(absence);
@@ -67,51 +67,51 @@ export const useAbsenceJustification = ({
 
   const handleJustificationChange = (
     patientId: number,
-    attendanceType: AttendanceType | "all" | "treatments",
+    appointmentType: AppointmentType | "all" | "treatments",
     justified: boolean,
     justification?: string,
   ) => {
     const group = groupedAbsences.find((g) => g.patientId === patientId);
     if (!group) return;
 
-    if (attendanceType === "all") {
+    if (appointmentType === "all") {
       [...group.assessment, ...group.treatments].forEach((absence) => {
         onJustificationChange(
           patientId,
-          absence.attendanceType as AttendanceType,
+          absence.appointmentType as AppointmentType,
           justified,
           justification,
         );
       });
-    } else if (attendanceType === "treatments") {
+    } else if (appointmentType === "treatments") {
       group.treatments.forEach((absence) => {
         onJustificationChange(
           patientId,
-          absence.attendanceType as AttendanceType,
+          absence.appointmentType as AppointmentType,
           justified,
           justification,
         );
       });
     } else {
-      onJustificationChange(patientId, attendanceType, justified, justification);
+      onJustificationChange(patientId, appointmentType, justified, justification);
     }
   };
 
   const getJustificationForType = (
     patientId: number,
-    attendanceType: "assessment" | "treatments" | "all",
+    appointmentType: "assessment" | "treatments" | "all",
   ) => {
-    if (attendanceType === "all") {
+    if (appointmentType === "all") {
       return absenceJustifications.find((j) => j.patientId === patientId);
-    } else if (attendanceType === "assessment") {
+    } else if (appointmentType === "assessment") {
       return absenceJustifications.find(
-        (j) => j.patientId === patientId && j.attendanceType === "assessment",
+        (j) => j.patientId === patientId && j.appointmentType === "assessment",
       );
     } else {
       return absenceJustifications.find(
         (j) =>
           j.patientId === patientId &&
-          (j.attendanceType === "physiotherapy" || j.attendanceType === "tens"),
+          (j.appointmentType === "physiotherapy" || j.appointmentType === "tens"),
       );
     }
   };
@@ -120,21 +120,21 @@ export const useAbsenceJustification = ({
     const parts: string[] = [];
 
     if (group.assessment.length > 0) {
-      parts.push(getAttendanceTypeLabel("assessment"));
+      parts.push(getAppointmentTypeLabel("assessment"));
     }
 
     if (group.treatments.length > 0) {
       const physiotherapy = group.treatments.filter(
-        (t) => t.attendanceType === "physiotherapy",
+        (t) => t.appointmentType === "physiotherapy",
       );
-      const tens = group.treatments.filter((t) => t.attendanceType === "tens");
+      const tens = group.treatments.filter((t) => t.appointmentType === "tens");
 
       const treatmentParts: string[] = [];
       if (physiotherapy.length > 0) {
-        treatmentParts.push(getAttendanceTypeLabel("physiotherapy"));
+        treatmentParts.push(getAppointmentTypeLabel("physiotherapy"));
       }
       if (tens.length > 0) {
-        treatmentParts.push(getAttendanceTypeLabel("tens"));
+        treatmentParts.push(getAppointmentTypeLabel("tens"));
       }
 
       if (treatmentParts.length > 0) {

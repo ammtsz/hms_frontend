@@ -43,14 +43,14 @@ describe("postTreatmentSession.utils", () => {
         baseSession({ treatmentId: 9, sessionNumber: 1, status: "missed" }),
         baseSession({ id: 2, treatmentId: 9, sessionNumber: 3 }),
       ]);
-      const attendanceScopedSessions = [
+      const appointmentScopedSessions = [
         baseSession({ treatmentId: 9, sessionNumber: 3, status: "scheduled" }),
       ];
 
       const result = resolveTreatmentPlanSessionHistory(
         historyByPlan,
         9,
-        attendanceScopedSessions,
+        appointmentScopedSessions,
       );
 
       expect(result).toHaveLength(2);
@@ -58,19 +58,19 @@ describe("postTreatmentSession.utils", () => {
       expect(result[1].sessionNumber).toBe(3);
     });
 
-    it("falls back to attendance-scoped sessions when the plan is not in the index", () => {
+    it("falls back to appointment-scoped sessions when the plan is not in the index", () => {
       const historyByPlan = groupPatientSessionsByTreatmentPlan([]);
-      const attendanceScopedSessions = [
+      const appointmentScopedSessions = [
         baseSession({ id: 5, treatmentId: 9, sessionNumber: 3, status: "scheduled" }),
       ];
 
       const result = resolveTreatmentPlanSessionHistory(
         historyByPlan,
         9,
-        attendanceScopedSessions,
+        appointmentScopedSessions,
       );
 
-      expect(result).toEqual(attendanceScopedSessions);
+      expect(result).toEqual(appointmentScopedSessions);
     });
   });
 });

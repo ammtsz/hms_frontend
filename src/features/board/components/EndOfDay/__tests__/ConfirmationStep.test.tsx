@@ -2,15 +2,15 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ConfirmationStep from "../components/steps/ConfirmationStep";
-import { groupAttendancesForDisplayWithBodyLocation } from "../utils/confirmationStepUtils";
+import { groupAppointmentsForDisplayWithBodyLocation } from "../utils/confirmationStepUtils";
 import type { AbsenceJustification } from "../types";
-import type { IAttendanceStatusDetailWithType } from "../../../utils/attendanceDataUtils";
+import type { IAppointmentStatusDetailWithType } from "../../../utils/appointmentDataUtils";
 
-function expectCompletedAttendanceLines(
-  completedAttendances: IAttendanceStatusDetailWithType[],
+function expectCompletedAppointmentLines(
+  completedAppointments: IAppointmentStatusDetailWithType[],
 ) {
   const grouped =
-    groupAttendancesForDisplayWithBodyLocation(completedAttendances);
+    groupAppointmentsForDisplayWithBodyLocation(completedAppointments);
   grouped.forEach(({ patientName, label }) => {
     expect(screen.getByText(`• ${patientName} (${label})`)).toBeInTheDocument();
   });
@@ -18,13 +18,13 @@ function expectCompletedAttendanceLines(
 }
 
 // Mock data factories
-const createMockAttendance = (
-  overrides: Partial<IAttendanceStatusDetailWithType> = {},
-): IAttendanceStatusDetailWithType => ({
+const createMockAppointment = (
+  overrides: Partial<IAppointmentStatusDetailWithType> = {},
+): IAppointmentStatusDetailWithType => ({
   name: "John Doe",
   priority: "3",
   patientId: 1,
-  attendanceType: "assessment",
+  appointmentType: "assessment",
   ...overrides,
 });
 
@@ -33,7 +33,7 @@ const createMockJustification = (
 ): AbsenceJustification => ({
   patientId: 1,
   patientName: "John Doe",
-  attendanceType: "assessment",
+  appointmentType: "assessment",
   justified: true,
   justification: "Medical appointment",
   ...overrides,
@@ -42,7 +42,7 @@ const createMockJustification = (
 describe("ConfirmationStep", () => {
   const defaultProps = {
     selectedDate: "2024-01-15",
-    completedAttendances: [],
+    completedAppointments: [],
     scheduledAbsences: [],
     absenceJustifications: [],
     isSubmitting: false,
@@ -61,16 +61,16 @@ describe("ConfirmationStep", () => {
   });
 
   it("shows summary cards with correct counts", () => {
-    const completedAttendances = [
-      createMockAttendance({
+    const completedAppointments = [
+      createMockAppointment({
         name: "Patient 1",
         patientId: 1,
-        attendanceType: "assessment",
+        appointmentType: "assessment",
       }),
-      createMockAttendance({
+      createMockAppointment({
         name: "Patient 2",
         patientId: 2,
-        attendanceType: "assessment",
+        appointmentType: "assessment",
       }),
     ];
     const absenceJustifications = [
@@ -82,7 +82,7 @@ describe("ConfirmationStep", () => {
     const { container } = render(
       <ConfirmationStep
         {...defaultProps}
-        completedAttendances={completedAttendances}
+        completedAppointments={completedAppointments}
         absenceJustifications={absenceJustifications}
       />,
     );
@@ -105,34 +105,34 @@ describe("ConfirmationStep", () => {
     expect(unjustifiedCard).toHaveTextContent("1");
   });
 
-  it("displays completed attendances list with labels", () => {
-    const completedAttendances = [
-      createMockAttendance({
+  it("displays completed appointments list with labels", () => {
+    const completedAppointments = [
+      createMockAppointment({
         name: "Jane Doe",
         patientId: 1,
-        attendanceType: "assessment",
+        appointmentType: "assessment",
       }),
-      createMockAttendance({
+      createMockAppointment({
         name: "Bob Smith",
         patientId: 2,
-        attendanceType: "physiotherapy",
+        appointmentType: "physiotherapy",
       }),
     ];
 
     const { container } = render(
       <ConfirmationStep
         {...defaultProps}
-        completedAttendances={completedAttendances}
+        completedAppointments={completedAppointments}
       />,
     );
 
-    // Find the completed attendances section heading specifically (h4 element)
+    // Find the completed appointments section heading specifically (h4 element)
     const completedSection = container.querySelector(
       "h4.text-md.font-medium.text-gray-900",
     );
-    expect(completedSection).toHaveTextContent("Completed Attendances");
+    expect(completedSection).toHaveTextContent("Completed Appointments");
 
-    expectCompletedAttendanceLines(completedAttendances);
+    expectCompletedAppointmentLines(completedAppointments);
   });
 
   it("displays justified absences with justifications", () => {
@@ -221,178 +221,178 @@ describe("ConfirmationStep", () => {
     expect(screen.queryByText("Finalize Day")).not.toBeInTheDocument();
   });
 
-  it("handles attendances without names", () => {
-    const completedAttendances = [
-      createMockAttendance({
+  it("handles appointments without names", () => {
+    const completedAppointments = [
+      createMockAppointment({
         name: "Unknown",
         patientId: undefined,
-        attendanceType: "assessment",
+        appointmentType: "assessment",
       }),
     ];
 
     render(
       <ConfirmationStep
         {...defaultProps}
-        completedAttendances={completedAttendances}
+        completedAppointments={completedAppointments}
       />,
     );
 
-    expectCompletedAttendanceLines(completedAttendances);
+    expectCompletedAppointmentLines(completedAppointments);
   });
 
-  describe("Attendance Grouping Logic", () => {
+  describe("Appointment Grouping Logic", () => {
     it("groups patient with assessment and treatments as two entries", () => {
-      const completedAttendances = [
-        createMockAttendance({
+      const completedAppointments = [
+        createMockAppointment({
           name: "Patient 10",
           patientId: 10,
-          attendanceType: "assessment",
+          appointmentType: "assessment",
         }),
-        createMockAttendance({
+        createMockAppointment({
           name: "Patient 10",
           patientId: 10,
-          attendanceType: "physiotherapy",
+          appointmentType: "physiotherapy",
         }),
-        createMockAttendance({
+        createMockAppointment({
           name: "Patient 10",
           patientId: 10,
-          attendanceType: "tens",
+          appointmentType: "tens",
         }),
       ];
 
       render(
         <ConfirmationStep
           {...defaultProps}
-          completedAttendances={completedAttendances}
+          completedAppointments={completedAppointments}
         />,
       );
 
-      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(2);
+      expect(expectCompletedAppointmentLines(completedAppointments)).toBe(2);
       expect(screen.getByText("2")).toBeInTheDocument();
     });
 
     it("groups patient with only assessment as one entry", () => {
-      const completedAttendances = [
-        createMockAttendance({
+      const completedAppointments = [
+        createMockAppointment({
           name: "Patient A",
           patientId: 1,
-          attendanceType: "assessment",
+          appointmentType: "assessment",
         }),
       ];
 
       render(
         <ConfirmationStep
           {...defaultProps}
-          completedAttendances={completedAttendances}
+          completedAppointments={completedAppointments}
         />,
       );
 
-      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(1);
+      expect(expectCompletedAppointmentLines(completedAppointments)).toBe(1);
       expect(screen.getByText("1")).toBeInTheDocument();
     });
 
     it("groups patient with only physiotherapy as one entry", () => {
-      const completedAttendances = [
-        createMockAttendance({
+      const completedAppointments = [
+        createMockAppointment({
           name: "Manual Test 2",
           patientId: 2,
-          attendanceType: "physiotherapy",
+          appointmentType: "physiotherapy",
         }),
       ];
 
       render(
         <ConfirmationStep
           {...defaultProps}
-          completedAttendances={completedAttendances}
+          completedAppointments={completedAppointments}
         />,
       );
 
-      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(1);
+      expect(expectCompletedAppointmentLines(completedAppointments)).toBe(1);
       expect(screen.getByText("1")).toBeInTheDocument();
     });
 
     it("groups patient with only tens as one entry", () => {
-      const completedAttendances = [
-        createMockAttendance({
+      const completedAppointments = [
+        createMockAppointment({
           name: "Patient C",
           patientId: 3,
-          attendanceType: "tens",
+          appointmentType: "tens",
         }),
       ];
 
       render(
         <ConfirmationStep
           {...defaultProps}
-          completedAttendances={completedAttendances}
+          completedAppointments={completedAppointments}
         />,
       );
 
-      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(1);
+      expect(expectCompletedAppointmentLines(completedAppointments)).toBe(1);
       expect(screen.getByText("1")).toBeInTheDocument();
     });
 
     it("groups patient with both physiotherapy and tens as one entry", () => {
-      const completedAttendances = [
-        createMockAttendance({
+      const completedAppointments = [
+        createMockAppointment({
           name: "Patient D",
           patientId: 4,
-          attendanceType: "physiotherapy",
+          appointmentType: "physiotherapy",
         }),
-        createMockAttendance({
+        createMockAppointment({
           name: "Patient D",
           patientId: 4,
-          attendanceType: "tens",
+          appointmentType: "tens",
         }),
       ];
 
       render(
         <ConfirmationStep
           {...defaultProps}
-          completedAttendances={completedAttendances}
+          completedAppointments={completedAppointments}
         />,
       );
 
-      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(1);
+      expect(expectCompletedAppointmentLines(completedAppointments)).toBe(1);
       expect(screen.getByText("1")).toBeInTheDocument();
     });
 
-    it("handles multiple different patients with different attendance types", () => {
-      const completedAttendances = [
-        createMockAttendance({
+    it("handles multiple different patients with different appointment types", () => {
+      const completedAppointments = [
+        createMockAppointment({
           name: "Patient 10",
           patientId: 10,
-          attendanceType: "assessment",
+          appointmentType: "assessment",
         }),
-        createMockAttendance({
+        createMockAppointment({
           name: "Patient 10",
           patientId: 10,
-          attendanceType: "physiotherapy",
+          appointmentType: "physiotherapy",
         }),
-        createMockAttendance({
+        createMockAppointment({
           name: "Patient 10",
           patientId: 10,
-          attendanceType: "tens",
+          appointmentType: "tens",
         }),
-        createMockAttendance({
+        createMockAppointment({
           name: "Manual Test 2",
           patientId: 2,
-          attendanceType: "physiotherapy",
+          appointmentType: "physiotherapy",
         }),
-        createMockAttendance({
+        createMockAppointment({
           name: "Patient X",
           patientId: 3,
-          attendanceType: "assessment",
+          appointmentType: "assessment",
         }),
       ];
 
       render(
         <ConfirmationStep
           {...defaultProps}
-          completedAttendances={completedAttendances}
+          completedAppointments={completedAppointments}
         />,
       );
 
-      expect(expectCompletedAttendanceLines(completedAttendances)).toBe(4);
+      expect(expectCompletedAppointmentLines(completedAppointments)).toBe(4);
       expect(screen.getByText("4")).toBeInTheDocument();
     });
   });

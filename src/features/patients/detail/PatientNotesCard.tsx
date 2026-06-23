@@ -368,7 +368,7 @@ export const PatientNotesCard: React.FC<PatientNotesCardProps> = ({
               <div className="text-xs text-gray-500">
                 💡 Use notes to record important observations about behavior,
                 condition progress, or relevant information for future
-                attendances.
+                appointments.
               </div>
             </div>
           </>

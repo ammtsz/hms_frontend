@@ -5,7 +5,7 @@ import { useConsultationSubmission } from "../useConsultationSubmission";
 import {
   useCreateConsultation,
   useUpdateConsultation,
-  useFetchConsultationByAttendance,
+  useFetchConsultationByAppointment,
 } from "@/api/query/hooks/useConsultationQueries";
 import type { PostConsultationFormData, PatientStatusValue } from "../..";
 import type { ConsultationResponseDto } from "@/api/types";
@@ -19,29 +19,29 @@ const mockUseCreateConsultation = useCreateConsultation as jest.MockedFunction<
 const mockUseUpdateConsultation = useUpdateConsultation as jest.MockedFunction<
   typeof useUpdateConsultation
 >;
-const mockUseFetchConsultationByAttendance =
-  useFetchConsultationByAttendance as jest.MockedFunction<
-    typeof useFetchConsultationByAttendance
+const mockUseFetchConsultationByAppointment =
+  useFetchConsultationByAppointment as jest.MockedFunction<
+    typeof useFetchConsultationByAppointment
   >;
 
-// Mock getConsultationByAttendance for 409 retry flow
+// Mock getConsultationByAppointment for 409 retry flow
 jest.mock("@/api/consultations", () => ({
   ...jest.requireActual("@/api/consultations"),
-  getConsultationByAttendance: jest.fn(),
+  getConsultationByAppointment: jest.fn(),
 }));
-import { getConsultationByAttendance } from "@/api/consultations";
-const mockGetConsultationByAttendance =
-  getConsultationByAttendance as jest.MockedFunction<
-    typeof getConsultationByAttendance
+import { getConsultationByAppointment } from "@/api/consultations";
+const mockGetConsultationByAppointment =
+  getConsultationByAppointment as jest.MockedFunction<
+    typeof getConsultationByAppointment
   >;
 
 // Helper: build a ConsultationResponseDto for mocks
 const createMockConsultation = (
   id: number,
-  attendanceId = 456,
+  appointmentId = 456,
 ): ConsultationResponseDto => ({
   id,
-  attendanceId,
+  appointmentId,
   mainConcern: "Test complaint",
   food: "Test food recommendation",
   water: "Test water recommendation",
@@ -160,10 +160,10 @@ describe("useConsultationSubmission", () => {
       isPaused: false,
       submittedAt: 0,
     });
-    mockGetConsultationByAttendance.mockReset();
-    mockUseFetchConsultationByAttendance.mockReturnValue(
-      jest.fn().mockImplementation(async (attendanceId: string | number) => {
-        return getConsultationByAttendance(attendanceId.toString());
+    mockGetConsultationByAppointment.mockReset();
+    mockUseFetchConsultationByAppointment.mockReturnValue(
+      jest.fn().mockImplementation(async (appointmentId: string | number) => {
+        return getConsultationByAppointment(appointmentId.toString());
       }),
     );
   });
@@ -206,23 +206,23 @@ describe("useConsultationSubmission", () => {
         wrapper: createWrapper,
       });
       const treatmentData = createMockPostConsultationFormData();
-      const attendanceId = 456;
+      const appointmentId = 456;
 
       let submitResult;
       await act(async () => {
         submitResult = await result.current.submitConsultation(
           treatmentData,
-          attendanceId,
+          appointmentId,
         );
       });
 
       expect(submitResult).toEqual({
         consultationId: 123,
         isUpdate: false,
-        cancelledAttendances: undefined,
+        cancelledAppointments: undefined,
       });
       expect(mockMutateAsync).toHaveBeenCalledWith({
-        attendanceId: 456,
+        appointmentId: 456,
         mainConcern: "Back pain",
         patientStatus: "T",
         food: "Avoid fried foods",
@@ -418,14 +418,14 @@ describe("useConsultationSubmission", () => {
       );
     });
 
-    it("should return cancelledAttendances when create response includes them (Discharged/Consecutive no-shows)", async () => {
+    it("should return cancelledAppointments when create response includes them (Discharged/Consecutive no-shows)", async () => {
       const mockConsultation = createMockConsultation(888, 700);
-      const cancelledAttendances = [
+      const cancelledAppointments = [
         { id: 10, type: "assessment", scheduledDate: "2026-01-25" },
       ];
       mockMutateAsync.mockResolvedValue({
         consultation: mockConsultation,
-        cancelledAttendances,
+        cancelledAppointments,
       });
 
       const treatmentData = createMockPostConsultationFormData({
@@ -446,7 +446,7 @@ describe("useConsultationSubmission", () => {
       expect(submitResult).toMatchObject({
         consultationId: 888,
         isUpdate: false,
-        cancelledAttendances,
+        cancelledAppointments,
       });
     });
   });
@@ -579,7 +579,7 @@ describe("useConsultationSubmission", () => {
     it("should fetch existing consultation and update on 409, then return isUpdate true", async () => {
       const existingConsultation = createMockConsultation(99, 2000);
       mockMutateAsync.mockRejectedValueOnce(create409Error());
-      mockGetConsultationByAttendance.mockResolvedValue({
+      mockGetConsultationByAppointment.mockResolvedValue({
         success: true,
         value: existingConsultation,
       });
@@ -604,7 +604,7 @@ describe("useConsultationSubmission", () => {
         consultationId: 99,
         isUpdate: true,
       });
-      expect(mockGetConsultationByAttendance).toHaveBeenCalledWith("2000");
+      expect(mockGetConsultationByAppointment).toHaveBeenCalledWith("2000");
       expect(mockUpdateMutateAsync).toHaveBeenCalledTimes(1);
       const updateCall = mockUpdateMutateAsync.mock.calls[0][0];
       expect(updateCall.id).toBe("99");
@@ -618,7 +618,7 @@ describe("useConsultationSubmission", () => {
     it("should handle 409 with wrapped axiosError property", async () => {
       const existingConsultation = createMockConsultation(101, 2001);
       mockMutateAsync.mockRejectedValueOnce(createWrapped409Error());
-      mockGetConsultationByAttendance.mockResolvedValue({
+      mockGetConsultationByAppointment.mockResolvedValue({
         success: true,
         value: existingConsultation,
       });
@@ -643,22 +643,22 @@ describe("useConsultationSubmission", () => {
         consultationId: 101,
         isUpdate: true,
       });
-      expect(mockGetConsultationByAttendance).toHaveBeenCalledWith("2001");
+      expect(mockGetConsultationByAppointment).toHaveBeenCalledWith("2001");
     });
 
-    it("should return cancelledAttendances from update response on 409 retry", async () => {
+    it("should return cancelledAppointments from update response on 409 retry", async () => {
       const existingConsultation = createMockConsultation(102, 2002);
-      const cancelledAttendances = [
+      const cancelledAppointments = [
         { id: 20, type: "assessment", scheduledDate: "2026-02-01" },
       ];
       mockMutateAsync.mockRejectedValueOnce(create409Error());
-      mockGetConsultationByAttendance.mockResolvedValue({
+      mockGetConsultationByAppointment.mockResolvedValue({
         success: true,
         value: existingConsultation,
       });
       mockUpdateMutateAsync.mockResolvedValue({
         consultation: existingConsultation,
-        cancelledAttendances,
+        cancelledAppointments,
       });
 
       const treatmentData = createMockPostConsultationFormData({
@@ -679,13 +679,13 @@ describe("useConsultationSubmission", () => {
       expect(submitResult).toMatchObject({
         consultationId: 102,
         isUpdate: true,
-        cancelledAttendances,
+        cancelledAppointments,
       });
     });
 
     it("should throw when fetch of existing consultation fails after 409", async () => {
       mockMutateAsync.mockRejectedValueOnce(create409Error());
-      mockGetConsultationByAttendance.mockResolvedValue({
+      mockGetConsultationByAppointment.mockResolvedValue({
         success: false,
         error: "Not found",
       });
@@ -701,16 +701,16 @@ describe("useConsultationSubmission", () => {
         ).rejects.toThrow("Failed to fetch existing consultation for retry");
       });
 
-      expect(mockGetConsultationByAttendance).toHaveBeenCalledWith("2003");
+      expect(mockGetConsultationByAppointment).toHaveBeenCalledWith("2003");
       expect(mockUpdateMutateAsync).not.toHaveBeenCalled();
     });
 
     it("should throw when fetch returns no value after 409", async () => {
       mockMutateAsync.mockRejectedValueOnce(create409Error());
-      mockGetConsultationByAttendance.mockResolvedValue({
+      mockGetConsultationByAppointment.mockResolvedValue({
         success: true,
         value: null,
-      } as unknown as Awaited<ReturnType<typeof getConsultationByAttendance>>);
+      } as unknown as Awaited<ReturnType<typeof getConsultationByAppointment>>);
 
       const treatmentData = createMockPostConsultationFormData();
       const { result } = renderHook(() => useConsultationSubmission(), {
@@ -729,7 +729,7 @@ describe("useConsultationSubmission", () => {
     it("should re-throw when update fails after 409 fetch succeeds", async () => {
       const existingConsultation = createMockConsultation(103, 2005);
       mockMutateAsync.mockRejectedValueOnce(create409Error());
-      mockGetConsultationByAttendance.mockResolvedValue({
+      mockGetConsultationByAppointment.mockResolvedValue({
         success: true,
         value: existingConsultation,
       });
@@ -768,7 +768,7 @@ describe("useConsultationSubmission", () => {
         ).rejects.toEqual(serverError);
       });
 
-      expect(mockGetConsultationByAttendance).not.toHaveBeenCalled();
+      expect(mockGetConsultationByAppointment).not.toHaveBeenCalled();
       expect(mockUpdateMutateAsync).not.toHaveBeenCalled();
     });
   });
@@ -798,7 +798,7 @@ describe("useConsultationSubmission", () => {
 
       expect(mockMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
-          attendanceId: 1200,
+          appointmentId: 1200,
           mainConcern: "Custom complaint",
           patientStatus: "D",
           food: "Custom food recommendation",

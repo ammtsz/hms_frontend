@@ -1,8 +1,8 @@
 import React from "react";
 import type { AbsenceJustification } from "../types";
-import type { AttendanceType } from "@/types/types";
+import type { AppointmentType } from "@/types/types";
 import type { GroupedAbsence } from "../hooks/useAbsenceJustification";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import { JustificationSection } from "./JustificationSection";
 import { Checkbox } from "@/components/ui";
 
@@ -12,11 +12,11 @@ interface PatientAbsenceCardProps {
   formatAbsencesList: (group: GroupedAbsence) => string;
   getJustificationForType: (
     patientId: number,
-    attendanceType: "assessment" | "treatments" | "all",
+    appointmentType: "assessment" | "treatments" | "all",
   ) => AbsenceJustification | undefined;
   handleJustificationChange: (
     patientId: number,
-    attendanceType: AttendanceType | "all" | "treatments",
+    appointmentType: AppointmentType | "all" | "treatments",
     justified: boolean,
     justification?: string,
   ) => void;
@@ -58,7 +58,7 @@ export const PatientAbsenceCard: React.FC<PatientAbsenceCardProps> = ({
               onChange={() => toggleApplyToAll(group.patientId)}
             />
             <span className="ml-2 text-sm text-gray-700">
-              Apply justification to all attendances
+              Apply justification to all appointments
             </span>
           </label>
         )}
@@ -78,7 +78,7 @@ export const PatientAbsenceCard: React.FC<PatientAbsenceCardProps> = ({
               <JustificationSection
                 patientId={group.patientId}
                 sectionType="assessment"
-                sectionLabel={getAttendanceTypeLabel("assessment")}
+                sectionLabel={getAppointmentTypeLabel("assessment")}
                 justification={getJustificationForType(
                   group.patientId,
                   "assessment",

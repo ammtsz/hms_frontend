@@ -17,13 +17,13 @@ export enum PatientStatus {
   CONSECUTIVE_NO_SHOWS = "C",
 }
 
-export enum AttendanceType {
+export enum AppointmentType {
   ASSESSMENT = "assessment",
   PHYSIOTHERAPY = "physiotherapy",
   TENS = "tens",
 }
 
-export enum AttendanceStatus {
+export enum AppointmentStatus {
   SCHEDULED = "scheduled",
   CHECKED_IN = "checked_in",
   IN_PROGRESS = "in_progress",
@@ -48,11 +48,11 @@ export interface PatientResponseDto {
   updatedAt: string; // ISO datetime string
 }
 
-export interface AttendanceResponseDto {
+export interface AppointmentResponseDto {
   id: number;
   patientId: number;
-  type: AttendanceType;
-  status: AttendanceStatus;
+  type: AppointmentType;
+  status: AppointmentStatus;
   scheduledDate: string; // YYYY-MM-DD
   scheduledTime: string; // HH:mm
   checkedInTime?: string; // HH:mm:ss
@@ -62,31 +62,31 @@ export interface AttendanceResponseDto {
   absenceJustified?: boolean;
   absenceNotes?: string; // Notes explaining reason for absence
   notes?: string;
-  parentAttendanceId?: number; // Links follow-ups and generated treatments to original consultation
+  parentAppointmentId?: number; // Links follow-ups and generated treatments to original consultation
   createdAt: string; // ISO datetime string
   updatedAt: string; // ISO datetime string
   patient?: PatientResponseDto; // Optional patient data
 }
 
 // Optimized DTOs for specific use cases
-export interface AttendanceScheduleDto {
+export interface AppointmentScheduleDto {
   id: number;
   patientId: number;
-  type: AttendanceType;
-  status: AttendanceStatus;
+  type: AppointmentType;
+  status: AppointmentStatus;
   scheduledDate: string; // YYYY-MM-DD
   notes?: string;
   patientName: string;
   patientPriority: string;
 }
 
-export interface NextAttendanceDateDto {
+export interface NextAppointmentDateDto {
   nextDate: string; // YYYY-MM-DD
 }
 
 export interface ConsultationResponseDto {
   id: number;
-  attendanceId: number;
+  appointmentId: number;
   mainConcern?: string;
   patientStatus?: string; // N, T, D, or C
   food?: string;
@@ -105,8 +105,8 @@ export interface ConsultationResponseDto {
   updatedTime: string; // HH:mm:ss - time from backend
 }
 
-/** Item returned when attendances were cancelled (e.g. status D or C) */
-export interface CancelledAttendanceItemDto {
+/** Item returned when appointments were cancelled (e.g. status D or C) */
+export interface CancelledAppointmentItemDto {
   id: number;
   type: string;
   scheduledDate: string;
@@ -126,7 +126,7 @@ export interface UpdateConsultationResponseDto {
   consultation: ConsultationResponseDto;
   treatments?: TreatmentsResultDto;
   /** Present when treatment status was set to Discharged (D) or Consecutive no-shows (C) */
-  cancelledAttendances?: CancelledAttendanceItemDto[];
+  cancelledAppointments?: CancelledAppointmentItemDto[];
 }
 
 export interface ScheduleSettingResponseDto {
@@ -164,19 +164,19 @@ export interface UpdatePatientRequest {
   cancellationReason?: string;
 }
 
-export interface CreateAttendanceRequest {
+export interface CreateAppointmentRequest {
   patientId: number;
-  type: AttendanceType;
+  type: AppointmentType;
   scheduledDate: string; // YYYY-MM-DD
   scheduledTime: string; // HH:mm
   notes?: string;
-  parentAttendanceId?: number; // Link to original consultation
-  status?: AttendanceStatus; // Optional initial status (defaults to scheduled)
+  parentAppointmentId?: number; // Link to original consultation
+  status?: AppointmentStatus; // Optional initial status (defaults to scheduled)
 }
 
-export interface UpdateAttendanceRequest {
-  type?: AttendanceType;
-  status?: AttendanceStatus;
+export interface UpdateAppointmentRequest {
+  type?: AppointmentType;
+  status?: AppointmentStatus;
   scheduledDate?: string; // YYYY-MM-DD
   scheduledTime?: string; // HH:mm
   checkedInDate?: string; // YYYY-MM-DD
@@ -190,11 +190,11 @@ export interface UpdateAttendanceRequest {
   absenceJustified?: boolean;
   absenceNotes?: string; // Notes explaining reason for absence
   notes?: string;
-  parentAttendanceId?: number; // Link to original consultation
+  parentAppointmentId?: number; // Link to original consultation
 }
 
 export interface CreateConsultationRequest {
-  attendanceId: number;
+  appointmentId: number;
   mainConcern?: string;
   patientStatus?: string; // N, T, D, or C - Stored on consultation and used for patient update
   food?: string;
@@ -210,7 +210,7 @@ export interface CreateConsultationRequest {
 }
 
 export interface UpdateConsultationRequest {
-  attendanceId?: number;
+  appointmentId?: number;
   mainConcern?: string;
   patientStatus?: string; // N, T, D, or C - Stored on consultation and used for patient update
   food?: string;
@@ -261,7 +261,7 @@ export type TreatmentPlanStatus =
 export interface TreatmentResponseDto {
   id: number;
   consultationId: number;
-  attendanceId: number;
+  appointmentId: number;
   patientId: number;
   treatmentType: "physiotherapy" | "tens";
   bodyLocation: string;
@@ -283,7 +283,7 @@ export interface TreatmentResponseDto {
 
 export interface CreateTreatmentRequest {
   consultationId: number;
-  attendanceId: number;
+  appointmentId: number;
   patientId: number;
   treatmentType: "physiotherapy" | "tens";
   bodyLocation: string;
@@ -294,19 +294,19 @@ export interface CreateTreatmentRequest {
   color?: string; // Required for physiotherapy
   notes?: string;
   /**
-   * When true, the first `hms_session` row reuses an existing attendance instead of
-   * creating a new scheduled attendance for the start date. Set when
+   * When true, the first `hms_session` row reuses an existing appointment instead of
+   * creating a new scheduled appointment for the start date. Set when
    * adding a new body location from the EditTreatmentModal (the treatment
-   * is happening at the current attendance, not a future one).
+   * is happening at the current appointment, not a future one).
    */
-  reuseAttendanceForFirstSession?: boolean;
+  reuseAppointmentForFirstSession?: boolean;
   /**
-   * The attendance ID to use for the first session row when
-   * `reuseAttendanceForFirstSession` is true. This must be the visit attendance
-   * (session row attendanceId), NOT the prescription attendance on the treatment.
-   * Falls back to `attendanceId` if omitted.
+   * The appointment ID to use for the first session row when
+   * `reuseAppointmentForFirstSession` is true. This must be the visit appointment
+   * (session row appointmentId), NOT the prescription appointment on the treatment.
+   * Falls back to `appointmentId` if omitted.
    */
-  firstSessionAttendanceId?: number;
+  firstSessionAppointmentId?: number;
 }
 
 export interface UpdateTreatmentRequest {
@@ -338,7 +338,7 @@ export interface BulkCreateTreatmentsResponse {
 }
 
 /** Row status for one scheduled occurrence (`hms_session`). */
-export type SessionAttendanceStatus =
+export type SessionAppointmentStatus =
   | "scheduled"
   | "completed"
   | "missed"
@@ -348,12 +348,12 @@ export type SessionAttendanceStatus =
 export interface SessionResponseDto {
   id: number;
   treatmentId: number;
-  attendanceId?: number;
+  appointmentId?: number;
   sessionNumber: number;
   scheduledDate: string;
   startTime?: string;
   endTime?: string;
-  status: SessionAttendanceStatus;
+  status: SessionAppointmentStatus;
   notes?: string;
   missedReason?: string;
   performedBy?: string;
@@ -375,7 +375,7 @@ export interface SessionResponseDto {
 
 export interface CreateSessionRequest {
   treatmentId: number;
-  attendanceId?: number;
+  appointmentId?: number;
   sessionNumber: number;
   scheduledDate: string; // ISO date string
   scheduledTime: string; // HH:mm
@@ -390,7 +390,7 @@ export interface UpdateSessionRequest {
 
 export interface CompleteSessionRequest {
   notes?: string;
-  attendanceId?: number;
+  appointmentId?: number;
 }
 
 export interface CompleteTreatmentRequest {

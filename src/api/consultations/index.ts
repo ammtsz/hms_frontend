@@ -7,7 +7,7 @@ import type {
   ConsultationResponseDto,
   UpdateConsultationResponseDto,
   ApiResponse,
-  AttendanceResponseDto,
+  AppointmentResponseDto,
 } from '../types';
 import { transformConsultationResponse } from '@/utils/apiTransformers';
 
@@ -23,11 +23,11 @@ export const getConsultations = async (): Promise<
   }
 };
 
-export const getConsultationByAttendance = async (
-  attendanceId: string,
+export const getConsultationByAppointment = async (
+  appointmentId: string,
 ): Promise<ApiResponse<ConsultationResponseDto>> => {
   try {
-    const { data } = await api.get(`/consultations/attendance/${attendanceId}`);
+    const { data } = await api.get(`/consultations/appointment/${appointmentId}`);
     return { success: true, value: data };
   } catch (error) {
     const message = getErrorMessage((error as AxiosError).status);
@@ -109,20 +109,20 @@ export const checkAndScheduleReturnAfterSessions = async (
 };
 
 /**
- * Schedule return attendance for a consultation.
+ * Schedule return appointment for a consultation.
  * @param consultationId - Consultation ID
  * @param mode - 'legacy' for immediate return, 'auto-return' for deferred return after sessions
  */
-export const scheduleReturnAttendance = async (
+export const scheduleReturnAppointment = async (
   consultationId: number,
   mode: 'legacy' | 'auto-return',
-): Promise<ApiResponse<AttendanceResponseDto>> => {
+): Promise<ApiResponse<AppointmentResponseDto>> => {
   try {
-    const response = await api.post<{ attendance: AttendanceResponseDto }>(
+    const response = await api.post<{ appointment: AppointmentResponseDto }>(
       `/consultations/${consultationId}/schedule-return`,
       { mode },
     );
-    return { success: true, value: response.data.attendance };
+    return { success: true, value: response.data.appointment };
   } catch (error) {
     const message = getErrorMessage((error as AxiosError).status);
     return { success: false, error: message };

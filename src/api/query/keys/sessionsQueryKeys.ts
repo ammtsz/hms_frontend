@@ -3,6 +3,6 @@ export const sessionsQueryKeys = {
   byTreatment: (treatmentId: string) =>
     [...sessionsQueryKeys.all, 'treatment', treatmentId] as const,
   byPatient: (patientId: string) => [...sessionsQueryKeys.all, 'patient', patientId] as const,
-  byAttendance: (attendanceId: number) =>
-    [...sessionsQueryKeys.all, 'attendance', attendanceId] as const,
+  byAppointment: (appointmentId: number) =>
+    [...sessionsQueryKeys.all, 'appointment', appointmentId] as const,
 };

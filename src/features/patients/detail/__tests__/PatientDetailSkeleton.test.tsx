@@ -65,7 +65,7 @@ describe("PatientDetailSkeleton", () => {
   it("renders list item skeletons", () => {
     const { container } = render(<PatientDetailSkeleton />);
 
-    // Should have skeleton list items (for attendance history and future appointments)
+    // Should have skeleton list items (for appointment history and future appointments)
     const listItems = container.querySelectorAll(".p-4.bg-gray-50.rounded-lg");
     expect(listItems.length).toBeGreaterThan(0);
   });

@@ -1,12 +1,12 @@
 import {
   Priority,
   Status,
-  AttendanceType,
-  AttendanceProgression,
+  AppointmentType,
+  AppointmentProgression,
   Recommendations,
-  AttendanceStatusDetail,
-  AttendanceStatus,
-  AttendanceByDate,
+  AppointmentStatusDetail,
+  AppointmentStatus,
+  AppointmentByDate,
   Schedule,
   CalendarSchedule,
   Patient,
@@ -38,11 +38,11 @@ describe('Type System', () => {
       expect(statusC).toBe("C");
     });
 
-    it('should define AttendanceTypeUnified correctly', () => {
-      const assessment: AttendanceType = "assessment";
-      const physiotherapy: AttendanceType = "physiotherapy";
-      const tens: AttendanceType = "tens";
-      const combined: AttendanceType = "combined";
+    it('should define AppointmentTypeUnified correctly', () => {
+      const assessment: AppointmentType = "assessment";
+      const physiotherapy: AppointmentType = "physiotherapy";
+      const tens: AppointmentType = "tens";
+      const combined: AppointmentType = "combined";
       
       expect(assessment).toBe("assessment");
       expect(physiotherapy).toBe("physiotherapy");
@@ -50,11 +50,11 @@ describe('Type System', () => {
       expect(combined).toBe("combined");
     });
 
-    it('should define AttendanceProgressionUnified correctly', () => {
-      const scheduled: AttendanceProgression = "scheduled";
-      const checkedIn: AttendanceProgression = "checkedIn";
-      const onGoing: AttendanceProgression = "onGoing";
-      const completed: AttendanceProgression = "completed";
+    it('should define AppointmentProgressionUnified correctly', () => {
+      const scheduled: AppointmentProgression = "scheduled";
+      const checkedIn: AppointmentProgression = "checkedIn";
+      const onGoing: AppointmentProgression = "onGoing";
+      const completed: AppointmentProgression = "completed";
       
       expect(scheduled).toBe("scheduled");
       expect(checkedIn).toBe("checkedIn");
@@ -79,30 +79,30 @@ describe('Type System', () => {
       expect(recommendations.returnWeeks).toBe(2);
     });
 
-    it('should create AttendanceStatusDetail interface correctly', () => {
-      const detail: AttendanceStatusDetail = {
+    it('should create AppointmentStatusDetail interface correctly', () => {
+      const detail: AppointmentStatusDetail = {
         name: "Test Patient",
         priority: "1",
         checkedInTime: "10:00",
         onGoingTime: null,
         completedTime: null,
-        attendanceId: 123,
+        appointmentId: 123,
         patientId: 456
       };
       
       expect(detail.name).toBe("Test Patient");
       expect(detail.priority).toBe("1");
-      expect(detail.attendanceId).toBe(123);
+      expect(detail.appointmentId).toBe(123);
     });
 
-    it('should create AttendanceStatus interface correctly', () => {
-      const status: AttendanceStatus = {
+    it('should create AppointmentStatus interface correctly', () => {
+      const status: AppointmentStatus = {
         scheduled: [],
         checkedIn: [{
           name: "Patient 1",
           priority: "2",
           checkedInTime: "09:30",
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 10
         }],
         onGoing: [],
@@ -125,7 +125,7 @@ describe('Type System', () => {
         startDate: "2025-01-01",
         dischargeDate: null,
         timezone: "America/Sao_Paulo",
-        nextAttendanceDates: [{
+        nextAppointmentDates: [{
           date: "2025-01-15",
           type: "assessment"
         }],
@@ -138,13 +138,13 @@ describe('Type System', () => {
           tens: false,
           returnWeeks: 1
         },
-        previousAttendances: [],
+        previousAppointments: [],
         missingAppointmentsStreak: 0,
       };
       
       expect(patient.name).toBe("Test Patient");
       expect(patient.timezone).toBe("America/Sao_Paulo");
-      expect(patient.nextAttendanceDates).toHaveLength(1);
+      expect(patient.nextAppointmentDates).toHaveLength(1);
     });
   });
 
@@ -166,8 +166,8 @@ describe('Type System', () => {
   });
 
   describe('Complex Type Structures', () => {
-    it('should create AttendanceByDate structure correctly', () => {
-      const attendanceByDate: AttendanceByDate = {
+    it('should create AppointmentByDate structure correctly', () => {
+      const appointmentByDate: AppointmentByDate = {
         date: "2025-01-15",
         assessment: {
           scheduled: [],
@@ -195,9 +195,9 @@ describe('Type System', () => {
         }
       };
 
-      expect(attendanceByDate.date).toBe("2025-01-15");
-      expect(attendanceByDate.assessment).toHaveProperty('scheduled');
-      expect(attendanceByDate.physiotherapy).toHaveProperty('checkedIn');
+      expect(appointmentByDate.date).toBe("2025-01-15");
+      expect(appointmentByDate.assessment).toHaveProperty('scheduled');
+      expect(appointmentByDate.physiotherapy).toHaveProperty('checkedIn');
     });
 
     it('should create Schedule structure correctly', () => {
@@ -208,8 +208,8 @@ describe('Type System', () => {
             id: "1",
             name: "Patient 1",
             priority: "1",
-            attendanceId: 123,
-            attendanceType: "assessment"
+            appointmentId: 123,
+            appointmentType: "assessment"
           }]
         }],
         physiotherapy: [],

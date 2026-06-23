@@ -14,8 +14,8 @@ jest.mock("@/api/patients", () => ({
   }),
 }));
 
-jest.mock("@/api/attendances", () => ({
-  getAttendancesByDate: jest.fn().mockResolvedValue({
+jest.mock("@/api/appointments", () => ({
+  getAppointmentsByDate: jest.fn().mockResolvedValue({
     success: true,
     value: [],
   }),
@@ -89,8 +89,8 @@ const mockPatient = {
   birthDate: new Date("1990-01-01"),
   mainConcern: "",
   dischargeDate: null,
-  nextAttendanceDates: [],
-  previousAttendances: [],
+  nextAppointmentDates: [],
+  previousAppointments: [],
 };
 
 const defaultMockReturn = {
@@ -104,8 +104,8 @@ const defaultMockReturn = {
   validationErrors: {},
   isFormValid: jest.fn().mockReturnValue(true),
   showSuccessModal: false,
-  scheduledAttendanceDate: null,
-  attendanceCreationFailed: null,
+  scheduledAppointmentDate: null,
+  appointmentCreationFailed: null,
   handleSuccessModalConfirm: jest.fn(),
 };
 
@@ -469,12 +469,12 @@ describe("PatientForm", () => {
       expect(mockHandleConfirm).toHaveBeenCalledTimes(1);
     });
 
-    it("should show attendance creation failure message when first attendance could not be created", () => {
+    it("should show appointment creation failure message when first appointment could not be created", () => {
       (usePatientForm as jest.Mock).mockReturnValue({
         ...defaultMockReturn,
         showSuccessModal: true,
-        scheduledAttendanceDate: null,
-        attendanceCreationFailed: {
+        scheduledAppointmentDate: null,
+        appointmentCreationFailed: {
           requested: true,
           message: "No time slot available for the selected date.",
         },

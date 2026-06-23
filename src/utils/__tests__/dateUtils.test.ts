@@ -6,12 +6,12 @@ import {
   getDaysUntil,
 } from '../dateUtils';
 
-jest.mock('@/api/attendances', () => ({
-  getNextAttendanceDate: jest.fn(),
+jest.mock('@/api/appointments', () => ({
+  getNextAppointmentDate: jest.fn(),
 }));
 
-import { getNextAttendanceDate } from '@/api/attendances';
-const mockGetNextAttendanceDate = getNextAttendanceDate as jest.MockedFunction<typeof getNextAttendanceDate>;
+import { getNextAppointmentDate } from '@/api/appointments';
+const mockGetNextAppointmentDate = getNextAppointmentDate as jest.MockedFunction<typeof getNextAppointmentDate>;
 
 describe('dateUtils', () => {
   beforeEach(() => {
@@ -105,7 +105,7 @@ describe('dateUtils', () => {
   describe('getDefaultSchedulingDate', () => {
     it('should return API result when successful', async () => {
       const testDate = "2024-01-15";
-      mockGetNextAttendanceDate.mockResolvedValue({
+      mockGetNextAppointmentDate.mockResolvedValue({
         success: true,
         value: { nextDate: testDate },
       });
@@ -115,7 +115,7 @@ describe('dateUtils', () => {
     });
 
     it('should fallback to next Tuesday when API fails', async () => {
-      mockGetNextAttendanceDate.mockRejectedValue(new Error('API Error'));
+      mockGetNextAppointmentDate.mockRejectedValue(new Error('API Error'));
 
       const result = await getDefaultSchedulingDate();
       expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/);

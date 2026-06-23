@@ -6,14 +6,14 @@ import {
   useScheduleDayWindowDays,
   useScheduleStatusFilters,
   usePatientFilter,
-  useShowNewAttendance,
+  useShowNewAppointment,
   useOpenAssessmentIdx,
   useOpenPhysiotherapyIdx,
   useSetSelectedDateString,
   useSetScheduleDayWindowDays,
   useSetScheduleStatusFilters,
   useSetPatientFilter,
-  useSetShowNewAttendance,
+  useSetShowNewAppointment,
   useSetOpenAssessmentIdx,
   useSetOpenPhysiotherapyIdx,
 } from "@/stores";
@@ -27,7 +27,7 @@ export function useScheduleCalendar() {
   const scheduleDayWindowDays = useScheduleDayWindowDays();
   const scheduleStatusFilters = useScheduleStatusFilters();
   const patientFilter = usePatientFilter();
-  const showNewAttendance = useShowNewAttendance();
+  const showNewAppointment = useShowNewAppointment();
   const openAssessmentIdx = useOpenAssessmentIdx();
   const openPhysiotherapyIdx = useOpenPhysiotherapyIdx();
 
@@ -35,7 +35,7 @@ export function useScheduleCalendar() {
   const setScheduleDayWindowDays = useSetScheduleDayWindowDays();
   const setScheduleStatusFilters = useSetScheduleStatusFilters();
   const setPatientFilter = useSetPatientFilter();
-  const setShowNewAttendance = useSetShowNewAttendance();
+  const setShowNewAppointment = useSetShowNewAppointment();
   const setOpenAssessmentIdx = useSetOpenAssessmentIdx();
   const setOpenPhysiotherapyIdx = useSetOpenPhysiotherapyIdx();
 
@@ -134,7 +134,7 @@ export function useScheduleCalendar() {
   };
 
   const handleFormSuccess = () => {
-    setShowNewAttendance(false);
+    setShowNewAppointment(false);
     handleRefreshSchedule();
   };
 
@@ -153,8 +153,8 @@ export function useScheduleCalendar() {
     setScheduleStatusFilters,
     patientFilter,
     setPatientFilter,
-    showNewAttendance,
-    setShowNewAttendance,
+    showNewAppointment,
+    setShowNewAppointment,
     openAssessmentIdx,
     setOpenAssessmentIdx,
     openPhysiotherapyIdx,

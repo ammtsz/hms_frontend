@@ -15,7 +15,7 @@ import { getDayOfWeekFromDateString } from "@/utils/scheduleTreatmentSlots";
 import { Card } from "@/components/ui";
 
 interface PatientWalkInPanelProps {
-  onRegisterNewAttendance?: (
+  onRegisterNewAppointment?: (
     patientName: string,
     types: string[],
     isNew: boolean,
@@ -24,7 +24,7 @@ interface PatientWalkInPanelProps {
 }
 
 const PatientWalkInPanel: React.FC<PatientWalkInPanelProps> = ({
-  onRegisterNewAttendance,
+  onRegisterNewAppointment,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -52,8 +52,8 @@ const PatientWalkInPanel: React.FC<PatientWalkInPanelProps> = ({
     priority: Priority,
   ) => {
     // Call parent callback
-    if (onRegisterNewAttendance) {
-      onRegisterNewAttendance(patientName, types, isNew, priority);
+    if (onRegisterNewAppointment) {
+      onRegisterNewAppointment(patientName, types, isNew, priority);
     }
 
     // Optionally collapse the panel after successful check-in
@@ -113,7 +113,7 @@ const PatientWalkInPanel: React.FC<PatientWalkInPanelProps> = ({
         }`}
       >
         <PatientWalkInForm
-          onRegisterNewAttendance={handleSuccessfulCheckIn}
+          onRegisterNewAppointment={handleSuccessfulCheckIn}
           isDropdown={true}
         />
       </div>

@@ -57,7 +57,7 @@ const mockPatient: Patient = {
   priority: "2",
   mainConcern: "",
   dischargeDate: null,
-  nextAttendanceDates: [],
+  nextAppointmentDates: [],
   currentRecommendations: {
     date: "2026-02-01",
     food: "",
@@ -68,7 +68,7 @@ const mockPatient: Patient = {
     tens: false,
     returnWeeks: 0,
   },
-  previousAttendances: [],
+  previousAppointments: [],
   missingAppointmentsStreak: 0,
 };
 

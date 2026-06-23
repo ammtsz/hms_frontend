@@ -56,7 +56,7 @@ export function LoginForm() {
         if (result.data.mustChangePassword) {
           router.push("/force-password-change");
         } else {
-          // Redirect to returnUrl if present and safe, otherwise attendance
+          // Redirect to returnUrl if present and safe, otherwise appointment
           const redirectPath = getSafeRedirectPath(returnUrl, "/board");
           router.push(redirectPath);
         }

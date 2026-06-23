@@ -15,7 +15,7 @@ interface ExpandedTreatmentDetailsProps {
   treatmentsWithSessionRows: TreatmentPlanWithSessionRow[];
   patientName: string;
   patientId?: number;
-  attendanceId?: number;
+  appointmentId?: number;
   patientData?: PatientResponseDto | null;
   /** When true (missed/cancelled card), editing is disabled regardless of treatment state. */
   isCardDisabled?: boolean;
@@ -31,7 +31,7 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
   const [editModalGroup, setEditModalGroup] = useState<{
     treatmentType: "physiotherapy" | "tens";
     treatmentPlans: TreatmentResponseDto[];
-    visitAttendanceId?: number;
+    visitAppointmentId?: number;
   } | null>(null);
 
   const uniqueTreatmentPlans = useMemo(
@@ -84,11 +84,11 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
     treatmentPlans: TreatmentResponseDto[],
   ) => {
     const firstTreatmentId = treatmentPlans[0]?.id;
-    const visitAttendanceId = treatmentsWithSessionRows.find(
+    const visitAppointmentId = treatmentsWithSessionRows.find(
       (pair) => pair.treatment.id === firstTreatmentId,
-    )?.sessionRow.attendanceId;
+    )?.sessionRow.appointmentId;
 
-    setEditModalGroup({ treatmentType, treatmentPlans, visitAttendanceId });
+    setEditModalGroup({ treatmentType, treatmentPlans, visitAppointmentId });
   };
 
   return (
@@ -99,7 +99,7 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
             ({ treatmentType, treatmentPlans, eligibility }) => {
               const canEdit = eligibility.canEdit;
               const tooltip = isCardDisabled
-                ? "This attendance is not active and cannot be edited."
+                ? "This appointment is not active and cannot be edited."
                 : canEdit
                   ? "Edit treatment"
                   : eligibility.reason === "hasCompletedSessions"
@@ -147,7 +147,7 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
           patientId={patientId}
           patientName={patientName}
           onSuccess={() => setEditModalGroup(null)}
-          currentAttendanceId={editModalGroup.visitAttendanceId}
+          currentAppointmentId={editModalGroup.visitAppointmentId}
         />
       )}
 

@@ -1,14 +1,14 @@
-import type { AttendanceProgression, AttendanceType } from '@/types/types';
+import type { AppointmentProgression, AppointmentType } from '@/types/types';
 import type { IDraggedItem } from '../types';
 
-export function isPhysiotherapyOrTens(type: AttendanceType): boolean {
+export function isPhysiotherapyOrTens(type: AppointmentType): boolean {
   return type === 'physiotherapy' || type === 'tens';
 }
 
 /** Returns true if the drop target type is allowed for the current dragged item. */
 export function isAllowedDropTarget(
   dragged: IDraggedItem,
-  toType: AttendanceType,
+  toType: AppointmentType,
 ): boolean {
   if (dragged.isCombinedTreatment) {
     const isPhysiotherapyTensMove =
@@ -21,8 +21,8 @@ export function isAllowedDropTarget(
 /** Returns true if this is a valid move (type allowed and status actually changes). */
 export function isValidMove(
   dragged: IDraggedItem,
-  toType: AttendanceType,
-  toStatus: AttendanceProgression,
+  toType: AppointmentType,
+  toStatus: AppointmentProgression,
 ): boolean {
   if (dragged.status === toStatus) return false;
   if (dragged.type === toType) return true;
@@ -36,8 +36,8 @@ export function isValidMove(
 /** Treatment type columns to update when performing a drag move. */
 export function resolveTreatmentTypesToMove(
   dragged: IDraggedItem,
-  toType: AttendanceType,
-): Set<AttendanceType> | AttendanceType[] {
+  toType: AppointmentType,
+): Set<AppointmentType> | AppointmentType[] {
   if (dragged.isCombinedTreatment && dragged.treatmentTypes) {
     const isPhysiotherapyTensCombined =
       dragged.treatmentTypes.includes('physiotherapy') &&
@@ -47,7 +47,7 @@ export function resolveTreatmentTypesToMove(
     const isTargetPhysiotherapyTens = toType === 'physiotherapy' || toType === 'tens';
 
     if (isPhysiotherapyTensCombined && isDraggingPhysiotherapyTens && isTargetPhysiotherapyTens) {
-      return new Set<AttendanceType>(['physiotherapy', 'tens']);
+      return new Set<AppointmentType>(['physiotherapy', 'tens']);
     }
     return [dragged.type];
   }

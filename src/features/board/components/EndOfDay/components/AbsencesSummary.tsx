@@ -17,7 +17,7 @@ export const AbsencesSummary: React.FC<AbsencesSummaryProps> = ({ count }) => {
           <div className="mt-2 text-sm text-yellow-700">
             <p>
               There {count === 1 ? "is" : "are"} {count} patient(s) who missed
-              scheduled attendances. Please justify absences to complete the
+              scheduled appointments. Please justify absences to complete the
               day.
             </p>
           </div>

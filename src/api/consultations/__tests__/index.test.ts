@@ -3,7 +3,7 @@ import {
   createConsultation,
   updateConsultation,
   deleteConsultation,
-  getConsultationByAttendance
+  getConsultationByAppointment
 } from '../index';
 
 // Mock the api instance
@@ -24,7 +24,7 @@ describe('Consultations API', () => {
 
   const mockConsultation = {
     id: 1,
-    attendanceId: 1,
+    appointmentId: 1,
     food: 'Fruits and vegetables',
     water: 'Mineral water',
     ointments: 'Healing ointment',
@@ -63,14 +63,14 @@ describe('Consultations API', () => {
     });
   });
 
-  describe('getConsultationByAttendance', () => {
-    it('should return consultation by attendance ID on success', async () => {
+  describe('getConsultationByAppointment', () => {
+    it('should return consultation by appointment ID on success', async () => {
       const mockResponse = { data: mockConsultation };
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await getConsultationByAttendance('1');
+      const result = await getConsultationByAppointment('1');
 
-      expect(mockApi.get).toHaveBeenCalledWith('/consultations/attendance/1');
+      expect(mockApi.get).toHaveBeenCalledWith('/consultations/appointment/1');
       expect(result).toEqual({
         success: true,
         value: mockConsultation
@@ -81,7 +81,7 @@ describe('Consultations API', () => {
       const mockError = { status: 404 };
       mockApi.get.mockRejectedValue(mockError);
 
-      const result = await getConsultationByAttendance('999');
+      const result = await getConsultationByAppointment('999');
 
       expect(result).toEqual({
         success: false,
@@ -93,7 +93,7 @@ describe('Consultations API', () => {
   describe('createConsultation', () => {
     it('should create consultation on success', async () => {
       const treatmentData = {
-        attendanceId: 1,
+        appointmentId: 1,
         food: 'Fruits and vegetables',
         water: 'Mineral water',
         ointments: 'Healing ointment',
@@ -116,7 +116,7 @@ describe('Consultations API', () => {
 
     it('should return error on validation failure', async () => {
       const treatmentData = {
-        attendanceId: 0, // Invalid attendance_id
+        appointmentId: 0, // Invalid appointment_id
         food: 'Fruits and vegetables',
         water: 'Mineral water',
         ointments: 'Healing ointment',

@@ -7,18 +7,18 @@
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { AttendanceStatus } from '@/api/types';
-import { AttendanceType } from '@/types/types';
+import { AppointmentStatus } from '@/api/types';
+import { AppointmentType } from '@/types/types';
 
 export const SCHEDULE_DAY_WINDOW_OPTIONS = [1, 7, 15, 30, 60, 90] as const;
 export type ScheduleDayWindowDays = (typeof SCHEDULE_DAY_WINDOW_OPTIONS)[number];
 
 const ALLOWED_DAY_WINDOWS = new Set<number>(SCHEDULE_DAY_WINDOW_OPTIONS);
 
-export const defaultScheduleCalendarStatusFilters = (): AttendanceStatus[] => [
-  AttendanceStatus.SCHEDULED,
-  AttendanceStatus.CHECKED_IN,
-  AttendanceStatus.IN_PROGRESS,
+export const defaultScheduleCalendarStatusFilters = (): AppointmentStatus[] => [
+  AppointmentStatus.SCHEDULED,
+  AppointmentStatus.CHECKED_IN,
+  AppointmentStatus.IN_PROGRESS,
 ];
 
 // Confirm remove modal state
@@ -26,8 +26,8 @@ interface ConfirmRemoveState {
   id: string;
   date: string; // YYYY-MM-DD format
   name: string;
-  type: AttendanceType;
-  attendanceIds: number[]; // Changed from single attendanceId to array
+  type: AppointmentType;
+  appointmentIds: number[]; // Changed from single appointmentId to array
 }
 
 export interface ScheduleStore {
@@ -53,10 +53,10 @@ export interface ScheduleStore {
   /** Forward-only window length in days from selected date (inclusive). */
   scheduleDayWindowDays: ScheduleDayWindowDays;
   /** Empty array = request all statuses on the API. */
-  scheduleStatusFilters: AttendanceStatus[];
+  scheduleStatusFilters: AppointmentStatus[];
   patientFilter: string;
   confirmRemove: ConfirmRemoveState | null;
-  showNewAttendance: boolean;
+  showNewAppointment: boolean;
   openAssessmentIdx: number[];
   openPhysiotherapyIdx: number[];
 
@@ -83,10 +83,10 @@ export interface ScheduleStore {
   // Calendar-specific actions
   setSelectedDateString: (date: string) => void;
   setScheduleDayWindowDays: (days: ScheduleDayWindowDays) => void;
-  setScheduleStatusFilters: (filters: AttendanceStatus[]) => void;
+  setScheduleStatusFilters: (filters: AppointmentStatus[]) => void;
   setPatientFilter: (filter: string) => void;
   setConfirmRemove: (confirmRemove: ConfirmRemoveState | null) => void;
-  setShowNewAttendance: (show: boolean) => void;
+  setShowNewAppointment: (show: boolean) => void;
   setOpenAssessmentIdx: (idx: number[]) => void;
   setOpenPhysiotherapyIdx: (idx: number[]) => void;
 
@@ -111,7 +111,7 @@ const initialState = {
   scheduleStatusFilters: defaultScheduleCalendarStatusFilters(),
   patientFilter: '',
   confirmRemove: null,
-  showNewAttendance: false,
+  showNewAppointment: false,
   openAssessmentIdx: [],
   openPhysiotherapyIdx: [],
 };
@@ -231,7 +231,7 @@ export const useScheduleStore = create<ScheduleStore>()(
             'setScheduleDayWindowDays',
           ),
 
-        setScheduleStatusFilters: (scheduleStatusFilters: AttendanceStatus[]) =>
+        setScheduleStatusFilters: (scheduleStatusFilters: AppointmentStatus[]) =>
           set({ scheduleStatusFilters }, false, 'setScheduleStatusFilters'),
 
         setPatientFilter: (patientFilter: string) =>
@@ -240,8 +240,8 @@ export const useScheduleStore = create<ScheduleStore>()(
         setConfirmRemove: (confirmRemove: ConfirmRemoveState | null) =>
           set({ confirmRemove }, false, 'setConfirmRemove'),
 
-        setShowNewAttendance: (showNewAttendance: boolean) =>
-          set({ showNewAttendance }, false, 'setShowNewAttendance'),
+        setShowNewAppointment: (showNewAppointment: boolean) =>
+          set({ showNewAppointment }, false, 'setShowNewAppointment'),
 
         setOpenAssessmentIdx: (openAssessmentIdx: number[]) =>
           set({ openAssessmentIdx }, false, 'setOpenAssessmentIdx'),

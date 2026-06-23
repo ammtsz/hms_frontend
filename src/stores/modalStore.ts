@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { AttendanceType, PatientBasic } from '@/types/types';
+import type { AppointmentType, PatientBasic } from '@/types/types';
 
 /** Summary rows for post-treatment modal (legacy store field; modal loads plans via React Query). */
 export interface ModalTreatmentSummary {
@@ -20,26 +20,26 @@ interface ModalStore {
   // Cancellation modal state
   cancellation: {
     isOpen: boolean;
-    attendanceIds?: number[];
+    appointmentIds?: number[];
     patientName?: string;
-    /** Attendance date (YYYY-MM-DD) used as base when rescheduling by weeks */
-    attendanceDate?: string;
+    /** Appointment date (YYYY-MM-DD) used as base when rescheduling by weeks */
+    appointmentDate?: string;
     isLoading: boolean;
   };
 
   // Treatment completion modal state
   postTreatment: {
     isOpen: boolean;
-    /** Single attendance (legacy) or all attendance IDs for this completion (grouped card) */
-    attendanceId?: number;
-    attendanceIds?: number[];
+    /** Single appointment (legacy) or all appointment IDs for this completion (grouped card) */
+    appointmentId?: number;
+    appointmentIds?: number[];
     patientId?: number;
     patientName?: string;
-    attendanceType?: AttendanceType;
+    appointmentType?: AppointmentType;
     treatmentSummaries: ModalTreatmentSummary[];
     isLoadingTreatmentSummaries: boolean;
-    /** Called with list of attendance IDs that were completed (not cancelled) */
-    onComplete?: (completedAttendanceIds: number[]) => void;
+    /** Called with list of appointment IDs that were completed (not cancelled) */
+    onComplete?: (completedAppointmentIds: number[]) => void;
   };
 
   multiSection: {
@@ -59,21 +59,21 @@ interface ModalStore {
   newPatientCheckIn: {
     isOpen: boolean;
     patient?: PatientBasic;
-    attendanceId?: number;
+    appointmentId?: number;
     onComplete?: (success: boolean) => void;
   };
 
   // Treatment Form modal state
-  postAttendance: {
+  postConsultation: {
     isOpen: boolean;
-    attendanceId?: number;
+    appointmentId?: number;
     patientId?: number;
     patientName?: string;
-    attendanceType?: string;
+    appointmentType?: string;
     currentTreatmentStatus?: string;
     currentStartDate?: Date;
     currentReturnWeeks?: number;
-    isFirstAttendance?: boolean;
+    isFirstAppointment?: boolean;
     isLoading?: boolean;
     onComplete?: (createdTreatmentIds: number[]) => void;
   };
@@ -87,12 +87,12 @@ interface ModalStore {
   // View Completed Consultation modal state
   viewCompletedConsultation: {
     isOpen: boolean;
-    attendanceId?: number;
+    appointmentId?: number;
     patientId?: number;
     patientName?: string;
   };
 
-  // Unresolved past attendances alert
+  // Unresolved past appointments alert
   unresolvedPast: {
     isOpen: boolean;
     dates: Array<{
@@ -104,34 +104,34 @@ interface ModalStore {
 
   // Actions
   openCancellation: (
-    attendanceIds: number[],
+    appointmentIds: number[],
     patientName: string,
-    attendanceDate?: string,
+    appointmentDate?: string,
   ) => void;
   openMultiSection: (onConfirm: () => void, onCancel: () => void) => void;
   openAssessmentBeforeTreatmentConfirm: (onConfirm: () => void, onCancel: () => void) => void;
   openNewPatientCheckIn: (data: {
     patient: PatientBasic,
-    attendanceId?: number,
+    appointmentId?: number,
     onComplete?: (success: boolean) => void
   }) => void;
   openPostTreatment: (data: {
-    /** All attendance IDs for this completion (one for single card, multiple for grouped) */
-    attendanceIds: number[];
+    /** All appointment IDs for this completion (one for single card, multiple for grouped) */
+    appointmentIds: number[];
     patientId: number;
     patientName: string;
-    attendanceType: AttendanceType;
-    onComplete?: (completedAttendanceIds: number[]) => void;
+    appointmentType: AppointmentType;
+    onComplete?: (completedAppointmentIds: number[]) => void;
   }) => void;
-  openPostAttendance: (data: {
-    attendanceId: number;
+  openPostConsultation: (data: {
+    appointmentId: number;
     patientId: number;
     patientName: string;
-    attendanceType: string;
+    appointmentType: string;
     currentTreatmentStatus: string;
     currentStartDate?: Date;
     currentReturnWeeks?: number;
-    isFirstAttendance: boolean;
+    isFirstAppointment: boolean;
     isLoading?: boolean;
     onComplete?: (createdTreatmentIds: number[]) => void;
   }) => void;
@@ -139,16 +139,16 @@ interface ModalStore {
     selectedDate?: string;
   }) => void;
   openViewCompletedConsultation: (data: {
-    attendanceId: number;
+    appointmentId: number;
     patientId: number;
     patientName: string;
   }) => void;
   openUnresolvedPast: (dates: Array<{ date: string; count: number; statuses: string[] }>) => void;
-  closeModal: (modalName: keyof Pick<ModalStore, 'cancellation' | 'postTreatment' | 'multiSection' | 'assessmentBeforeTreatmentConfirm' | 'newPatientCheckIn' | 'postAttendance' | 'endOfDay' | 'viewCompletedConsultation' | 'unresolvedPast'>) => void;
+  closeModal: (modalName: keyof Pick<ModalStore, 'cancellation' | 'postTreatment' | 'multiSection' | 'assessmentBeforeTreatmentConfirm' | 'newPatientCheckIn' | 'postConsultation' | 'endOfDay' | 'viewCompletedConsultation' | 'unresolvedPast'>) => void;
   setCancellationLoading: (loading: boolean) => void;
   setPostTreatmentSummaries: (summaries: ModalTreatmentSummary[]) => void;
   setPostTreatmentLoading: (loading: boolean) => void;
-  setPostAttendanceLoading: (loading: boolean) => void;
+  setPostConsultationLoading: (loading: boolean) => void;
 }
 
 export const useModalStore = create<ModalStore>()(
@@ -161,11 +161,11 @@ export const useModalStore = create<ModalStore>()(
 
     postTreatment: {
       isOpen: false,
-      attendanceId: undefined,
-      attendanceIds: undefined,
+      appointmentId: undefined,
+      appointmentIds: undefined,
       patientId: undefined,
       patientName: undefined,
-      attendanceType: undefined,
+      appointmentType: undefined,
       treatmentSummaries: [],
       isLoadingTreatmentSummaries: false,
     },
@@ -182,7 +182,7 @@ export const useModalStore = create<ModalStore>()(
       isOpen: false,
     },
 
-    postAttendance: {
+    postConsultation: {
       isOpen: false,
     },
 
@@ -193,7 +193,7 @@ export const useModalStore = create<ModalStore>()(
 
     viewCompletedConsultation: {
       isOpen: false,
-      attendanceId: undefined,
+      appointmentId: undefined,
       patientId: undefined,
       patientName: undefined,
     },
@@ -204,11 +204,11 @@ export const useModalStore = create<ModalStore>()(
     },
 
     // Actions
-    openCancellation: (attendanceIds, patientName, attendanceDate) => {
+    openCancellation: (appointmentIds, patientName, appointmentDate) => {
       set((state) => {
-        state.cancellation.attendanceIds = attendanceIds;
+        state.cancellation.appointmentIds = appointmentIds;
         state.cancellation.patientName = patientName;
-        state.cancellation.attendanceDate = attendanceDate;
+        state.cancellation.appointmentDate = appointmentDate;
         state.cancellation.isOpen = true;
         state.cancellation.isLoading = false;
       });
@@ -230,11 +230,11 @@ export const useModalStore = create<ModalStore>()(
       });
     },
 
-    openNewPatientCheckIn: ({ patient, attendanceId, onComplete }) => {
+    openNewPatientCheckIn: ({ patient, appointmentId, onComplete }) => {
       set((state) => {
         state.newPatientCheckIn.isOpen = true;
         state.newPatientCheckIn.patient = patient;
-        state.newPatientCheckIn.attendanceId = attendanceId;
+        state.newPatientCheckIn.appointmentId = appointmentId;
         state.newPatientCheckIn.onComplete = onComplete;
       });
     },
@@ -242,28 +242,28 @@ export const useModalStore = create<ModalStore>()(
     openPostTreatment: (data) => {
       set((state) => {
         state.postTreatment.isOpen = true;
-        state.postTreatment.attendanceIds = data.attendanceIds;
+        state.postTreatment.appointmentIds = data.appointmentIds;
         state.postTreatment.patientId = data.patientId;
         state.postTreatment.patientName = data.patientName;
-        state.postTreatment.attendanceType = data.attendanceType;
+        state.postTreatment.appointmentType = data.appointmentType;
         state.postTreatment.treatmentSummaries = [];
         state.postTreatment.isLoadingTreatmentSummaries = false;
         state.postTreatment.onComplete = data.onComplete;
       });
     },
-    openPostAttendance: (data) => {
+    openPostConsultation: (data) => {
       set((state) => {
-        state.postAttendance.isOpen = true;
-        state.postAttendance.attendanceId = data.attendanceId;
-        state.postAttendance.patientId = data.patientId;
-        state.postAttendance.patientName = data.patientName;
-        state.postAttendance.attendanceType = data.attendanceType;
-        state.postAttendance.currentTreatmentStatus = data.currentTreatmentStatus;
-        state.postAttendance.currentStartDate = data.currentStartDate;
-        state.postAttendance.currentReturnWeeks = data.currentReturnWeeks;
-        state.postAttendance.isFirstAttendance = data.isFirstAttendance;
-        state.postAttendance.isLoading = data.isLoading || false;
-        state.postAttendance.onComplete = data.onComplete;
+        state.postConsultation.isOpen = true;
+        state.postConsultation.appointmentId = data.appointmentId;
+        state.postConsultation.patientId = data.patientId;
+        state.postConsultation.patientName = data.patientName;
+        state.postConsultation.appointmentType = data.appointmentType;
+        state.postConsultation.currentTreatmentStatus = data.currentTreatmentStatus;
+        state.postConsultation.currentStartDate = data.currentStartDate;
+        state.postConsultation.currentReturnWeeks = data.currentReturnWeeks;
+        state.postConsultation.isFirstAppointment = data.isFirstAppointment;
+        state.postConsultation.isLoading = data.isLoading || false;
+        state.postConsultation.onComplete = data.onComplete;
       });
     },
 
@@ -277,7 +277,7 @@ export const useModalStore = create<ModalStore>()(
     openViewCompletedConsultation: (data) => {
       set((state) => {
         state.viewCompletedConsultation.isOpen = true;
-        state.viewCompletedConsultation.attendanceId = data.attendanceId;
+        state.viewCompletedConsultation.appointmentId = data.appointmentId;
         state.viewCompletedConsultation.patientId = data.patientId;
         state.viewCompletedConsultation.patientName = data.patientName;
       });
@@ -290,16 +290,16 @@ export const useModalStore = create<ModalStore>()(
         // Reset modal-specific data
         if (modalName === 'cancellation') {
           state.cancellation.isLoading = false;
-          state.cancellation.attendanceIds = undefined;
+          state.cancellation.appointmentIds = undefined;
           state.cancellation.patientName = undefined;
-          state.cancellation.attendanceDate = undefined;
+          state.cancellation.appointmentDate = undefined;
         }
         if (modalName === 'postTreatment') {
-          state.postTreatment.attendanceId = undefined;
-          state.postTreatment.attendanceIds = undefined;
+          state.postTreatment.appointmentId = undefined;
+          state.postTreatment.appointmentIds = undefined;
           state.postTreatment.patientId = undefined;
           state.postTreatment.patientName = undefined;
-          state.postTreatment.attendanceType = undefined;
+          state.postTreatment.appointmentType = undefined;
           state.postTreatment.treatmentSummaries = [];
           state.postTreatment.isLoadingTreatmentSummaries = false;
           state.postTreatment.onComplete = undefined;
@@ -314,26 +314,26 @@ export const useModalStore = create<ModalStore>()(
         }
         if (modalName === 'newPatientCheckIn') {
           state.newPatientCheckIn.patient = undefined;
-          state.newPatientCheckIn.attendanceId = undefined;
+          state.newPatientCheckIn.appointmentId = undefined;
           state.newPatientCheckIn.onComplete = undefined;
         }
-        if (modalName === 'postAttendance') {
-          state.postAttendance.attendanceId = undefined;
-          state.postAttendance.patientId = undefined;
-          state.postAttendance.patientName = undefined;
-          state.postAttendance.attendanceType = undefined;
-          state.postAttendance.currentTreatmentStatus = undefined;
-          state.postAttendance.currentStartDate = undefined;
-          state.postAttendance.currentReturnWeeks = undefined;
-          state.postAttendance.isFirstAttendance = undefined;
-          state.postAttendance.isLoading = undefined;
-          state.postAttendance.onComplete = undefined;
+        if (modalName === 'postConsultation') {
+          state.postConsultation.appointmentId = undefined;
+          state.postConsultation.patientId = undefined;
+          state.postConsultation.patientName = undefined;
+          state.postConsultation.appointmentType = undefined;
+          state.postConsultation.currentTreatmentStatus = undefined;
+          state.postConsultation.currentStartDate = undefined;
+          state.postConsultation.currentReturnWeeks = undefined;
+          state.postConsultation.isFirstAppointment = undefined;
+          state.postConsultation.isLoading = undefined;
+          state.postConsultation.onComplete = undefined;
         }
         if (modalName === 'endOfDay') {
           state.endOfDay.selectedDate = undefined;
         }
         if (modalName === 'viewCompletedConsultation') {
-          state.viewCompletedConsultation.attendanceId = undefined;
+          state.viewCompletedConsultation.appointmentId = undefined;
           state.viewCompletedConsultation.patientId = undefined;
           state.viewCompletedConsultation.patientName = undefined;
         }
@@ -368,9 +368,9 @@ export const useModalStore = create<ModalStore>()(
       });
     },
 
-    setPostAttendanceLoading: (loading) => {
+    setPostConsultationLoading: (loading) => {
       set((state) => {
-        state.postAttendance.isLoading = loading;
+        state.postConsultation.isLoading = loading;
       });
     },
   }))
@@ -382,7 +382,7 @@ export const usePostTreatmentModal = () => useModalStore((state) => state.postTr
 export const useMultiSectionModal = () => useModalStore((state) => state.multiSection);
 export const useAssessmentBeforeTreatmentConfirmModal = () => useModalStore((state) => state.assessmentBeforeTreatmentConfirm);
 export const useNewPatientCheckInModal = () => useModalStore((state) => state.newPatientCheckIn);
-export const usePostAttendanceModal = () => useModalStore((state) => state.postAttendance);
+export const usePostConsultationModal = () => useModalStore((state) => state.postConsultation);
 export const useEndOfDayModal = () => useModalStore((state) => state.endOfDay);
 export const useViewCompletedConsultationModal = () => useModalStore((state) => state.viewCompletedConsultation);
 export const useUnresolvedPastModal = () => useModalStore((state) => state.unresolvedPast);
@@ -393,7 +393,7 @@ export const useOpenMultiSection = () => useModalStore((state) => state.openMult
 export const useOpenAssessmentBeforeTreatmentConfirm = () => useModalStore((state) => state.openAssessmentBeforeTreatmentConfirm);
 export const useOpenPostTreatment = () => useModalStore((state) => state.openPostTreatment);
 export const useOpenNewPatientCheckIn = () => useModalStore((state) => state.openNewPatientCheckIn);
-export const useOpenPostAttendance = () => useModalStore((state) => state.openPostAttendance);
+export const useOpenPostAppointment = () => useModalStore((state) => state.openPostConsultation);
 export const useOpenEndOfDay = () => useModalStore((state) => state.openEndOfDay);
 export const useOpenViewCompletedConsultation = () => useModalStore((state) => state.openViewCompletedConsultation);
 export const useOpenUnresolvedPast = () => useModalStore((state) => state.openUnresolvedPast);
@@ -401,4 +401,4 @@ export const useCloseModal = () => useModalStore((state) => state.closeModal);
 export const useSetCancellationLoading = () => useModalStore((state) => state.setCancellationLoading);
 export const useSetPostTreatmentSummaries = () => useModalStore((state) => state.setPostTreatmentSummaries);
 export const useSetPostTreatmentLoading = () => useModalStore((state) => state.setPostTreatmentLoading);
-export const useSetPostAttendanceLoading = () => useModalStore((state) => state.setPostAttendanceLoading);
+export const useSetPostAppointmentLoading = () => useModalStore((state) => state.setPostConsultationLoading);

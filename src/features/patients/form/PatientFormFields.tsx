@@ -32,7 +32,7 @@ interface PatientFormFieldsProps {
         status: string;
         mainConcern: string;
         dischargeDate?: string | null; // YYYY-MM-DD format
-        nextAttendanceDates?: { date: string; type: string }[]; // dates as YYYY-MM-DD strings
+        nextAppointmentDates?: { date: string; type: string }[]; // dates as YYYY-MM-DD strings
       };
   handleChange: (
     e: React.ChangeEvent<
@@ -46,10 +46,10 @@ interface PatientFormFieldsProps {
   /** When true, shows discharge date in the basic info section (e.g. on edit page) */
   showDischargeDate?: boolean;
   validationErrors?: Record<string, string>;
-  /** When provided (e.g. on edit page), applies status rules: disable N if has completed attendances, disable T (schedule instead), disable D unless current status is T */
+  /** When provided (e.g. on edit page), applies status rules: disable N if has completed appointments, disable T (schedule instead), disable D unless current status is T */
   statusConfig?: {
     currentStatus: string;
-    hasCompletedAttendances: boolean;
+    hasCompletedAppointments: boolean;
   };
   /** When true, the form is being used for editing (e.g. on edit page) */
   isEdit?: boolean;
@@ -224,12 +224,12 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
               <option
                 value="N"
                 disabled={
-                  statusConfig?.hasCompletedAttendances ||
+                  statusConfig?.hasCompletedAppointments ||
                   statusConfig?.currentStatus !== "N"
                 }
                 title={
-                  statusConfig?.hasCompletedAttendances
-                    ? "Can only change to New when no completed attendances exist."
+                  statusConfig?.hasCompletedAppointments
+                    ? "Can only change to New when no completed appointments exist."
                     : undefined
                 }
               >
@@ -242,7 +242,7 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                 }
                 title={
                   statusConfig && statusConfig.currentStatus !== "T"
-                    ? "Schedule a New Attendance to change the status."
+                    ? "Schedule a New Appointment to change the status."
                     : undefined
                 }
               >
@@ -344,9 +344,9 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                     type="date"
                     invalid={Boolean(validationErrors.firstConsultationDate)}
                     value={
-                      patient.nextAttendanceDates?.[0]?.date
+                      patient.nextAppointmentDates?.[0]?.date
                         ? formatDateForInput(
-                            patient.nextAttendanceDates[0].date,
+                            patient.nextAppointmentDates[0].date,
                           )
                         : ""
                     }

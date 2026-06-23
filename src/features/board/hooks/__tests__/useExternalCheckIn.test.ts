@@ -245,7 +245,7 @@ describe('useExternalCheckIn', () => {
       expect(mockOnCheckInProcessed).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle invalid attendance type gracefully', () => {
+    it('should handle invalid appointment type gracefully', () => {
       const mockOnCheckInProcessed = jest.fn();
       const unscheduledCheckIn = {
         name: 'Invalid Type Patient',

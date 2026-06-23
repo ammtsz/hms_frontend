@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { CheckCircle2 } from "lucide-react";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import { formatDisplayDate } from "@/utils/dateUtils";
-import type { AttendanceType } from "@/types/types";
+import type { AppointmentType } from "@/types/types";
 import type { ProcessEndOfDayResponse } from "@/api/day-finalization";
 import {
   groupRescheduledByPatient,
@@ -68,16 +68,16 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
               </h4>
               <ul className="space-y-4">
                 {groupedRescheduled.map(
-                  ({ patientName, patientId, attendances }) => (
+                  ({ patientName, patientId, appointments }) => (
                     <li key={patientId} className="text-sm text-green-700">
                       <div className="font-medium">• {patientName}</div>
                       <ul className="ml-4 mt-1 space-y-1">
-                        {attendances.map((item) => (
+                        {appointments.map((item) => (
                           <li
                             key={`${item.type}|${item.oldDate}|${item.newDate}`}
                           >
-                            {getAttendanceTypeLabel(
-                              item.type as AttendanceType,
+                            {getAppointmentTypeLabel(
+                              item.type as AppointmentType,
                             )}
                             {item.type !== "assessment"
                               ? ` (${item.count} ${
@@ -114,17 +114,17 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
           {groupedCancelled.length > 0 && (
             <div className="bg-red-50 border border-red-200 rounded-md p-4">
               <h4 className="text-md font-medium text-red-800 mb-3">
-                Attendances canceled due to consecutive no-shows
+                Appointments canceled due to consecutive no-shows
               </h4>
               <ul className="space-y-3">
                 {groupedCancelled.map((item) => (
                   <li key={item.patientId} className="text-sm text-red-700">
                     <div className="font-medium">• {item.patientName}</div>
-                    {item.attendances.length > 0 && (
+                    {item.appointments.length > 0 && (
                       <ul className="ml-4 mt-1 space-y-1 text-xs">
-                        {item.attendances.map((att) => (
+                        {item.appointments.map((att) => (
                           <li key={`${att.type}|${att.scheduledDate}`}>
-                            {getAttendanceTypeLabel(att.type as AttendanceType)}
+                            {getAppointmentTypeLabel(att.type as AppointmentType)}
                             {att.type !== "assessment" && att.count > 1
                               ? ` (${att.count} locations)`
                               : ""}{" "}
@@ -146,17 +146,17 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
               </h4>
               <ul className="space-y-4">
                 {groupedNotRescheduled.map(
-                  ({ patientId, patientName, attendances }) => (
+                  ({ patientId, patientName, appointments }) => (
                     <li key={patientId} className="text-sm text-yellow-700">
                       <div className="font-medium">• {patientName}</div>
                       <ul className="ml-4 mt-1 space-y-1">
-                        {attendances.map((item) => (
+                        {appointments.map((item) => (
                           <li
                             key={`${item.type}|${item.reason}`}
                             className="text-xs text-yellow-700"
                           >
-                            {getAttendanceTypeLabel(
-                              item.type as AttendanceType,
+                            {getAppointmentTypeLabel(
+                              item.type as AppointmentType,
                             )}
                             {item.type !== "assessment" && item.count > 1
                               ? ` (${item.count} locations)`

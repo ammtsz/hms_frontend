@@ -1,55 +1,55 @@
 import { useState, useCallback } from 'react';
-import { useAttendanceBoardState } from '@/features/board/hooks/useAttendanceBoardState';
+import { useBoardState } from '@/features/board/hooks/useBoardState';
 import type {
-  AttendanceProgression,
-  AttendanceType,
+  AppointmentProgression,
+  AppointmentType,
 } from '@/types/types';
 import type { IDraggedItem } from '../types';
 import {
   buildDragTreatmentTypes,
   findPatientInBoard,
   getPatientsForColumn,
-} from '@/features/board/utils/dragDropAttendanceHelpers';
+} from '@/features/board/utils/dragDropAppointmentHelpers';
 import { useDragDropStatusUpdater } from './useDragDropStatusUpdater';
 import { useDragDropDropHandler } from './useDragDropDropHandler';
 
 export const useDragAndDrop = () => {
-  const { attendancesByDate, setAttendancesByDate, refreshCurrentDate } =
-    useAttendanceBoardState();
+  const { appointmentsByDate, setAppointmentsByDate, refreshCurrentDate } =
+    useBoardState();
 
-  const updateAttendanceStatus = useDragDropStatusUpdater();
+  const updateAppointmentStatus = useDragDropStatusUpdater();
 
   const [dragged, setDragged] = useState<IDraggedItem | null>(null);
 
   const findPatient = useCallback(
     (
-      type: AttendanceType,
-      status: AttendanceProgression,
+      type: AppointmentType,
+      status: AppointmentProgression,
       patientId: number,
-    ) => findPatientInBoard(attendancesByDate, type, status, patientId),
-    [attendancesByDate],
+    ) => findPatientInBoard(appointmentsByDate, type, status, patientId),
+    [appointmentsByDate],
   );
 
   const getPatients = useCallback(
-    (type: AttendanceType, status: AttendanceProgression) =>
-      getPatientsForColumn(attendancesByDate, type, status),
-    [attendancesByDate],
+    (type: AppointmentType, status: AppointmentProgression) =>
+      getPatientsForColumn(appointmentsByDate, type, status),
+    [appointmentsByDate],
   );
 
   const { handleDropWithConfirm } = useDragDropDropHandler({
     dragged,
     setDragged,
-    attendancesByDate,
-    setAttendancesByDate,
+    appointmentsByDate,
+    setAppointmentsByDate,
     refreshCurrentDate,
-    updateAttendanceStatus,
+    updateAppointmentStatus,
   });
 
   const handleDragStart = useCallback(
     (
-      type: AttendanceType,
+      type: AppointmentType,
       idx: number,
-      status: AttendanceProgression,
+      status: AppointmentProgression,
       patientId?: number,
     ) => {
       if (status === 'completed') {
@@ -80,7 +80,7 @@ export const useDragAndDrop = () => {
         type,
         status,
         patient.patientId,
-        attendancesByDate,
+        appointmentsByDate,
       );
 
       setDragged({
@@ -92,7 +92,7 @@ export const useDragAndDrop = () => {
         treatmentTypes,
       });
     },
-    [findPatient, getPatients, attendancesByDate],
+    [findPatient, getPatients, appointmentsByDate],
   );
 
   const handleDragEnd = useCallback(() => {

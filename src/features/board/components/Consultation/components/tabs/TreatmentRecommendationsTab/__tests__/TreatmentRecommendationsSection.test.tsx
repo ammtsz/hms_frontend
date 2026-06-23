@@ -161,9 +161,7 @@ describe("TreatmentRecommendationsSection", () => {
         />,
       );
 
-      expect(
-        screen.getByText("Treatment Recommendations"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Treatment Recommendations")).toBeInTheDocument();
       expect(screen.getByText("Physiotherapy")).toBeInTheDocument();
       expect(screen.getByText("TENS")).toBeInTheDocument();
       expect(
@@ -413,7 +411,7 @@ describe("TreatmentRecommendationsSection", () => {
       );
 
       const notesTextarea = screen.getByPlaceholderText(
-        /Notes about Physiotherapy and TENS sessions/i,
+        /Physiotherapy and TENS sessions notes/i,
       );
       expect(notesTextarea).toBeDisabled();
     });

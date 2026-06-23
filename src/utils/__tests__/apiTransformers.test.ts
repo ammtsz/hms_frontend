@@ -2,21 +2,21 @@ import { addCalendarDaysToLocalYmd, getTodayClinic } from '@/utils/timezoneDate'
 import { 
   transformPriority, 
   transformStatus, 
-  transformAttendanceType, 
-  transformAttendanceProgression,
+  transformAppointmentType, 
+  transformAppointmentProgression,
   transformStatusToApi,
   transformPriorityToApi,
   transformPatientFromApi,
   transformSinglePatientFromApi,
-  transformAttendanceToPrevious,
-  transformAttendanceToNext,
-  transformPatientWithAttendances,
-  transformAttendanceTypeToApi,
-  transformAttendanceProgressionToApi,
+  transformAppointmentToPrevious,
+  transformAppointmentToNext,
+  transformPatientWithAppointments,
+  transformAppointmentTypeToApi,
+  transformAppointmentProgressionToApi,
   transformProcessEndOfDayResponse,
   transformConsultationResponse
 } from '../apiTransformers';
-import { PatientPriority, PatientStatus, AttendanceType, AttendanceStatus, PatientResponseDto, AttendanceResponseDto } from '@/api/types';
+import { PatientPriority, PatientStatus, AppointmentType, AppointmentStatus, PatientResponseDto, AppointmentResponseDto } from '@/api/types';
 import type { UpdateConsultationResponseDto } from '@/api/types';
 
 describe('API Transformers', () => {
@@ -68,51 +68,51 @@ describe('API Transformers', () => {
     });
   });
 
-  describe('transformAttendanceType', () => {
+  describe('transformAppointmentType', () => {
     it('should transform ASSESSMENT to "assessment"', () => {
-      expect(transformAttendanceType(AttendanceType.ASSESSMENT)).toBe('assessment');
+      expect(transformAppointmentType(AppointmentType.ASSESSMENT)).toBe('assessment');
     });
 
     it('should transform PHYSIOTHERAPY to "physiotherapy"', () => {
-      expect(transformAttendanceType(AttendanceType.PHYSIOTHERAPY)).toBe('physiotherapy');
+      expect(transformAppointmentType(AppointmentType.PHYSIOTHERAPY)).toBe('physiotherapy');
     });
 
     it('should transform TENS to "tens"', () => {
-      expect(transformAttendanceType(AttendanceType.TENS)).toBe('tens');
+      expect(transformAppointmentType(AppointmentType.TENS)).toBe('tens');
     });
 
     it('should default to "assessment" for unknown type', () => {
-      expect(transformAttendanceType('UNKNOWN' as AttendanceType)).toBe('assessment');
+      expect(transformAppointmentType('UNKNOWN' as AppointmentType)).toBe('assessment');
     });
   });
 
-  describe('transformAttendanceProgression', () => {
+  describe('transformAppointmentProgression', () => {
     it('should transform SCHEDULED to "scheduled"', () => {
-      expect(transformAttendanceProgression(AttendanceStatus.SCHEDULED)).toBe('scheduled');
+      expect(transformAppointmentProgression(AppointmentStatus.SCHEDULED)).toBe('scheduled');
     });
 
     it('should transform CHECKED_IN to "checkedIn"', () => {
-      expect(transformAttendanceProgression(AttendanceStatus.CHECKED_IN)).toBe('checkedIn');
+      expect(transformAppointmentProgression(AppointmentStatus.CHECKED_IN)).toBe('checkedIn');
     });
 
     it('should transform IN_PROGRESS to "onGoing"', () => {
-      expect(transformAttendanceProgression(AttendanceStatus.IN_PROGRESS)).toBe('onGoing');
+      expect(transformAppointmentProgression(AppointmentStatus.IN_PROGRESS)).toBe('onGoing');
     });
 
     it('should transform COMPLETED to "completed"', () => {
-      expect(transformAttendanceProgression(AttendanceStatus.COMPLETED)).toBe('completed');
+      expect(transformAppointmentProgression(AppointmentStatus.COMPLETED)).toBe('completed');
     });
 
     it('should transform MISSED to "scheduled" (shown in scheduled column with flag)', () => {
-      expect(transformAttendanceProgression(AttendanceStatus.MISSED)).toBe('scheduled');
+      expect(transformAppointmentProgression(AppointmentStatus.MISSED)).toBe('scheduled');
     });
 
     it('should transform CANCELLED to "scheduled" (shown in scheduled column with flag)', () => {
-      expect(transformAttendanceProgression(AttendanceStatus.CANCELLED)).toBe('scheduled');
+      expect(transformAppointmentProgression(AppointmentStatus.CANCELLED)).toBe('scheduled');
     });
 
     it('should default to "scheduled" for unknown status', () => {
-      expect(transformAttendanceProgression('UNKNOWN' as AttendanceStatus)).toBe('scheduled');
+      expect(transformAppointmentProgression('UNKNOWN' as AppointmentStatus)).toBe('scheduled');
     });
   });
 
@@ -288,31 +288,31 @@ describe('API Transformers', () => {
     });
   });
 
-  describe('transformAttendanceToPrevious', () => {
-    const createMockAttendance = (overrides = {}): AttendanceResponseDto => ({
+  describe('transformAppointmentToPrevious', () => {
+    const createMockAppointment = (overrides = {}): AppointmentResponseDto => ({
       id: 1,
       patientId: 1,
       scheduledDate: '2025-01-15',
       scheduledTime: '10:00',
-      type: AttendanceType.ASSESSMENT,
-      status: AttendanceStatus.COMPLETED,
+      type: AppointmentType.ASSESSMENT,
+      status: AppointmentStatus.COMPLETED,
       notes: 'Test notes',
       createdAt: '2025-01-15T00:00:00Z',
       updatedAt: '2025-01-15T00:00:00Z',
       ...overrides
     });
 
-    it('should transform attendance to previous format', () => {
-      const apiAttendance = createMockAttendance();
-      const result = transformAttendanceToPrevious(apiAttendance);
+    it('should transform appointment to previous format', () => {
+      const apiAppointment = createMockAppointment();
+      const result = transformAppointmentToPrevious(apiAppointment);
 
       expect(result).toEqual({
-        attendanceId: '1',
+        appointmentId: '1',
         date: '2025-01-15',
         type: 'assessment',
         notes: 'Test notes',
         recommendations: null,
-        status: AttendanceStatus.COMPLETED,
+        status: AppointmentStatus.COMPLETED,
         absenceNotes: undefined,
         absenceJustified: undefined,
         createdDate: '2025-01-15',
@@ -322,70 +322,70 @@ describe('API Transformers', () => {
     });
 
     it('should handle missing notes', () => {
-      const apiAttendance = createMockAttendance({ notes: undefined });
-      const result = transformAttendanceToPrevious(apiAttendance);
+      const apiAppointment = createMockAppointment({ notes: undefined });
+      const result = transformAppointmentToPrevious(apiAppointment);
 
       expect(result.notes).toBe('');
     });
 
-    it('should handle different attendance types', () => {
-      const physiotherapyAttendance = createMockAttendance({ type: AttendanceType.PHYSIOTHERAPY });
-      const tensAttendance = createMockAttendance({ type: AttendanceType.TENS });
+    it('should handle different appointment types', () => {
+      const physiotherapyAppointment = createMockAppointment({ type: AppointmentType.PHYSIOTHERAPY });
+      const tensAppointment = createMockAppointment({ type: AppointmentType.TENS });
 
-      expect(transformAttendanceToPrevious(physiotherapyAttendance).type).toBe('physiotherapy');
-      expect(transformAttendanceToPrevious(tensAttendance).type).toBe('tens');
+      expect(transformAppointmentToPrevious(physiotherapyAppointment).type).toBe('physiotherapy');
+      expect(transformAppointmentToPrevious(tensAppointment).type).toBe('tens');
     });
   });
 
-  describe('transformAttendanceToNext', () => {
-    const createMockAttendance = (overrides = {}): AttendanceResponseDto => ({
+  describe('transformAppointmentToNext', () => {
+    const createMockAppointment = (overrides = {}): AppointmentResponseDto => ({
       id: 1,
       patientId: 1,
       scheduledDate: '2025-01-20',
       scheduledTime: '14:00',
-      type: AttendanceType.ASSESSMENT,
-      status: AttendanceStatus.SCHEDULED,
+      type: AppointmentType.ASSESSMENT,
+      status: AppointmentStatus.SCHEDULED,
       notes: undefined,
       createdAt: '2025-01-15T00:00:00Z',
       updatedAt: '2025-01-15T00:00:00Z',
       ...overrides
     });
 
-    it('should transform attendance to next format', () => {
-      const apiAttendance = createMockAttendance();
-      const result = transformAttendanceToNext(apiAttendance);
+    it('should transform appointment to next format', () => {
+      const apiAppointment = createMockAppointment();
+      const result = transformAppointmentToNext(apiAppointment);
 
       expect(result).toMatchObject({
-        attendanceId: '1',
+        appointmentId: '1',
         date: '2025-01-20',
         type: 'assessment',
-        parentAttendanceId: undefined,
+        parentAppointmentId: undefined,
       });
       expect(result.createdDate).toBeDefined();
       expect(result.updatedDate).toBeDefined();
     });
 
-    it('should handle different attendance types', () => {
-      const physiotherapyAttendance = createMockAttendance({ type: AttendanceType.PHYSIOTHERAPY });
-      const result = transformAttendanceToNext(physiotherapyAttendance);
+    it('should handle different appointment types', () => {
+      const physiotherapyAppointment = createMockAppointment({ type: AppointmentType.PHYSIOTHERAPY });
+      const result = transformAppointmentToNext(physiotherapyAppointment);
 
       expect(result.type).toBe('physiotherapy');
     });
 
-    it('should include parentAttendanceId when present', () => {
-      const returnConsultation = createMockAttendance({ parentAttendanceId: 42 });
-      const result = transformAttendanceToNext(returnConsultation);
+    it('should include parentAppointmentId when present', () => {
+      const returnConsultation = createMockAppointment({ parentAppointmentId: 42 });
+      const result = transformAppointmentToNext(returnConsultation);
 
       expect(result).toMatchObject({
-        attendanceId: '1',
+        appointmentId: '1',
         date: '2025-01-20',
         type: 'assessment',
-        parentAttendanceId: 42,
+        parentAppointmentId: 42,
       });
     });
   });
 
-  describe('transformPatientWithAttendances', () => {
+  describe('transformPatientWithAppointments', () => {
     const createMockPatient = (): PatientResponseDto => ({
       id: 1,
       name: 'Test Patient',
@@ -401,77 +401,77 @@ describe('API Transformers', () => {
       updatedAt: '2025-01-01T00:00:00Z'
     });
 
-    const createMockAttendance = (overrides = {}): AttendanceResponseDto => ({
+    const createMockAppointment = (overrides = {}): AppointmentResponseDto => ({
       id: 1,
       patientId: 1,
       scheduledDate: '2025-01-15',
       scheduledTime: '10:00',
-      type: AttendanceType.ASSESSMENT,
-      status: AttendanceStatus.COMPLETED,
+      type: AppointmentType.ASSESSMENT,
+      status: AppointmentStatus.COMPLETED,
       notes: 'Test notes',
       createdAt: '2025-01-15T00:00:00Z',
       updatedAt: '2025-01-15T00:00:00Z',
       ...overrides
     });
 
-    it('should transform patient with completed attendances', () => {
+    it('should transform patient with completed appointments', () => {
       const patient = createMockPatient();
-      const attendances = [
-        createMockAttendance({ id: 1, status: AttendanceStatus.COMPLETED, scheduledDate: '2025-01-10' }),
-        createMockAttendance({ id: 2, status: AttendanceStatus.COMPLETED, scheduledDate: '2025-01-05' })
+      const appointments = [
+        createMockAppointment({ id: 1, status: AppointmentStatus.COMPLETED, scheduledDate: '2025-01-10' }),
+        createMockAppointment({ id: 2, status: AppointmentStatus.COMPLETED, scheduledDate: '2025-01-05' })
       ];
 
-      const result = transformPatientWithAttendances(patient, attendances);
+      const result = transformPatientWithAppointments(patient, appointments);
 
-      expect(result.previousAttendances).toHaveLength(2);
-      expect(result.previousAttendances[0].attendanceId).toBe('1'); // Most recent first
-      expect(result.previousAttendances[1].attendanceId).toBe('2');
+      expect(result.previousAppointments).toHaveLength(2);
+      expect(result.previousAppointments[0].appointmentId).toBe('1'); // Most recent first
+      expect(result.previousAppointments[1].appointmentId).toBe('2');
     });
 
-    it('should filter out non-completed attendances from previous', () => {
+    it('should filter out non-completed appointments from previous', () => {
       const patient = createMockPatient();
-      const attendances = [
-        createMockAttendance({ id: 1, status: AttendanceStatus.COMPLETED }),
-        createMockAttendance({ id: 2, status: AttendanceStatus.SCHEDULED }),
-        createMockAttendance({ id: 3, status: AttendanceStatus.IN_PROGRESS })
+      const appointments = [
+        createMockAppointment({ id: 1, status: AppointmentStatus.COMPLETED }),
+        createMockAppointment({ id: 2, status: AppointmentStatus.SCHEDULED }),
+        createMockAppointment({ id: 3, status: AppointmentStatus.IN_PROGRESS })
       ];
 
-      const result = transformPatientWithAttendances(patient, attendances);
+      const result = transformPatientWithAppointments(patient, appointments);
 
-      expect(result.previousAttendances).toHaveLength(1);
-      expect(result.previousAttendances[0].attendanceId).toBe('1');
-      expect(result.openAttendancesCount).toBe(2); // scheduled + in_progress
+      expect(result.previousAppointments).toHaveLength(1);
+      expect(result.previousAppointments[0].appointmentId).toBe('1');
+      expect(result.openAppointmentsCount).toBe(2); // scheduled + in_progress
     });
 
-    it('should include future attendances', () => {
+    it('should include future appointments', () => {
       const patient = createMockPatient();
       const futureDateString = addCalendarDaysToLocalYmd(getTodayClinic(), 7);
 
-      const attendances = [
-        createMockAttendance({ 
+      const appointments = [
+        createMockAppointment({ 
           id: 1, 
-          status: AttendanceStatus.SCHEDULED, 
+          status: AppointmentStatus.SCHEDULED, 
           scheduledDate: futureDateString 
         }),
-        createMockAttendance({ 
+        createMockAppointment({ 
           id: 2, 
-          status: AttendanceStatus.CHECKED_IN, 
+          status: AppointmentStatus.CHECKED_IN, 
           scheduledDate: futureDateString 
         })
       ];
 
-      const result = transformPatientWithAttendances(patient, attendances);
+      const result = transformPatientWithAppointments(patient, appointments);
 
-      expect(result.nextAttendanceDates).toHaveLength(2);
+      expect(result.nextAppointmentDates).toHaveLength(2);
     });
 
-    it('should handle empty attendances array', () => {
+    it('should handle empty appointments array', () => {
       const patient = createMockPatient();
-      const result = transformPatientWithAttendances(patient, []);
+      const result = transformPatientWithAppointments(patient, []);
 
-      expect(result.previousAttendances).toHaveLength(0);
-      expect(result.nextAttendanceDates).toHaveLength(0);
-      expect(result.openAttendancesCount).toBe(0);
+      expect(result.previousAppointments).toHaveLength(0);
+      expect(result.nextAppointmentDates).toHaveLength(0);
+      expect(result.openAppointmentsCount).toBe(0);
     });
   });
 
@@ -480,7 +480,7 @@ describe('API Transformers', () => {
       const apiResponse = {
         rescheduled: [
           {
-            attendanceId: 1,
+            appointmentId: 1,
             patientId: 1,
             patientName: 'John Doe',
             type: 'physiotherapy',
@@ -498,7 +498,7 @@ describe('API Transformers', () => {
       expect(result.rescheduled[0].type).toBe('physiotherapy');
     });
 
-    it('should convert physiotherapy to physiotherapy in cancelledForC attendances', () => {
+    it('should convert physiotherapy to physiotherapy in cancelledForC appointments', () => {
       const apiResponse = {
         rescheduled: [],
         statusChangedToC: [],
@@ -506,7 +506,7 @@ describe('API Transformers', () => {
           {
             patientId: 1,
             patientName: 'Jane',
-            attendances: [
+            appointments: [
               { id: 10, type: 'physiotherapy', scheduledDate: '2024-01-20' },
             ],
           },
@@ -516,14 +516,14 @@ describe('API Transformers', () => {
 
       const result = transformProcessEndOfDayResponse(apiResponse);
 
-      expect(result.cancelledForC[0].attendances[0].type).toBe('physiotherapy');
+      expect(result.cancelledForC[0].appointments[0].type).toBe('physiotherapy');
     });
 
     it('should leave assessment and tens types unchanged', () => {
       const apiResponse = {
         rescheduled: [
           {
-            attendanceId: 1,
+            appointmentId: 1,
             patientId: 1,
             patientName: 'John',
             type: 'assessment',
@@ -531,7 +531,7 @@ describe('API Transformers', () => {
             newDate: '2024-01-22',
           },
           {
-            attendanceId: 2,
+            appointmentId: 2,
             patientId: 2,
             patientName: 'Jane',
             type: 'tens',
@@ -557,7 +557,7 @@ describe('API Transformers', () => {
         cancelledForC: [],
         couldNotReschedule: [
           {
-            attendanceId: 5,
+            appointmentId: 5,
             patientId: 3,
             patientName: 'Alice',
             type: 'assessment',
@@ -576,7 +576,7 @@ describe('API Transformers', () => {
   describe('transformConsultationResponse', () => {
     const baseConsultation: UpdateConsultationResponseDto['consultation'] = {
       id: 1,
-      attendanceId: 1,
+      appointmentId: 1,
       createdDate: '2024-01-15',
       createdTime: '10:00:00',
       updatedDate: '2024-01-15',
@@ -591,91 +591,91 @@ describe('API Transformers', () => {
       notes: '',
     };
 
-    it('should preserve consultation and other fields when cancelledAttendances is undefined', () => {
+    it('should preserve consultation and other fields when cancelledAppointments is undefined', () => {
       const apiResponse: UpdateConsultationResponseDto = {
         consultation: baseConsultation,
       };
       const result = transformConsultationResponse(apiResponse);
       expect(result.consultation).toEqual(baseConsultation);
-      expect(result.cancelledAttendances).toBeUndefined();
+      expect(result.cancelledAppointments).toBeUndefined();
     });
 
-    it('should preserve consultation when cancelledAttendances is empty array', () => {
+    it('should preserve consultation when cancelledAppointments is empty array', () => {
       const apiResponse: UpdateConsultationResponseDto = {
         consultation: baseConsultation,
-        cancelledAttendances: [],
+        cancelledAppointments: [],
       };
       const result = transformConsultationResponse(apiResponse);
       expect(result.consultation).toEqual(baseConsultation);
-      expect(result.cancelledAttendances).toEqual([]);
+      expect(result.cancelledAppointments).toEqual([]);
     });
 
-    it('should convert physiotherapy to physiotherapy in cancelledAttendances', () => {
+    it('should convert physiotherapy to physiotherapy in cancelledAppointments', () => {
       const apiResponse: UpdateConsultationResponseDto = {
         consultation: baseConsultation,
-        cancelledAttendances: [
+        cancelledAppointments: [
           { id: 10, type: 'physiotherapy', scheduledDate: '2026-01-20' },
         ],
       };
       const result = transformConsultationResponse(apiResponse);
-      expect(result.cancelledAttendances).toHaveLength(1);
-      expect(result.cancelledAttendances![0]).toMatchObject({
+      expect(result.cancelledAppointments).toHaveLength(1);
+      expect(result.cancelledAppointments![0]).toMatchObject({
         id: 10,
         type: 'physiotherapy',
         scheduledDate: '2026-01-20',
       });
     });
 
-    it('should leave assessment and tens types unchanged in cancelledAttendances', () => {
+    it('should leave assessment and tens types unchanged in cancelledAppointments', () => {
       const apiResponse: UpdateConsultationResponseDto = {
         consultation: baseConsultation,
-        cancelledAttendances: [
+        cancelledAppointments: [
           { id: 1, type: 'assessment', scheduledDate: '2026-01-15' },
           { id: 2, type: 'tens', scheduledDate: '2026-01-16' },
         ],
       };
       const result = transformConsultationResponse(apiResponse);
-      expect(result.cancelledAttendances![0].type).toBe('assessment');
-      expect(result.cancelledAttendances![1].type).toBe('tens');
+      expect(result.cancelledAppointments![0].type).toBe('assessment');
+      expect(result.cancelledAppointments![1].type).toBe('tens');
     });
 
-    it('should preserve all other fields when transforming cancelledAttendances', () => {
+    it('should preserve all other fields when transforming cancelledAppointments', () => {
       const apiResponse: UpdateConsultationResponseDto = {
         consultation: baseConsultation,
-        cancelledAttendances: [
+        cancelledAppointments: [
           { id: 5, type: 'physiotherapy', scheduledDate: '2026-02-01' },
         ],
       };
       const result = transformConsultationResponse(apiResponse);
       expect(result.consultation).toEqual(baseConsultation);
-      expect(result.cancelledAttendances![0].id).toBe(5);
-      expect(result.cancelledAttendances![0].scheduledDate).toBe('2026-02-01');
+      expect(result.cancelledAppointments![0].id).toBe(5);
+      expect(result.cancelledAppointments![0].scheduledDate).toBe('2026-02-01');
     });
   });
 
   describe('reverse transformation functions', () => {
-    describe('transformAttendanceTypeToApi', () => {
+    describe('transformAppointmentTypeToApi', () => {
       it('should transform local to API format', () => {
-        expect(transformAttendanceTypeToApi('assessment')).toBe(AttendanceType.ASSESSMENT);
-        expect(transformAttendanceTypeToApi('physiotherapy')).toBe(AttendanceType.PHYSIOTHERAPY);
-        expect(transformAttendanceTypeToApi('tens')).toBe(AttendanceType.TENS);
+        expect(transformAppointmentTypeToApi('assessment')).toBe(AppointmentType.ASSESSMENT);
+        expect(transformAppointmentTypeToApi('physiotherapy')).toBe(AppointmentType.PHYSIOTHERAPY);
+        expect(transformAppointmentTypeToApi('tens')).toBe(AppointmentType.TENS);
       });
 
       it('should default to ASSESSMENT for unknown type', () => {
-        expect(transformAttendanceTypeToApi('unknown' as 'assessment')).toBe(AttendanceType.ASSESSMENT);
+        expect(transformAppointmentTypeToApi('unknown' as 'assessment')).toBe(AppointmentType.ASSESSMENT);
       });
     });
 
-    describe('transformAttendanceProgressionToApi', () => {
+    describe('transformAppointmentProgressionToApi', () => {
       it('should transform local to API format', () => {
-        expect(transformAttendanceProgressionToApi('scheduled')).toBe(AttendanceStatus.SCHEDULED);
-        expect(transformAttendanceProgressionToApi('checkedIn')).toBe(AttendanceStatus.CHECKED_IN);
-        expect(transformAttendanceProgressionToApi('onGoing')).toBe(AttendanceStatus.IN_PROGRESS);
-        expect(transformAttendanceProgressionToApi('completed')).toBe(AttendanceStatus.COMPLETED);
+        expect(transformAppointmentProgressionToApi('scheduled')).toBe(AppointmentStatus.SCHEDULED);
+        expect(transformAppointmentProgressionToApi('checkedIn')).toBe(AppointmentStatus.CHECKED_IN);
+        expect(transformAppointmentProgressionToApi('onGoing')).toBe(AppointmentStatus.IN_PROGRESS);
+        expect(transformAppointmentProgressionToApi('completed')).toBe(AppointmentStatus.COMPLETED);
       });
 
       it('should default to SCHEDULED for unknown status', () => {
-        expect(transformAttendanceProgressionToApi('unknown' as 'scheduled')).toBe(AttendanceStatus.SCHEDULED);
+        expect(transformAppointmentProgressionToApi('unknown' as 'scheduled')).toBe(AppointmentStatus.SCHEDULED);
       });
     });
   });

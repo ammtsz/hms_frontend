@@ -12,7 +12,7 @@ const PostTreatmentModal: React.FC = () => {
     patientName,
     rows,
     rowsByType,
-    completedAttendanceIds,
+    completedAppointmentIds,
     cancellationReasons,
     generalNotes,
     setGeneralNotes,
@@ -52,7 +52,7 @@ const PostTreatmentModal: React.FC = () => {
           error={error}
           rows={rows}
           rowsByType={rowsByType}
-          completedAttendanceIds={completedAttendanceIds}
+          completedAppointmentIds={completedAppointmentIds}
           cancellationReasons={cancellationReasons}
           generalNotes={generalNotes}
           setGeneralNotes={setGeneralNotes}

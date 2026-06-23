@@ -16,14 +16,14 @@ Keep shared routes and reusable components light. Prefer route-level splitting f
 import { lazy, Suspense } from "react";
 
 // ✅ CORRECT: Lazy load heavy components
-const AttendanceBoard = lazy(
-  () => import("@/features/board/AttendanceBoard")
+const AppointmentsBoard = lazy(
+  () => import("@/features/board/AppointmentsBoard")
 );
 
-export default function AttendancePage() {
+export default function AppointmentPage() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      <AttendanceBoard />
+      <AppointmentsBoard />
     </Suspense>
   );
 }
@@ -60,10 +60,10 @@ export function usePatients() {
 }
 
 // For real-time data
-export function useAttendances(date: string) {
+export function useAppointments(date: string) {
   return useQuery({
-    queryKey: ["attendances", date],
-    queryFn: () => getAttendances(date),
+    queryKey: ["appointments", date],
+    queryFn: () => getAppointments(date),
     staleTime: 0, // Always check for updates
     refetchInterval: 30000, // Refetch every 30 seconds
   });
@@ -99,10 +99,10 @@ function prefetchPatient(id: number) {
 
 ```typescript
 // ✅ CORRECT: Only re-renders when selectedDate changes
-const selectedDate = useAttendanceStore((state) => state.selectedDate);
+const selectedDate = useBoardStore((state) => state.selectedDate);
 
 // ❌ WRONG: Re-renders on ANY store change
-const store = useAttendanceStore();
+const store = useBoardStore();
 const { selectedDate } = store; // Don't destructure entire store
 ```
 
@@ -110,13 +110,13 @@ const { selectedDate } = store; // Don't destructure entire store
 
 ```typescript
 // ✅ CORRECT: Compute derived state in selector
-const hasUnsavedChanges = useAttendanceStore((state) =>
-  state.attendances.some((a) => a.modified)
+const hasUnsavedChanges = useBoardStore((state) =>
+  state.appointments.some((a) => a.modified)
 );
 
 // ❌ WRONG: Computing in component causes re-renders
-const attendances = useAttendanceStore((state) => state.attendances);
-const hasUnsavedChanges = attendances.some((a) => a.modified);
+const appointments = useBoardStore((state) => state.appointments);
+const hasUnsavedChanges = appointments.some((a) => a.modified);
 ```
 
 ## React Memoization

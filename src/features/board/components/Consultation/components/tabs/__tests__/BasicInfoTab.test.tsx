@@ -9,7 +9,7 @@ import BasicInfoTab from "../BasicInfoTab";
 import type {
   PostConsultationFormData,
   PatientStatusValue,
-} from "../../../hooks/usePostAttendanceForm";
+} from "../../../hooks/usePostConsultationForm";
 import type { PatientResponseDto } from "@/api/types";
 import {
   PatientPriority,
@@ -67,7 +67,7 @@ describe("BasicInfoTab", () => {
     );
 
     expect(
-      screen.getByText("Basic Attendance Information"),
+      screen.getByText("Basic Appointment Information"),
     ).toBeInTheDocument();
   });
 

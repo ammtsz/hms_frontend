@@ -3,7 +3,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   useSessionsByTreatment,
-  useSessionsByAttendances,
+  useSessionsByAppointments,
   useCompleteSession,
   useBulkCompleteSessions,
 } from "../useSessionsQueries";
@@ -35,7 +35,7 @@ const createMockSessionRow = (id = 1, sessionNumber = 1) => ({
 const createMockTreatment = (id = 1) => ({
   id,
   consultationId: id * 5,
-  attendanceId: id * 3,
+  appointmentId: id * 3,
   patientId: id * 2,
   treatmentType: "physiotherapy" as const,
   bodyLocation: "Test location",
@@ -69,13 +69,13 @@ describe("useSessionsQueries", () => {
     jest.clearAllMocks();
   });
 
-  describe("useSessionsByAttendances", () => {
-    test("should return dataByAttendance map and refetch when attendanceIds provided", async () => {
-      const attendanceIds = [1, 2];
+  describe("useSessionsByAppointments", () => {
+    test("should return dataByAppointment map and refetch when appointmentIds provided", async () => {
+      const appointmentIds = [1, 2];
       const mockSessions1 = [createMockSessionRow(101)];
       const mockSessions2 = [createMockSessionRow(102)];
 
-      mockedSessionsApi.getSessionsByAttendance.mockImplementation((id: number) =>
+      mockedSessionsApi.getSessionsByAppointment.mockImplementation((id: number) =>
         Promise.resolve({
           success: true,
           value: id === 1 ? mockSessions1 : mockSessions2,
@@ -83,31 +83,31 @@ describe("useSessionsQueries", () => {
       );
 
       const wrapper = createWrapper();
-      const { result } = renderHook(() => useSessionsByAttendances(attendanceIds), { wrapper });
+      const { result } = renderHook(() => useSessionsByAppointments(appointmentIds), { wrapper });
 
       await waitFor(() => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      expect(result.current.dataByAttendance.get(1)).toEqual(mockSessions1);
-      expect(result.current.dataByAttendance.get(2)).toEqual(mockSessions2);
+      expect(result.current.dataByAppointment.get(1)).toEqual(mockSessions1);
+      expect(result.current.dataByAppointment.get(2)).toEqual(mockSessions2);
       expect(result.current.isError).toBe(false);
       expect(typeof result.current.refetch).toBe("function");
 
-      const callCountBefore = mockedSessionsApi.getSessionsByAttendance.mock.calls.length;
+      const callCountBefore = mockedSessionsApi.getSessionsByAppointment.mock.calls.length;
       await result.current.refetch();
       await waitFor(() => {
-        const callCountAfter = mockedSessionsApi.getSessionsByAttendance.mock.calls.length;
+        const callCountAfter = mockedSessionsApi.getSessionsByAppointment.mock.calls.length;
         expect(callCountAfter).toBe(callCountBefore + 2);
       });
     });
 
-    test("should not run queries when attendanceIds is empty", () => {
+    test("should not run queries when appointmentIds is empty", () => {
       const wrapper = createWrapper();
-      const { result } = renderHook(() => useSessionsByAttendances([]), { wrapper });
+      const { result } = renderHook(() => useSessionsByAppointments([]), { wrapper });
 
-      expect(result.current.dataByAttendance.size).toBe(0);
-      expect(mockedSessionsApi.getSessionsByAttendance).not.toHaveBeenCalled();
+      expect(result.current.dataByAppointment.size).toBe(0);
+      expect(mockedSessionsApi.getSessionsByAppointment).not.toHaveBeenCalled();
     });
   });
 
@@ -222,7 +222,7 @@ describe("useSessionsQueries", () => {
         treatmentId: "123",
         completionData: {
           notes: "Treatment completed successfully",
-          attendanceId: 1,
+          appointmentId: 1,
         },
         newCompletedCount: 2,
       };
@@ -254,7 +254,7 @@ describe("useSessionsQueries", () => {
         treatmentId: "123",
         completionData: {
           notes: "Test",
-          attendanceId: 1,
+          appointmentId: 1,
         },
         newCompletedCount: 2,
       };
@@ -287,7 +287,7 @@ describe("useSessionsQueries", () => {
         treatmentId: "123",
         completionData: {
           notes: "Test",
-          attendanceId: 1,
+          appointmentId: 1,
         },
         newCompletedCount: 2,
       };
@@ -329,7 +329,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "123",
           completionData: {
             notes: "Session 1 completed",
-            attendanceId: 1,
+            appointmentId: 1,
           },
           newCompletedCount: 2,
         },
@@ -337,7 +337,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "456",
           completionData: {
             notes: "Session 2 completed",
-            attendanceId: 2,
+            appointmentId: 2,
           },
           newCompletedCount: 3,
         },
@@ -380,7 +380,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "123",
           completionData: {
             notes: "Session 1 completed",
-            attendanceId: 1,
+            appointmentId: 1,
           },
           newCompletedCount: 2,
         },
@@ -388,7 +388,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "456",
           completionData: {
             notes: "Session 2 completed",
-            attendanceId: 2,
+            appointmentId: 2,
           },
           newCompletedCount: 3,
         },
@@ -421,7 +421,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "123",
           completionData: {
             notes: "Session 1 completed",
-            attendanceId: 1,
+            appointmentId: 1,
           },
           newCompletedCount: 2,
         },
@@ -458,7 +458,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "123",
           completionData: {
             notes: "Session 1 completed",
-            attendanceId: 1,
+            appointmentId: 1,
           },
           newCompletedCount: 2,
         },
@@ -499,7 +499,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "123",
           completionData: {
             notes: "Session 1 completed",
-            attendanceId: 1,
+            appointmentId: 1,
           },
           newCompletedCount: 2,
         },
@@ -507,7 +507,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "456",
           completionData: {
             notes: "Session 2 completed",
-            attendanceId: 2,
+            appointmentId: 2,
           },
           newCompletedCount: 3,
         },
@@ -526,7 +526,7 @@ describe("useSessionsQueries", () => {
 
       const completions: Array<{
         treatmentId: string;
-        completionData: { notes?: string; attendanceId?: number };
+        completionData: { notes?: string; appointmentId?: number };
         newCompletedCount: number;
       }> = [];
 
@@ -553,7 +553,7 @@ describe("useSessionsQueries", () => {
           treatmentId: "123",
           completionData: {
             notes: "Session 1 completed",
-            attendanceId: 1,
+            appointmentId: 1,
           },
           newCompletedCount: 2,
         },

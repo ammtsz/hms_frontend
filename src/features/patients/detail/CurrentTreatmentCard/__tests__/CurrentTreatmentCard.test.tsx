@@ -30,16 +30,16 @@ jest.mock("@/api/query/hooks/usePatientQueries", () => ({
     isPending: false,
     error: null,
   })),
-  useNewlyScheduledAttendances: jest.fn(() => ({
+  useNewlyScheduledAppointments: jest.fn(() => ({
     data: [],
     isLoading: false,
     error: null,
   })),
 }));
 
-// Mock the attendance queries
-jest.mock("@/api/query/hooks/useAttendanceQueries", () => ({
-  useCreateAttendance: jest.fn(() => ({
+// Mock the appointment queries
+jest.mock("@/api/query/hooks/useAppointmentQueries", () => ({
+  useCreateAppointment: jest.fn(() => ({
     mutate: jest.fn(),
     isPending: false,
     error: null,
@@ -94,7 +94,7 @@ const mockPatient: Patient = {
   startDate: "2024-01-15",
   dischargeDate: "2024-06-15",
   timezone: "America/Sao_Paulo",
-  nextAttendanceDates: [
+  nextAppointmentDates: [
     {
       date: "2024-12-28",
       type: "assessment",
@@ -109,14 +109,14 @@ const mockPatient: Patient = {
     tens: false,
     returnWeeks: 2,
   },
-  previousAttendances: [],
+  previousAppointments: [],
   missingAppointmentsStreak: 0,
 };
 
 const mockTreatmentPlan = {
   id: 1,
   consultationId: 1,
-  attendanceId: 1,
+  appointmentId: 1,
   patientId: 1,
   treatmentType: "physiotherapy" as const,
   bodyLocation: "Head",
@@ -592,7 +592,7 @@ describe("CurrentTreatmentCard", () => {
   describe("Consultation integration", () => {
     const mockConsultation = {
       id: 1,
-      attendanceId: 123, // This should match one of the patient's attendance IDs
+      appointmentId: 123, // This should match one of the patient's appointment IDs
       patientId: "1",
       food: "Avoid red meat",
       water: "Drink water",
@@ -601,8 +601,8 @@ describe("CurrentTreatmentCard", () => {
       tens: false,
       returnWeeks: 4,
       notes: "Patient responding well to treatment",
-      // createdDate is intentionally different from the attendance date (2024-10-25)
-      // so the header uses the attendance date, not consultation `createdDate`
+      // createdDate is intentionally different from the appointment date (2024-10-25)
+      // so the header uses the appointment date, not consultation `createdDate`
       createdDate: "2024-12-15",
       createdTime: "10:00:00",
       updatedDate: "2024-12-15",
@@ -619,11 +619,11 @@ describe("CurrentTreatmentCard", () => {
     });
 
     it("should display recommendations from latest consultation when available", () => {
-      const patientWithAttendance: Patient = {
+      const patientWithAppointment: Patient = {
         ...mockPatient,
-        previousAttendances: [
+        previousAppointments: [
           {
-            attendanceId: "123", // Matches consultation.attendanceId
+            appointmentId: "123", // Matches consultation.appointmentId
             date: "2024-10-25",
             type: "assessment",
             notes: "First consultation",
@@ -644,7 +644,7 @@ describe("CurrentTreatmentCard", () => {
       };
 
       renderWithClient(
-        <CurrentTreatmentCard patient={patientWithAttendance} />,
+        <CurrentTreatmentCard patient={patientWithAppointment} />,
       );
 
       // Recommendations come from persisted consultation (food / water / ointments)
@@ -671,13 +671,13 @@ describe("CurrentTreatmentCard", () => {
       // Confirmed by food / water / ointment strings above
     });
 
-    it("should use attendance date in header instead of consultation createdDate", () => {
-      const patientWithAttendance: Patient = {
+    it("should use appointment date in header instead of consultation createdDate", () => {
+      const patientWithAppointment: Patient = {
         ...mockPatient,
-        previousAttendances: [
+        previousAppointments: [
           {
-            attendanceId: "123",
-            // Attendance in June; consultation createdDate in December
+            appointmentId: "123",
+            // Appointment in June; consultation createdDate in December
             date: "2024-06-15",
             type: "assessment",
             notes: "",
@@ -698,17 +698,17 @@ describe("CurrentTreatmentCard", () => {
       };
 
       renderWithClient(
-        <CurrentTreatmentCard patient={patientWithAttendance} />,
+        <CurrentTreatmentCard patient={patientWithAppointment} />,
       );
 
       const header = screen.getByText(/Latest Recommendations/);
-      // Header shows attendance month (June), not consultation createdDate (December)
+      // Header shows appointment month (June), not consultation createdDate (December)
       expect(header.textContent).toMatch(/Latest Recommendations \(0?6\//);
       expect(header.textContent).not.toMatch(/\/12\//);
     });
 
     it("should fallback to patient recommendations when no consultations match", () => {
-      // No consultations for patient's attendances
+      // No consultations for patient's appointments
       (useConsultations as jest.Mock).mockReturnValue({
         data: [],
         isLoading: false,

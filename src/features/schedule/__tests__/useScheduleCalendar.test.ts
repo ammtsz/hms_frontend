@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { useScheduleCalendar } from "../hooks/useScheduleCalendar";
-import { AttendanceStatus } from '@/api/types';
+import { AppointmentStatus } from '@/api/types';
 
 jest.mock('@/api/query/hooks/useScheduleQueries', () => ({
   useSchedule: jest.fn(),
@@ -13,14 +13,14 @@ jest.mock('@/stores', () => ({
   useScheduleDayWindowDays: jest.fn(),
   useScheduleStatusFilters: jest.fn(),
   usePatientFilter: jest.fn(),
-  useShowNewAttendance: jest.fn(),
+  useShowNewAppointment: jest.fn(),
   useOpenAssessmentIdx: jest.fn(),
   useOpenPhysiotherapyIdx: jest.fn(),
   useSetSelectedDateString: jest.fn(),
   useSetScheduleDayWindowDays: jest.fn(),
   useSetScheduleStatusFilters: jest.fn(),
   useSetPatientFilter: jest.fn(),
-  useSetShowNewAttendance: jest.fn(),
+  useSetShowNewAppointment: jest.fn(),
   useSetOpenAssessmentIdx: jest.fn(),
   useSetOpenPhysiotherapyIdx: jest.fn(),
 }));
@@ -31,14 +31,14 @@ import {
   useScheduleDayWindowDays,
   useScheduleStatusFilters,
   usePatientFilter,
-  useShowNewAttendance,
+  useShowNewAppointment,
   useOpenAssessmentIdx,
   useOpenPhysiotherapyIdx,
   useSetSelectedDateString,
   useSetScheduleDayWindowDays,
   useSetScheduleStatusFilters,
   useSetPatientFilter,
-  useSetShowNewAttendance,
+  useSetShowNewAppointment,
   useSetOpenAssessmentIdx,
   useSetOpenPhysiotherapyIdx,
 } from '@/stores';
@@ -48,7 +48,7 @@ describe('useScheduleCalendar', () => {
   let mockSetScheduleDayWindowDays: jest.Mock;
   let mockSetScheduleStatusFilters: jest.Mock;
   let mockSetPatientFilter: jest.Mock;
-  let mockSetShowNewAttendance: jest.Mock;
+  let mockSetShowNewAppointment: jest.Mock;
   let mockSetOpenAssessmentIdx: jest.Mock;
   let mockSetOpenPhysiotherapyIdx: jest.Mock;
   let mockRefreshSchedule: jest.Mock;
@@ -61,10 +61,10 @@ describe('useScheduleCalendar', () => {
           {
             id: '1',
             name: 'John Doe',
-            attendanceId: 100,
-            attendanceType: 'assessment' as const,
+            appointmentId: 100,
+            appointmentType: 'assessment' as const,
             priority: '1' as const,
-            attendanceStatus: AttendanceStatus.SCHEDULED,
+            appointmentStatus: AppointmentStatus.SCHEDULED,
           },
         ],
       },
@@ -74,10 +74,10 @@ describe('useScheduleCalendar', () => {
           {
             id: '2',
             name: 'Jane Smith',
-            attendanceId: 101,
-            attendanceType: 'assessment' as const,
+            appointmentId: 101,
+            appointmentType: 'assessment' as const,
             priority: '2' as const,
-            attendanceStatus: AttendanceStatus.SCHEDULED,
+            appointmentStatus: AppointmentStatus.SCHEDULED,
           },
         ],
       },
@@ -89,10 +89,10 @@ describe('useScheduleCalendar', () => {
           {
             id: '3',
             name: 'Bob Wilson',
-            attendanceId: 102,
-            attendanceType: 'physiotherapy' as const,
+            appointmentId: 102,
+            appointmentType: 'physiotherapy' as const,
             priority: '3' as const,
-            attendanceStatus: AttendanceStatus.SCHEDULED,
+            appointmentStatus: AppointmentStatus.SCHEDULED,
           },
         ],
       },
@@ -106,7 +106,7 @@ describe('useScheduleCalendar', () => {
     mockSetScheduleDayWindowDays = jest.fn();
     mockSetScheduleStatusFilters = jest.fn();
     mockSetPatientFilter = jest.fn();
-    mockSetShowNewAttendance = jest.fn();
+    mockSetShowNewAppointment = jest.fn();
     mockSetOpenAssessmentIdx = jest.fn();
     mockSetOpenPhysiotherapyIdx = jest.fn();
     mockRefreshSchedule = jest.fn();
@@ -114,10 +114,10 @@ describe('useScheduleCalendar', () => {
     (useSelectedDateString as jest.Mock).mockReturnValue('2024-01-15');
     (useScheduleDayWindowDays as jest.Mock).mockReturnValue(30);
     (useScheduleStatusFilters as jest.Mock).mockReturnValue([
-      AttendanceStatus.SCHEDULED,
+      AppointmentStatus.SCHEDULED,
     ]);
     (usePatientFilter as jest.Mock).mockReturnValue('');
-    (useShowNewAttendance as jest.Mock).mockReturnValue(false);
+    (useShowNewAppointment as jest.Mock).mockReturnValue(false);
     (useOpenAssessmentIdx as jest.Mock).mockReturnValue([]);
     (useOpenPhysiotherapyIdx as jest.Mock).mockReturnValue([]);
 
@@ -129,8 +129,8 @@ describe('useScheduleCalendar', () => {
       mockSetScheduleStatusFilters,
     );
     (useSetPatientFilter as jest.Mock).mockReturnValue(mockSetPatientFilter);
-    (useSetShowNewAttendance as jest.Mock).mockReturnValue(
-      mockSetShowNewAttendance,
+    (useSetShowNewAppointment as jest.Mock).mockReturnValue(
+      mockSetShowNewAppointment,
     );
     (useSetOpenAssessmentIdx as jest.Mock).mockReturnValue(mockSetOpenAssessmentIdx);
     (useSetOpenPhysiotherapyIdx as jest.Mock).mockReturnValue(mockSetOpenPhysiotherapyIdx);
@@ -151,7 +151,7 @@ describe('useScheduleCalendar', () => {
       expect(result.current.selectedDate).toBe('2024-01-15');
       expect(result.current.scheduleDayWindowDays).toBe(30);
       expect(result.current.scheduleStatusFilters).toEqual([
-        AttendanceStatus.SCHEDULED,
+        AppointmentStatus.SCHEDULED,
       ]);
       expect(result.current.filteredSchedule.assessment).toHaveLength(2);
       expect(result.current.rangeSummaryText).toContain('Period:');
@@ -163,7 +163,7 @@ describe('useScheduleCalendar', () => {
       expect(useSchedule).toHaveBeenCalledWith({
         fromDate: '2024-01-15',
         toDate: '2024-02-13',
-        statuses: [AttendanceStatus.SCHEDULED],
+        statuses: [AppointmentStatus.SCHEDULED],
       });
     });
 
@@ -193,10 +193,10 @@ describe('useScheduleCalendar', () => {
                 {
                   id: '1',
                   name: 'John Smith',
-                  attendanceId: 100,
-                  attendanceType: 'assessment' as const,
+                  appointmentId: 100,
+                  appointmentType: 'assessment' as const,
                   priority: '1' as const,
-                  attendanceStatus: AttendanceStatus.SCHEDULED,
+                  appointmentStatus: AppointmentStatus.SCHEDULED,
                 },
               ],
             },
@@ -217,14 +217,14 @@ describe('useScheduleCalendar', () => {
   });
 
   describe('Form Success Handler', () => {
-    it('closes new attendance modal and triggers refresh on form success', async () => {
+    it('closes new appointment modal and triggers refresh on form success', async () => {
       const { result } = renderHook(() => useScheduleCalendar());
 
       await act(async () => {
         result.current.handleFormSuccess();
       });
 
-      expect(mockSetShowNewAttendance).toHaveBeenCalledWith(false);
+      expect(mockSetShowNewAppointment).toHaveBeenCalledWith(false);
       expect(mockRefreshSchedule).toHaveBeenCalled();
     });
   });

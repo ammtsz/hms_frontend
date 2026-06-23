@@ -7,12 +7,12 @@ import LoadingFallback from "@/components/common/LoadingFallback";
 import { SettingsIcon } from "lucide-react";
 import { Card } from "@/components/ui";
 
-// Lazy load the heavy attendance board
-const AttendanceBoard = lazy(
-  () => import("@/features/board/AttendanceBoard"),
+// Lazy load the heavy appointment board
+const AppointmentsBoard = lazy(
+  () => import("@/features/board/AppointmentsBoard"),
 );
 
-export default function AttendancePage() {
+export default function AppointmentPage() {
   const [unscheduledCheckIn, setUnscheduledCheckIn] = useState<{
     name: string;
     types: string[];
@@ -26,7 +26,7 @@ export default function AttendancePage() {
   }, []);
 
   // Memoize registration callback to prevent infinite loops
-  const handleRegisterNewAttendance = useCallback(
+  const handleRegisterNewAppointment = useCallback(
     (name: string, types: string[], isNew: boolean, priority: Priority) => {
       setUnscheduledCheckIn({ name, types, isNew, priority });
     },
@@ -37,17 +37,17 @@ export default function AttendancePage() {
     <div className="flex flex-col gap-8 my-6 sm:my-16">
       {/* Walk-in Patients Panel */}
       <PatientWalkInPanel
-        onRegisterNewAttendance={handleRegisterNewAttendance}
+        onRegisterNewAppointment={handleRegisterNewAppointment}
       />
 
-      {/* Attendance Management Board */}
+      {/* Appointment Management Board */}
       <Card>
         <div className="p-4 border-b border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Attendance Board
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Appointments Board
           </h2>
           <p className="mt-1 text-sm text-gray-600">
-            Manage attendance flow by dragging and dropping patient names. Use
+            Manage appointment flow by dragging and dropping patient names. Use
             the{" "}
             <SettingsIcon
               className="inline h-4 w-4 shrink-0 align-text-bottom"
@@ -60,12 +60,12 @@ export default function AttendancePage() {
           <Suspense
             fallback={
               <LoadingFallback
-                message="Loading attendance board..."
+                message="Loading appointment board..."
                 size="large"
               />
             }
           >
-            <AttendanceBoard
+            <AppointmentsBoard
               unscheduledCheckIn={unscheduledCheckIn}
               onCheckInProcessed={handleCheckInProcessed}
             />

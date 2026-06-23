@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import { Patient, Priority } from "@/types/types";
-import { AttendanceType } from "@/api/types";
+import { AppointmentType } from "@/api/types";
 import {
-  useCreateAttendance,
-  useCheckInAttendance,
-} from "@/api/query/hooks/useAttendanceQueries";
+  useCreateAppointment,
+  useCheckInAppointment,
+} from "@/api/query/hooks/useAppointmentQueries";
 import { useUpdatePatient } from "@/api/query/hooks/usePatientQueries";
 
 import { transformPriorityToApi } from "@/utils/apiTransformers";
@@ -19,7 +19,7 @@ import { Button, Field, Input, Select } from "@/components/ui";
 
 interface NewPatientCheckInFormProps {
   patient: Patient;
-  attendanceId?: number;
+  appointmentId?: number;
   onSuccess: (updatedPatient: Patient) => void;
   onCancel: () => void;
 }
@@ -33,12 +33,12 @@ type NewPatientCheckInFormData = {
 
 const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
   patient,
-  attendanceId,
+  appointmentId,
   onSuccess,
   onCancel,
 }) => {
-  const createAttendanceMutation = useCreateAttendance();
-  const checkInAttendanceMutation = useCheckInAttendance();
+  const createAppointmentMutation = useCreateAppointment();
+  const checkInAppointmentMutation = useCheckInAppointment();
   const updatePatientMutation = useUpdatePatient();
 
   // Form state for patient information
@@ -117,25 +117,25 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
         data: updateData,
       });
 
-      // Check if we have an existing attendance to check in, or need to create a new one
-      if (attendanceId) {
-        // Check in the existing attendance
-        await checkInAttendanceMutation.mutateAsync({
-          attendanceId: attendanceId,
+      // Check if we have an existing appointment to check in, or need to create a new one
+      if (appointmentId) {
+        // Check in the existing appointment
+        await checkInAppointmentMutation.mutateAsync({
+          appointmentId: appointmentId,
           patientName: formData.name.trim(),
         });
       } else {
-        // Create a new assessment consultation attendance (default for new patients)
-        const newAttendance = await createAttendanceMutation.mutateAsync({
+        // Create a new assessment consultation appointment (default for new patients)
+        const newAppointment = await createAppointmentMutation.mutateAsync({
           patientId: parseInt(patient.id),
-          attendanceType: AttendanceType.ASSESSMENT,
+          appointmentType: AppointmentType.ASSESSMENT,
           scheduledDate: getTodayClinic(), // YYYY-MM-DD
         });
 
-        // Immediately check in the new attendance if created successfully
-        if (newAttendance?.id) {
-          await checkInAttendanceMutation.mutateAsync({
-            attendanceId: newAttendance.id,
+        // Immediately check in the new appointment if created successfully
+        if (newAppointment?.id) {
+          await checkInAppointmentMutation.mutateAsync({
+            appointmentId: newAppointment.id,
             patientName: formData.name.trim(),
           });
         }

@@ -1,11 +1,11 @@
 import React from "react";
 import { formatDisplayDate, getWeeksUntil } from "@/utils/dateUtils";
-import type { AttendanceResponseDto } from "@/api/types";
+import type { AppointmentResponseDto } from "@/api/types";
 
 interface NextConsultationCardProps {
-  nextAssessmentConsultation: AttendanceResponseDto | null;
-  fetchingAttendances?: boolean;
-  attendancesError?: string;
+  nextAssessmentConsultation: AppointmentResponseDto | null;
+  fetchingAppointments?: boolean;
+  appointmentsError?: string;
   createdDate?: string;
   returnWeeks?: number;
   returnWhenTreatmentComplete?: boolean;
@@ -16,13 +16,13 @@ interface NextConsultationCardProps {
  */
 export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
   nextAssessmentConsultation,
-  fetchingAttendances,
-  attendancesError,
+  fetchingAppointments,
+  appointmentsError,
   createdDate,
   returnWeeks,
   returnWhenTreatmentComplete,
 }) => {
-  if (fetchingAttendances) {
+  if (fetchingAppointments) {
     return (
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-lg p-5 mb-6">
         <div className="flex items-center space-x-4">
@@ -44,7 +44,7 @@ export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
     );
   }
 
-  if (attendancesError) {
+  if (appointmentsError) {
     return (
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-lg p-5 mb-6">
         <div className="flex items-start space-x-4">
@@ -58,7 +58,7 @@ export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
               Error fetching appointments
             </h4>
             <p className="text-sm text-amber-700 mb-2">
-              {attendancesError || "Error fetching created appointments"}
+              {appointmentsError || "Error fetching created appointments"}
             </p>
             <p className="text-xs text-amber-600">
               The appointments were created successfully, but we couldn&apos;t
@@ -88,7 +88,7 @@ export const NextConsultationCard: React.FC<NextConsultationCardProps> = ({
           <div className="flex-1">
             <div>
               <h4 className="text-lg font-semibold mb-1">
-                Return of Assessment Consultation
+                Assessment Consultation Return
               </h4>
             </div>
           </div>

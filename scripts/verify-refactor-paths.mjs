@@ -34,9 +34,9 @@ const legacyGitPrefixes = [
   'src/features/board/components/endOfDay/',
   'src/features/board/components/treatmentSession/',
   'src/features/board/components/treatmentRecommendations/',
-  'src/features/board/components/attendanceActions/',
-  'src/features/board/AttendanceManagement.tsx',
-  'src/features/board/hooks/useAttendanceManagement.ts',
+  'src/features/board/components/appointmentActions/',
+  'src/features/board/AppointmentManagement.tsx',
+  'src/features/board/hooks/useAppointmentManagement.ts',
   'src/api/dayFinalization/',
   'src/api/query/hooks/usePatientComplaint.ts',
   'src/features/settings/ProfileSettings.tsx',
@@ -45,8 +45,8 @@ const legacyGitPrefixes = [
   'src/features/settings/hooks/',
 ];
 
-const attendanceLegacyFolders = {
-  attendanceActions: 'AttendanceActions',
+const appointmentLegacyFolders = {
+  appointmentActions: 'AppointmentActions',
   board: 'Board',
   cards: 'Cards',
   consultation: 'Consultation',
@@ -68,9 +68,9 @@ const legacyImportSubstrings = [
   'features/board/components/endOfDay/',
   'features/board/components/treatmentSession/',
   'features/board/components/treatmentRecommendations/',
-  'features/board/components/attendanceActions/',
-  'features/board/AttendanceManagement',
-  'hooks/useAttendanceManagement',
+  'features/board/components/appointmentActions/',
+  'features/board/AppointmentManagement',
+  'hooks/useAppointmentManagement',
   'api/dayFinalization',
   'query/hooks/usePatientComplaint',
   'features/settings/ProfileSettings',
@@ -180,14 +180,14 @@ for (const file of walk(join(ROOT, 'src'))) {
     }
 
     const absFolderMatch = spec.match(/features\/board\/components\/([^/'"]+)/);
-    if (absFolderMatch && absFolderMatch[1] in attendanceLegacyFolders) {
+    if (absFolderMatch && absFolderMatch[1] in appointmentLegacyFolders) {
       errors.push(
-        `${relative(ROOT, file)}: use ${attendanceLegacyFolders[absFolderMatch[1]]} in ${spec}`,
+        `${relative(ROOT, file)}: use ${appointmentLegacyFolders[absFolderMatch[1]]} in ${spec}`,
       );
     }
 
     const relComponents = spec.match(/components\/([^/'"]+)/);
-    if (relComponents && relComponents[1] in attendanceLegacyFolders) {
+    if (relComponents && relComponents[1] in appointmentLegacyFolders) {
       errors.push(
         `${relative(ROOT, file)}: legacy folder "${relComponents[1]}" in ${spec}`,
       );

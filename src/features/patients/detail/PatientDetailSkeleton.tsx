@@ -56,7 +56,7 @@ export const PatientDetailSkeleton: React.FC<PatientDetailSkeletonProps> = ({
                 </CardBody>
               </Card>
 
-              {/* Attendance History Card */}
+              {/* Appointment History Card */}
               <Card>
                 <CardBody>
                   <Skeleton className="h-6 w-56 mb-4" />

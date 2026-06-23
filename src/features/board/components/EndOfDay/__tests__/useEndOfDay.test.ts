@@ -4,23 +4,23 @@
 
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { useEndOfDay } from "../hooks/useEndOfDay";
-import { useAttendanceData } from "@/features/board/hooks/useAttendanceData";
+import { useBoardData } from "@/features/board/hooks/useBoardData";
 import { useProcessEndOfDay } from "@/api/query/hooks/useDayFinalizationQueries";
 import { useCloseModal } from "@/stores/modalStore";
-import * as attendanceDataUtils from "../../../utils/attendanceDataUtils";
-import type { AttendanceType } from "@/types/types";
+import * as appointmentDataUtils from "../../../utils/appointmentDataUtils";
+import type { AppointmentType } from "@/types/types";
 
 // Mock dependencies
-jest.mock("@/features/board/hooks/useAttendanceData");
+jest.mock("@/features/board/hooks/useBoardData");
 jest.mock("@/api/query/hooks/useDayFinalizationQueries");
 jest.mock("@/stores/modalStore");
-jest.mock("../../../utils/attendanceDataUtils", () => ({
-  getIncompleteAttendances: jest.fn(() => []),
-  getCompletedAttendances: jest.fn(() => []),
+jest.mock("../../../utils/appointmentDataUtils", () => ({
+  getIncompleteAppointments: jest.fn(() => []),
+  getCompletedAppointments: jest.fn(() => []),
   getScheduledAbsences: jest.fn(() => []),
 }));
 
-const mockUseAttendanceData = useAttendanceData as jest.MockedFunction<typeof useAttendanceData>;
+const mockUseAppointmentData = useBoardData as jest.MockedFunction<typeof useBoardData>;
 const mockUseProcessEndOfDay = useProcessEndOfDay as jest.MockedFunction<typeof useProcessEndOfDay>;
 const mockUseCloseModal = useCloseModal as jest.MockedFunction<typeof useCloseModal>;
 
@@ -33,15 +33,15 @@ describe("useEndOfDay", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockUseAttendanceData.mockReturnValue({
-      attendancesByDate: null,
+    mockUseAppointmentData.mockReturnValue({
+      appointmentsByDate: null,
       refreshData: mockRefreshData,
       isLoading: false,
       error: null,
-      getIncompleteAttendances: jest.fn(),
-      getCompletedAttendances: jest.fn(),
+      getIncompleteAppointments: jest.fn(),
+      getCompletedAppointments: jest.fn(),
       getScheduledAbsences: jest.fn(),
-    } as Partial<ReturnType<typeof useAttendanceData>> as ReturnType<typeof useAttendanceData>);
+    } as Partial<ReturnType<typeof useBoardData>> as ReturnType<typeof useBoardData>);
 
     mockUseProcessEndOfDay.mockReturnValue({
       mutateAsync: mockProcessEndOfDayMutateAsync,
@@ -53,23 +53,23 @@ describe("useEndOfDay", () => {
     mockUseCloseModal.mockReturnValue(mockCloseModal);
   });
 
-  it("should use attendanceId instead of patientId when submitting absences", async () => {
-    const getScheduledAbsencesSpy = jest.spyOn(attendanceDataUtils, 'getScheduledAbsences');
+  it("should use appointmentId instead of patientId when submitting absences", async () => {
+    const getScheduledAbsencesSpy = jest.spyOn(appointmentDataUtils, 'getScheduledAbsences');
 
-    // Mock scheduled absences with both patientId and attendanceId
+    // Mock scheduled absences with both patientId and appointmentId
     const mockScheduledAbsences = [
       {
         name: "John Doe",
         patientId: 14, // This is the patient ID
-        attendanceId: 33, // This is the attendance ID (should be used in API)
-        attendanceType: "assessment" as AttendanceType,
+        appointmentId: 33, // This is the appointment ID (should be used in API)
+        appointmentType: "assessment" as AppointmentType,
         priority: "1" as const,
       },
       {
         name: "Jane Smith",
         patientId: 6,
-        attendanceId: 32,
-        attendanceType: "physiotherapy" as AttendanceType,
+        appointmentId: 32,
+        appointmentType: "physiotherapy" as AppointmentType,
         priority: "2" as const,
       },
     ];
@@ -100,13 +100,13 @@ describe("useEndOfDay", () => {
       await result.current.handleSubmit();
     });
 
-    // Verify processEndOfDay was called with correct attendanceIds (not patientIds)
+    // Verify processEndOfDay was called with correct appointmentIds (not patientIds)
     await waitFor(() => {
       expect(mockProcessEndOfDayMutateAsync).toHaveBeenCalledWith({
         date: selectedDate,
         absenceJustifications: [
-          { attendanceId: 33, justified: true, notes: "Family emergency" },
-          { attendanceId: 32, justified: false, notes: "" },
+          { appointmentId: 33, justified: true, notes: "Family emergency" },
+          { appointmentId: 32, justified: false, notes: "" },
         ],
       });
     });
@@ -125,16 +125,16 @@ describe("useEndOfDay", () => {
     expect(mockRefreshData).toHaveBeenCalled();
   });
 
-  it("should filter out absences without attendanceId", async () => {
-    const getScheduledAbsencesSpy = jest.spyOn(attendanceDataUtils, 'getScheduledAbsences');
+  it("should filter out absences without appointmentId", async () => {
+    const getScheduledAbsencesSpy = jest.spyOn(appointmentDataUtils, 'getScheduledAbsences');
 
-    // Mock scheduled absence without attendanceId - will be filtered out
+    // Mock scheduled absence without appointmentId - will be filtered out
     const mockScheduledAbsences = [
       {
         name: "John Doe",
         patientId: 14,
-        // No attendanceId - filtered out by .filter(absence => absence.attendanceId)
-        attendanceType: "assessment" as AttendanceType,
+        // No appointmentId - filtered out by .filter(absence => absence.appointmentId)
+        appointmentType: "assessment" as AppointmentType,
         priority: "1" as const,
       },
     ];
@@ -162,7 +162,7 @@ describe("useEndOfDay", () => {
       await result.current.handleSubmit();
     });
 
-    // No attendances with attendanceId - empty payload
+    // No appointments with appointmentId - empty payload
     await waitFor(() => {
       expect(mockProcessEndOfDayMutateAsync).toHaveBeenCalledWith({
         date: selectedDate,
@@ -171,23 +171,23 @@ describe("useEndOfDay", () => {
     });
   });
 
-  it("should find correct attendanceId when multiple absences exist for same patient", async () => {
-    const getScheduledAbsencesSpy = jest.spyOn(attendanceDataUtils, 'getScheduledAbsences');
+  it("should find correct appointmentId when multiple absences exist for same patient", async () => {
+    const getScheduledAbsencesSpy = jest.spyOn(appointmentDataUtils, 'getScheduledAbsences');
 
     // Mock scenario: same patient has multiple absences (different types)
     const mockScheduledAbsences = [
       {
         name: "John Doe",
         patientId: 14,
-        attendanceId: 33,
-        attendanceType: "assessment" as AttendanceType,
+        appointmentId: 33,
+        appointmentType: "assessment" as AppointmentType,
         priority: "1" as const,
       },
       {
         name: "John Doe",
         patientId: 14,
-        attendanceId: 34,
-        attendanceType: "physiotherapy" as AttendanceType,
+        appointmentId: 34,
+        appointmentType: "physiotherapy" as AppointmentType,
         priority: "1" as const,
       },
     ];
@@ -220,8 +220,8 @@ describe("useEndOfDay", () => {
       expect(mockProcessEndOfDayMutateAsync).toHaveBeenCalledWith({
         date: selectedDate,
         absenceJustifications: expect.arrayContaining([
-          { attendanceId: 33, justified: true, notes: "Assessment absence" },
-          { attendanceId: 34, justified: false, notes: "" },
+          { appointmentId: 33, justified: true, notes: "Assessment absence" },
+          { appointmentId: 34, justified: false, notes: "" },
         ]),
       });
     });

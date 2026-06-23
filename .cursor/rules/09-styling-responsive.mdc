@@ -23,7 +23,7 @@ Always include visible focus states and ensure color contrast meets accessibilit
 
 Follow mobile-first approach and Tailwind breakpoints. Prefer extending existing patterns and avoid ad-hoc breakpoints.
 
-### Attendance Board & Layout
+### Appointment Board & Layout
 
 Use grid and responsive classes (`grid-cols-1 md:grid-cols-2 lg:grid-cols-4`), and ensure no horizontal scroll at small widths.
 

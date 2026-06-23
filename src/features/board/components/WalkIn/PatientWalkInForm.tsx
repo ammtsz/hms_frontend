@@ -5,12 +5,12 @@ import { Priority } from "@/types/types";
 import ErrorDisplay from "@/components/common/ErrorDisplay";
 import { usePatientWalkInForm } from "./hooks/usePatientWalkInForm";
 import { PatientSelector } from "./components/PatientSelector";
-import { ParentAttendanceSelector } from "./components/ParentAttendanceSelector";
+import { ParentAppointmentSelector } from "./components/ParentAppointmentSelector";
 import { NewPatientFields } from "./components/NewPatientFields";
 import { Button, Card } from "@/components/ui";
 
 interface PatientWalkInFormProps {
-  onRegisterNewAttendance?: (
+  onRegisterNewAppointment?: (
     patientName: string,
     types: string[],
     isNew: boolean,
@@ -20,7 +20,7 @@ interface PatientWalkInFormProps {
 }
 
 const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
-  onRegisterNewAttendance,
+  onRegisterNewAppointment,
   isDropdown = false,
 }) => {
   const {
@@ -32,14 +32,14 @@ const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
     error,
     setError,
     success,
-    parentAttendanceOptions,
+    parentAppointmentOptions,
     loadingParentOptions,
     patientStatus,
     filteredPatients,
     prioritiesLoading,
-    fetchParentAttendanceOptions,
+    fetchParentAppointmentOptions,
     handleSubmit,
-  } = usePatientWalkInForm({ onRegisterNewAttendance });
+  } = usePatientWalkInForm({ onRegisterNewAppointment });
 
   const handleNewPatientToggle = (checked: boolean) => {
     setFormData((prev) => ({
@@ -48,7 +48,7 @@ const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
       selectedPatient: "",
       phone: "",
       birthDate: "",
-      selectedParentAttendance: "",
+      selectedParentAppointment: "",
     }));
     setShowDropdown(false);
     setError(null);
@@ -67,13 +67,13 @@ const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
       name: patientName,
       selectedPatient: patientName,
       priority: selected?.priority || "3",
-      selectedParentAttendance: "",
+      selectedParentAppointment: "",
     }));
     setShowDropdown(false);
     setError(null);
 
     if (selected?.id) {
-      fetchParentAttendanceOptions(selected.id);
+      fetchParentAppointmentOptions(selected.id);
     }
   };
 
@@ -106,16 +106,16 @@ const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
         />
 
         {!formData.isNewPatient && formData.selectedPatient && (
-          <ParentAttendanceSelector
-            selectedParentAttendance={formData.selectedParentAttendance}
-            parentAttendanceOptions={parentAttendanceOptions}
+          <ParentAppointmentSelector
+            selectedParentAppointment={formData.selectedParentAppointment}
+            parentAppointmentOptions={parentAppointmentOptions}
             loadingParentOptions={loadingParentOptions}
             isSubmitting={isSubmitting}
             patientStatus={patientStatus}
-            onParentAttendanceChange={(value) =>
+            onParentAppointmentChange={(value) =>
               setFormData((prev) => ({
                 ...prev,
-                selectedParentAttendance: value,
+                selectedParentAppointment: value,
               }))
             }
           />
@@ -141,7 +141,7 @@ const PatientWalkInForm: React.FC<PatientWalkInFormProps> = ({
 
         <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
           <h3 className="text-sm font-medium text-blue-800 mb-1">
-            Attendance Type
+            Appointment Type
           </h3>
           <p className="text-sm text-gray-700">Assessment Consultation</p>
           <p className="text-xs text-gray-500 mt-1">

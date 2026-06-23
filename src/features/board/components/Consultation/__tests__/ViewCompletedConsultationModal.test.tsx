@@ -5,7 +5,7 @@ import ViewCompletedConsultationModal from "../ViewCompletedConsultationModal";
 
 // Mock all the dependencies
 jest.mock("@/api/query/hooks/useConsultationQueries", () => ({
-  useConsultationByAttendance: jest.fn(() => ({
+  useConsultationByAppointment: jest.fn(() => ({
     data: null,
     isLoading: false,
     error: null,
@@ -21,7 +21,7 @@ jest.mock("@/api/query/hooks/useTreatmentsQueries", () => ({
 }));
 
 jest.mock("@/api/query/hooks/usePatientQueries", () => ({
-  useNewlyScheduledAttendances: jest.fn(() => ({
+  useNewlyScheduledAppointments: jest.fn(() => ({
     data: [],
     isLoading: false,
     error: null,
@@ -68,7 +68,7 @@ describe("ViewCompletedConsultationModal", () => {
     it("should not render when modal is closed", () => {
       mockUseViewCompletedConsultationModal.mockReturnValue({
         isOpen: false,
-        attendanceId: undefined,
+        appointmentId: undefined,
         patientId: undefined,
         patientName: undefined,
       });
@@ -80,7 +80,7 @@ describe("ViewCompletedConsultationModal", () => {
     it("should render BaseModal when modal is open", () => {
       mockUseViewCompletedConsultationModal.mockReturnValue({
         isOpen: true,
-        attendanceId: 123,
+        appointmentId: 123,
         patientId: 456,
         patientName: "John Smith",
       });
@@ -94,7 +94,7 @@ describe("ViewCompletedConsultationModal", () => {
     it("should use correct modal state from store", () => {
       const mockState = {
         isOpen: true,
-        attendanceId: 999,
+        appointmentId: 999,
         patientId: 888,
         patientName: "Test Patient",
       };
@@ -110,7 +110,7 @@ describe("ViewCompletedConsultationModal", () => {
     it("should have access to closeModal function", () => {
       mockUseViewCompletedConsultationModal.mockReturnValue({
         isOpen: true,
-        attendanceId: 123,
+        appointmentId: 123,
         patientId: 456,
         patientName: "John Smith",
       });

@@ -6,7 +6,7 @@ import {
   type ProcessEndOfDayParams,
   type ProcessEndOfDayResponse,
 } from '@/api/day-finalization';
-import { invalidateAttendanceTreatmentCaches } from '@/api/query/invalidation/invalidateAttendanceTreatmentCaches';
+import { invalidateAppointmentTreatmentCaches } from '@/api/query/invalidation/invalidateAppointmentTreatmentCaches';
 
 import { dayFinalizationKeys } from '@/api/query/keys/dayFinalizationKeys';
 
@@ -69,7 +69,7 @@ export function useFetchDayFinalizationStatus() {
  * await processEndOfDayMutation.mutateAsync({
  *   date: '2026-01-15',
  *   absenceJustifications: [
- *     { attendanceId: 1, justified: false, notes: '' },
+ *     { appointmentId: 1, justified: false, notes: '' },
  *   ],
  * });
  */
@@ -88,9 +88,9 @@ export function useProcessEndOfDay() {
       queryClient.invalidateQueries({
         queryKey: dayFinalizationKeys.byDate(variables.date),
       });
-      queryClient.invalidateQueries({ queryKey: ['attendances'] });
+      queryClient.invalidateQueries({ queryKey: ['appointments'] });
       queryClient.invalidateQueries({ queryKey: dayFinalizationKeys.all });
-      invalidateAttendanceTreatmentCaches(queryClient);
+      invalidateAppointmentTreatmentCaches(queryClient);
     },
     onError: (error) => {
       console.error('Error processing endOfDay:', error);

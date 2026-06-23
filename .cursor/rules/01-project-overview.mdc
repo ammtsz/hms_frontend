@@ -4,7 +4,7 @@ alwaysApply: true
 
 # Healthcare Management System - Project Overview
 
-This is a volunteer project for managing attendances and treatments in a assessment center in Brazil. The system is built with modern web technologies and follows specific architectural patterns.
+This is a volunteer project for managing appointments and treatments in a assessment center in Brazil. The system is built with modern web technologies and follows specific architectural patterns.
 
 ## Critical Documentation
 

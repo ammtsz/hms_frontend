@@ -62,7 +62,7 @@ export const ALL_TYPES_SLOTS_UNAVAILABLE_MESSAGE =
 
 /**
  * Returns the date slot error message when the selected date has no slots for the
- * selected attendance types (assessment, physiotherapy, tens). Returns null when valid.
+ * selected appointment types (assessment, physiotherapy, tens). Returns null when valid.
  * Use for pre-submit validation feedback.
  */
 export function getDateSlotError(

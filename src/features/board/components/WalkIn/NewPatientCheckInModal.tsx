@@ -11,7 +11,7 @@ const NewPatientCheckInModal: React.FC = () => {
   const newPatientCheckIn = useNewPatientCheckInModal();
   const closeModal = useCloseModal();
 
-  const { patient, attendanceId, isOpen, onComplete } = newPatientCheckIn;
+  const { patient, appointmentId, isOpen, onComplete } = newPatientCheckIn;
 
   const patientForCheckIn: Patient = {
     ...(patient as PatientBasic),
@@ -19,7 +19,7 @@ const NewPatientCheckInModal: React.FC = () => {
     mainConcern: "", // Default value since PatientBasic doesn't have mainConcern
     startDate: getTodayClinic(), // Default value since PatientBasic doesn't have startDate
     dischargeDate: null, // Default value since PatientBasic doesn't have dischargeDate
-    nextAttendanceDates: [], // Default empty array
+    nextAppointmentDates: [], // Default empty array
     currentRecommendations: {
       // Default recommendations
       date: "",
@@ -30,7 +30,7 @@ const NewPatientCheckInModal: React.FC = () => {
       tens: false,
       returnWeeks: 0,
     },
-    previousAttendances: [], // Default empty array
+    previousAppointments: [], // Default empty array
     missingAppointmentsStreak: 0,
   };
 
@@ -58,7 +58,7 @@ const NewPatientCheckInModal: React.FC = () => {
     >
       <NewPatientCheckInForm
         patient={patientForCheckIn}
-        attendanceId={attendanceId}
+        appointmentId={appointmentId}
         onSuccess={handleSuccess}
         onCancel={handleClose}
       />

@@ -6,17 +6,17 @@ import type { PostTreatmentRow } from "./types";
 interface TreatmentTypeSectionProps {
   treatmentType: "physiotherapy" | "tens";
   rows: PostTreatmentRow[];
-  completedAttendanceIds: Set<number>;
+  completedAppointmentIds: Set<number>;
   cancellationReasons: Map<number, string>;
   isSubmitting: boolean;
-  onToggle: (attendanceId: number) => void;
-  onCancellationReasonChange: (attendanceId: number, value: string) => void;
+  onToggle: (appointmentId: number) => void;
+  onCancellationReasonChange: (appointmentId: number, value: string) => void;
 }
 
 export const TreatmentTypeSection: React.FC<TreatmentTypeSectionProps> = ({
   treatmentType,
   rows,
-  completedAttendanceIds,
+  completedAppointmentIds,
   cancellationReasons,
   isSubmitting,
   onToggle,
@@ -38,10 +38,10 @@ export const TreatmentTypeSection: React.FC<TreatmentTypeSectionProps> = ({
     <div className="divide-y divide-gray-100">
       {rows.map((row) => (
         <TreatmentRow
-          key={row.attendanceId}
+          key={row.appointmentId}
           row={row}
-          isChecked={completedAttendanceIds.has(row.attendanceId)}
-          cancellationReason={cancellationReasons.get(row.attendanceId) ?? ""}
+          isChecked={completedAppointmentIds.has(row.appointmentId)}
+          cancellationReason={cancellationReasons.get(row.appointmentId) ?? ""}
           isSubmitting={isSubmitting}
           onToggle={onToggle}
           onCancellationReasonChange={onCancellationReasonChange}

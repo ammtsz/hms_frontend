@@ -36,7 +36,7 @@ describe('useTreatmentsByPatient', () => {
   const mockTreatmentPlan = {
     id: 1,
     consultationId: 1,
-    attendanceId: 1,
+    appointmentId: 1,
     patientId: 1,
     treatmentType: 'physiotherapy' as const,
     bodyLocation: 'Head',
@@ -211,7 +211,7 @@ describe('useTreatmentsByPatient', () => {
 });
 
 describe('useInvalidateTreatments', () => {
-  it('invalidates patient sessions, refetches attendance sessions, and invalidates indicators', () => {
+  it('invalidates patient sessions, refetches appointment sessions, and invalidates indicators', () => {
     const queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
@@ -235,7 +235,7 @@ describe('useInvalidateTreatments', () => {
       queryKey: ['treatments'],
     });
     expect(refetchSpy).toHaveBeenCalledWith({
-      queryKey: ['treatmentsByAttendance'],
+      queryKey: ['treatmentsByAppointment'],
     });
   });
 });
@@ -244,7 +244,7 @@ describe('useEditTreatments', () => {
   const firstSession = {
     id: 1,
     consultationId: 10,
-    attendanceId: 20,
+    appointmentId: 20,
     patientId: 1,
     treatmentType: 'physiotherapy' as const,
     bodyLocation: 'Head',
@@ -267,7 +267,7 @@ describe('useEditTreatments', () => {
     mockCreateTreatment.mockResolvedValue({ success: true, value: { ...firstSession, id: 2 } });
   });
 
-  it('creates a new session linked to the current visit attendance', async () => {
+  it('creates a new session linked to the current visit appointment', async () => {
     const onClose = jest.fn();
     const onSuccess = jest.fn();
     const setSubmitError = jest.fn();
@@ -277,7 +277,7 @@ describe('useEditTreatments', () => {
         treatmentType: 'physiotherapy',
         firstSession,
         patientId: 1,
-        currentAttendanceId: 99,
+        currentAppointmentId: 99,
         onSuccess,
         onClose,
         setSubmitError,
@@ -302,12 +302,12 @@ describe('useEditTreatments', () => {
     expect(mockCreateTreatment).toHaveBeenCalledWith(
       expect.objectContaining({
         consultationId: 10,
-        attendanceId: 20,
+        appointmentId: 20,
         patientId: 1,
         treatmentType: 'physiotherapy',
         bodyLocation: 'Neck',
-        reuseAttendanceForFirstSession: true,
-        firstSessionAttendanceId: 99,
+        reuseAppointmentForFirstSession: true,
+        firstSessionAppointmentId: 99,
       }),
     );
     expect(onSuccess).toHaveBeenCalled();

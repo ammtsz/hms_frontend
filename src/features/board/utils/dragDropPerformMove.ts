@@ -1,91 +1,91 @@
 import type {
-  AttendanceByDate,
-  AttendanceProgression,
-  AttendanceStatusDetail,
-  AttendanceType,
+  AppointmentByDate,
+  AppointmentProgression,
+  AppointmentStatusDetail,
+  AppointmentType,
 } from '@/types/types';
 import type { IDraggedItem } from '../types';
 import { resolveTreatmentTypesToMove } from './dragDropRules';
 import {
   findPatientInBoard,
   updatePatientTimestamps,
-} from './dragDropAttendanceHelpers';
-import type { UpdateAttendanceStatusFn } from '../hooks/useDragDropStatusUpdater';
+} from './dragDropAppointmentHelpers';
+import type { UpdateAppointmentStatusFn } from '../hooks/useDragDropStatusUpdater';
 
-export interface PerformAttendanceMoveParams {
+export interface PerformAppointmentMoveParams {
   dragged: IDraggedItem;
-  toType: AttendanceType;
-  toStatus: AttendanceProgression;
-  attendancesByDate: AttendanceByDate;
-  setAttendancesByDate: (data: AttendanceByDate | null) => void;
-  updateAttendanceStatus: UpdateAttendanceStatusFn;
+  toType: AppointmentType;
+  toStatus: AppointmentProgression;
+  appointmentsByDate: AppointmentByDate;
+  setAppointmentsByDate: (data: AppointmentByDate | null) => void;
+  updateAppointmentStatus: UpdateAppointmentStatusFn;
 }
 
-export async function performAttendanceMove({
+export async function performAppointmentMove({
   dragged,
   toType,
   toStatus,
-  attendancesByDate,
-  setAttendancesByDate,
-  updateAttendanceStatus,
-}: PerformAttendanceMoveParams): Promise<void> {
+  appointmentsByDate,
+  setAppointmentsByDate,
+  updateAppointmentStatus,
+}: PerformAppointmentMoveParams): Promise<void> {
   const treatmentTypesToMove = resolveTreatmentTypesToMove(dragged, toType);
 
-  let newAttendancesByDate = { ...attendancesByDate };
+  let newAppointmentsByDate = { ...appointmentsByDate };
 
   for (const treatmentType of treatmentTypesToMove) {
     const patient = findPatientInBoard(
-      attendancesByDate,
-      treatmentType as AttendanceType,
+      appointmentsByDate,
+      treatmentType as AppointmentType,
       dragged.status,
       dragged.patientId,
     );
     if (!patient) continue;
 
-    const attendanceIds =
-      patient.treatmentAttendanceIds && patient.treatmentAttendanceIds.length > 0
-        ? patient.treatmentAttendanceIds
-        : patient.attendanceId
-          ? [patient.attendanceId]
+    const appointmentIds =
+      patient.treatmentAppointmentIds && patient.treatmentAppointmentIds.length > 0
+        ? patient.treatmentAppointmentIds
+        : patient.appointmentId
+          ? [patient.appointmentId]
           : [];
 
-    if (attendanceIds.length > 0) {
-      for (const attendanceId of attendanceIds) {
-        const result = await updateAttendanceStatus(attendanceId, toStatus);
+    if (appointmentIds.length > 0) {
+      for (const appointmentId of appointmentIds) {
+        const result = await updateAppointmentStatus(appointmentId, toStatus);
         if (!result.success) {
           console.warn(
-            `Backend sync failed for ${treatmentType} attendanceId ${attendanceId}, continuing with local update`,
+            `Backend sync failed for ${treatmentType} appointmentId ${appointmentId}, continuing with local update`,
           );
         }
       }
     }
 
-    const sourceType = treatmentType as AttendanceType;
-    newAttendancesByDate = {
-      ...newAttendancesByDate,
+    const sourceType = treatmentType as AppointmentType;
+    newAppointmentsByDate = {
+      ...newAppointmentsByDate,
       [sourceType]: {
-        ...newAttendancesByDate[sourceType],
+        ...newAppointmentsByDate[sourceType],
         [dragged.status]: (
-          newAttendancesByDate[sourceType][dragged.status] as AttendanceStatusDetail[]
-        ).filter((p: AttendanceStatusDetail) => p.patientId !== dragged.patientId),
+          newAppointmentsByDate[sourceType][dragged.status] as AppointmentStatusDetail[]
+        ).filter((p: AppointmentStatusDetail) => p.patientId !== dragged.patientId),
       },
     };
 
     const destinationType = dragged.isCombinedTreatment
-      ? (treatmentType as AttendanceType)
+      ? (treatmentType as AppointmentType)
       : toType;
 
-    newAttendancesByDate = {
-      ...newAttendancesByDate,
+    newAppointmentsByDate = {
+      ...newAppointmentsByDate,
       [destinationType]: {
-        ...newAttendancesByDate[destinationType],
+        ...newAppointmentsByDate[destinationType],
         [toStatus]: [
-          ...(newAttendancesByDate[destinationType][toStatus] as AttendanceStatusDetail[]),
+          ...(newAppointmentsByDate[destinationType][toStatus] as AppointmentStatusDetail[]),
           updatePatientTimestamps(patient, toStatus),
         ],
       },
     };
   }
 
-  setAttendancesByDate(newAttendancesByDate);
+  setAppointmentsByDate(newAppointmentsByDate);
 }

@@ -2,16 +2,16 @@ import { renderHook } from "@testing-library/react";
 import { useCreatedTreatmentsSummary } from "../useCreatedTreatmentsSummary";
 import type { CreatedTreatment } from "../../components/CreatedTreatmentsConfirmation";
 import type {
-  AttendanceResponseDto,
-  AttendanceType,
-  AttendanceStatus,
+  AppointmentResponseDto,
+  AppointmentType,
+  AppointmentStatus,
 } from "@/api/types";
 
 describe("useCreatedTreatmentsSummary", () => {
   const mockPhysiotherapySession: CreatedTreatment = {
     id: 1,
     consultationId: 1,
-    attendanceId: 1,
+    appointmentId: 1,
     patientId: 1,
     treatmentType: "physiotherapy",
     bodyLocation: "Head",
@@ -30,7 +30,7 @@ describe("useCreatedTreatmentsSummary", () => {
   const mockTensSession: CreatedTreatment = {
     id: 2,
     consultationId: 2,
-    attendanceId: 1,
+    appointmentId: 1,
     patientId: 1,
     treatmentType: "tens",
     bodyLocation: "Back",
@@ -44,12 +44,12 @@ describe("useCreatedTreatmentsSummary", () => {
     updatedTime: "00:00:00",
   };
 
-  const mockAttendances: AttendanceResponseDto[] = [
+  const mockAppointments: AppointmentResponseDto[] = [
     {
       id: 101,
       patientId: 1,
-      type: "physiotherapy" as AttendanceType,
-      status: "scheduled" as AttendanceStatus,
+      type: "physiotherapy" as AppointmentType,
+      status: "scheduled" as AppointmentStatus,
       scheduledDate: "2026-01-21T00:00:00.000Z",
       scheduledTime: "14:00",
       createdAt: "2026-01-15T00:00:00.000Z",
@@ -58,8 +58,8 @@ describe("useCreatedTreatmentsSummary", () => {
     {
       id: 102,
       patientId: 1,
-      type: "physiotherapy" as AttendanceType,
-      status: "scheduled" as AttendanceStatus,
+      type: "physiotherapy" as AppointmentType,
+      status: "scheduled" as AppointmentStatus,
       scheduledDate: "2026-01-28T00:00:00.000Z",
       scheduledTime: "14:00",
       createdAt: "2026-01-15T00:00:00.000Z",
@@ -68,8 +68,8 @@ describe("useCreatedTreatmentsSummary", () => {
     {
       id: 103,
       patientId: 1,
-      type: "assessment" as AttendanceType,
-      status: "scheduled" as AttendanceStatus,
+      type: "assessment" as AppointmentType,
+      status: "scheduled" as AppointmentStatus,
       scheduledDate: "2026-02-19T00:00:00.000Z",
       scheduledTime: "15:00",
       createdAt: "2026-01-15T00:00:00.000Z",
@@ -81,7 +81,7 @@ describe("useCreatedTreatmentsSummary", () => {
     it("should group sessions by treatment type", () => {
       const sessions = [mockPhysiotherapySession, mockTensSession];
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, mockAttendances),
+        useCreatedTreatmentsSummary(sessions, mockAppointments),
       );
 
       expect(result.current.physiotherapySessions).toHaveLength(1);
@@ -94,7 +94,7 @@ describe("useCreatedTreatmentsSummary", () => {
 
     it("should handle empty sessions array", () => {
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary([], mockAttendances),
+        useCreatedTreatmentsSummary([], mockAppointments),
       );
 
       expect(result.current.physiotherapySessions).toHaveLength(0);
@@ -104,7 +104,7 @@ describe("useCreatedTreatmentsSummary", () => {
     it("should handle only physiotherapy sessions", () => {
       const sessions = [mockPhysiotherapySession];
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, mockAttendances),
+        useCreatedTreatmentsSummary(sessions, mockAppointments),
       );
 
       expect(result.current.physiotherapySessions).toHaveLength(1);
@@ -114,7 +114,7 @@ describe("useCreatedTreatmentsSummary", () => {
     it("should handle only tens sessions", () => {
       const sessions = [mockTensSession];
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, mockAttendances),
+        useCreatedTreatmentsSummary(sessions, mockAppointments),
       );
 
       expect(result.current.physiotherapySessions).toHaveLength(0);
@@ -126,7 +126,7 @@ describe("useCreatedTreatmentsSummary", () => {
     it("should calculate total appointments correctly", () => {
       const sessions = [mockPhysiotherapySession, mockTensSession];
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, mockAttendances),
+        useCreatedTreatmentsSummary(sessions, mockAppointments),
       );
 
       // 3 physiotherapy sessions + 2 tens sessions = 5 total
@@ -135,7 +135,7 @@ describe("useCreatedTreatmentsSummary", () => {
 
     it("should return 0 for empty sessions", () => {
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary([], mockAttendances),
+        useCreatedTreatmentsSummary([], mockAppointments),
       );
 
       expect(result.current.totalAppointments).toBe(0);
@@ -146,7 +146,7 @@ describe("useCreatedTreatmentsSummary", () => {
     it("should find next assessment consultation", () => {
       const sessions = [mockPhysiotherapySession];
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, mockAttendances),
+        useCreatedTreatmentsSummary(sessions, mockAppointments),
       );
 
       expect(result.current.nextAssessmentConsultation).not.toBeNull();
@@ -156,7 +156,7 @@ describe("useCreatedTreatmentsSummary", () => {
       expect(result.current.nextAssessmentConsultation?.id).toBe(103);
     });
 
-    it("should return null when no attendances provided", () => {
+    it("should return null when no appointments provided", () => {
       const sessions = [mockPhysiotherapySession];
       const { result } = renderHook(() =>
         useCreatedTreatmentsSummary(sessions, undefined),
@@ -167,11 +167,11 @@ describe("useCreatedTreatmentsSummary", () => {
 
     it("should return null when no assessment consultations exist", () => {
       const sessions = [mockPhysiotherapySession];
-      const attendances = mockAttendances.filter(
+      const appointments = mockAppointments.filter(
         (a) => a.type !== "assessment",
       );
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, attendances),
+        useCreatedTreatmentsSummary(sessions, appointments),
       );
 
       expect(result.current.nextAssessmentConsultation).toBeNull();
@@ -179,13 +179,13 @@ describe("useCreatedTreatmentsSummary", () => {
 
     it("should only return scheduled assessment consultations", () => {
       const sessions = [mockPhysiotherapySession];
-      const attendancesWithCompleted: AttendanceResponseDto[] = [
-        ...mockAttendances,
+      const appointmentsWithCompleted: AppointmentResponseDto[] = [
+        ...mockAppointments,
         {
           id: 104,
           patientId: 1,
-          type: "assessment" as AttendanceType,
-          status: "completed" as AttendanceStatus,
+          type: "assessment" as AppointmentType,
+          status: "completed" as AppointmentStatus,
           scheduledDate: "2026-01-10T00:00:00.000Z",
           scheduledTime: "10:00",
           createdAt: "2026-01-15T00:00:00.000Z",
@@ -194,7 +194,7 @@ describe("useCreatedTreatmentsSummary", () => {
       ];
 
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, attendancesWithCompleted),
+        useCreatedTreatmentsSummary(sessions, appointmentsWithCompleted),
       );
 
       expect(result.current.nextAssessmentConsultation?.status).toBe(
@@ -204,14 +204,14 @@ describe("useCreatedTreatmentsSummary", () => {
     });
   });
 
-  describe("getScheduledDatesFromAttendances", () => {
-    it("should return scheduled dates from attendances", () => {
+  describe("getScheduledDatesFromAppointments", () => {
+    it("should return scheduled dates from appointments", () => {
       const sessions = [mockPhysiotherapySession];
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, mockAttendances),
+        useCreatedTreatmentsSummary(sessions, mockAppointments),
       );
 
-      const scheduledDates = result.current.getScheduledDatesFromAttendances(
+      const scheduledDates = result.current.getScheduledDatesFromAppointments(
         mockPhysiotherapySession,
       );
 
@@ -220,7 +220,7 @@ describe("useCreatedTreatmentsSummary", () => {
       expect(scheduledDates[0].time).toBe("14:00");
     });
 
-    it("should prefer session rows over attendances when sessions are present", () => {
+    it("should prefer session rows over appointments when sessions are present", () => {
       const sessions = [
         {
           ...mockPhysiotherapySession,
@@ -264,11 +264,11 @@ describe("useCreatedTreatmentsSummary", () => {
       const { result } = renderHook(() =>
         useCreatedTreatmentsSummary(
           sessions as CreatedTreatment[],
-          mockAttendances,
+          mockAppointments,
         ),
       );
 
-      const scheduledDates = result.current.getScheduledDatesFromAttendances(
+      const scheduledDates = result.current.getScheduledDatesFromAppointments(
         sessions[0] as CreatedTreatment,
       );
 
@@ -279,13 +279,13 @@ describe("useCreatedTreatmentsSummary", () => {
       ]);
     });
 
-    it("should fallback to calculated dates when no attendances", () => {
+    it("should fallback to calculated dates when no appointments", () => {
       const sessions = [mockPhysiotherapySession];
       const { result } = renderHook(() =>
         useCreatedTreatmentsSummary(sessions, undefined),
       );
 
-      const scheduledDates = result.current.getScheduledDatesFromAttendances(
+      const scheduledDates = result.current.getScheduledDatesFromAppointments(
         mockPhysiotherapySession,
       );
 
@@ -302,23 +302,23 @@ describe("useCreatedTreatmentsSummary", () => {
       };
       const sessions = [sessionWith2Planned];
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, mockAttendances),
+        useCreatedTreatmentsSummary(sessions, mockAppointments),
       );
 
       const scheduledDates =
-        result.current.getScheduledDatesFromAttendances(sessionWith2Planned);
+        result.current.getScheduledDatesFromAppointments(sessionWith2Planned);
 
       expect(scheduledDates).toHaveLength(2);
     });
 
-    it("should match attendances by treatment type", () => {
+    it("should match appointments by treatment type", () => {
       const sessions = [mockTensSession];
-      const tensAttendances: AttendanceResponseDto[] = [
+      const tensAppointments: AppointmentResponseDto[] = [
         {
           id: 201,
           patientId: 1,
-          type: "tens" as AttendanceType,
-          status: "scheduled" as AttendanceStatus,
+          type: "tens" as AppointmentType,
+          status: "scheduled" as AppointmentStatus,
           scheduledDate: "2026-01-21T00:00:00.000Z",
           scheduledTime: "15:00",
           createdAt: "2026-01-15T00:00:00.000Z",
@@ -327,22 +327,22 @@ describe("useCreatedTreatmentsSummary", () => {
       ];
 
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, tensAttendances),
+        useCreatedTreatmentsSummary(sessions, tensAppointments),
       );
 
       const scheduledDates =
-        result.current.getScheduledDatesFromAttendances(mockTensSession);
+        result.current.getScheduledDatesFromAppointments(mockTensSession);
 
       expect(scheduledDates).toHaveLength(1);
       expect(scheduledDates[0].date).toBe("2026-01-21");
     });
 
-    it("should distribute attendances correctly among multiple sessions of same type", () => {
+    it("should distribute appointments correctly among multiple sessions of same type", () => {
       // Create two physiotherapy sessions with different body locations
       const physiotherapySession1: CreatedTreatment = {
         id: 1,
         consultationId: 1,
-        attendanceId: 1,
+        appointmentId: 1,
         patientId: 1,
         treatmentType: "physiotherapy",
         bodyLocation: "eyes",
@@ -361,7 +361,7 @@ describe("useCreatedTreatmentsSummary", () => {
       const physiotherapySession2: CreatedTreatment = {
         id: 2,
         consultationId: 1,
-        attendanceId: 1,
+        appointmentId: 1,
         patientId: 1,
         treatmentType: "physiotherapy",
         bodyLocation: "Head",
@@ -377,13 +377,13 @@ describe("useCreatedTreatmentsSummary", () => {
         updatedTime: "00:00:00",
       };
 
-      // Create 5 physiotherapy attendances (2 for session1, 3 for session2)
-      const multipleSessionAttendances: AttendanceResponseDto[] = [
+      // Create 5 physiotherapy appointments (2 for session1, 3 for session2)
+      const multipleSessionAppointments: AppointmentResponseDto[] = [
         {
           id: 10,
           patientId: 1,
-          type: "physiotherapy" as AttendanceType,
-          status: "scheduled" as AttendanceStatus,
+          type: "physiotherapy" as AppointmentType,
+          status: "scheduled" as AppointmentStatus,
           scheduledDate: "2026-01-26T00:00:00.000Z",
           scheduledTime: "19:30",
           createdAt: "2026-01-15T00:00:00.000Z",
@@ -392,8 +392,8 @@ describe("useCreatedTreatmentsSummary", () => {
         {
           id: 11,
           patientId: 1,
-          type: "physiotherapy" as AttendanceType,
-          status: "scheduled" as AttendanceStatus,
+          type: "physiotherapy" as AppointmentType,
+          status: "scheduled" as AppointmentStatus,
           scheduledDate: "2026-02-02T00:00:00.000Z",
           scheduledTime: "19:30",
           createdAt: "2026-01-15T00:00:00.000Z",
@@ -402,8 +402,8 @@ describe("useCreatedTreatmentsSummary", () => {
         {
           id: 13,
           patientId: 1,
-          type: "physiotherapy" as AttendanceType,
-          status: "scheduled" as AttendanceStatus,
+          type: "physiotherapy" as AppointmentType,
+          status: "scheduled" as AppointmentStatus,
           scheduledDate: "2026-01-26T00:00:00.000Z",
           scheduledTime: "19:30",
           createdAt: "2026-01-15T00:00:00.000Z",
@@ -412,8 +412,8 @@ describe("useCreatedTreatmentsSummary", () => {
         {
           id: 14,
           patientId: 1,
-          type: "physiotherapy" as AttendanceType,
-          status: "scheduled" as AttendanceStatus,
+          type: "physiotherapy" as AppointmentType,
+          status: "scheduled" as AppointmentStatus,
           scheduledDate: "2026-02-02T00:00:00.000Z",
           scheduledTime: "19:30",
           createdAt: "2026-01-15T00:00:00.000Z",
@@ -422,8 +422,8 @@ describe("useCreatedTreatmentsSummary", () => {
         {
           id: 12,
           patientId: 1,
-          type: "physiotherapy" as AttendanceType,
-          status: "scheduled" as AttendanceStatus,
+          type: "physiotherapy" as AppointmentType,
+          status: "scheduled" as AppointmentStatus,
           scheduledDate: "2026-02-09T00:00:00.000Z",
           scheduledTime: "19:30",
           createdAt: "2026-01-15T00:00:00.000Z",
@@ -433,24 +433,24 @@ describe("useCreatedTreatmentsSummary", () => {
 
       const sessions = [physiotherapySession1, physiotherapySession2];
       const { result } = renderHook(() =>
-        useCreatedTreatmentsSummary(sessions, multipleSessionAttendances),
+        useCreatedTreatmentsSummary(sessions, multipleSessionAppointments),
       );
 
       // Get scheduled dates for first session (2 planned)
-      const session1Dates = result.current.getScheduledDatesFromAttendances(
+      const session1Dates = result.current.getScheduledDatesFromAppointments(
         physiotherapySession1,
       );
       expect(session1Dates).toHaveLength(2);
-      // Should get first 2 attendances by ID (10, 11)
+      // Should get first 2 appointments by ID (10, 11)
       expect(session1Dates[0].date).toBe("2026-01-26");
       expect(session1Dates[1].date).toBe("2026-02-02");
 
       // Get scheduled dates for second session (3 planned)
-      const session2Dates = result.current.getScheduledDatesFromAttendances(
+      const session2Dates = result.current.getScheduledDatesFromAppointments(
         physiotherapySession2,
       );
       expect(session2Dates).toHaveLength(3);
-      // Should get next 3 attendances by ID (12, 13, 14)
+      // Should get next 3 appointments by ID (12, 13, 14)
       expect(session2Dates[0].date).toBe("2026-02-09");
       expect(session2Dates[1].date).toBe("2026-01-26");
       expect(session2Dates[2].date).toBe("2026-02-02");
@@ -465,17 +465,17 @@ describe("useCreatedTreatmentsSummary", () => {
     it("should memoize grouped sessions", () => {
       const sessions = [mockPhysiotherapySession, mockTensSession];
       const { result, rerender } = renderHook(
-        ({ sessions, attendances }) =>
-          useCreatedTreatmentsSummary(sessions, attendances),
+        ({ sessions, appointments }) =>
+          useCreatedTreatmentsSummary(sessions, appointments),
         {
-          initialProps: { sessions, attendances: mockAttendances },
+          initialProps: { sessions, appointments: mockAppointments },
         },
       );
 
       const firstPhysiotherapy = result.current.physiotherapySessions;
       const firstTens = result.current.tensSessions;
 
-      rerender({ sessions, attendances: mockAttendances });
+      rerender({ sessions, appointments: mockAppointments });
 
       expect(result.current.physiotherapySessions).toBe(firstPhysiotherapy);
       expect(result.current.tensSessions).toBe(firstTens);
@@ -484,17 +484,17 @@ describe("useCreatedTreatmentsSummary", () => {
     it("should recalculate when sessions change", () => {
       const sessions = [mockPhysiotherapySession];
       const { result, rerender } = renderHook(
-        ({ sessions, attendances }) =>
-          useCreatedTreatmentsSummary(sessions, attendances),
+        ({ sessions, appointments }) =>
+          useCreatedTreatmentsSummary(sessions, appointments),
         {
-          initialProps: { sessions, attendances: mockAttendances },
+          initialProps: { sessions, appointments: mockAppointments },
         },
       );
 
       expect(result.current.totalAppointments).toBe(3);
 
       const newSessions = [...sessions, mockTensSession];
-      rerender({ sessions: newSessions, attendances: mockAttendances });
+      rerender({ sessions: newSessions, appointments: mockAppointments });
 
       expect(result.current.totalAppointments).toBe(5);
     });

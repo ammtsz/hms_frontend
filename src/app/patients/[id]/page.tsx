@@ -7,15 +7,15 @@ import { getTodayClinic } from "@/utils/timezoneDate";
 import {
   LazyHeaderCard,
   LazyCurrentTreatmentCard,
-  LazyAttendanceHistoryCard,
-  LazyScheduledAttendancesCard,
+  LazyAppointmentHistoryCard,
+  LazyScheduledAppointmentsCard,
   LazyPatientNotesCard,
   LazySessionBreakdownCard,
   LazyComponentWrapper,
 } from "@/features/patients/detail/LazyComponents";
 import { PatientDetailSkeleton } from "@/features/patients/detail/PatientDetailSkeleton";
 import { PageError } from "@/components/common/PageError";
-import { usePatientWithAttendances } from "@/api/query/hooks/usePatientQueries";
+import { usePatientWithAppointments } from "@/api/query/hooks/usePatientQueries";
 import {
   PatientPageSectionNav,
   PatientPageScrollTargetProvider,
@@ -35,7 +35,7 @@ export default function PatientDetailPage() {
     refetch,
     isRefetching,
     failureCount,
-  } = usePatientWithAttendances(patientId);
+  } = usePatientWithAppointments(patientId);
 
   // Loading state with skeleton
   if (isLoading || isRefetching) {
@@ -197,27 +197,27 @@ export default function PatientDetailPage() {
             </section>
 
             <section
-              id={PATIENT_PAGE_SECTION_IDS.attendanceHistory}
+              id={PATIENT_PAGE_SECTION_IDS.appointmentHistory}
               className={PATIENT_PAGE_SECTION_SCROLL_MARGIN_CLASS}
-              aria-label="Attendance history"
+              aria-label="Appointment history"
             >
               <LazyComponentWrapper>
-                <LazyAttendanceHistoryCard
+                <LazyAppointmentHistoryCard
                   patient={patient}
-                  sectionId={PATIENT_PAGE_SECTION_IDS.attendanceHistory}
+                  sectionId={PATIENT_PAGE_SECTION_IDS.appointmentHistory}
                 />
               </LazyComponentWrapper>
             </section>
 
             <section
-              id={PATIENT_PAGE_SECTION_IDS.scheduledAttendances}
+              id={PATIENT_PAGE_SECTION_IDS.scheduledAppointments}
               className={PATIENT_PAGE_SECTION_SCROLL_MARGIN_CLASS}
-              aria-label="Scheduled attendances"
+              aria-label="Scheduled appointments"
             >
               <LazyComponentWrapper>
-                <LazyScheduledAttendancesCard
+                <LazyScheduledAppointmentsCard
                   patient={patient}
-                  sectionId={PATIENT_PAGE_SECTION_IDS.scheduledAttendances}
+                  sectionId={PATIENT_PAGE_SECTION_IDS.scheduledAppointments}
                 />
               </LazyComponentWrapper>
             </section>

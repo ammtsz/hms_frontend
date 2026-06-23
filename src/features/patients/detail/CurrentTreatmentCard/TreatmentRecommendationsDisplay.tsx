@@ -1,6 +1,6 @@
-import { CONSULTATION_NOTES_HEADING } from "@/utils/attendanceStatusLabels";
+import { CONSULTATION_NOTES_HEADING } from "@/utils/appointmentStatusLabels";
 import { formatDisplayDate } from "@/utils/dateUtils";
-import type { ActiveTreatmentRow } from "@/features/patients/detail/AttendanceDetails/helpers/assessmentHelpers";
+import type { ActiveTreatmentRow } from "@/features/patients/detail/AppointmentDetails/helpers/assessmentHelpers";
 
 interface Recommendations {
   date?: string; // YYYY-MM-DD format

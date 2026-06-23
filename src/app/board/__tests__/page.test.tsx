@@ -4,14 +4,14 @@
 
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import AttendancePage from "../page";
+import AppointmentPage from "../page";
 
 // Mock the PatientWalkInPanel component
 jest.mock("@/features/board/components/WalkIn", () => ({
   PatientWalkInPanel: ({
-    onRegisterNewAttendance,
+    onRegisterNewAppointment,
   }: {
-    onRegisterNewAttendance: (
+    onRegisterNewAppointment: (
       name: string,
       types: string[],
       isNew: boolean,
@@ -20,12 +20,12 @@ jest.mock("@/features/board/components/WalkIn", () => ({
   }) => (
     <div data-testid="patient-walk-in-panel">
       <button
-        data-testid="register-attendance-btn"
+        data-testid="register-appointment-btn"
         onClick={() =>
-          onRegisterNewAttendance("Test Patient", ["assessment"], true, "2")
+          onRegisterNewAppointment("Test Patient", ["assessment"], true, "2")
         }
       >
-        Register New Attendance
+        Register New Appointment
       </button>
     </div>
   ),
@@ -53,9 +53,9 @@ jest.mock("@/components/common/LoadingFallback", () => {
 });
 
 // Lazy import resolves to this module path
-jest.mock("@/features/board/AttendanceBoard", () => ({
+jest.mock("@/features/board/AppointmentsBoard", () => ({
   __esModule: true,
-  default: function MockAttendanceBoard({
+  default: function MockAppointmentsBoard({
     unscheduledCheckIn,
     onCheckInProcessed,
   }: {
@@ -68,8 +68,8 @@ jest.mock("@/features/board/AttendanceBoard", () => ({
     onCheckInProcessed: () => void;
   }) {
     return (
-      <div data-testid="attendance-board">
-        <div>Attendance Board Component</div>
+      <div data-testid="appointment-board">
+        <div>Appointment Board Component</div>
         {unscheduledCheckIn && (
           <div data-testid="unscheduled-check-in">
             Patient: {unscheduledCheckIn.name}
@@ -83,34 +83,34 @@ jest.mock("@/features/board/AttendanceBoard", () => ({
   },
 }));
 
-describe("AttendancePage", () => {
+describe("AppointmentPage", () => {
   it("should render all main components", () => {
-    render(<AttendancePage />);
+    render(<AppointmentPage />);
 
     expect(screen.getByTestId("patient-walk-in-panel")).toBeInTheDocument();
-    expect(screen.getByText("Attendance Board")).toBeInTheDocument();
+    expect(screen.getByText("Appointments Board")).toBeInTheDocument();
 
     // Should render either loading fallback or the actual component
     const hasLoadingFallback = screen.queryByTestId("loading-fallback");
-    const hasAttendanceBoard = screen.queryByTestId("attendance-board");
-    expect(hasLoadingFallback || hasAttendanceBoard).toBeTruthy();
+    const hasAppointmentsBoard = screen.queryByTestId("appointment-board");
+    expect(hasLoadingFallback || hasAppointmentsBoard).toBeTruthy();
   });
 
   it("should display the correct heading and description", () => {
-    render(<AttendancePage />);
+    render(<AppointmentPage />);
 
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
-      "Attendance Board",
+      "Appointments Board",
     );
 
-    const description = screen.getByText(/Manage attendance flow/);
+    const description = screen.getByText(/Manage appointment flow/);
     expect(description).toBeInTheDocument();
     expect(description).toHaveTextContent(/dragging and dropping/);
     expect(description).toHaveTextContent(/settings button/);
   });
 
   it("should have proper layout structure", () => {
-    const { container } = render(<AttendancePage />);
+    const { container } = render(<AppointmentPage />);
 
     const mainContainer = container.firstChild as HTMLElement;
     expect(mainContainer).toHaveClass(
@@ -129,15 +129,15 @@ describe("AttendancePage", () => {
   });
 
   it("should handle unscheduled check-in state", () => {
-    render(<AttendancePage />);
+    render(<AppointmentPage />);
 
     // Initially no unscheduled check-in
     expect(
       screen.queryByTestId("unscheduled-check-in"),
     ).not.toBeInTheDocument();
 
-    // Trigger new attendance registration
-    const registerButton = screen.getByTestId("register-attendance-btn");
+    // Trigger new appointment registration
+    const registerButton = screen.getByTestId("register-appointment-btn");
     fireEvent.click(registerButton);
 
     // Should show unscheduled check-in
@@ -146,10 +146,10 @@ describe("AttendancePage", () => {
   });
 
   it("should clear unscheduled check-in when processed", () => {
-    render(<AttendancePage />);
+    render(<AppointmentPage />);
 
-    // Register new attendance
-    const registerButton = screen.getByTestId("register-attendance-btn");
+    // Register new appointment
+    const registerButton = screen.getByTestId("register-appointment-btn");
     fireEvent.click(registerButton);
 
     // Verify it's there
@@ -165,30 +165,30 @@ describe("AttendancePage", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("should pass correct props to AttendanceBoard", () => {
-    render(<AttendancePage />);
+  it("should pass correct props to AppointmentsBoard", () => {
+    render(<AppointmentPage />);
 
-    // Register new attendance to trigger state change
-    const registerButton = screen.getByTestId("register-attendance-btn");
+    // Register new appointment to trigger state change
+    const registerButton = screen.getByTestId("register-appointment-btn");
     fireEvent.click(registerButton);
 
-    // AttendanceBoard should receive the unscheduled check-in data
+    // AppointmentsBoard should receive the unscheduled check-in data
     expect(screen.getByTestId("unscheduled-check-in")).toBeInTheDocument();
     expect(screen.getByText("Patient: Test Patient")).toBeInTheDocument();
   });
 
-  it("should use Suspense for lazy loading AttendanceBoard", () => {
-    render(<AttendancePage />);
+  it("should use Suspense for lazy loading AppointmentsBoard", () => {
+    render(<AppointmentPage />);
 
     // Should render either loading fallback or the actual component
     const hasLoadingFallback = screen.queryByTestId("loading-fallback");
-    const hasAttendanceBoard = screen.queryByTestId("attendance-board");
+    const hasAppointmentsBoard = screen.queryByTestId("appointment-board");
 
-    expect(hasLoadingFallback || hasAttendanceBoard).toBeTruthy();
+    expect(hasLoadingFallback || hasAppointmentsBoard).toBeTruthy();
   });
 
   it("should be a client component", () => {
     // Test that it renders without server-side issues
-    expect(() => render(<AttendancePage />)).not.toThrow();
+    expect(() => render(<AppointmentPage />)).not.toThrow();
   });
 });

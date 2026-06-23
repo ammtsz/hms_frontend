@@ -86,7 +86,7 @@ with 404 to prevent the browser from reaching backend auth endpoints directly.
 // src/app/api/[...path]/allowlist.ts
 export const PROXY_ALLOWED_SEGMENTS = new Set([
   "patients",
-  "attendances",
+  "appointments",
   "consultations",
   "treatments",
   "sessions",

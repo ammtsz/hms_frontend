@@ -83,8 +83,8 @@ See [AUTHENTICATION.md](./AUTHENTICATION.md) (including Production Deployment).
 const { data: patients, isLoading } = usePatientQueries();
 
 // ✅ Client State - Zustand
-const selectedDate = useAttendanceStore((state) => state.selectedDate);
-const setSelectedDate = useAttendanceStore((state) => state.setSelectedDate);
+const selectedDate = useBoardStore((state) => state.selectedDate);
+const setSelectedDate = useBoardStore((state) => state.setSelectedDate);
 
 // ✅ Global Settings - Context
 const { clinicTimezone } = useClinicTimezone();
@@ -136,7 +136,7 @@ the project [SETUP guide](./SETUP.md).
 
 ```typescript
 // ❌ BAD: God hook doing everything
-function useAttendanceEverything() {
+function useAppointmentEverything() {
   // 500 lines of mixed concerns
 }
 
@@ -147,7 +147,7 @@ function useDragAndDrop() {
 function useModalManagement() {
   /* modal state */
 }
-function useAttendanceWorkflow() {
+function useBoardWorkflow() {
   /* business rules */
 }
 ```
@@ -158,7 +158,7 @@ function useAttendanceWorkflow() {
 - **Query Keys** - Cache identity factories in `src/api/query/keys` (import keys from here, not from hooks)
 - **Business Logic Hooks** - Feature workflow rules, owned by the feature that uses them (`features/board/hooks/useDragAndDrop.ts`)
 - **UI Hooks** - UI state and interactions near their owning feature or component group (`features/board/hooks/useModalManagement.ts`)
-- **Form Hooks** - Form handling near the form workflow (`features/patients/form/hooks/usePatientForm.ts`, `features/board/components/Scheduling/hooks/useAttendanceForm.ts`)
+- **Form Hooks** - Form handling near the form workflow (`features/patients/form/hooks/usePatientForm.ts`, `features/board/components/Scheduling/hooks/useAppointmentForm.ts`)
 - **Shared Non-Query Hooks** - Cross-feature utilities in `src/hooks` (`useDateHelpers.ts`)
 
 ### 4. API Integration Pattern
@@ -214,21 +214,21 @@ function PatientDetail({ id }: Props) {
 
 ```typescript
 // Store definition
-interface AttendanceStore {
+interface AppointmentStore {
   // State
   selectedDate: Date;
-  draggedItem: DraggedAttendance | null;
+  draggedItem: DraggedAppointment | null;
 
   // Actions
   setSelectedDate: (date: Date) => void;
-  setDraggedItem: (item: DraggedAttendance | null) => void;
+  setDraggedItem: (item: DraggedAppointment | null) => void;
 
   // Computed/Async
   checkEndOfDayStatus: () => Promise<boolean>;
 }
 
 // Store creation
-export const useAttendanceStore = create<AttendanceStore>()(
+export const useBoardStore = create<AppointmentStore>()(
   devtools((set, get) => ({
     selectedDate: new Date(),
     draggedItem: null,
@@ -243,8 +243,8 @@ export const useAttendanceStore = create<AttendanceStore>()(
 );
 
 // Selective subscriptions (performance)
-const selectedDate = useAttendanceStore((state) => state.selectedDate);
-const setDate = useAttendanceStore((state) => state.setSelectedDate);
+const selectedDate = useBoardStore((state) => state.selectedDate);
+const setDate = useBoardStore((state) => state.setSelectedDate);
 ```
 
 **Selectors Pattern:**
@@ -252,10 +252,10 @@ const setDate = useAttendanceStore((state) => state.setSelectedDate);
 ```typescript
 // Reusable selectors for consistent access
 export const useSelectedDate = () =>
-  useAttendanceStore((state) => state.selectedDate);
+  useBoardStore((state) => state.selectedDate);
 
 export const useSetSelectedDate = () =>
-  useAttendanceStore((state) => state.setSelectedDate);
+  useBoardStore((state) => state.setSelectedDate);
 ```
 
 ## 🔄 Data Flow
@@ -367,14 +367,14 @@ const formatted = formatWithTimezone(date); // Uses clinic timezone from env
 
 ```typescript
 function useDragAndDrop() {
-  const { draggedItem, setDraggedItem } = useAttendanceStore();
+  const { draggedItem, setDraggedItem } = useBoardStore();
 
-  const handleDragStart = (item: Attendance) => {
+  const handleDragStart = (item: Appointment) => {
     setDraggedItem(item);
   };
 
-  const handleDrop = async (targetStatus: AttendanceStatus) => {
-    await updateAttendanceStatus(draggedItem.id, targetStatus);
+  const handleDrop = async (targetStatus: AppointmentStatus) => {
+    await updateAppointmentStatus(draggedItem.id, targetStatus);
     setDraggedItem(null);
     // React Query automatically refetches
   };
@@ -419,13 +419,13 @@ function usePatientForm() {
 **Route-level lazy loading:**
 
 ```typescript
-const AttendanceBoard = lazy(
-  () => import("@/features/board/AttendanceBoard")
+const AppointmentsBoard = lazy(
+  () => import("@/features/board/AppointmentsBoard")
 );
 
 // In page
 <Suspense fallback={<LoadingFallback />}>
-  <AttendanceBoard />
+  <AppointmentsBoard />
 </Suspense>;
 ```
 
@@ -442,10 +442,10 @@ const AttendanceBoard = lazy(
 
 ```typescript
 // ❌ Re-renders on any store change
-const store = useAttendanceStore();
+const store = useBoardStore();
 
 // ✅ Only re-renders when selectedDate changes
-const selectedDate = useAttendanceStore((state) => state.selectedDate);
+const selectedDate = useBoardStore((state) => state.selectedDate);
 ```
 
 ### 4. Memoization
@@ -482,8 +482,8 @@ it("renders patient name", () => {
 **Integration Tests** - Multiple components working together
 
 ```typescript
-it("completes attendance workflow", async () => {
-  render(<AttendanceBoard />);
+it("completes appointment workflow", async () => {
+  render(<AppointmentsBoard />);
   // Simulate user interactions
   // Verify end state
 });
@@ -563,7 +563,7 @@ type ApiResponse<T> = {
 ### Bundle Sizes (Post-Optimization)
 
 - **Home Page:** 102kB
-- **Attendance:** 132kB (was 170kB)
+- **Appointment:** 132kB (was 170kB)
 - **Schedule:** 102kB (was 137kB)
 - **Patients:** 102kB (was 130kB)
 

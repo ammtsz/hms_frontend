@@ -2,37 +2,37 @@ import { useCallback } from "react";
 import {
   useCreateConsultation,
   useUpdateConsultation,
-  useFetchConsultationByAttendance,
+  useFetchConsultationByAppointment,
 } from "@/api/query/hooks/useConsultationQueries";
 import type {
   CreateConsultationRequest,
   UpdateConsultationRequest,
-  CancelledAttendanceItemDto,
+  CancelledAppointmentItemDto,
 } from "@/api/types";
-import type { PostConsultationFormData } from "./usePostAttendanceForm";
+import type { PostConsultationFormData } from "./usePostConsultationForm";
 import { AxiosError } from "axios";
 
 /**
- * Creates or updates a consultation for post-attendance flow.
- * On 409 (consultation already exists for attendance), fetches and PATCHes instead.
+ * Creates or updates a consultation for post-appointment flow.
+ * On 409 (consultation already exists for appointment), fetches and PATCHes instead.
  */
 export const useConsultationSubmission = () => {
   const createConsultationMutation = useCreateConsultation();
   const updateConsultationMutation = useUpdateConsultation();
-  const fetchConsultationByAttendance = useFetchConsultationByAttendance();
+  const fetchConsultationByAppointment = useFetchConsultationByAppointment();
 
   const submitConsultation = useCallback(
     async (
       data: PostConsultationFormData,
-      attendanceId: number,
+      appointmentId: number,
     ): Promise<{
       consultationId: number;
       isUpdate: boolean;
-      cancelledAttendances?: CancelledAttendanceItemDto[];
+      cancelledAppointments?: CancelledAppointmentItemDto[];
     }> => {
       try {
         const consultationRequest: CreateConsultationRequest = {
-          attendanceId: attendanceId,
+          appointmentId: appointmentId,
           mainConcern: data.mainConcern,
           patientStatus: data.patientStatus,
           food: data.food,
@@ -61,7 +61,7 @@ export const useConsultationSubmission = () => {
           return {
             consultationId: response.consultation.id,
             isUpdate: false,
-            cancelledAttendances: response.cancelledAttendances,
+            cancelledAppointments: response.cancelledAppointments,
           };
         } catch (createError) {
           const axiosErr =
@@ -74,11 +74,11 @@ export const useConsultationSubmission = () => {
           }
 
           console.log(
-            `[Retry] 409: consultation exists for attendance ${attendanceId}, updating…`,
+            `[Retry] 409: consultation exists for appointment ${appointmentId}, updating…`,
           );
 
-          const consultationFetchResult = await fetchConsultationByAttendance(
-            attendanceId,
+          const consultationFetchResult = await fetchConsultationByAppointment(
+            appointmentId,
             { staleTime: 0 },
           );
 
@@ -113,7 +113,7 @@ export const useConsultationSubmission = () => {
           return {
             consultationId: existingConsultation.id,
             isUpdate: true,
-            cancelledAttendances: updateResponse.cancelledAttendances,
+            cancelledAppointments: updateResponse.cancelledAppointments,
           };
         }
       } catch (error) {
@@ -124,7 +124,7 @@ export const useConsultationSubmission = () => {
     [
       createConsultationMutation,
       updateConsultationMutation,
-      fetchConsultationByAttendance,
+      fetchConsultationByAppointment,
     ],
   );
 

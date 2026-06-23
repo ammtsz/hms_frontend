@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import TreatmentRecommendationsSection from "./TreatmentRecommendationsSection";
-import type { PostConsultationFormData } from "../../../hooks/usePostAttendanceForm";
+import type { PostConsultationFormData } from "../../../hooks/usePostConsultationForm";
 import type { TreatmentRecommendation } from "../../../types";
 import { Checkbox, Field, Input } from "@/components/ui";
 

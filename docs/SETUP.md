@@ -150,13 +150,13 @@ npm run bundle-size            # Quick bundle size check
 hms-frontend/
 ├── src/                      # Source code
 │   ├── api/                  # HTTP clients + shared API types
-│   │   ├── <resource>/       # e.g. patients/, attendances/, treatments/
+│   │   ├── <resource>/       # e.g. patients/, appointments/, treatments/
 │   │   └── query/
 │   │       ├── hooks/        # React Query hooks
 │   │       ├── keys/         # Query key factories
 │   │       └── invalidation/ # Shared cache invalidation helpers
 │   ├── app/                  # Next.js pages (App Router)
-│   ├── features/             # Feature modules (attendance, patients, …)
+│   ├── features/             # Feature modules (appointment, patients, …)
 │   ├── components/           # Shared UI: auth/, common/, layout/, ui/
 │   ├── contexts/             # React Context providers
 │   ├── hooks/                # Cross-feature non-query hooks

@@ -354,7 +354,7 @@ const TreatmentRecommendationsSection: React.FC<
               }
               onChange={(e) => handleTreatmentNotesChange(e.target.value)}
               disabled={disabled}
-              placeholder="Notes about Physiotherapy and TENS sessions..."
+              placeholder="Physiotherapy and TENS sessions notes..."
               maxLength={500}
               rows={3}
               className="resize-none text-sm"

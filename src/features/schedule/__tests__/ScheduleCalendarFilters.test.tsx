@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ScheduleCalendarFilters from "../components/ScheduleCalendarFilters";
 import { SCHEDULE_FILTER_LABELS } from "../utils/scheduleFilterConstants";
-import { AttendanceStatus } from "@/api/types";
+import { AppointmentStatus } from "@/api/types";
 import type { ScheduleDayWindowDays } from "@/stores";
 
 jest.mock("@/utils/timezoneDate", () => ({
@@ -20,9 +20,9 @@ describe("ScheduleCalendarFilters", () => {
     scheduleDayWindowDays: 7 as ScheduleDayWindowDays,
     setScheduleDayWindowDays: jest.fn(),
     scheduleStatusFilters: [
-      AttendanceStatus.SCHEDULED,
-      AttendanceStatus.COMPLETED,
-    ] as AttendanceStatus[],
+      AppointmentStatus.SCHEDULED,
+      AppointmentStatus.COMPLETED,
+    ] as AppointmentStatus[],
     setScheduleStatusFilters: jest.fn(),
     patientFilter: "",
     setPatientFilter: jest.fn(),
@@ -42,7 +42,7 @@ describe("ScheduleCalendarFilters", () => {
     expect(
       screen.getByLabelText("Select a date to filter"),
     ).toBeInTheDocument();
-    expect(screen.getByText(SCHEDULE_FILTER_LABELS.attendanceStatus)).toBeInTheDocument();
+    expect(screen.getByText(SCHEDULE_FILTER_LABELS.appointmentStatus)).toBeInTheDocument();
     expect(screen.getByText(SCHEDULE_FILTER_LABELS.legend)).toBeInTheDocument();
   });
 

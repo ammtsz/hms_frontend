@@ -1,6 +1,6 @@
 import React from "react";
 import type { ScheduledAbsence, AbsenceJustification } from "../../types";
-import type { AttendanceType } from "@/types/types";
+import type { AppointmentType } from "@/types/types";
 import { useAbsenceJustification } from "../../hooks/useAbsenceJustification";
 import { EmptyAbsencesState } from "../EmptyAbsencesState";
 import { AbsencesSummary } from "../AbsencesSummary";
@@ -14,7 +14,7 @@ interface AbsenceJustificationStepProps {
   absenceJustifications: AbsenceJustification[];
   onJustificationChange: (
     patientId: number,
-    attendanceType: AttendanceType,
+    appointmentType: AppointmentType,
     justified: boolean,
     justification?: string,
   ) => void;

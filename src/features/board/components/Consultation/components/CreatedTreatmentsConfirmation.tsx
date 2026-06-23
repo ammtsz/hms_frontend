@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
 import type {
-  AttendanceResponseDto,
-  CancelledAttendanceItemDto,
+  AppointmentResponseDto,
+  CancelledAppointmentItemDto,
   SessionResponseDto,
 } from "@/api/types";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import { formatDisplayDate } from "@/utils/dateUtils";
-import type { AttendanceType } from "@/types/types";
+import type { AppointmentType } from "@/types/types";
 import { useCreatedTreatmentsSummary } from "../hooks/useCreatedTreatmentsSummary";
 import { SuccessHeader } from "./CreatedTreatmentsConfirmation/SuccessHeader";
 import { NextConsultationCard } from "./CreatedTreatmentsConfirmation/NextConsultationCard";
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui";
 export interface CreatedTreatment {
   id: number;
   consultationId: number;
-  attendanceId: number;
+  appointmentId: number;
   patientId: number;
   treatmentType: "physiotherapy" | "tens";
   bodyLocation: string;
@@ -48,25 +48,25 @@ interface CreatedTreatmentsConfirmationProps {
   customMessage?: string;
   /** Number of weeks until next assessment consultation return */
   returnWeeks?: number;
-  /** When true, return is scheduled after the last planned treatment attendance */
+  /** When true, return is scheduled after the last planned treatment appointment */
   returnWhenTreatmentComplete?: boolean;
-  /** Newly scheduled attendances fetched from database */
-  newlyScheduledAttendances?: AttendanceResponseDto[];
-  /** Loading state for fetching attendances */
-  fetchingAttendances?: boolean;
-  /** Error message if fetching attendances failed */
-  attendancesError?: string;
+  /** Newly scheduled appointments fetched from database */
+  newlyScheduledAppointments?: AppointmentResponseDto[];
+  /** Loading state for fetching appointments */
+  fetchingAppointments?: boolean;
+  /** Error message if fetching appointments failed */
+  appointmentsError?: string;
   /** Patient lifecycle status (consultation) to detect assessment discharge */
   patientStatus?: "N" | "T" | "D" | "C";
   /** Optional created date for the consultation */
   createdDate?: string;
-  /** Attendances cancelled when status was set to D or C (e.g. from PostAttendanceModal) */
-  cancelledAttendances?: CancelledAttendanceItemDto[];
+  /** Appointments cancelled when status was set to D or C (e.g. from PostConsultationModal) */
+  cancelledAppointments?: CancelledAppointmentItemDto[];
 }
 
 /**
  * Confirmation view after saving a consultation: lists created treatments
- * and their automatically scheduled attendances.
+ * and their automatically scheduled appointments.
  */
 const CreatedTreatmentsConfirmation: React.FC<
   CreatedTreatmentsConfirmationProps
@@ -77,27 +77,30 @@ const CreatedTreatmentsConfirmation: React.FC<
   customMessage,
   returnWeeks,
   returnWhenTreatmentComplete,
-  newlyScheduledAttendances,
-  fetchingAttendances,
-  attendancesError,
+  newlyScheduledAppointments,
+  fetchingAppointments,
+  appointmentsError,
   patientStatus,
   createdDate,
-  cancelledAttendances = [],
+  cancelledAppointments = [],
 }) => {
   const groupedCancelled = useMemo(() => {
-    if (cancelledAttendances.length === 0) return [];
+    if (cancelledAppointments.length === 0) return [];
     return groupCancelledByPatient([
-      { patientId: 0, patientName, attendances: cancelledAttendances },
+      { patientId: 0, patientName, appointments: cancelledAppointments },
     ]);
-  }, [cancelledAttendances, patientName]);
+  }, [cancelledAppointments, patientName]);
 
   // Use custom hook for data processing
   const {
     physiotherapySessions,
     tensSessions,
     nextAssessmentConsultation,
-    getScheduledDatesFromAttendances,
-  } = useCreatedTreatmentsSummary(createdTreatments, newlyScheduledAttendances);
+    getScheduledDatesFromAppointments,
+  } = useCreatedTreatmentsSummary(
+    createdTreatments,
+    newlyScheduledAppointments,
+  );
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col">
@@ -127,18 +130,18 @@ const CreatedTreatmentsConfirmation: React.FC<
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <h4 className="text-md font-medium text-red-800 mb-3">
               {patientStatus === "D"
-                ? "Attendances Cancelled due to Discharged"
-                : "Attendances Cancelled due to Consecutive no-shows"}
+                ? "Appointments Cancelled due to Discharged"
+                : "Appointments Cancelled due to Consecutive no-shows"}
             </h4>
             <ul className="space-y-3">
               {groupedCancelled.map((item) => (
                 <li key={item.patientId} className="text-sm text-red-700">
                   <div className="font-medium">• {item.patientName}</div>
-                  {item.attendances.length > 0 && (
+                  {item.appointments.length > 0 && (
                     <ul className="ml-4 mt-1 space-y-1 text-xs">
-                      {item.attendances.map((att) => (
+                      {item.appointments.map((att) => (
                         <li key={`${att.type}|${att.scheduledDate}`}>
-                          {getAttendanceTypeLabel(att.type as AttendanceType)}
+                          {getAppointmentTypeLabel(att.type as AppointmentType)}
                           {att.type !== "assessment" && att.count > 1
                             ? ` (${att.count} locations)`
                             : ""}{" "}
@@ -165,19 +168,19 @@ const CreatedTreatmentsConfirmation: React.FC<
         <CreatedTreatmentGroup
           treatments={physiotherapySessions}
           title="Physiotherapy"
-          getScheduledDates={getScheduledDatesFromAttendances}
+          getScheduledDates={getScheduledDatesFromAppointments}
         />
         <CreatedTreatmentGroup
           treatments={tensSessions}
           title="TENS"
-          getScheduledDates={getScheduledDatesFromAttendances}
+          getScheduledDates={getScheduledDatesFromAppointments}
         />
       </div>
 
       <NextConsultationCard
         nextAssessmentConsultation={nextAssessmentConsultation}
-        fetchingAttendances={fetchingAttendances}
-        attendancesError={attendancesError}
+        fetchingAppointments={fetchingAppointments}
+        appointmentsError={appointmentsError}
         createdDate={createdDate}
         returnWeeks={returnWeeks}
         returnWhenTreatmentComplete={returnWhenTreatmentComplete}
@@ -186,7 +189,7 @@ const CreatedTreatmentsConfirmation: React.FC<
       {onAcknowledge && (
         <div className="flex justify-end mt-auto pb-8">
           <Button type="button" onClick={onAcknowledge}>
-            OK
+            Close
           </Button>
         </div>
       )}

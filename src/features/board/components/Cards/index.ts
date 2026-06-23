@@ -1,4 +1,4 @@
 // Card components
-export { default as AttendanceCard } from './AttendanceCard';
-export { default as AttendanceTypeTag } from './AttendanceTypeTag';
-export { default as AttendanceTimes } from './AttendanceTimes';
+export { default as AppointmentCard } from './AppointmentCard';
+export { default as AppointmentTypeTag } from './AppointmentTypeTag';
+export { default as AppointmentTimes } from './AppointmentTimes';

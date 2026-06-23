@@ -6,13 +6,13 @@ import PostTreatmentModal from "..";
 import * as modalStore from "@/stores/modalStore";
 import * as treatmentsQueriesModule from "@/api/query/hooks/useTreatmentsQueries";
 import * as sessionsQueriesHooks from "@/api/query/hooks/useSessionsQueries";
-import * as attendanceQueries from "@/api/query/hooks/useAttendanceQueries";
+import * as appointmentQueries from "@/api/query/hooks/useAppointmentQueries";
 import type { TreatmentResponseDto, SessionResponseDto } from "@/api/types";
 
 jest.mock("@/stores/modalStore");
 jest.mock("@/api/query/hooks/useTreatmentsQueries");
 jest.mock("@/api/query/hooks/useSessionsQueries");
-jest.mock("@/api/query/hooks/useAttendanceQueries");
+jest.mock("@/api/query/hooks/useAppointmentQueries");
 
 const mockModalStore = modalStore as jest.Mocked<typeof modalStore>;
 const mockTreatmentsQueries = treatmentsQueriesModule as jest.Mocked<
@@ -21,14 +21,14 @@ const mockTreatmentsQueries = treatmentsQueriesModule as jest.Mocked<
 const mockSessionsQueriesHooks = sessionsQueriesHooks as jest.Mocked<
   typeof sessionsQueriesHooks
 >;
-const mockAttendanceQueries = attendanceQueries as jest.Mocked<
-  typeof attendanceQueries
+const mockAppointmentQueries = appointmentQueries as jest.Mocked<
+  typeof appointmentQueries
 >;
 
 const mockScheduledRecord: SessionResponseDto = {
   id: 101,
   treatmentId: 1,
-  attendanceId: 1,
+  appointmentId: 1,
   sessionNumber: 4,
   scheduledDate: "2024-01-15",
   status: "scheduled",
@@ -41,7 +41,7 @@ const mockScheduledRecord: SessionResponseDto = {
 const mockTreatmentWithSessions: TreatmentResponseDto = {
   id: 1,
   consultationId: 1,
-  attendanceId: 1,
+  appointmentId: 1,
   patientId: 123,
   treatmentType: "physiotherapy",
   bodyLocation: "Head",
@@ -71,10 +71,10 @@ const mockTreatmentWithSessions: TreatmentResponseDto = {
 
 const mockPostTreatmentModal = {
   isOpen: true,
-  attendanceIds: [1],
+  appointmentIds: [1],
   patientId: 123,
   patientName: "Test Patient",
-  attendanceType: "physiotherapy" as const,
+  appointmentType: "physiotherapy" as const,
   treatmentSummaries: [],
   isLoadingTreatmentSummaries: false,
   onComplete: jest.fn(),
@@ -114,11 +114,11 @@ describe("PostTreatmentModal", () => {
     );
     mockModalStore.useCloseModal.mockReturnValue(mockCloseModal);
 
-    const dataByAttendance = new Map<number, SessionResponseDto[]>();
-    dataByAttendance.set(1, [mockScheduledRecord]);
+    const dataByAppointment = new Map<number, SessionResponseDto[]>();
+    dataByAppointment.set(1, [mockScheduledRecord]);
 
-    mockSessionsQueriesHooks.useSessionsByAttendances.mockReturnValue({
-      dataByAttendance,
+    mockSessionsQueriesHooks.useSessionsByAppointments.mockReturnValue({
+      dataByAppointment,
       isLoading: false,
       isError: false,
       error: null,
@@ -142,15 +142,15 @@ describe("PostTreatmentModal", () => {
       isPending: false,
     } as unknown as ReturnType<typeof sessionsQueriesHooks.useCompleteSession>);
 
-    mockAttendanceQueries.useCompleteAttendance.mockReturnValue({
+    mockAppointmentQueries.useCompleteAppointment.mockReturnValue({
       mutateAsync: jest.fn().mockResolvedValue(undefined),
       isPending: false,
-    } as unknown as ReturnType<typeof attendanceQueries.useCompleteAttendance>);
+    } as unknown as ReturnType<typeof appointmentQueries.useCompleteAppointment>);
 
-    mockAttendanceQueries.useDeleteAttendance.mockReturnValue({
+    mockAppointmentQueries.useDeleteAppointment.mockReturnValue({
       mutateAsync: jest.fn().mockResolvedValue(undefined),
       isPending: false,
-    } as unknown as ReturnType<typeof attendanceQueries.useDeleteAttendance>);
+    } as unknown as ReturnType<typeof appointmentQueries.useDeleteAppointment>);
 
     jest.clearAllMocks();
   });
@@ -183,8 +183,8 @@ describe("PostTreatmentModal", () => {
     });
 
     it("should show loading state", () => {
-      mockSessionsQueriesHooks.useSessionsByAttendances.mockReturnValue({
-        dataByAttendance: new Map(),
+      mockSessionsQueriesHooks.useSessionsByAppointments.mockReturnValue({
+        dataByAppointment: new Map(),
         isLoading: true,
         isError: false,
         error: null,
@@ -199,8 +199,8 @@ describe("PostTreatmentModal", () => {
     });
 
     it("should show error state", () => {
-      mockSessionsQueriesHooks.useSessionsByAttendances.mockReturnValue({
-        dataByAttendance: new Map(),
+      mockSessionsQueriesHooks.useSessionsByAppointments.mockReturnValue({
+        dataByAppointment: new Map(),
         isLoading: false,
         isError: true,
         error: new Error("Failed to load"),
@@ -212,8 +212,8 @@ describe("PostTreatmentModal", () => {
     });
 
     it("should show empty state when no rows", () => {
-      mockSessionsQueriesHooks.useSessionsByAttendances.mockReturnValue({
-        dataByAttendance: new Map(),
+      mockSessionsQueriesHooks.useSessionsByAppointments.mockReturnValue({
+        dataByAppointment: new Map(),
         isLoading: false,
         isError: false,
         error: null,
@@ -278,7 +278,7 @@ describe("PostTreatmentModal", () => {
       ).toBeDisabled();
     });
 
-    it("should call onComplete with completed attendance ids on successful submit", async () => {
+    it("should call onComplete with completed appointment ids on successful submit", async () => {
       renderModal();
       fireEvent.click(
         screen.getByRole("button", { name: /Register Session/i }),

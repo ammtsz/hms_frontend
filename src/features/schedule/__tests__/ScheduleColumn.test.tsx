@@ -3,20 +3,20 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ScheduleColumn from "../components/ScheduleColumn";
 import { SCHEDULE_COLUMN_MESSAGES } from "../utils/scheduleFilterConstants";
-import { AttendanceType } from "@/types/types";
-import { AttendanceStatus } from "@/api/types";
+import { AppointmentType } from "@/types/types";
+import { AppointmentStatus } from "@/api/types";
 import { useOpenCancellation } from "@/stores/modalStore";
 
-jest.mock("@/features/board/components/Cards/AttendanceTypeTag", () => {
-  return function MockAttendanceTypeTag({
+jest.mock("@/features/board/components/Cards/AppointmentTypeTag", () => {
+  return function MockAppointmentTypeTag({
     type,
     count,
   }: {
-    type: AttendanceType;
+    type: AppointmentType;
     count: number;
   }) {
     return (
-      <span data-testid="attendance-type-tag" data-type={type}>
+      <span data-testid="appointment-type-tag" data-type={type}>
         {type}-{count}
       </span>
     );
@@ -63,15 +63,15 @@ describe("ScheduleColumn", () => {
   const mockPatient1 = {
     id: "1",
     name: "John Smith",
-    attendanceId: 100,
-    attendanceType: "assessment" as AttendanceType,
+    appointmentId: 100,
+    appointmentType: "assessment" as AppointmentType,
   };
 
   const mockPatient2 = {
     id: "2",
     name: "Emily Williams",
-    attendanceId: 101,
-    attendanceType: "physiotherapy" as AttendanceType,
+    appointmentId: 101,
+    appointmentType: "physiotherapy" as AppointmentType,
   };
 
   const defaultScheduleItem = {
@@ -290,27 +290,27 @@ describe("ScheduleColumn", () => {
 
     it("does not show type tags on assessment column", () => {
       expect(
-        screen.queryByTestId("attendance-type-tag"),
+        screen.queryByTestId("appointment-type-tag"),
       ).not.toBeInTheDocument();
     });
   });
 
   describe("Treatment column type tags", () => {
-    it("displays attendance type tags for physiotherapy column", () => {
+    it("displays appointment type tags for physiotherapy column", () => {
       const physiotherapyItem = {
         date: "2024-01-15",
         patients: [
           {
             id: "1",
             name: "John",
-            attendanceId: 1,
-            attendanceType: "physiotherapy" as AttendanceType,
+            appointmentId: 1,
+            appointmentType: "physiotherapy" as AppointmentType,
           },
           {
             id: "1",
             name: "John",
-            attendanceId: 2,
-            attendanceType: "tens" as AttendanceType,
+            appointmentId: 2,
+            appointmentType: "tens" as AppointmentType,
           },
         ],
       };
@@ -324,7 +324,7 @@ describe("ScheduleColumn", () => {
         />,
       );
 
-      const tags = screen.getAllByTestId("attendance-type-tag");
+      const tags = screen.getAllByTestId("appointment-type-tag");
       expect(tags).toHaveLength(2);
       expect(tags[0]).toHaveAttribute("data-type", "physiotherapy");
       expect(tags[1]).toHaveAttribute("data-type", "tens");
@@ -350,7 +350,7 @@ describe("ScheduleColumn", () => {
     it("does not show Manage for non-scheduled status", () => {
       const completedPatient = {
         ...mockPatient1,
-        attendanceStatus: AttendanceStatus.COMPLETED,
+        appointmentStatus: AppointmentStatus.COMPLETED,
       };
       render(
         <ScheduleColumn
@@ -527,10 +527,10 @@ describe("ScheduleColumn", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("handles patient without attendance type", () => {
+    it("handles patient without appointment type", () => {
       const patientWithoutType = {
         ...mockPatient1,
-        attendanceType: undefined as unknown as AttendanceType,
+        appointmentType: undefined as unknown as AppointmentType,
       };
       const scheduleWithoutType = {
         ...defaultScheduleItem,
@@ -547,7 +547,7 @@ describe("ScheduleColumn", () => {
 
       expect(screen.getByText("John Smith")).toBeInTheDocument();
       expect(
-        screen.queryByTestId("attendance-type-tag"),
+        screen.queryByTestId("appointment-type-tag"),
       ).not.toBeInTheDocument();
     });
 

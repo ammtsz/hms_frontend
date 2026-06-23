@@ -11,15 +11,15 @@ export interface ModalManagementState {
   
   // Treatment form modal
   treatmentFormOpen: boolean;
-  selectedAttendanceForTreatment: {
+  selectedAppointmentForTreatment: {
     id: number;
     patientId: number;
     patientName: string;
-    attendanceType: string;
+    appointmentType: string;
     currentTreatmentStatus: "N" | "T" | "D" | "C";
     currentStartDate?: Date;
     currentReturnWeeks?: number;
-    isFirstAttendance: boolean;
+    isFirstAppointment: boolean;
   } | null;
 }
 
@@ -41,18 +41,18 @@ export const useModalManagement = ({
     name: string;
   } | null>(null);
 
-  // Treatment form modal state (for when completing attendance)
+  // Treatment form modal state (for when completing appointment)
   const [treatmentFormOpen, setTreatmentFormOpen] = useState(false);
-  const [selectedAttendanceForTreatment, setSelectedAttendanceForTreatment] =
+  const [selectedAppointmentForTreatment, setSelectedAppointmentForTreatment] =
     useState<{
       id: number;
       patientId: number;
       patientName: string;
-      attendanceType: string;
+      appointmentType: string;
       currentTreatmentStatus: "N" | "T" | "D" | "C";
       currentStartDate?: Date;
       currentReturnWeeks?: number;
-      isFirstAttendance: boolean;
+      isFirstAppointment: boolean;
     } | null>(null);
 
   // Patient edit modal handlers
@@ -79,21 +79,21 @@ export const useModalManagement = ({
   // Treatment form modal handlers
   const handleTreatmentFormCancel = useCallback(() => {
     setTreatmentFormOpen(false);
-    setSelectedAttendanceForTreatment(null);
+    setSelectedAppointmentForTreatment(null);
   }, []);
 
   const openTreatmentFormModal = useCallback(
-    (attendanceDetails: {
+    (appointmentDetails: {
       id: number;
       patientId: number;
       patientName: string;
-      attendanceType: string;
+      appointmentType: string;
       currentTreatmentStatus: "N" | "T" | "D" | "C";
       currentStartDate?: Date;
       currentReturnWeeks?: number;
-      isFirstAttendance: boolean;
+      isFirstAppointment: boolean;
     }) => {
-      setSelectedAttendanceForTreatment(attendanceDetails);
+      setSelectedAppointmentForTreatment(appointmentDetails);
       setTreatmentFormOpen(true);
     },
     []
@@ -101,14 +101,14 @@ export const useModalManagement = ({
 
   const handleTreatmentFormSubmit = useCallback(
     async (data: PostConsultationFormData): Promise<{ consultationId: number }> => {
-      if (!selectedAttendanceForTreatment) {
-        throw new Error("No attendance selected for treatment");
+      if (!selectedAppointmentForTreatment) {
+        throw new Error("No appointment selected for treatment");
       }
 
       try {
         // Build the create-consultation request
         const consultationRequest: CreateConsultationRequest = {
-          attendanceId: selectedAttendanceForTreatment.id,
+          appointmentId: selectedAppointmentForTreatment.id,
           mainConcern: data.mainConcern,
           patientStatus: data.patientStatus,
           food: data.food,
@@ -133,7 +133,7 @@ export const useModalManagement = ({
         if (data.patientStatus === 'D') {
           try {
             await updatePatientMutation.mutateAsync({
-              patientId: selectedAttendanceForTreatment.patientId.toString(),
+              patientId: selectedAppointmentForTreatment.patientId.toString(),
               data: {
                 patientStatus: data.patientStatus as PatientStatus
               }
@@ -147,7 +147,7 @@ export const useModalManagement = ({
 
         // Close modal and refresh data
         setTreatmentFormOpen(false);
-        setSelectedAttendanceForTreatment(null);
+        setSelectedAppointmentForTreatment(null);
         refreshData?.();
 
         return { consultationId: response.consultation.id };
@@ -156,7 +156,7 @@ export const useModalManagement = ({
         throw error;
       }
     },
-    [selectedAttendanceForTreatment, refreshData, createConsultationMutation, updatePatientMutation]
+    [selectedAppointmentForTreatment, refreshData, createConsultationMutation, updatePatientMutation]
   );
 
   return {
@@ -164,7 +164,7 @@ export const useModalManagement = ({
     editPatientModalOpen,
     patientToEdit,
     treatmentFormOpen,
-    selectedAttendanceForTreatment,
+    selectedAppointmentForTreatment,
 
     // Patient edit modal handlers
     handleEditPatientCancel,

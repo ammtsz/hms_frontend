@@ -11,8 +11,8 @@ export interface Holiday {
 
 export interface HolidayConflict {
   hasConflict: boolean;
-  attendanceCount: number;
-  attendances?: Array<{
+  appointmentCount: number;
+  appointments?: Array<{
     id: number;
     patientName: string;
     treatmentType: string;

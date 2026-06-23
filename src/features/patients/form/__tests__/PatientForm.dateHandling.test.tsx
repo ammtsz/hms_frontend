@@ -19,8 +19,8 @@ jest.mock("@/api/patients", () => ({
   }),
 }));
 
-jest.mock("@/api/attendances", () => ({
-  getAttendancesByDate: jest.fn().mockResolvedValue({
+jest.mock("@/api/appointments", () => ({
+  getAppointmentsByDate: jest.fn().mockResolvedValue({
     success: true,
     value: [],
   }),

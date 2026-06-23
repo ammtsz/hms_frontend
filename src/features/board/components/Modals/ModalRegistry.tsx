@@ -1,7 +1,7 @@
 import React from "react";
 
-const LazyManageAttendanceModal = React.lazy(
-  () => import("@/features/board/components/AttendanceActions/ManageAttendanceModal"),
+const LazyManageAppointmentsModal = React.lazy(
+  () => import("@/features/board/components/AppointmentActions/ManageAppointmentsModal"),
 );
 const LazyMultiSectionModal = React.lazy(
   () => import("@/features/board/components/Board/MultiSectionModal"),
@@ -12,8 +12,8 @@ const LazyAssessmentBeforeTreatmentConfirmModal = React.lazy(
 const LazyNewPatientCheckInModal = React.lazy(
   () => import("@/features/board/components/WalkIn/NewPatientCheckInModal"),
 );
-const LazyPostAttendanceModal = React.lazy(
-  () => import("@/features/board/components/Consultation/PostAttendanceModal"),
+const LazyPostConsultationModal = React.lazy(
+  () => import("@/features/board/components/Consultation/PostConsultationModal"),
 );
 const LazyEndOfDayModal = React.lazy(
   () => import("@/features/board/components/EndOfDay/EndOfDayModal"),
@@ -24,8 +24,8 @@ const LazyPostTreatmentModal = React.lazy(
 const LazyViewCompletedConsultationModal = React.lazy(
   () => import("@/features/board/components/Consultation/ViewCompletedConsultationModal"),
 );
-const LazyUnresolvedPastAttendancesModal = React.lazy(
-  () => import("@/features/board/components/AttendanceActions/UnresolvedPastAttendancesModal"),
+const LazyUnresolvedPastAppointmentsModal = React.lazy(
+  () => import("@/features/board/components/AppointmentActions/UnresolvedPastAppointmentsModal"),
 );
 
 /**
@@ -33,7 +33,7 @@ const LazyUnresolvedPastAttendancesModal = React.lazy(
  *
  * Benefits:
  * - Zero prop drilling
- * - Single import in AttendanceBoard
+ * - Single import in AppointmentsBoard
  * - Easy to add new modals (just add to this registry)
  * - Automatic lazy loading and performance optimization
  * - Centralized modal management
@@ -45,9 +45,9 @@ interface ModalRegistryProps {
 
 const MODAL_REGISTRY = [
   {
-    name: "manageAttendance",
-    component: LazyManageAttendanceModal,
-    description: "Handles attendance cancellation or postponement",
+    name: "manageAppointment",
+    component: LazyManageAppointmentsModal,
+    description: "Handles appointment cancellation or postponement",
   },
   {
     name: "multiSection",
@@ -66,9 +66,9 @@ const MODAL_REGISTRY = [
     description: "New patient registration and check-in workflow",
   },
   {
-    name: "postAttendance",
-    component: LazyPostAttendanceModal,
-    description: "Assessment treatment form for completed attendances",
+    name: "postConsultation",
+    component: LazyPostConsultationModal,
+    description: "Assessment treatment form for completed appointments",
   },
   {
     name: "endOfDay",
@@ -87,8 +87,8 @@ const MODAL_REGISTRY = [
   },
   {
     name: "unresolvedPast",
-    component: LazyUnresolvedPastAttendancesModal,
-    description: "Alert for unresolved past attendances",
+    component: LazyUnresolvedPastAppointmentsModal,
+    description: "Alert for unresolved past appointments",
   },
 ];
 
@@ -104,8 +104,8 @@ const ModalRegistry: React.FC<ModalRegistryProps> = ({ onRefresh }) => {
   return (
     <>
       {MODAL_REGISTRY.map(({ name, component: ModalComponent }) => {
-        // Pass onRefresh to ManageAttendanceModal
-        if (name === "manageAttendance") {
+        // Pass onRefresh to ManageAppointmentsModal
+        if (name === "manageAppointment") {
           return <ModalComponent key={name} onRefresh={onRefresh} />;
         }
         return <ModalComponent key={name} />;

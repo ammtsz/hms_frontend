@@ -10,7 +10,7 @@ import {
   useMultiSectionModal,
   useAssessmentBeforeTreatmentConfirmModal,
   useNewPatientCheckInModal,
-  usePostAttendanceModal,
+  usePostConsultationModal,
   useEndOfDayModal,
   useUnresolvedPastModal,
   useOpenCancellation,
@@ -18,14 +18,14 @@ import {
   useOpenAssessmentBeforeTreatmentConfirm,
   useOpenPostTreatment,
   useOpenNewPatientCheckIn,
-  useOpenPostAttendance,
+  useOpenPostAppointment,
   useOpenEndOfDay,
   useOpenUnresolvedPast,
   useCloseModal,
   useSetCancellationLoading,
   useSetPostTreatmentSummaries,
   useSetPostTreatmentLoading,
-  useSetPostAttendanceLoading,
+  useSetPostAppointmentLoading,
   ModalTreatmentSummary
 } from '@/stores/modalStore';
 import { PatientBasic } from '@/types/types';
@@ -41,7 +41,7 @@ describe('Modal Store', () => {
       result.current.closeModal('multiSection');
       result.current.closeModal('assessmentBeforeTreatmentConfirm');
       result.current.closeModal('newPatientCheckIn');
-      result.current.closeModal('postAttendance');
+      result.current.closeModal('postConsultation');
       result.current.closeModal('endOfDay');
       result.current.closeModal('unresolvedPast');
     });
@@ -56,7 +56,7 @@ describe('Modal Store', () => {
       });
 
       expect(result.current.cancellation.isOpen).toBe(true);
-      expect(result.current.cancellation.attendanceIds).toEqual([123]);
+      expect(result.current.cancellation.appointmentIds).toEqual([123]);
       expect(result.current.cancellation.patientName).toBe('John Doe');
       expect(result.current.cancellation.isLoading).toBe(false);
     });
@@ -176,10 +176,10 @@ describe('Modal Store', () => {
       const { result } = renderHook(() => useModalStore());
       const onComplete = jest.fn();
       const data = {
-        attendanceIds: [123],
+        appointmentIds: [123],
         patientId: 456,
         patientName: 'John Doe',
-        attendanceType: 'assessment' as const,
+        appointmentType: 'assessment' as const,
         onComplete
       };
 
@@ -188,10 +188,10 @@ describe('Modal Store', () => {
       });
 
       expect(result.current.postTreatment.isOpen).toBe(true);
-      expect(result.current.postTreatment.attendanceIds).toEqual([123]);
+      expect(result.current.postTreatment.appointmentIds).toEqual([123]);
       expect(result.current.postTreatment.patientId).toBe(456);
       expect(result.current.postTreatment.patientName).toBe('John Doe');
-      expect(result.current.postTreatment.attendanceType).toBe('assessment');
+      expect(result.current.postTreatment.appointmentType).toBe('assessment');
       expect(result.current.postTreatment.treatmentSummaries).toEqual([]);
       expect(result.current.postTreatment.isLoadingTreatmentSummaries).toBe(false);
       expect(result.current.postTreatment.onComplete).toBe(onComplete);
@@ -201,10 +201,10 @@ describe('Modal Store', () => {
       const { result } = renderHook(() => useModalStore());
       const onComplete = jest.fn();
       const data = {
-        attendanceIds: [123],
+        appointmentIds: [123],
         patientId: 456,
         patientName: 'John Doe',
-        attendanceType: 'assessment' as const,
+        appointmentType: 'assessment' as const,
         onComplete
       };
 
@@ -221,10 +221,10 @@ describe('Modal Store', () => {
       });
 
       expect(result.current.postTreatment.isOpen).toBe(false);
-      expect(result.current.postTreatment.attendanceIds).toBeUndefined();
+      expect(result.current.postTreatment.appointmentIds).toBeUndefined();
       expect(result.current.postTreatment.patientId).toBeUndefined();
       expect(result.current.postTreatment.patientName).toBeUndefined();
-      expect(result.current.postTreatment.attendanceType).toBeUndefined();
+      expect(result.current.postTreatment.appointmentType).toBeUndefined();
       expect(result.current.postTreatment.treatmentSummaries).toEqual([]);
       expect(result.current.postTreatment.isLoadingTreatmentSummaries).toBe(false);
       expect(result.current.postTreatment.onComplete).toBeUndefined();
@@ -292,14 +292,14 @@ describe('Modal Store', () => {
       act(() => {
         result.current.openNewPatientCheckIn({
           patient,
-          attendanceId: 789,
+          appointmentId: 789,
           onComplete
         });
       });
 
       expect(result.current.newPatientCheckIn.isOpen).toBe(true);
       expect(result.current.newPatientCheckIn.patient).toBe(patient);
-      expect(result.current.newPatientCheckIn.attendanceId).toBe(789);
+      expect(result.current.newPatientCheckIn.appointmentId).toBe(789);
       expect(result.current.newPatientCheckIn.onComplete).toBe(onComplete);
     });
 
@@ -318,7 +318,7 @@ describe('Modal Store', () => {
       act(() => {
         result.current.openNewPatientCheckIn({
           patient,
-          attendanceId: 789,
+          appointmentId: 789,
           onComplete
         });
       });
@@ -332,58 +332,58 @@ describe('Modal Store', () => {
 
       expect(result.current.newPatientCheckIn.isOpen).toBe(false);
       expect(result.current.newPatientCheckIn.patient).toBeUndefined();
-      expect(result.current.newPatientCheckIn.attendanceId).toBeUndefined();
+      expect(result.current.newPatientCheckIn.appointmentId).toBeUndefined();
       expect(result.current.newPatientCheckIn.onComplete).toBeUndefined();
     });
   });
 
-  describe('Post Attendance Modal', () => {
-    test('should open post attendance modal with correct data', () => {
+  describe('Post Appointment Modal', () => {
+    test('should open post appointment modal with correct data', () => {
       const { result } = renderHook(() => useModalStore());
       const onComplete = jest.fn();
       const data = {
-        attendanceId: 123,
+        appointmentId: 123,
         patientId: 456,
         patientName: 'John Doe',
-        attendanceType: 'assessment' as const,
+        appointmentType: 'assessment' as const,
         currentTreatmentStatus: 'Active',
         currentStartDate: new Date('2024-01-01'),
         currentReturnWeeks: 4,
-        isFirstAttendance: true,
+        isFirstAppointment: true,
         isLoading: false,
         initialData: undefined,
         onComplete
       };
 
       act(() => {
-        result.current.openPostAttendance(data);
+        result.current.openPostConsultation(data);
       });
 
-      expect(result.current.postAttendance.isOpen).toBe(true);
-      expect(result.current.postAttendance.attendanceId).toBe(123);
-      expect(result.current.postAttendance.patientId).toBe(456);
-      expect(result.current.postAttendance.patientName).toBe('John Doe');
-      expect(result.current.postAttendance.attendanceType).toBe('assessment');
-      expect(result.current.postAttendance.currentTreatmentStatus).toBe('Active');
-      expect(result.current.postAttendance.currentStartDate).toEqual(new Date('2024-01-01'));
-      expect(result.current.postAttendance.currentReturnWeeks).toBe(4);
-      expect(result.current.postAttendance.isFirstAttendance).toBe(true);
-      expect(result.current.postAttendance.isLoading).toBe(false);
-      expect(result.current.postAttendance.onComplete).toBe(onComplete);
+      expect(result.current.postConsultation.isOpen).toBe(true);
+      expect(result.current.postConsultation.appointmentId).toBe(123);
+      expect(result.current.postConsultation.patientId).toBe(456);
+      expect(result.current.postConsultation.patientName).toBe('John Doe');
+      expect(result.current.postConsultation.appointmentType).toBe('assessment');
+      expect(result.current.postConsultation.currentTreatmentStatus).toBe('Active');
+      expect(result.current.postConsultation.currentStartDate).toEqual(new Date('2024-01-01'));
+      expect(result.current.postConsultation.currentReturnWeeks).toBe(4);
+      expect(result.current.postConsultation.isFirstAppointment).toBe(true);
+      expect(result.current.postConsultation.isLoading).toBe(false);
+      expect(result.current.postConsultation.onComplete).toBe(onComplete);
     });
 
-    test('should close post attendance modal and reset data', () => {
+    test('should close post appointment modal and reset data', () => {
       const { result } = renderHook(() => useModalStore());
       const onComplete = jest.fn();
       const data = {
-        attendanceId: 123,
+        appointmentId: 123,
         patientId: 456,
         patientName: 'John Doe',
-        attendanceType: 'assessment' as const,
+        appointmentType: 'assessment' as const,
         currentTreatmentStatus: 'Active',
         currentStartDate: new Date('2024-01-01'),
         currentReturnWeeks: 4,
-        isFirstAttendance: true,
+        isFirstAppointment: true,
         isLoading: false,
         initialData: undefined,
         onComplete
@@ -391,43 +391,43 @@ describe('Modal Store', () => {
 
       // Open modal first
       act(() => {
-        result.current.openPostAttendance(data);
+        result.current.openPostConsultation(data);
       });
 
-      expect(result.current.postAttendance.isOpen).toBe(true);
+      expect(result.current.postConsultation.isOpen).toBe(true);
 
       // Close modal
       act(() => {
-        result.current.closeModal('postAttendance');
+        result.current.closeModal('postConsultation');
       });
 
-      expect(result.current.postAttendance.isOpen).toBe(false);
-      expect(result.current.postAttendance.attendanceId).toBeUndefined();
-      expect(result.current.postAttendance.patientId).toBeUndefined();
-      expect(result.current.postAttendance.patientName).toBeUndefined();
-      expect(result.current.postAttendance.attendanceType).toBeUndefined();
-      expect(result.current.postAttendance.currentTreatmentStatus).toBeUndefined();
-      expect(result.current.postAttendance.currentStartDate).toBeUndefined();
-      expect(result.current.postAttendance.currentReturnWeeks).toBeUndefined();
-      expect(result.current.postAttendance.isFirstAttendance).toBeUndefined();
-      expect(result.current.postAttendance.isLoading).toBeUndefined();
-      expect(result.current.postAttendance.onComplete).toBeUndefined();
+      expect(result.current.postConsultation.isOpen).toBe(false);
+      expect(result.current.postConsultation.appointmentId).toBeUndefined();
+      expect(result.current.postConsultation.patientId).toBeUndefined();
+      expect(result.current.postConsultation.patientName).toBeUndefined();
+      expect(result.current.postConsultation.appointmentType).toBeUndefined();
+      expect(result.current.postConsultation.currentTreatmentStatus).toBeUndefined();
+      expect(result.current.postConsultation.currentStartDate).toBeUndefined();
+      expect(result.current.postConsultation.currentReturnWeeks).toBeUndefined();
+      expect(result.current.postConsultation.isFirstAppointment).toBeUndefined();
+      expect(result.current.postConsultation.isLoading).toBeUndefined();
+      expect(result.current.postConsultation.onComplete).toBeUndefined();
     });
 
-    test('should set post attendance loading state', () => {
+    test('should set post appointment loading state', () => {
       const { result } = renderHook(() => useModalStore());
 
       act(() => {
-        result.current.setPostAttendanceLoading(true);
+        result.current.setPostConsultationLoading(true);
       });
 
-      expect(result.current.postAttendance.isLoading).toBe(true);
+      expect(result.current.postConsultation.isLoading).toBe(true);
 
       act(() => {
-        result.current.setPostAttendanceLoading(false);
+        result.current.setPostConsultationLoading(false);
       });
 
-      expect(result.current.postAttendance.isLoading).toBe(false);
+      expect(result.current.postConsultation.isLoading).toBe(false);
     });
   });
 
@@ -476,7 +476,7 @@ describe('Modal Store', () => {
       const { result: multiSectionResult } = renderHook(() => useMultiSectionModal());
       const { result: assessmentConfirmResult } = renderHook(() => useAssessmentBeforeTreatmentConfirmModal());
       const { result: newPatientResult } = renderHook(() => useNewPatientCheckInModal());
-      const { result: postAttendanceResult } = renderHook(() => usePostAttendanceModal());
+      const { result: postConsultationResult } = renderHook(() => usePostConsultationModal());
       const { result: endOfDayResult } = renderHook(() => useEndOfDayModal());
 
       // Test that hooks return the correct initial state
@@ -485,7 +485,7 @@ describe('Modal Store', () => {
       expect(multiSectionResult.current.isOpen).toBe(false);
       expect(assessmentConfirmResult.current.isOpen).toBe(false);
       expect(newPatientResult.current.isOpen).toBe(false);
-      expect(postAttendanceResult.current.isOpen).toBe(false);
+      expect(postConsultationResult.current.isOpen).toBe(false);
       expect(endOfDayResult.current.isOpen).toBe(false);
     });
 
@@ -495,13 +495,13 @@ describe('Modal Store', () => {
       const { result: openAssessmentConfirm } = renderHook(() => useOpenAssessmentBeforeTreatmentConfirm());
       const { result: openPostTreatment } = renderHook(() => useOpenPostTreatment());
       const { result: openNewPatient } = renderHook(() => useOpenNewPatientCheckIn());
-      const { result: openPostAttendance } = renderHook(() => useOpenPostAttendance());
+      const { result: openPostConsultation } = renderHook(() => useOpenPostAppointment());
       const { result: openEndOfDay } = renderHook(() => useOpenEndOfDay());
       const { result: closeModal } = renderHook(() => useCloseModal());
       const { result: setCancellationLoading } = renderHook(() => useSetCancellationLoading());
       const { result: setPostTreatmentSummaries } = renderHook(() => useSetPostTreatmentSummaries());
       const { result: setPostTreatmentLoading } = renderHook(() => useSetPostTreatmentLoading());
-      const { result: setPostAttendanceLoading } = renderHook(() => useSetPostAttendanceLoading());
+      const { result: setPostConsultationLoading } = renderHook(() => useSetPostAppointmentLoading());
 
       // Test that all action hooks return functions
       expect(typeof openCancellation.current).toBe('function');
@@ -509,13 +509,13 @@ describe('Modal Store', () => {
       expect(typeof openAssessmentConfirm.current).toBe('function');
       expect(typeof openPostTreatment.current).toBe('function');
       expect(typeof openNewPatient.current).toBe('function');
-      expect(typeof openPostAttendance.current).toBe('function');
+      expect(typeof openPostConsultation.current).toBe('function');
       expect(typeof openEndOfDay.current).toBe('function');
       expect(typeof closeModal.current).toBe('function');
       expect(typeof setCancellationLoading.current).toBe('function');
       expect(typeof setPostTreatmentSummaries.current).toBe('function');
       expect(typeof setPostTreatmentLoading.current).toBe('function');
-      expect(typeof setPostAttendanceLoading.current).toBe('function');
+      expect(typeof setPostConsultationLoading.current).toBe('function');
     });
   });
 

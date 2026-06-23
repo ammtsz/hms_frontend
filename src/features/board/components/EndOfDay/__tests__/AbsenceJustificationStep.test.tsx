@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import AbsenceJustificationStep from "../components/steps/AbsenceJustificationStep";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import type { AbsenceJustification, ScheduledAbsence } from "../types";
 
 // Mock data factories
@@ -11,7 +11,7 @@ const createMockScheduledAbsence = (
 ): ScheduledAbsence => ({
   patientId: 1,
   patientName: "John Doe",
-  attendanceType: "assessment",
+  appointmentType: "assessment",
   ...overrides,
 });
 
@@ -20,7 +20,7 @@ const createMockJustification = (
 ): AbsenceJustification => ({
   patientId: 1,
   patientName: "John Doe",
-  attendanceType: "assessment",
+  appointmentType: "assessment",
   // justified is undefined initially
   ...overrides,
 });
@@ -43,7 +43,7 @@ describe("AbsenceJustificationStep", () => {
     render(<AbsenceJustificationStep {...defaultProps} />);
 
     expect(
-      screen.getByText("All attendances confirmed!"),
+      screen.getByText("All appointments confirmed!"),
     ).toBeInTheDocument();
     expect(
       screen.getByText("There are no scheduled absences to justify."),
@@ -88,7 +88,7 @@ describe("AbsenceJustificationStep", () => {
 
     expect(screen.getByText("Jane Doe")).toBeInTheDocument();
     expect(
-      screen.getByText(getAttendanceTypeLabel("assessment")),
+      screen.getByText(getAppointmentTypeLabel("assessment")),
     ).toBeInTheDocument();
   });
 
@@ -97,24 +97,24 @@ describe("AbsenceJustificationStep", () => {
       createMockScheduledAbsence({
         patientName: "Jane Doe",
         patientId: 123,
-        attendanceType: "assessment",
+        appointmentType: "assessment",
       }),
       createMockScheduledAbsence({
         patientName: "Jane Doe",
         patientId: 123,
-        attendanceType: "physiotherapy",
+        appointmentType: "physiotherapy",
       }),
     ];
     const absenceJustifications = [
       createMockJustification({
         patientId: 123,
         patientName: "Jane Doe",
-        attendanceType: "assessment",
+        appointmentType: "assessment",
       }),
       createMockJustification({
         patientId: 123,
         patientName: "Jane Doe",
-        attendanceType: "physiotherapy",
+        appointmentType: "physiotherapy",
       }),
     ];
 
@@ -127,16 +127,16 @@ describe("AbsenceJustificationStep", () => {
     );
 
     fireEvent.click(
-      screen.getByLabelText("Apply justification to all attendances"),
+      screen.getByLabelText("Apply justification to all appointments"),
     );
 
     expect(
       screen.getByRole("heading", {
-        name: getAttendanceTypeLabel("assessment"),
+        name: getAppointmentTypeLabel("assessment"),
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { name: getAttendanceTypeLabel("physiotherapy") }),
+      screen.getByRole("heading", { name: getAppointmentTypeLabel("physiotherapy") }),
     ).toBeInTheDocument();
   });
 

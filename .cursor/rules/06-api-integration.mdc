@@ -164,7 +164,7 @@ src/api/
 ├── patients/
 │   ├── index.ts              # Patient API functions
 │   └── __tests__/            # API function tests
-├── attendances/
+├── appointments/
 │   └── index.ts
 ├── consultations/
 │   └── index.ts

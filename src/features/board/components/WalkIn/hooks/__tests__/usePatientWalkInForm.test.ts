@@ -2,22 +2,22 @@ import { renderHook, act } from "@testing-library/react";
 import { usePatientWalkInForm } from "../usePatientWalkInForm";
 import { usePatients, useCreatePatient } from "@/api/query/hooks/usePatientQueries";
 import {
-  useAttendancesByDate,
-  useCreateAttendance,
-  useCheckInAttendance,
+  useAppointmentsByDate,
+  useCreateAppointment,
+  useCheckInAppointment,
   useEligibleParentOptions,
-} from "@/api/query/hooks/useAttendanceQueries";
+} from "@/api/query/hooks/useAppointmentQueries";
 import { useSelectablePrioritiesForForm } from "@/features/board/hooks/useSelectablePrioritiesForForm";
 import { SystemOptionType } from "@/types/systemOptions";
 
 // Mock the hooks
 jest.mock("@/api/query/hooks/usePatientQueries");
-jest.mock("@/api/query/hooks/useAttendanceQueries");
+jest.mock("@/api/query/hooks/useAppointmentQueries");
 jest.mock("@/features/board/hooks/useSelectablePrioritiesForForm", () => ({
   useSelectablePrioritiesForForm: jest.fn(),
 }));
-jest.mock("@/features/board/hooks/useAttendanceHolidayForDate", () => ({
-  useAttendanceHolidayForDate: jest.fn().mockReturnValue({
+jest.mock("@/features/board/hooks/useBoardHolidayForDate", () => ({
+  useBoardHolidayForDate: jest.fn().mockReturnValue({
     isLoading: false,
     hasError: false,
     blockedLabels: [],
@@ -25,21 +25,21 @@ jest.mock("@/features/board/hooks/useAttendanceHolidayForDate", () => ({
     holidayMessage: null,
   }),
 }));
-jest.mock("@/api/attendances");
+jest.mock("@/api/appointments");
 jest.mock("@/api/consultations");
 
 const mockUsePatients = usePatients as jest.MockedFunction<typeof usePatients>;
 const mockUseCreatePatient = useCreatePatient as jest.MockedFunction<
   typeof useCreatePatient
 >;
-const mockUseAttendancesByDate = useAttendancesByDate as jest.MockedFunction<
-  typeof useAttendancesByDate
+const mockUseAppointmentsByDate = useAppointmentsByDate as jest.MockedFunction<
+  typeof useAppointmentsByDate
 >;
-const mockUseCreateAttendance = useCreateAttendance as jest.MockedFunction<
-  typeof useCreateAttendance
+const mockUseCreateAppointment = useCreateAppointment as jest.MockedFunction<
+  typeof useCreateAppointment
 >;
-const mockUseCheckInAttendance = useCheckInAttendance as jest.MockedFunction<
-  typeof useCheckInAttendance
+const mockUseCheckInAppointment = useCheckInAppointment as jest.MockedFunction<
+  typeof useCheckInAppointment
 >;
 const mockUseEligibleParentOptions = useEligibleParentOptions as jest.MockedFunction<
   typeof useEligibleParentOptions
@@ -100,18 +100,18 @@ describe("usePatientWalkInForm", () => {
       mutateAsync: jest.fn(),
     } as unknown as ReturnType<typeof useCreatePatient>);
 
-    mockUseAttendancesByDate.mockReturnValue({
+    mockUseAppointmentsByDate.mockReturnValue({
       data: null,
       refetch: jest.fn(),
-    } as unknown as ReturnType<typeof useAttendancesByDate>);
+    } as unknown as ReturnType<typeof useAppointmentsByDate>);
 
-    mockUseCreateAttendance.mockReturnValue({
+    mockUseCreateAppointment.mockReturnValue({
       mutateAsync: jest.fn(),
-    } as unknown as ReturnType<typeof useCreateAttendance>);
+    } as unknown as ReturnType<typeof useCreateAppointment>);
 
-    mockUseCheckInAttendance.mockReturnValue({
+    mockUseCheckInAppointment.mockReturnValue({
       mutateAsync: jest.fn(),
-    } as unknown as ReturnType<typeof useCheckInAttendance>);
+    } as unknown as ReturnType<typeof useCheckInAppointment>);
 
     mockUseEligibleParentOptions.mockReturnValue({
       data: { options: [] },
@@ -129,7 +129,7 @@ describe("usePatientWalkInForm", () => {
       priority: "5",
       isNewPatient: false,
       selectedPatient: "",
-      selectedParentAttendance: "",
+      selectedParentAppointment: "",
     });
     expect(result.current.isSubmitting).toBe(false);
     expect(result.current.error).toBeNull();

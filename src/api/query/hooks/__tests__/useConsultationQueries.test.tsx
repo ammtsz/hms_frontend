@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import {
   useConsultations,
-  useConsultationByAttendance,
+  useConsultationByAppointment,
   useCreateConsultation,
   useUpdateConsultation,
   useDeleteConsultation,
@@ -53,7 +53,7 @@ describe("useConsultationQueries hooks", () => {
 
   const mockConsultation: ConsultationResponseDto = {
     id: 1,
-    attendanceId: 123,
+    appointmentId: 123,
     mainConcern: "Test complaint",
     food: "Light meals",
     water: "2L/day",
@@ -92,9 +92,9 @@ describe("useConsultationQueries hooks", () => {
         "detail",
         "123",
       ]);
-      expect(consultationKeys.byAttendance("456")).toEqual([
+      expect(consultationKeys.byAppointment("456")).toEqual([
         "consultations",
-        "attendance",
+        "appointment",
         "456",
       ]);
     });
@@ -186,14 +186,14 @@ describe("useConsultationQueries hooks", () => {
     });
   });
 
-  describe("useConsultationByAttendance", () => {
-    it("should fetch treatment record by attendance ID", async () => {
-      mockedAPI.getConsultationByAttendance.mockResolvedValue({
+  describe("useConsultationByAppointment", () => {
+    it("should fetch treatment record by appointment ID", async () => {
+      mockedAPI.getConsultationByAppointment.mockResolvedValue({
         success: true,
         value: mockConsultation,
       });
 
-      const { result } = renderHook(() => useConsultationByAttendance("123"), {
+      const { result } = renderHook(() => useConsultationByAppointment("123"), {
         wrapper: createWrapper(),
       });
 
@@ -202,16 +202,16 @@ describe("useConsultationQueries hooks", () => {
       });
 
       expect(result.current.data).toEqual(mockConsultation);
-      expect(mockedAPI.getConsultationByAttendance).toHaveBeenCalledWith("123");
+      expect(mockedAPI.getConsultationByAppointment).toHaveBeenCalledWith("123");
     });
 
     it("should return null for not found record", async () => {
-      mockedAPI.getConsultationByAttendance.mockResolvedValue({
+      mockedAPI.getConsultationByAppointment.mockResolvedValue({
         success: false,
         error: "Record not found",
       });
 
-      const { result } = renderHook(() => useConsultationByAttendance("999"), {
+      const { result } = renderHook(() => useConsultationByAppointment("999"), {
         wrapper: createWrapper(),
       });
 
@@ -223,12 +223,12 @@ describe("useConsultationQueries hooks", () => {
     });
 
     it("should handle 404 errors gracefully", async () => {
-      mockedAPI.getConsultationByAttendance.mockResolvedValue({
+      mockedAPI.getConsultationByAppointment.mockResolvedValue({
         success: false,
         error: "404 not found",
       });
 
-      const { result } = renderHook(() => useConsultationByAttendance("404"), {
+      const { result } = renderHook(() => useConsultationByAppointment("404"), {
         wrapper: createWrapper(),
       });
 
@@ -241,12 +241,12 @@ describe("useConsultationQueries hooks", () => {
 
     it("should throw error for other failures", async () => {
       // The query function will throw when success is false and error is not about 'not found'
-      mockedAPI.getConsultationByAttendance.mockResolvedValue({
+      mockedAPI.getConsultationByAppointment.mockResolvedValue({
         success: false,
         error: "Server error",
       });
 
-      const { result } = renderHook(() => useConsultationByAttendance("123"), {
+      const { result } = renderHook(() => useConsultationByAppointment("123"), {
         wrapper: createWrapper(),
       });
 
@@ -259,17 +259,17 @@ describe("useConsultationQueries hooks", () => {
       );
 
       // Verify the API was called
-      expect(mockedAPI.getConsultationByAttendance).toHaveBeenCalledTimes(1);
+      expect(mockedAPI.getConsultationByAppointment).toHaveBeenCalledTimes(1);
       expect(result.current.error?.message).toBe("Server error");
     });
 
-    it("should handle numeric attendance ID", async () => {
-      mockedAPI.getConsultationByAttendance.mockResolvedValue({
+    it("should handle numeric appointment ID", async () => {
+      mockedAPI.getConsultationByAppointment.mockResolvedValue({
         success: true,
         value: mockConsultation,
       });
 
-      const { result } = renderHook(() => useConsultationByAttendance(456), {
+      const { result } = renderHook(() => useConsultationByAppointment(456), {
         wrapper: createWrapper(),
       });
 
@@ -277,25 +277,25 @@ describe("useConsultationQueries hooks", () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(mockedAPI.getConsultationByAttendance).toHaveBeenCalledWith("456");
+      expect(mockedAPI.getConsultationByAppointment).toHaveBeenCalledWith("456");
     });
 
-    it("should not run query when attendanceId is falsy", () => {
-      const { result } = renderHook(() => useConsultationByAttendance(""), {
+    it("should not run query when appointmentId is falsy", () => {
+      const { result } = renderHook(() => useConsultationByAppointment(""), {
         wrapper: createWrapper(),
       });
 
       expect(result.current.fetchStatus).toBe("idle");
-      expect(mockedAPI.getConsultationByAttendance).not.toHaveBeenCalled();
+      expect(mockedAPI.getConsultationByAppointment).not.toHaveBeenCalled();
     });
 
     it("should handle success response with no value", async () => {
-      mockedAPI.getConsultationByAttendance.mockResolvedValue({
+      mockedAPI.getConsultationByAppointment.mockResolvedValue({
         success: true,
         value: undefined,
       });
 
-      const { result } = renderHook(() => useConsultationByAttendance("123"), {
+      const { result } = renderHook(() => useConsultationByAppointment("123"), {
         wrapper: createWrapper(),
       });
 
@@ -310,7 +310,7 @@ describe("useConsultationQueries hooks", () => {
   describe("useCreateConsultation", () => {
     it("should create treatment record successfully", async () => {
       const createData: CreateConsultationRequest = {
-        attendanceId: 123,
+        appointmentId: 123,
         mainConcern: "Test complaint",
         food: "Light meals",
         water: "2L/day",
@@ -334,7 +334,7 @@ describe("useConsultationQueries hooks", () => {
 
     it("should handle create error", async () => {
       const createData: CreateConsultationRequest = {
-        attendanceId: 123,
+        appointmentId: 123,
         mainConcern: "Test complaint",
         physiotherapy: false,
         returnWeeks: 1,
@@ -356,7 +356,7 @@ describe("useConsultationQueries hooks", () => {
 
     it("should handle create success but no value", async () => {
       const createData: CreateConsultationRequest = {
-        attendanceId: 123,
+        appointmentId: 123,
         mainConcern: "Test complaint",
         notes: "Test notes",
       };
@@ -377,7 +377,7 @@ describe("useConsultationQueries hooks", () => {
 
     it("should invalidate queries on success", async () => {
       const createData: CreateConsultationRequest = {
-        attendanceId: 123,
+        appointmentId: 123,
         mainConcern: "Test complaint",
         physiotherapy: true,
         returnWeeks: 3,
@@ -404,7 +404,7 @@ describe("useConsultationQueries hooks", () => {
       });
 
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-        queryKey: consultationKeys.byAttendance("123"),
+        queryKey: consultationKeys.byAppointment("123"),
       });
     });
   });
@@ -561,7 +561,7 @@ describe("useConsultationQueries hooks", () => {
       expect(result.current.consultations).toEqual([mockConsultation]);
       expect(result.current.error).toBe(null);
       expect(typeof result.current.refreshConsultations).toBe("function");
-      expect(typeof result.current.getConsultationForAttendance).toBe(
+      expect(typeof result.current.getConsultationForAppointment).toBe(
         "function",
       );
       expect(typeof result.current.createConsultation).toBe("function");
@@ -609,8 +609,8 @@ describe("useConsultationQueries hooks", () => {
       });
     });
 
-    it("should get treatment record for attendance", async () => {
-      mockedAPI.getConsultationByAttendance.mockResolvedValue({
+    it("should get treatment record for appointment", async () => {
+      mockedAPI.getConsultationByAppointment.mockResolvedValue({
         success: true,
         value: mockConsultation,
       });
@@ -623,14 +623,14 @@ describe("useConsultationQueries hooks", () => {
         expect(result.current.loading).toBe(false);
       });
 
-      const record = await result.current.getConsultationForAttendance(123);
+      const record = await result.current.getConsultationForAppointment(123);
 
       expect(record).toEqual(mockConsultation);
     });
 
     it("should handle create record error", async () => {
       const createData: CreateConsultationRequest = {
-        attendanceId: 123,
+        appointmentId: 123,
         mainConcern: "Test complaint",
         physiotherapy: true,
         returnWeeks: 5,

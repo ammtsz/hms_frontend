@@ -43,7 +43,7 @@ export const getDayFinalizationStatus = async (
 export interface ProcessEndOfDayParams {
   date: string;
   absenceJustifications: Array<{
-    attendanceId: number;
+    appointmentId: number;
     justified: boolean;
     notes?: string;
   }>;
@@ -51,7 +51,7 @@ export interface ProcessEndOfDayParams {
 
 export interface ProcessEndOfDayResponse {
   rescheduled: Array<{
-    attendanceId: number;
+    appointmentId: number;
     patientId: number;
     patientName: string;
     type: string;
@@ -65,14 +65,14 @@ export interface ProcessEndOfDayResponse {
   cancelledForC: Array<{
     patientId: number;
     patientName: string;
-    attendances: Array<{
+    appointments: Array<{
       id: number;
       type: string;
       scheduledDate: string;
     }>;
   }>;
   couldNotReschedule: Array<{
-    attendanceId: number;
+    appointmentId: number;
     patientId: number;
     patientName: string;
     type: string;

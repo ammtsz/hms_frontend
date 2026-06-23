@@ -114,8 +114,8 @@ describe('usePatientForm', () => {
       expect(result.current.patient.mainConcern).toBe('');
       expect(result.current.patient.birthDate).toBe("");
       expect(result.current.patient.dischargeDate).toBeNull();
-      expect(result.current.patient.nextAttendanceDates).toEqual([]);
-      expect(result.current.patient.previousAttendances).toEqual([]);
+      expect(result.current.patient.nextAppointmentDates).toEqual([]);
+      expect(result.current.patient.previousAppointments).toEqual([]);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.validationErrors).toEqual({});
     });
@@ -217,7 +217,7 @@ describe('usePatientForm', () => {
       expect(result.current.patient.dischargeDate).toBeNull();
     });
 
-    it('should handle next attendance date changes', () => {
+    it('should handle next appointment date changes', () => {
       const { result } = renderHook(() => usePatientForm());
 
       act(() => {
@@ -226,12 +226,12 @@ describe('usePatientForm', () => {
         } as unknown as React.ChangeEvent<HTMLInputElement>);
       });
 
-      expect(result.current.patient.nextAttendanceDates).toHaveLength(1);
-      expect(result.current.patient.nextAttendanceDates[0].date).toBe('2024-02-01');
-      expect(result.current.patient.nextAttendanceDates[0].type).toBe('assessment');
+      expect(result.current.patient.nextAppointmentDates).toHaveLength(1);
+      expect(result.current.patient.nextAppointmentDates[0].date).toBe('2024-02-01');
+      expect(result.current.patient.nextAppointmentDates[0].type).toBe('assessment');
     });
 
-    it('should clear next attendance dates when value is empty', () => {
+    it('should clear next appointment dates when value is empty', () => {
       const { result } = renderHook(() => usePatientForm());
 
       // First set a date
@@ -241,7 +241,7 @@ describe('usePatientForm', () => {
         } as unknown as React.ChangeEvent<HTMLInputElement>);
       });
 
-      expect(result.current.patient.nextAttendanceDates).toHaveLength(1);
+      expect(result.current.patient.nextAppointmentDates).toHaveLength(1);
 
       // Then clear it
       act(() => {
@@ -250,7 +250,7 @@ describe('usePatientForm', () => {
         } as unknown as React.ChangeEvent<HTMLInputElement>);
       });
 
-      expect(result.current.patient.nextAttendanceDates).toEqual([]);
+      expect(result.current.patient.nextAppointmentDates).toEqual([]);
     });
 
     it('should handle start date changes via handleChange', () => {
@@ -307,7 +307,7 @@ describe('usePatientForm', () => {
           ...result.current.patient,
           name: 'John Doe',
           birthDate: '1990-01-01',
-          nextAttendanceDates: [{ date: '2024-02-01', type: 'assessment' }],
+          nextAppointmentDates: [{ date: '2024-02-01', type: 'assessment' }],
         });
       });
 
@@ -543,7 +543,7 @@ describe('usePatientForm', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    it('should create attendance when next date is provided', async () => {
+    it('should create appointment when next date is provided', async () => {
       const mockCreatedPatient = { id: 1, name: 'John Doe' };
       mockCreatePatientMutateAsync.mockResolvedValue(mockCreatedPatient);
       mockAddPatientToScheduleMutateAsync.mockResolvedValue({});
@@ -556,7 +556,7 @@ describe('usePatientForm', () => {
           ...result.current.patient,
           name: 'John Doe',
           birthDate: VALID_BIRTH_DATE,
-          nextAttendanceDates: [{ date: nextDate, type: 'assessment' }]
+          nextAppointmentDates: [{ date: nextDate, type: 'assessment' }]
         });
       });
 
@@ -592,7 +592,7 @@ describe('usePatientForm', () => {
           ...result.current.patient,
           name: 'John Doe',
           birthDate: VALID_BIRTH_DATE,
-          nextAttendanceDates: [{ date: nextDate, type: 'assessment' }]
+          nextAppointmentDates: [{ date: nextDate, type: 'assessment' }]
         });
       });
 
@@ -619,7 +619,7 @@ describe('usePatientForm', () => {
       });
     });
 
-    it('should set attendanceCreationFailed when no time slot succeeds', async () => {
+    it('should set appointmentCreationFailed when no time slot succeeds', async () => {
       const mockCreatedPatient = { id: 1, name: 'John Doe' };
       mockCreatePatientMutateAsync.mockResolvedValue(mockCreatedPatient);
       mockAddPatientToScheduleMutateAsync.mockRejectedValue(
@@ -634,7 +634,7 @@ describe('usePatientForm', () => {
           ...result.current.patient,
           name: 'John Doe',
           birthDate: VALID_BIRTH_DATE,
-          nextAttendanceDates: [{ date: nextDate, type: 'assessment' }]
+          nextAppointmentDates: [{ date: nextDate, type: 'assessment' }]
         });
       });
 
@@ -645,8 +645,8 @@ describe('usePatientForm', () => {
       });
 
       expect(result.current.showSuccessModal).toBe(true);
-      expect(result.current.scheduledAttendanceDate).toBeNull();
-      expect(result.current.attendanceCreationFailed).toEqual({
+      expect(result.current.scheduledAppointmentDate).toBeNull();
+      expect(result.current.appointmentCreationFailed).toEqual({
         requested: true,
         message: 'No time slot available for the selected date.',
       });

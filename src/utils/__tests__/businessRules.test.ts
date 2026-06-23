@@ -2,7 +2,7 @@ import {
   sortPatientsByPriority,
   isPatientAlreadyScheduledForAssessment,
 } from "../businessRules";
-import type { AttendanceByDate, AttendanceStatus } from "../../types/types";
+import type { AppointmentByDate, AppointmentStatus } from "../../types/types";
 
 // Test patient interface with name property
 interface TestPatient {
@@ -122,7 +122,7 @@ describe("businessRules", () => {
   });
 
   describe("isPatientAlreadyScheduledForAssessment", () => {
-    const mockAttendancesByDate: AttendanceByDate = {
+    const mockAppointmentsByDate: AppointmentByDate = {
       date: "2025-01-15",
       assessment: {
         scheduled: [
@@ -132,31 +132,31 @@ describe("businessRules", () => {
         checkedIn: [{ name: "Michael Taylor", priority: "1" }],
         onGoing: [{ name: "Sarah Stevens", priority: "2" }],
         completed: [{ name: "David Thompson", priority: "3" }],
-      } as AttendanceStatus,
+      } as AppointmentStatus,
       physiotherapy: {
         scheduled: [{ name: "Jennifer Davis", priority: "2" }],
         checkedIn: [],
         onGoing: [],
         completed: [],
-      } as AttendanceStatus,
+      } as AppointmentStatus,
       tens: {
         scheduled: [],
         checkedIn: [{ name: "Robert Moore", priority: "1" }],
         onGoing: [],
         completed: [],
-      } as AttendanceStatus,
+      } as AppointmentStatus,
       combined: {
         scheduled: [],
         checkedIn: [],
         onGoing: [],
         completed: [],
-      } as AttendanceStatus,
+      } as AppointmentStatus,
     };
 
     it("should return true when patient is found in assessment scheduled", () => {
       const result = isPatientAlreadyScheduledForAssessment(
         "John Smith",
-        mockAttendancesByDate,
+        mockAppointmentsByDate,
       );
       expect(result).toBe(true);
     });
@@ -164,7 +164,7 @@ describe("businessRules", () => {
     it("should return true when patient is found in checkedIn status", () => {
       const result = isPatientAlreadyScheduledForAssessment(
         "Michael Taylor",
-        mockAttendancesByDate,
+        mockAppointmentsByDate,
       );
       expect(result).toBe(true);
     });
@@ -172,7 +172,7 @@ describe("businessRules", () => {
     it("should return true when patient is found in onGoing status", () => {
       const result = isPatientAlreadyScheduledForAssessment(
         "Sarah Stevens",
-        mockAttendancesByDate,
+        mockAppointmentsByDate,
       );
       expect(result).toBe(true);
     });
@@ -180,7 +180,7 @@ describe("businessRules", () => {
     it("should return true when patient is found in completed status", () => {
       const result = isPatientAlreadyScheduledForAssessment(
         "David Thompson",
-        mockAttendancesByDate,
+        mockAppointmentsByDate,
       );
       expect(result).toBe(true);
     });
@@ -189,13 +189,13 @@ describe("businessRules", () => {
       expect(
         isPatientAlreadyScheduledForAssessment(
           "Jennifer Davis",
-          mockAttendancesByDate,
+          mockAppointmentsByDate,
         ),
       ).toBe(false);
       expect(
         isPatientAlreadyScheduledForAssessment(
           "Robert Moore",
-          mockAttendancesByDate,
+          mockAppointmentsByDate,
         ),
       ).toBe(false);
     });
@@ -203,12 +203,12 @@ describe("businessRules", () => {
     it("should return false when patient is not found", () => {
       const result = isPatientAlreadyScheduledForAssessment(
         "Unregistered Name",
-        mockAttendancesByDate,
+        mockAppointmentsByDate,
       );
       expect(result).toBe(false);
     });
 
-    it("should return false when attendancesByDate is null", () => {
+    it("should return false when appointmentsByDate is null", () => {
       const result = isPatientAlreadyScheduledForAssessment("John Smith", null);
       expect(result).toBe(false);
     });
@@ -216,115 +216,115 @@ describe("businessRules", () => {
     it("should handle case-insensitive name matching", () => {
       const result = isPatientAlreadyScheduledForAssessment(
         "john smith",
-        mockAttendancesByDate,
+        mockAppointmentsByDate,
       );
       expect(result).toBe(true);
     });
 
-    it("should handle attendance type with empty status arrays", () => {
-      const emptyAttendances: AttendanceByDate = {
+    it("should handle appointment type with empty status arrays", () => {
+      const emptyAppointments: AppointmentByDate = {
         date: "2025-01-15",
         assessment: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         physiotherapy: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         tens: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         combined: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
       };
 
       const result = isPatientAlreadyScheduledForAssessment(
         "John Smith",
-        emptyAttendances,
+        emptyAppointments,
       );
       expect(result).toBe(false);
     });
 
-    it("should handle partially defined attendance types", () => {
-      const partialAttendances: AttendanceByDate = {
+    it("should handle partially defined appointment types", () => {
+      const partialAppointments: AppointmentByDate = {
         date: "2025-01-15",
         assessment: {
           scheduled: [{ name: "Test Patient", priority: "1" }],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         physiotherapy: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         tens: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         combined: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
       };
 
       const result = isPatientAlreadyScheduledForAssessment(
         "Test Patient",
-        partialAttendances,
+        partialAppointments,
       );
       expect(result).toBe(true);
     });
 
-    it("should handle attendance with undefined status arrays", () => {
-      const attendancesWithNulls: AttendanceByDate = {
+    it("should handle appointment with undefined status arrays", () => {
+      const appointmentsWithNulls: AppointmentByDate = {
         date: "2025-01-15",
         assessment: {
           scheduled: undefined as unknown as [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         physiotherapy: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         tens: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
         combined: {
           scheduled: [],
           checkedIn: [],
           onGoing: [],
           completed: [],
-        } as AttendanceStatus,
+        } as AppointmentStatus,
       };
 
       const result = isPatientAlreadyScheduledForAssessment(
         "Test Patient",
-        attendancesWithNulls,
+        appointmentsWithNulls,
       );
       expect(result).toBe(false);
     });

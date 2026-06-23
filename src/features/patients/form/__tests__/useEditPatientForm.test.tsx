@@ -48,7 +48,7 @@ describe("useEditPatientForm", () => {
     status: "D",
     mainConcern: "Test complaint",
     dischargeDate: null,
-    nextAttendanceDates: [],
+    nextAppointmentDates: [],
   };
 
   const defaultProps = {
@@ -231,7 +231,7 @@ describe("useEditPatientForm", () => {
       expect(result.current.patient.dischargeDate).toBeNull();
     });
 
-    it("should handle next attendance date changes", () => {
+    it("should handle next appointment date changes", () => {
       const { result } = renderHook(() => useEditPatientForm(defaultProps));
 
       act(() => {
@@ -241,12 +241,12 @@ describe("useEditPatientForm", () => {
         result.current.handleAssessmentConsultationChange(mockEvent);
       });
 
-      expect(result.current.patient.nextAttendanceDates).toEqual([
+      expect(result.current.patient.nextAppointmentDates).toEqual([
         { date: "2024-02-15", type: "assessment" },
       ]);
     });
 
-    it("should clear next attendance dates when empty", () => {
+    it("should clear next appointment dates when empty", () => {
       const { result } = renderHook(() => useEditPatientForm(defaultProps));
 
       act(() => {
@@ -256,7 +256,7 @@ describe("useEditPatientForm", () => {
         result.current.handleAssessmentConsultationChange(mockEvent);
       });
 
-      expect(result.current.patient.nextAttendanceDates).toEqual([]);
+      expect(result.current.patient.nextAppointmentDates).toEqual([]);
     });
 
     it("should handle invalid date strings in assessment consultation changes", () => {
@@ -317,7 +317,7 @@ describe("useEditPatientForm", () => {
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
-    it("should reject discharge date earlier than last completed attendance", async () => {
+    it("should reject discharge date earlier than last completed appointment", async () => {
       const { result } = renderHook(() =>
         useEditPatientForm({
           ...defaultProps,
@@ -338,12 +338,12 @@ describe("useEditPatientForm", () => {
       });
 
       expect(result.current.error).toContain(
-        "The discharge date cannot be earlier than the date of the last completed attendance",
+        "The discharge date cannot be earlier than the date of the last completed appointment",
       );
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
-    it("should allow discharge date on or after last completed attendance when minDischargeDate set", async () => {
+    it("should allow discharge date on or after last completed appointment when minDischargeDate set", async () => {
       mockMutateAsync.mockResolvedValue({ id: 123, name: "Updated Patient" });
       const { result } = renderHook(() =>
         useEditPatientForm({
@@ -434,14 +434,14 @@ describe("useEditPatientForm", () => {
   });
 
   describe("Status change confirmation (Discharged/Consecutive no-shows)", () => {
-    it("should set pendingStatusChange when submitting with status D and openAttendancesCount > 0", async () => {
-      const propsWithOpenAttendances = {
+    it("should set pendingStatusChange when submitting with status D and openAppointmentsCount > 0", async () => {
+      const propsWithOpenAppointments = {
         ...defaultProps,
         initialData: { ...defaultInitialData, status: "D" },
-        openAttendancesCount: 2,
+        openAppointmentsCount: 2,
       };
       const { result } = renderHook(() =>
-        useEditPatientForm(propsWithOpenAttendances),
+        useEditPatientForm(propsWithOpenAppointments),
       );
 
       await act(async () => {
@@ -456,14 +456,14 @@ describe("useEditPatientForm", () => {
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
-    it("should set pendingStatusChange when submitting with status C and openAttendancesCount > 0", async () => {
-      const propsWithOpenAttendances = {
+    it("should set pendingStatusChange when submitting with status C and openAppointmentsCount > 0", async () => {
+      const propsWithOpenAppointments = {
         ...defaultProps,
         initialData: { ...defaultInitialData, status: "C" },
-        openAttendancesCount: 1,
+        openAppointmentsCount: 1,
       };
       const { result } = renderHook(() =>
-        useEditPatientForm(propsWithOpenAttendances),
+        useEditPatientForm(propsWithOpenAppointments),
       );
 
       await act(async () => {
@@ -478,15 +478,15 @@ describe("useEditPatientForm", () => {
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
-    it("should not set pendingStatusChange when openAttendancesCount is 0", async () => {
+    it("should not set pendingStatusChange when openAppointmentsCount is 0", async () => {
       mockMutateAsync.mockResolvedValue({ id: 123, name: "Updated" });
-      const propsNoOpenAttendances = {
+      const propsNoOpenAppointments = {
         ...defaultProps,
         initialData: { ...defaultInitialData, status: "D" },
-        openAttendancesCount: 0,
+        openAppointmentsCount: 0,
       };
       const { result } = renderHook(() =>
-        useEditPatientForm(propsNoOpenAttendances),
+        useEditPatientForm(propsNoOpenAppointments),
       );
 
       await act(async () => {
@@ -500,13 +500,13 @@ describe("useEditPatientForm", () => {
 
     it("should clear pendingStatusChange and submit when confirmStatusChange is called", async () => {
       mockMutateAsync.mockResolvedValue({ id: 123, name: "Updated" });
-      const propsWithOpenAttendances = {
+      const propsWithOpenAppointments = {
         ...defaultProps,
         initialData: { ...defaultInitialData, status: "D" },
-        openAttendancesCount: 2,
+        openAppointmentsCount: 2,
       };
       const { result } = renderHook(() =>
-        useEditPatientForm(propsWithOpenAttendances),
+        useEditPatientForm(propsWithOpenAppointments),
       );
 
       await act(async () => {
@@ -527,13 +527,13 @@ describe("useEditPatientForm", () => {
     });
 
     it("should clear pendingStatusChange when cancelStatusChange is called", async () => {
-      const propsWithOpenAttendances = {
+      const propsWithOpenAppointments = {
         ...defaultProps,
         initialData: { ...defaultInitialData, status: "D" },
-        openAttendancesCount: 2,
+        openAppointmentsCount: 2,
       };
       const { result } = renderHook(() =>
-        useEditPatientForm(propsWithOpenAttendances),
+        useEditPatientForm(propsWithOpenAppointments),
       );
 
       await act(async () => {
@@ -668,10 +668,10 @@ describe("useEditPatientForm", () => {
   });
 
   describe("Delete patient", () => {
-    it("should map delete error to attendance-history friendly message", async () => {
+    it("should map delete error to appointment-history friendly message", async () => {
       const mockOnError = jest.fn();
       mockDeleteAsync.mockRejectedValue(
-        new Error("Cannot delete patient 123: Has 1 active attendances"),
+        new Error("Cannot delete patient 123: Has 1 active appointments"),
       );
       const consoleErrorSpy = jest
         .spyOn(console, "error")

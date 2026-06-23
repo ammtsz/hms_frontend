@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@/utils/testUtils";
 import { TreatmentRecommendationsDisplay } from "../TreatmentRecommendationsDisplay";
-import { CONSULTATION_NOTES_HEADING } from "@/utils/attendanceStatusLabels";
+import { CONSULTATION_NOTES_HEADING } from "@/utils/appointmentStatusLabels";
 import { Recommendations } from "@/types/types";
 
 const mockRecommendations = {

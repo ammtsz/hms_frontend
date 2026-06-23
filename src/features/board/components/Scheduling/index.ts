@@ -1,1 +1,1 @@
-export { default as NewAttendanceForm } from "./NewAttendanceForm";
+export { default as NewAppointmentForm } from "./NewAppointmentForm";

@@ -1,12 +1,12 @@
 import type { AbsenceJustification, ScheduledAbsence } from "../types";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import type {
-  GroupedAttendanceDisplay,
-  IAttendanceStatusDetailWithType,
-} from "../../../utils/attendanceDataUtils";
+  GroupedAppointmentDisplay,
+  IAppointmentStatusDetailWithType,
+} from "../../../utils/appointmentDataUtils";
 
-/** Grouped attendance with body location counts for treatments. Used in ConfirmationStep. */
-export interface GroupedAttendanceDisplayWithBodyLocation extends GroupedAttendanceDisplay {
+/** Grouped appointment with body location counts for treatments. Used in ConfirmationStep. */
+export interface GroupedAppointmentDisplayWithBodyLocation extends GroupedAppointmentDisplay {
   physiotherapyCount?: number;
   tensCount?: number;
 }
@@ -22,7 +22,7 @@ export interface AbsenceCard {
   justified: boolean;
 }
 
-/** Group scheduled absences by card (patient + assessment|treatments). Count by cards, not individual attendances. */
+/** Group scheduled absences by card (patient + assessment|treatments). Count by cards, not individual appointments. */
 export function groupAbsenceJustificationsByCard(
   scheduledAbsences: ScheduledAbsence[],
   absenceJustifications: AbsenceJustification[],
@@ -46,7 +46,7 @@ export function groupAbsenceJustificationsByCard(
       });
     }
     const g = byPatient.get(pid)!;
-    if (absence.attendanceType === "assessment") {
+    if (absence.appointmentType === "assessment") {
       g.assessment.push(absence);
     } else {
       g.treatments.push(absence);
@@ -65,17 +65,17 @@ export function groupAbsenceJustificationsByCard(
         });
       }
       const g = byPatient.get(pid)!;
-      if (j.attendanceType === "assessment") {
+      if (j.appointmentType === "assessment") {
         g.assessment.push({
           patientId: pid,
           patientName: j.patientName,
-          attendanceType: "assessment",
+          appointmentType: "assessment",
         });
       } else {
         g.treatments.push({
           patientId: pid,
           patientName: j.patientName,
-          attendanceType: j.attendanceType as "physiotherapy" | "tens",
+          appointmentType: j.appointmentType as "physiotherapy" | "tens",
         });
       }
     }
@@ -87,13 +87,13 @@ export function groupAbsenceJustificationsByCard(
     const getJustification = (type: "assessment" | "treatments") => {
       if (type === "assessment") {
         return absenceJustifications.find(
-          (j) => j.patientId === patientId && j.attendanceType === "assessment",
+          (j) => j.patientId === patientId && j.appointmentType === "assessment",
         );
       }
       return absenceJustifications.find(
         (j) =>
           j.patientId === patientId &&
-          (j.attendanceType === "physiotherapy" || j.attendanceType === "tens"),
+          (j.appointmentType === "physiotherapy" || j.appointmentType === "tens"),
       );
     };
 
@@ -112,10 +112,10 @@ export function groupAbsenceJustificationsByCard(
 
     if (group.treatments.length > 0) {
       const physiotherapyCount = group.treatments.filter(
-        (t) => t.attendanceType === "physiotherapy",
+        (t) => t.appointmentType === "physiotherapy",
       ).length;
       const tensCount = group.treatments.filter(
-        (t) => t.attendanceType === "tens",
+        (t) => t.appointmentType === "tens",
       ).length;
       const j = getJustification("treatments");
       cards.push({
@@ -135,29 +135,29 @@ export function groupAbsenceJustificationsByCard(
 
 export function getAbsenceCardLabelParts(card: AbsenceCard): string[] {
   if (card.hasAssessment) {
-    return [getAttendanceTypeLabel("assessment")];
+    return [getAppointmentTypeLabel("assessment")];
   }
   const parts: string[] = [];
   if (card.physiotherapyCount > 0) {
     parts.push(
-      `${getAttendanceTypeLabel("physiotherapy")} (${card.physiotherapyCount} ${card.physiotherapyCount === 1 ? "location" : "locations"})`,
+      `${getAppointmentTypeLabel("physiotherapy")} (${card.physiotherapyCount} ${card.physiotherapyCount === 1 ? "location" : "locations"})`,
     );
   }
   if (card.tensCount > 0) {
     parts.push(
-      `${getAttendanceTypeLabel("tens")} (${card.tensCount} ${card.tensCount === 1 ? "location" : "locations"})`,
+      `${getAppointmentTypeLabel("tens")} (${card.tensCount} ${card.tensCount === 1 ? "location" : "locations"})`,
     );
   }
   return parts;
 }
 
 /**
- * Groups attendances with body location counts for treatment types.
- * Each attendance = 1 local. Used in ConfirmationStep for "Physiotherapy - 1 site" format.
+ * Groups appointments with body location counts for treatment types.
+ * Each appointment = 1 local. Used in ConfirmationStep for "Physiotherapy - 1 site" format.
  */
-export function groupAttendancesForDisplayWithBodyLocation(
-  attendances: IAttendanceStatusDetailWithType[],
-): GroupedAttendanceDisplayWithBodyLocation[] {
+export function groupAppointmentsForDisplayWithBodyLocation(
+  appointments: IAppointmentStatusDetailWithType[],
+): GroupedAppointmentDisplayWithBodyLocation[] {
   const patientGroups = new Map<
     string,
     {
@@ -169,31 +169,31 @@ export function groupAttendancesForDisplayWithBodyLocation(
     }
   >();
 
-  attendances.forEach((attendance) => {
-    const key = attendance.patientId?.toString() || attendance.name;
+  appointments.forEach((appointment) => {
+    const key = appointment.patientId?.toString() || appointment.name;
     const existing = patientGroups.get(key);
 
     if (existing) {
-      if (attendance.attendanceType === "assessment") {
+      if (appointment.appointmentType === "assessment") {
         existing.assessmentCount += 1;
-      } else if (attendance.attendanceType === "physiotherapy") {
+      } else if (appointment.appointmentType === "physiotherapy") {
         existing.physiotherapyCount += 1;
-      } else if (attendance.attendanceType === "tens") {
+      } else if (appointment.appointmentType === "tens") {
         existing.tensCount += 1;
       }
     } else {
       patientGroups.set(key, {
-        patientName: attendance.name,
-        patientId: attendance.patientId,
-        assessmentCount: attendance.attendanceType === "assessment" ? 1 : 0,
+        patientName: appointment.name,
+        patientId: appointment.patientId,
+        assessmentCount: appointment.appointmentType === "assessment" ? 1 : 0,
         physiotherapyCount:
-          attendance.attendanceType === "physiotherapy" ? 1 : 0,
-        tensCount: attendance.attendanceType === "tens" ? 1 : 0,
+          appointment.appointmentType === "physiotherapy" ? 1 : 0,
+        tensCount: appointment.appointmentType === "tens" ? 1 : 0,
       });
     }
   });
 
-  const result: GroupedAttendanceDisplayWithBodyLocation[] = [];
+  const result: GroupedAppointmentDisplayWithBodyLocation[] = [];
 
   patientGroups.forEach((group) => {
     const hasTreatments = group.physiotherapyCount > 0 || group.tensCount > 0;
@@ -202,18 +202,18 @@ export function groupAttendancesForDisplayWithBodyLocation(
       result.push({
         patientName: group.patientName,
         patientId: group.patientId,
-        label: getAttendanceTypeLabel("assessment"),
+        label: getAppointmentTypeLabel("assessment"),
       });
 
       const treatmentParts: string[] = [];
       if (group.physiotherapyCount > 0) {
         treatmentParts.push(
-          `${getAttendanceTypeLabel("physiotherapy")} - ${group.physiotherapyCount} ${group.physiotherapyCount === 1 ? "location" : "locations"}`,
+          `${getAppointmentTypeLabel("physiotherapy")} - ${group.physiotherapyCount} ${group.physiotherapyCount === 1 ? "location" : "locations"}`,
         );
       }
       if (group.tensCount > 0) {
         treatmentParts.push(
-          `${getAttendanceTypeLabel("tens")} - ${group.tensCount} ${group.tensCount === 1 ? "location" : "locations"}`,
+          `${getAppointmentTypeLabel("tens")} - ${group.tensCount} ${group.tensCount === 1 ? "location" : "locations"}`,
         );
       }
       result.push({
@@ -227,18 +227,18 @@ export function groupAttendancesForDisplayWithBodyLocation(
       result.push({
         patientName: group.patientName,
         patientId: group.patientId,
-        label: getAttendanceTypeLabel("assessment"),
+        label: getAppointmentTypeLabel("assessment"),
       });
     } else if (hasTreatments) {
       const treatmentParts: string[] = [];
       if (group.physiotherapyCount > 0) {
         treatmentParts.push(
-          `${getAttendanceTypeLabel("physiotherapy")} - ${group.physiotherapyCount} ${group.physiotherapyCount === 1 ? "location" : "locations"}`,
+          `${getAppointmentTypeLabel("physiotherapy")} - ${group.physiotherapyCount} ${group.physiotherapyCount === 1 ? "location" : "locations"}`,
         );
       }
       if (group.tensCount > 0) {
         treatmentParts.push(
-          `${getAttendanceTypeLabel("tens")} - ${group.tensCount} ${group.tensCount === 1 ? "location" : "locations"}`,
+          `${getAppointmentTypeLabel("tens")} - ${group.tensCount} ${group.tensCount === 1 ? "location" : "locations"}`,
         );
       }
       result.push({

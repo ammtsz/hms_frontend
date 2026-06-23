@@ -240,12 +240,12 @@ describe('Patients API', () => {
       });
     });
 
-    it('should return specific error message when patient has active attendances', async () => {
+    it('should return specific error message when patient has active appointments', async () => {
       const mockError = {
         status: 409,
         response: {
           data: {
-            message: 'Cannot delete patient 1: Has 3 active attendances'
+            message: 'Cannot delete patient 1: Has 3 active appointments'
           }
         }
       };
@@ -255,7 +255,7 @@ describe('Patients API', () => {
 
       expect(result).toEqual({
         success: false,
-        error: 'Cannot delete patient 1: Has 3 active attendances'
+        error: 'Cannot delete patient 1: Has 3 active appointments'
       });
     });
   });

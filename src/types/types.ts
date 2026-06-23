@@ -2,7 +2,7 @@
  * Modern TypeScript Type System
  * 
  * This file defines all type definitions for the application using modern TypeScript conventions.
- * Primary types use clean names without prefixes (Priority, Status, AttendanceType, etc.).
+ * Primary types use clean names without prefixes (Priority, Status, AppointmentType, etc.).
  * Legacy I-prefixed types are maintained as aliases for backward compatibility.
  * New API types are re-exported for seamless integration.
  */
@@ -12,13 +12,13 @@ export {
   PatientPriority,
   PatientStatus,
   type PatientResponseDto,
-  type AttendanceResponseDto,
-  type AttendanceScheduleDto,
+  type AppointmentResponseDto,
+  type AppointmentScheduleDto,
   type ConsultationResponseDto,
   type CreatePatientRequest,
   type UpdatePatientRequest,
-  type CreateAttendanceRequest,
-  type UpdateAttendanceRequest,
+  type CreateAppointmentRequest,
+  type UpdateAppointmentRequest,
   type CreateConsultationRequest,
   type UpdateConsultationRequest,
   type ScheduleSettingResponseDto
@@ -27,8 +27,8 @@ export {
 // Primary types (modern naming without I-prefix)
 export type Priority = "1" | "2" | "3" | "4" | "5";
 export type Status = "N" | "T" | "D" | "C";
-export type AttendanceType = "assessment" | "physiotherapy" | "tens" | "combined"; // combined for calendar view
-export type AttendanceProgression = "scheduled" | "checkedIn" | "onGoing" | "completed";
+export type AppointmentType = "assessment" | "physiotherapy" | "tens" | "combined"; // combined for calendar view
+export type AppointmentProgression = "scheduled" | "checkedIn" | "onGoing" | "completed";
 
 // UI section types for the room layout  
 export type UISection = "assessment" | "mixed"; // assessment room and mixed room (physiotherapy + tens)
@@ -43,33 +43,33 @@ export interface Recommendations {
   notes?: string;
 }
 
-export interface AttendanceStatusDetail {
+export interface AppointmentStatusDetail {
   name: string; 
   priority: Priority; 
   checkedInTime?: string | null; 
   onGoingTime?: string | null; 
   completedTime?: string | null;
   // Backend sync data
-  attendanceId?: number;
-  treatmentAttendanceIds?: number[];
+  appointmentId?: number;
+  treatmentAppointmentIds?: number[];
   patientId?: number;
-  notes?: string; // Attendance notes
+  notes?: string; // Appointment notes
   // Status metadata
-  isMissed?: boolean; // True if attendance status is MISSED
-  isCancelled?: boolean; // True if attendance status is CANCELLED
+  isMissed?: boolean; // True if appointment status is MISSED
+  isCancelled?: boolean; // True if appointment status is CANCELLED
 }
 
-export interface AttendanceStatus {
-    scheduled: AttendanceStatusDetail[],
-    checkedIn: AttendanceStatusDetail[],
-    onGoing: AttendanceStatusDetail[],
-    completed: AttendanceStatusDetail[],
+export interface AppointmentStatus {
+    scheduled: AppointmentStatusDetail[],
+    checkedIn: AppointmentStatusDetail[],
+    onGoing: AppointmentStatusDetail[],
+    completed: AppointmentStatusDetail[],
   }
 
-export type AttendanceByDate = {
+export type AppointmentByDate = {
   date: string; // YYYY-MM-DD format
 } & {
-  [type in AttendanceType]: AttendanceStatus;
+  [type in AppointmentType]: AppointmentStatus;
 };
 
 export interface ScheduleItem {
@@ -78,15 +78,15 @@ export interface ScheduleItem {
     id: string;
     name: string;
     priority: Priority;
-    attendanceId?: number; // Backend attendance ID for deletion
-    attendanceType?: AttendanceType; // Specific attendance type for individual patients
-    /** Attendance workflow status from API (schedule list) */
-    attendanceStatus?: import("@/api/types").AttendanceStatus;
+    appointmentId?: number; // Backend appointment ID for deletion
+    appointmentType?: AppointmentType; // Specific appointment type for individual patients
+    /** Appointment workflow status from API (schedule list) */
+    appointmentStatus?: import("@/api/types").AppointmentStatus;
   }[];
 }
 
 export type Schedule = {
-  [K in AttendanceType]: ScheduleItem[];
+  [K in AppointmentType]: ScheduleItem[];
 };
 
 // Specialized schedule type for calendar view (combines physiotherapy and tens into physiotherapy)
@@ -110,26 +110,26 @@ export interface Patient extends PatientBasic {
   startDate: string, // YYYY-MM-DD string format
   dischargeDate: string | null, // YYYY-MM-DD string format or null
   timezone?: string,
-  nextAttendanceDates: {
+  nextAppointmentDates: {
     date: string, // YYYY-MM-DD string format
-    type: AttendanceType,
+    type: AppointmentType,
     status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled',
     absenceNotes?: string, // Cancellation reason
   }[],
   currentRecommendations: {
     date: string, // YYYY-MM-DD string format
   } & Recommendations,
-  previousAttendances: PreviousAttendance[],
+  previousAppointments: PreviousAppointment[],
   /** Consecutive unjustified absences (from API; default 0) */
   missingAppointmentsStreak: number,
-  /** Count of open (scheduled, checked_in, in_progress) attendances; used for status-change confirmation */
-  openAttendancesCount?: number
+  /** Count of open (scheduled, checked_in, in_progress) appointments; used for status-change confirmation */
+  openAppointmentsCount?: number
 }
 
-export interface PreviousAttendance {
-  attendanceId: string;
+export interface PreviousAppointment {
+  appointmentId: string;
   date: string; // YYYY-MM-DD string format
-  type: AttendanceType;
+  type: AppointmentType;
   notes: string;
   recommendations: Recommendations | null;
   status?: 'completed' | 'missed' | 'cancelled'; // Add status for display
@@ -137,5 +137,5 @@ export interface PreviousAttendance {
   absenceJustified?: boolean; // Whether absence was justified
   createdDate: string; // YY-MM-DD 
   updatedDate: string; // YY-MM-DD 
-  cancelledDate?: string; // YYYY-MM-DD (only for cancelled attendances)
+  cancelledDate?: string; // YYYY-MM-DD (only for cancelled appointments)
 }

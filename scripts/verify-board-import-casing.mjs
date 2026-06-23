@@ -11,7 +11,7 @@ const ROOT = new URL('..', import.meta.url).pathname;
 const COMPONENTS = 'src/features/board/components';
 
 const LEGACY_TO_PASCAL = {
-  attendanceActions: 'AttendanceActions',
+  appointmentActions: 'AppointmentActions',
   board: 'Board',
   cards: 'Cards',
   consultation: 'Consultation',

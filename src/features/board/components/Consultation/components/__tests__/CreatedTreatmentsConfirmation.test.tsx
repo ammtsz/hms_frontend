@@ -4,9 +4,9 @@ import CreatedTreatmentsConfirmation, {
   type CreatedTreatment,
 } from "../CreatedTreatmentsConfirmation";
 import type {
-  AttendanceResponseDto,
-  AttendanceStatus,
-  AttendanceType,
+  AppointmentResponseDto,
+  AppointmentStatus,
+  AppointmentType,
 } from "@/api/types";
 
 // Mock date helpers (formatDisplayDate used by confirmation; getWeeksUntil by NextConsultationCard)
@@ -50,7 +50,7 @@ describe("CreatedTreatmentsConfirmation", () => {
   const mockPhysiotherapySession: CreatedTreatment = {
     id: 1,
     consultationId: 1,
-    attendanceId: 1,
+    appointmentId: 1,
     patientId: 1,
     treatmentType: "physiotherapy",
     bodyLocation: "Head",
@@ -70,7 +70,7 @@ describe("CreatedTreatmentsConfirmation", () => {
   const mockTensSession: CreatedTreatment = {
     id: 2,
     consultationId: 1,
-    attendanceId: 1,
+    appointmentId: 1,
     patientId: 1,
     treatmentType: "tens",
     bodyLocation: "Back",
@@ -85,12 +85,12 @@ describe("CreatedTreatmentsConfirmation", () => {
     updatedTime: "10:00:00",
   };
 
-  const mockScheduledAttendances: AttendanceResponseDto[] = [
+  const mockScheduledAppointments: AppointmentResponseDto[] = [
     {
       id: 101,
       patientId: 1,
-      type: "assessment" as AttendanceType,
-      status: "scheduled" as AttendanceStatus,
+      type: "assessment" as AppointmentType,
+      status: "scheduled" as AppointmentStatus,
       scheduledDate: "2025-10-14",
       scheduledTime: "09:00:00",
       createdAt: "2025-09-16T10:00:00Z",
@@ -99,8 +99,8 @@ describe("CreatedTreatmentsConfirmation", () => {
     {
       id: 102,
       patientId: 1,
-      type: "physiotherapy" as AttendanceType,
-      status: "scheduled" as AttendanceStatus,
+      type: "physiotherapy" as AppointmentType,
+      status: "scheduled" as AppointmentStatus,
       scheduledDate: "2025-09-23",
       scheduledTime: "10:00:00",
       createdAt: "2025-09-16T10:00:00Z",
@@ -109,8 +109,8 @@ describe("CreatedTreatmentsConfirmation", () => {
     {
       id: 103,
       patientId: 1,
-      type: "physiotherapy" as AttendanceType,
-      status: "scheduled" as AttendanceStatus,
+      type: "physiotherapy" as AppointmentType,
+      status: "scheduled" as AppointmentStatus,
       scheduledDate: "2025-09-30",
       scheduledTime: "10:00:00",
       createdAt: "2025-09-16T10:00:00Z",
@@ -217,7 +217,7 @@ describe("CreatedTreatmentsConfirmation", () => {
         createdTreatments={[mockPhysiotherapySession]}
         patientName={patientName}
         onAcknowledge={mockOnAcknowledge}
-        newlyScheduledAttendances={mockScheduledAttendances}
+        newlyScheduledAppointments={mockScheduledAppointments}
       />,
     );
 
@@ -235,7 +235,7 @@ describe("CreatedTreatmentsConfirmation", () => {
       />,
     );
 
-    const acknowledgeButton = screen.getByText("OK");
+    const acknowledgeButton = screen.getByText("Close");
     fireEvent.click(acknowledgeButton);
 
     expect(mockOnAcknowledge).toHaveBeenCalledTimes(1);
@@ -291,7 +291,7 @@ describe("CreatedTreatmentsConfirmation", () => {
   });
 
   describe("Next Assessment Consultation", () => {
-    it("should display next consultation date when scheduled attendances are provided", () => {
+    it("should display next consultation date when scheduled appointments are provided", () => {
       const returnWeeks = 4;
 
       render(
@@ -300,36 +300,36 @@ describe("CreatedTreatmentsConfirmation", () => {
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
           returnWeeks={returnWeeks}
-          newlyScheduledAttendances={mockScheduledAttendances}
+          newlyScheduledAppointments={mockScheduledAppointments}
         />,
       );
 
       // Should show the next consultation section (NextConsultationCard)
       expect(
-        screen.getByText("Return of Assessment Consultation"),
+        screen.getByText("Assessment Consultation Return"),
       ).toBeInTheDocument();
 
-      // Should show the date from the scheduled attendance (10/14/2025)
+      // Should show the date from the scheduled appointment (10/14/2025)
       expect(screen.getByText("10/14/2025")).toBeInTheDocument();
     });
 
-    it("should not display next consultation section when newlyScheduledAttendances is empty", () => {
+    it("should not display next consultation section when newlyScheduledAppointments is empty", () => {
       render(
         <CreatedTreatmentsConfirmation
           createdTreatments={[mockPhysiotherapySession]}
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
           returnWeeks={4}
-          newlyScheduledAttendances={[]}
+          newlyScheduledAppointments={[]}
         />,
       );
 
       expect(
-        screen.queryByText("Return of Assessment Consultation"),
+        screen.queryByText("Assessment Consultation Return"),
       ).not.toBeInTheDocument();
     });
 
-    it("should not display next consultation section when newlyScheduledAttendances is not provided", () => {
+    it("should not display next consultation section when newlyScheduledAppointments is not provided", () => {
       render(
         <CreatedTreatmentsConfirmation
           createdTreatments={[mockPhysiotherapySession]}
@@ -340,23 +340,23 @@ describe("CreatedTreatmentsConfirmation", () => {
       );
 
       expect(
-        screen.queryByText("Return of Assessment Consultation"),
+        screen.queryByText("Assessment Consultation Return"),
       ).not.toBeInTheDocument();
     });
 
-    it("should filter out non-scheduled assessment attendances (completed/in_progress)", () => {
-      const attendancesWithCompleted: AttendanceResponseDto[] = [
+    it("should filter out non-scheduled assessment appointments (completed/in_progress)", () => {
+      const appointmentsWithCompleted: AppointmentResponseDto[] = [
         {
           id: 100,
           patientId: 1,
-          type: "assessment" as AttendanceType,
-          status: "completed" as AttendanceStatus,
+          type: "assessment" as AppointmentType,
+          status: "completed" as AppointmentStatus,
           scheduledDate: "2025-09-16",
           scheduledTime: "09:00:00",
           createdAt: "2025-09-16T10:00:00Z",
           updatedAt: "2025-09-16T10:00:00Z",
         },
-        ...mockScheduledAttendances,
+        ...mockScheduledAppointments,
       ];
 
       render(
@@ -365,7 +365,7 @@ describe("CreatedTreatmentsConfirmation", () => {
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
           returnWeeks={4}
-          newlyScheduledAttendances={attendancesWithCompleted}
+          newlyScheduledAppointments={appointmentsWithCompleted}
         />,
       );
 
@@ -375,12 +375,12 @@ describe("CreatedTreatmentsConfirmation", () => {
     });
 
     it("should display singular form for 1 week return", () => {
-      const oneWeekLaterAttendances: AttendanceResponseDto[] = [
+      const oneWeekLaterAppointments: AppointmentResponseDto[] = [
         {
           id: 99,
           patientId: 1,
-          type: "assessment" as AttendanceType,
-          status: "scheduled" as AttendanceStatus,
+          type: "assessment" as AppointmentType,
+          status: "scheduled" as AppointmentStatus,
           scheduledDate: "2025-09-23",
           scheduledTime: "09:00:00",
           createdAt: "2025-09-16T10:00:00Z",
@@ -393,7 +393,7 @@ describe("CreatedTreatmentsConfirmation", () => {
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
           returnWeeks={1}
-          newlyScheduledAttendances={oneWeekLaterAttendances}
+          newlyScheduledAppointments={oneWeekLaterAppointments}
         />,
       );
 
@@ -408,7 +408,7 @@ describe("CreatedTreatmentsConfirmation", () => {
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
           returnWeeks={8}
-          newlyScheduledAttendances={mockScheduledAttendances}
+          newlyScheduledAppointments={mockScheduledAppointments}
         />,
       );
 
@@ -423,12 +423,12 @@ describe("CreatedTreatmentsConfirmation", () => {
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
           returnWeeks={4}
-          newlyScheduledAttendances={mockScheduledAttendances}
+          newlyScheduledAppointments={mockScheduledAppointments}
         />,
       );
 
       expect(
-        screen.getByText("Return of Assessment Consultation"),
+        screen.getByText("Assessment Consultation Return"),
       ).toBeInTheDocument();
       expect(screen.getByText("10/14/2025")).toBeInTheDocument();
     });
@@ -440,24 +440,24 @@ describe("CreatedTreatmentsConfirmation", () => {
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
           returnWeeks={2}
-          newlyScheduledAttendances={mockScheduledAttendances}
+          newlyScheduledAppointments={mockScheduledAppointments}
         />,
       );
 
       // Should still show next consultation section
       expect(
-        screen.getByText("Return of Assessment Consultation"),
+        screen.getByText("Assessment Consultation Return"),
       ).toBeInTheDocument();
       expect(screen.getByText("10/14/2025")).toBeInTheDocument();
     });
 
-    it("should show loading state when fetchingAttendances is true", () => {
+    it("should show loading state when fetchingAppointments is true", () => {
       render(
         <CreatedTreatmentsConfirmation
           createdTreatments={[mockPhysiotherapySession]}
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
-          fetchingAttendances={true}
+          fetchingAppointments={true}
         />,
       );
 
@@ -471,7 +471,7 @@ describe("CreatedTreatmentsConfirmation", () => {
       ).toBeInTheDocument();
     });
 
-    it("should show error state when attendancesError is provided", () => {
+    it("should show error state when appointmentsError is provided", () => {
       const errorMessage = "Error fetching appointments";
 
       render(
@@ -479,7 +479,7 @@ describe("CreatedTreatmentsConfirmation", () => {
           createdTreatments={[mockPhysiotherapySession]}
           patientName={patientName}
           onAcknowledge={mockOnAcknowledge}
-          attendancesError={errorMessage}
+          appointmentsError={errorMessage}
         />,
       );
 

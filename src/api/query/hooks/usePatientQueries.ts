@@ -1,9 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPatientById, updatePatient, getPatients, createPatient, deletePatient } from '@/api/patients';
-import { getAttendancesByPatient } from '@/api/attendances';
+import { getAppointmentsByPatient } from '@/api/appointments';
 import {
   transformSinglePatientFromApi,
-  transformPatientWithAttendances,
+  transformPatientWithAppointments,
   transformPatientsFromApi
 } from '@/utils/apiTransformers';
 import { Patient } from '@/types/types';
@@ -15,17 +15,17 @@ import { sessionsQueryKeys } from '@/api/query/keys/sessionsQueryKeys';
 import { patientKeys } from '@/api/query/keys/patientKeys';
 
 /**
- * Hook to fetch patient data with attendances
+ * Hook to fetch patient data with appointments
  * Implements parallel fetching with fallback strategy
  */
-export function usePatientWithAttendances(patientId: string) {
+export function usePatientWithAppointments(patientId: string) {
   return useQuery({
     queryKey: patientKeys.detail(patientId),
     queryFn: async (): Promise<Patient> => {
-      // Fetch patient data and attendance history in parallel
-      const [patientResult, attendancesResult] = await Promise.all([
+      // Fetch patient data and appointment history in parallel
+      const [patientResult, appointmentsResult] = await Promise.all([
         getPatientById(patientId),
-        getAttendancesByPatient(patientId),
+        getAppointmentsByPatient(patientId),
       ]);
 
       if (!patientResult.success || !patientResult.value) {
@@ -34,18 +34,18 @@ export function usePatientWithAttendances(patientId: string) {
 
       let transformedPatient: Patient;
 
-      if (attendancesResult.success && attendancesResult.value) {
-        // Use enhanced transformer with attendance history
-        transformedPatient = transformPatientWithAttendances(
+      if (appointmentsResult.success && appointmentsResult.value) {
+        // Use enhanced transformer with appointment history
+        transformedPatient = transformPatientWithAppointments(
           patientResult.value,
-          attendancesResult.value
+          appointmentsResult.value
         );
       } else {
-        // Fallback to basic transformer if attendance fetch fails
+        // Fallback to basic transformer if appointment fetch fails
         transformedPatient = transformSinglePatientFromApi(patientResult.value);
 
-        // Log attendance error but don't fail the query
-        console.warn('Failed to load attendance data:', attendancesResult.error);
+        // Log appointment error but don't fail the query
+        console.warn('Failed to load appointment data:', appointmentsResult.error);
       }
 
       return transformedPatient;
@@ -59,8 +59,8 @@ export function usePatientWithAttendances(patientId: string) {
 }
 
 /**
- * Hook to fetch only patient basic data (without attendances)
- * Useful for lighter queries when attendance data isn't needed
+ * Hook to fetch only patient basic data (without appointments)
+ * Useful for lighter queries when appointment data isn't needed
  */
 export function usePatient(patientId: string) {
   return useQuery({
@@ -81,50 +81,50 @@ export function usePatient(patientId: string) {
 }
 
 /**
- * Hook to fetch patient attendances separately
- * Allows for independent caching and refetching of attendance data
+ * Hook to fetch patient appointments separately
+ * Allows for independent caching and refetching of appointment data
  */
-export function usePatientAttendances(patientId: string) {
+export function usePatientAppointments(patientId: string) {
   return useQuery({
-    queryKey: patientKeys.attendances(patientId),
+    queryKey: patientKeys.appointments(patientId),
     queryFn: async () => {
-      const result = await getAttendancesByPatient(patientId);
+      const result = await getAppointmentsByPatient(patientId);
 
       if (!result.success) {
-        throw new Error(result.error || 'Error loading attendances');
+        throw new Error(result.error || 'Error loading appointments');
       }
 
       return result.value || [];
     },
     enabled: !!patientId,
-    // Attendance data changes more frequently
+    // Appointment data changes more frequently
     staleTime: 2 * 60 * 1000, // 2 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
   });
 }
 
 /**
- * Hook to fetch newly scheduled attendances for a patient
+ * Hook to fetch newly scheduled appointments for a patient
  * Used for confirmation display after treatment creation
- * Filters for scheduled attendances from today onwards
+ * Filters for scheduled appointments from today onwards
  */
-export function useNewlyScheduledAttendances(patientId: string | undefined, enabled: boolean = false) {
+export function useNewlyScheduledAppointments(patientId: string | undefined, enabled: boolean = false) {
   const today = getTodayClinic();
 
   return useQuery({
-    queryKey: [...patientKeys.attendances(patientId || ''), 'scheduled', today],
+    queryKey: [...patientKeys.appointments(patientId || ''), 'scheduled', today],
     queryFn: async () => {
       if (!patientId) {
         throw new Error('Patient ID is required');
       }
 
-      const result = await getAttendancesByPatient(patientId, {
+      const result = await getAppointmentsByPatient(patientId, {
         fromDate: today,
         status: 'scheduled'
       });
 
       if (!result.success) {
-        throw new Error(result.error || 'Error loading scheduled attendances');
+        throw new Error(result.error || 'Error loading scheduled appointments');
       }
 
       return result.value || [];
@@ -205,11 +205,11 @@ export function useUpdatePatient() {
       return result.value;
     },
     onSuccess: (_, { patientId }) => {
-      // Detail query (usePatientWithAttendances) and separate attendance cache
-      // (ScheduledAttendancesCard, AttendanceHistory) must both refresh — e.g. when
-      // status D/C cancels open attendances on the backend.
+      // Detail query (usePatientWithAppointments) and separate appointment cache
+      // (ScheduledAppointmentsCard, AppointmentHistory) must both refresh — e.g. when
+      // status D/C cancels open appointments on the backend.
       queryClient.invalidateQueries({ queryKey: patientKeys.detail(patientId) });
-      queryClient.invalidateQueries({ queryKey: patientKeys.attendances(patientId) });
+      queryClient.invalidateQueries({ queryKey: patientKeys.appointments(patientId) });
       queryClient.invalidateQueries({ queryKey: patientNotesKeys.list(patientId) });
       queryClient.invalidateQueries({ queryKey: sessionsQueryKeys.byPatient(patientId) });
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
@@ -259,19 +259,19 @@ export function usePrefetchPatient() {
     queryClient.prefetchQuery({
       queryKey: patientKeys.detail(patientId),
       queryFn: async () => {
-        const [patientResult, attendancesResult] = await Promise.all([
+        const [patientResult, appointmentsResult] = await Promise.all([
           getPatientById(patientId),
-          getAttendancesByPatient(patientId),
+          getAppointmentsByPatient(patientId),
         ]);
 
         if (!patientResult.success || !patientResult.value) {
           throw new Error(patientResult.error || 'Patient not found');
         }
 
-        if (attendancesResult.success && attendancesResult.value) {
-          return transformPatientWithAttendances(
+        if (appointmentsResult.success && appointmentsResult.value) {
+          return transformPatientWithAppointments(
             patientResult.value,
-            attendancesResult.value
+            appointmentsResult.value
           );
         } else {
           return transformSinglePatientFromApi(patientResult.value);
@@ -322,8 +322,8 @@ export function useInvalidatePatientCache() {
     invalidatePatient: (patientId: string) => {
       queryClient.invalidateQueries({ queryKey: patientKeys.detail(patientId) });
     },
-    invalidatePatientAttendances: (patientId: string) => {
-      queryClient.invalidateQueries({ queryKey: patientKeys.attendances(patientId) });
+    invalidatePatientAppointments: (patientId: string) => {
+      queryClient.invalidateQueries({ queryKey: patientKeys.appointments(patientId) });
     },
     invalidatePatientNotes: (patientId: string) => {
       queryClient.invalidateQueries({ queryKey: patientNotesKeys.list(patientId) });

@@ -9,7 +9,7 @@ import {
 
 import { formatPhoneNumber } from "@/utils/formUtils";
 import { transformPriorityToApi, transformStatusToApi } from "@/utils/apiTransformers";
-import type { CreatePatientRequest, AttendanceType } from "@/api/types";
+import type { CreatePatientRequest, AppointmentType } from "@/api/types";
 import { formatDateClinic } from "@/utils/timezoneDate";
 import { useCreatePatient } from "@/api/query/hooks/usePatientQueries";
 import { useAddPatientToSchedule } from "@/api/query/hooks/useScheduleQueries";
@@ -38,8 +38,8 @@ const initialPatient: Omit<Patient, "id"> = {
   mainConcern: "",
   startDate: formatDateClinic(), // YYYY-MM-DD string format
   dischargeDate: null,
-  nextAttendanceDates: [],
-  previousAttendances: [],
+  nextAppointmentDates: [],
+  previousAppointments: [],
   missingAppointmentsStreak: 0,
   currentRecommendations: {
     date: formatDateClinic(), // YYYY-MM-DD string format
@@ -52,9 +52,9 @@ export function usePatientForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [scheduledAttendanceDate, setScheduledAttendanceDate] = useState<string | null>(null);
-  /** When user requested first consultation but attendance creation failed; message explains why */
-  const [attendanceCreationFailed, setAttendanceCreationFailed] = useState<{
+  const [scheduledAppointmentDate, setScheduledAppointmentDate] = useState<string | null>(null);
+  /** When user requested first consultation but appointment creation failed; message explains why */
+  const [appointmentCreationFailed, setAppointmentCreationFailed] = useState<{
     requested: true;
     message: string;
   } | null>(null);
@@ -88,7 +88,7 @@ export function usePatientForm() {
     }
 
     // First consultation date: must have assessment slots on that day (when schedule settings are available)
-    const firstConsultationDate = patient.nextAttendanceDates?.[0]?.date;
+    const firstConsultationDate = patient.nextAppointmentDates?.[0]?.date;
     if (
       firstConsultationDate &&
       scheduleSettings &&
@@ -167,7 +167,7 @@ export function usePatientForm() {
       const date = value || null;
       setPatient((prev) => ({
         ...prev,
-        nextAttendanceDates: date
+        nextAppointmentDates: date
           ? [{ date, type: "assessment" }]
           : [],
         startDate: date || prev.startDate,
@@ -211,9 +211,9 @@ export function usePatientForm() {
     }
 
     // If user selected a first consultation date, check if that day is finalized (block submit and show feedback)
-    if (patient.nextAttendanceDates.length > 0 && patient.nextAttendanceDates[0]?.date) {
-      const attendanceDate = patient.nextAttendanceDates[0].date;
-      const finalizationResult = await fetchDayFinalizationStatus(attendanceDate);
+    if (patient.nextAppointmentDates.length > 0 && patient.nextAppointmentDates[0]?.date) {
+      const appointmentDate = patient.nextAppointmentDates[0].date;
+      const finalizationResult = await fetchDayFinalizationStatus(appointmentDate);
       if (finalizationResult.success && finalizationResult.value?.isFinalized) {
         setValidationErrors((prev) => ({
           ...prev,
@@ -255,53 +255,53 @@ export function usePatientForm() {
       try {
         // Use React Query mutation to create the patient
         const createdPatient = await createPatientMutation.mutateAsync(patientCreateData);
-        // Create attendance if next date is provided (finalization already checked before submit)
-        if (patient.nextAttendanceDates.length > 0 && patient.nextAttendanceDates[0]?.date) {
-          const attendanceDate = patient.nextAttendanceDates[0].date;
+        // Create appointment if next date is provided (finalization already checked before submit)
+        if (patient.nextAppointmentDates.length > 0 && patient.nextAppointmentDates[0]?.date) {
+          const appointmentDate = patient.nextAppointmentDates[0].date;
           const timeSlots = ["20:00", "21:00"];
-          let attendanceCreated = false;
+          let appointmentCreated = false;
           let lastSlotError: Error | null = null;
 
           for (const time of timeSlots) {
-            if (attendanceCreated) break;
+            if (appointmentCreated) break;
 
             try {
               await addPatientToScheduleMutation.mutateAsync({
                 patientId: createdPatient?.id || 0,
-                type: "assessment" as AttendanceType,
-                scheduledDate: attendanceDate,
+                type: "assessment" as AppointmentType,
+                scheduledDate: appointmentDate,
                 scheduledTime: time,
                 notes: "Appointment created during patient registration"
               });
-              attendanceCreated = true;
-              setScheduledAttendanceDate(attendanceDate);
-              setAttendanceCreationFailed(null);
+              appointmentCreated = true;
+              setScheduledAppointmentDate(appointmentDate);
+              setAppointmentCreationFailed(null);
             } catch (slotError) {
               lastSlotError = slotError instanceof Error ? slotError : new Error(String(slotError));
               console.log(`Error in slot ${time}:`, slotError);
             }
           }
 
-          if (!attendanceCreated) {
+          if (!appointmentCreated) {
             const userMessage =
               lastSlotError?.message ||
               "No time slot available for the selected date.";
-            setScheduledAttendanceDate(null);
-            setAttendanceCreationFailed({
+            setScheduledAppointmentDate(null);
+            setAppointmentCreationFailed({
               requested: true,
               message: userMessage,
             });
           }
         } else {
-          setScheduledAttendanceDate(null);
-          setAttendanceCreationFailed(null);
+          setScheduledAppointmentDate(null);
+          setAppointmentCreationFailed(null);
         }
         
         // React Query automatically invalidates and refetches patient list
         // No need to manually call refreshPatients()
         
         // TODO: In the future, we could also save the treatment recommendations
-        // by creating an initial attendance and consultation if needed
+        // by creating an initial appointment and consultation if needed
         
         // Reset form
         setPatient(initialPatient);
@@ -345,8 +345,8 @@ export function usePatientForm() {
 
   const handleSuccessModalConfirm = () => {
     setShowSuccessModal(false);
-    setScheduledAttendanceDate(null);
-    setAttendanceCreationFailed(null);
+    setScheduledAppointmentDate(null);
+    setAppointmentCreationFailed(null);
     // Redirect to patients list
     router.push("/patients");
   };
@@ -362,8 +362,8 @@ export function usePatientForm() {
     validationErrors,
     isFormValid,
     showSuccessModal,
-    scheduledAttendanceDate,
-    attendanceCreationFailed,
+    scheduledAppointmentDate,
+    appointmentCreationFailed,
     handleSuccessModalConfirm,
   };
 }

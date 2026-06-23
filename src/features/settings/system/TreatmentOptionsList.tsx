@@ -182,7 +182,7 @@ export default function TreatmentOptionsList({
         </Table>
       </TableContainer>
 
-      {/* Add New Form — admin only; collaborators create body locations from attendance forms */}
+      {/* Add New Form — admin only; collaborators create body locations from appointment forms */}
       {isAdding && isAdmin ? (
         <Card className="border-blue-300 bg-blue-50 p-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">

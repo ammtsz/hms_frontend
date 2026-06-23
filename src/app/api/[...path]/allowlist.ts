@@ -12,7 +12,7 @@
  */
 export const PROXY_ALLOWED_SEGMENTS = new Set([
   'patients',
-  'attendances',
+  'appointments',
   'consultations',
   'treatments',
   'sessions',

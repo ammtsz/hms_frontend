@@ -1,6 +1,6 @@
 import React from "react";
 import type { AbsenceJustification } from "../types";
-import type { AttendanceType } from "@/types/types";
+import type { AppointmentType } from "@/types/types";
 import { Field, Radio, Textarea } from "@/components/ui";
 
 interface JustificationSectionProps {
@@ -10,7 +10,7 @@ interface JustificationSectionProps {
   justification?: AbsenceJustification;
   onJustificationChange: (
     patientId: number,
-    attendanceType: AttendanceType | "all" | "treatments",
+    appointmentType: AppointmentType | "all" | "treatments",
     justified: boolean,
     justification?: string,
   ) => void;

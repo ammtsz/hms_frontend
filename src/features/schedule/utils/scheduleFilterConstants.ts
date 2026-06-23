@@ -1,29 +1,31 @@
-import { AttendanceStatus } from "@/api/types";
+import { AppointmentStatus } from "@/api/types";
 
 /** All workflow statuses available in the schedule status filter */
-export const ALL_SCHEDULE_FILTER_STATUSES: AttendanceStatus[] = [
-  AttendanceStatus.SCHEDULED,
-  AttendanceStatus.CHECKED_IN,
-  AttendanceStatus.IN_PROGRESS,
-  AttendanceStatus.COMPLETED,
-  AttendanceStatus.CANCELLED,
-  AttendanceStatus.MISSED,
+export const ALL_SCHEDULE_FILTER_STATUSES: AppointmentStatus[] = [
+  AppointmentStatus.SCHEDULED,
+  AppointmentStatus.CHECKED_IN,
+  AppointmentStatus.IN_PROGRESS,
+  AppointmentStatus.COMPLETED,
+  AppointmentStatus.CANCELLED,
+  AppointmentStatus.MISSED,
 ];
 
-export const SCHEDULE_STATUS_CHECKBOX_LABELS: Record<AttendanceStatus, string> =
-  {
-    [AttendanceStatus.SCHEDULED]: "Scheduled",
-    [AttendanceStatus.CHECKED_IN]: "Checked-in",
-    [AttendanceStatus.IN_PROGRESS]: "In progress",
-    [AttendanceStatus.COMPLETED]: "Completed",
-    [AttendanceStatus.CANCELLED]: "Cancelled",
-    [AttendanceStatus.MISSED]: "Missed",
-  };
+export const SCHEDULE_STATUS_CHECKBOX_LABELS: Record<
+  AppointmentStatus,
+  string
+> = {
+  [AppointmentStatus.SCHEDULED]: "Scheduled",
+  [AppointmentStatus.CHECKED_IN]: "Checked-in",
+  [AppointmentStatus.IN_PROGRESS]: "In progress",
+  [AppointmentStatus.COMPLETED]: "Completed",
+  [AppointmentStatus.CANCELLED]: "Cancelled",
+  [AppointmentStatus.MISSED]: "Missed",
+};
 
 export const SCHEDULE_PAGE_LABELS = {
-  title: "Attendance Schedule",
-  description: "View and manage appointments by date and attendance type",
-  newAttendanceButton: "+ New Attendance",
+  title: "Appointments Schedule",
+  description: "View and manage appointments by date and appointment type",
+  newAppointmentButton: "+ New Appointment",
   schedulingModalTitle: "Assessment Consultation Scheduling",
   schedulingFormLoading: "Loading scheduling form...",
 } as const;
@@ -37,12 +39,12 @@ export const SCHEDULE_COLUMN_MESSAGES = {
   loading: "Loading appointments...",
   emptyAssessment: "No assessment consultations found.",
   emptyPhysiotherapy: "No physiotherapy/TENS found.",
-  emptyHint: "Select a different date or create a New Attendance.",
+  emptyHint: "Select a different date or create a New Appointment.",
   refreshing: "Refreshing...",
 } as const;
 
 export const SCHEDULE_FILTER_LABELS = {
-  attendanceStatus: "Attendance Status",
+  appointmentStatus: "Appointment Status",
   legend: "Legend:",
   noStatusSelected: "No status selected: showing all statuses in the period.",
 } as const;

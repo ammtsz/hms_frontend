@@ -1,5 +1,5 @@
 import * as patientApi from '../patients';
-import * as attendanceApi from '../attendances';
+import * as appointmentApi from '../appointments';
 import * as consultationApi from '../consultations';
 import * as scheduleSettingApi from '../schedule-settings';
 import * as types from '../types';
@@ -15,16 +15,16 @@ describe('API Index Exports', () => {
     expect(patientApi.deletePatient).toBeDefined();
   });
 
-  it('should export all attendance API functions', () => {
-    expect(attendanceApi.getAttendances).toBeDefined();
-    expect(attendanceApi.getAttendanceById).toBeDefined();
-    expect(attendanceApi.createAttendance).toBeDefined();
-    expect(attendanceApi.updateAttendance).toBeDefined();
-    expect(attendanceApi.deleteAttendance).toBeDefined();
-    expect(attendanceApi.checkInAttendance).toBeDefined();
-    expect(attendanceApi.startAttendance).toBeDefined();
-    expect(attendanceApi.completeAttendance).toBeDefined();
-    expect(attendanceApi.cancelAttendance).toBeDefined();
+  it('should export all appointment API functions', () => {
+    expect(appointmentApi.getAppointments).toBeDefined();
+    expect(appointmentApi.getAppointmentById).toBeDefined();
+    expect(appointmentApi.createAppointment).toBeDefined();
+    expect(appointmentApi.updateAppointment).toBeDefined();
+    expect(appointmentApi.deleteAppointment).toBeDefined();
+    expect(appointmentApi.checkInAppointment).toBeDefined();
+    expect(appointmentApi.startAppointment).toBeDefined();
+    expect(appointmentApi.completeAppointment).toBeDefined();
+    expect(appointmentApi.cancelAppointment).toBeDefined();
   });
 
   it('should export all consultation API functions', () => {
@@ -32,7 +32,7 @@ describe('API Index Exports', () => {
     expect(consultationApi.createConsultation).toBeDefined();
     expect(consultationApi.updateConsultation).toBeDefined();
     expect(consultationApi.deleteConsultation).toBeDefined();
-    expect(consultationApi.getConsultationByAttendance).toBeDefined();
+    expect(consultationApi.getConsultationByAppointment).toBeDefined();
   });
 
   it('should export all schedule setting API functions', () => {
@@ -48,8 +48,8 @@ describe('API Index Exports', () => {
   it('should export types', () => {
     expect(types.PatientPriority).toBeDefined();
     expect(types.PatientStatus).toBeDefined();
-    expect(types.AttendanceType).toBeDefined();
-    expect(types.AttendanceStatus).toBeDefined();
+    expect(types.AppointmentType).toBeDefined();
+    expect(types.AppointmentStatus).toBeDefined();
   });
 
   it('should export utility functions', () => {

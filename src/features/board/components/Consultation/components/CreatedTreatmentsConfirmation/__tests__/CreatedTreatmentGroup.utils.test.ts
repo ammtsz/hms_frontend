@@ -6,7 +6,7 @@ function createSession(
 ): CreatedTreatment {
   return {
     consultationId: 1,
-    attendanceId: 1,
+    appointmentId: 1,
     patientId: 1,
     treatmentType: "physiotherapy",
     startDate: "2025-09-16",

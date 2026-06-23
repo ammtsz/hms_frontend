@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { AttendanceResponseDto, SessionResponseDto } from "@/api/types";
+import type { AppointmentResponseDto, SessionResponseDto } from "@/api/types";
 import {
   addCalendarDaysToLocalYmd,
   toCalendarDateString,
@@ -7,11 +7,11 @@ import {
 import type { CreatedTreatment } from "../components/CreatedTreatmentsConfirmation";
 
 /**
- * Derives display data for created treatment plans and related attendances.
+ * Derives display data for created treatment plans and related appointments.
  */
 export const useCreatedTreatmentsSummary = (
   createdTreatments: CreatedTreatment[],
-  newlyScheduledAttendances?: AttendanceResponseDto[],
+  newlyScheduledAppointments?: AppointmentResponseDto[],
 ) => {
   // Nominal weekly dates from start (fallback only; does not apply holiday shifts)
   const getNominalWeeklyDates = (
@@ -40,19 +40,19 @@ export const useCreatedTreatmentsSummary = (
       }));
   };
 
-  // Get actual scheduled dates (session rows first, then attendances, then nominal weekly)
-  const getScheduledDatesFromAttendances = (
+  // Get actual scheduled dates (session rows first, then appointments, then nominal weekly)
+  const getScheduledDatesFromAppointments = (
     treatment: CreatedTreatment,
   ): Array<{ date: string; time?: string }> => {
     if (treatment.sessions && treatment.sessions.length > 0) {
       return getDatesFromSessions(treatment.sessions, treatment.plannedSessions);
     }
 
-    if (!newlyScheduledAttendances || newlyScheduledAttendances.length === 0) {
+    if (!newlyScheduledAppointments || newlyScheduledAppointments.length === 0) {
       return getNominalWeeklyDates(treatment);
     }
 
-    const attendancesByType = newlyScheduledAttendances
+    const appointmentsByType = newlyScheduledAppointments
       .filter((att) => {
         const typeMatch =
           treatment.treatmentType === "physiotherapy"
@@ -79,16 +79,16 @@ export const useCreatedTreatmentsSummary = (
       offset += treatmentsOfSameType[i].plannedSessions;
     }
 
-    const planAttendances = attendancesByType.slice(
+    const planAppointments = appointmentsByType.slice(
       offset,
       offset + treatment.plannedSessions,
     );
 
-    if (planAttendances.length === 0) {
+    if (planAppointments.length === 0) {
       return getNominalWeeklyDates(treatment);
     }
 
-    return planAttendances.map((att) => ({
+    return planAppointments.map((att) => ({
       date: toCalendarDateString(att.scheduledDate),
       time: att.scheduledTime,
     }));
@@ -110,11 +110,11 @@ export const useCreatedTreatmentsSummary = (
   );
 
   const nextAssessmentConsultation = useMemo(() => {
-    if (!newlyScheduledAttendances || newlyScheduledAttendances.length === 0) {
+    if (!newlyScheduledAppointments || newlyScheduledAppointments.length === 0) {
       return null;
     }
 
-    const assessmentAttendances = newlyScheduledAttendances
+    const assessmentAppointments = newlyScheduledAppointments
       .filter((att) => att.type === "assessment" && att.status === "scheduled")
       .sort((a, b) =>
         toCalendarDateString(a.scheduledDate).localeCompare(
@@ -122,14 +122,14 @@ export const useCreatedTreatmentsSummary = (
         ),
       );
 
-    return assessmentAttendances[0] || null;
-  }, [newlyScheduledAttendances]);
+    return assessmentAppointments[0] || null;
+  }, [newlyScheduledAppointments]);
 
   return {
     physiotherapySessions,
     tensSessions,
     totalAppointments,
     nextAssessmentConsultation,
-    getScheduledDatesFromAttendances,
+    getScheduledDatesFromAppointments,
   };
 };

@@ -72,10 +72,10 @@ function useMyComponentLogic() {
 
 ```typescript
 // ✅ CORRECT: Selective Zustand subscriptions
-const selectedDate = useAttendanceStore((state) => state.selectedDate);
+const selectedDate = useBoardStore((state) => state.selectedDate);
 
 // ❌ WRONG: Subscribe to entire store
-const store = useAttendanceStore(); // Re-renders on any change
+const store = useBoardStore(); // Re-renders on any change
 
 // ✅ CORRECT: Memoize expensive calculations
 const sortedData = useMemo(() => data.sort(complexSort), [data]);
@@ -89,12 +89,12 @@ const handleClick = useCallback(() => doSomething(data), [data]);
 Use lazy loading for route-level components:
 
 ```typescript
-const AttendanceBoard = lazy(
-  () => import("@/features/board/AttendanceBoard")
+const AppointmentsBoard = lazy(
+  () => import("@/features/board/AppointmentsBoard")
 );
 
 <Suspense fallback={<LoadingFallback />}>
-  <AttendanceBoard />
+  <AppointmentsBoard />
 </Suspense>;
 ```
 

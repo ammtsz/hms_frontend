@@ -146,7 +146,7 @@ describe('sessions API', () => {
     it('should complete treatment session record', async () => {
       const completionData = {
         notes: 'Session completed successfully',
-        attendanceId: 123,
+        appointmentId: 123,
       };
       const mockResponse = { id: 1, status: 'completed', ...completionData };
       mockApi.post.mockResolvedValue({ data: mockResponse });

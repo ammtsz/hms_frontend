@@ -8,8 +8,8 @@ interface TreatmentRowProps {
   isChecked: boolean;
   cancellationReason: string;
   isSubmitting: boolean;
-  onToggle: (attendanceId: number) => void;
-  onCancellationReasonChange: (attendanceId: number, value: string) => void;
+  onToggle: (appointmentId: number) => void;
+  onCancellationReasonChange: (appointmentId: number, value: string) => void;
 }
 
 export const TreatmentRow: React.FC<TreatmentRowProps> = ({
@@ -25,7 +25,7 @@ export const TreatmentRow: React.FC<TreatmentRowProps> = ({
       <label className="flex items-start gap-2 cursor-pointer shrink-0">
         <Checkbox
           checked={isChecked}
-          onChange={() => onToggle(row.attendanceId)}
+          onChange={() => onToggle(row.appointmentId)}
           disabled={isSubmitting}
           className="mt-1"
         />
@@ -51,14 +51,14 @@ export const TreatmentRow: React.FC<TreatmentRowProps> = ({
     {!isChecked && (
       <div className="mt-2 pl-6">
         <Field
-          htmlFor={`cancellation-reason-${row.attendanceId}`}
+          htmlFor={`cancellation-reason-${row.appointmentId}`}
           label="Reason for non-performance (required)"
         >
           <Textarea
-            id={`cancellation-reason-${row.attendanceId}`}
+            id={`cancellation-reason-${row.appointmentId}`}
             value={cancellationReason}
             onChange={(e) =>
-              onCancellationReasonChange(row.attendanceId, e.target.value)
+              onCancellationReasonChange(row.appointmentId, e.target.value)
             }
             placeholder="Ex.: Patient did not attend at the scheduled time"
             rows={2}

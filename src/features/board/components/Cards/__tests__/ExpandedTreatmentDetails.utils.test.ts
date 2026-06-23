@@ -18,7 +18,7 @@ function createSession(
   return {
     id: 1,
     consultationId: 1,
-    attendanceId: 1,
+    appointmentId: 1,
     patientId: 1,
     treatmentType: "physiotherapy",
     bodyLocation: "Head",

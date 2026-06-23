@@ -1,4 +1,4 @@
-import type { AttendanceStatus } from '@/api/types';
+import type { AppointmentStatus } from '@/api/types';
 
 /**
  * React Query keys for the schedule (calendar) feature.
@@ -6,7 +6,7 @@ import type { AttendanceStatus } from '@/api/types';
  * client-side cache entries are invalidated on first deploy after this rename.
  */
 export type ScheduleApiFilters = {
-  statuses?: AttendanceStatus[];
+  statuses?: AppointmentStatus[];
   fromDate?: string;
   toDate?: string;
   type?: string;

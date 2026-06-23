@@ -157,7 +157,7 @@ export async function createHolidayPeriod(
     const backendMessage = axiosError.response?.data?.message;
 
     if (typeof backendMessage === 'string') {
-      if (backendMessage.startsWith('ATTENDANCE_CONFLICT:')) {
+      if (backendMessage.startsWith('APPOINTMENT_CONFLICT:')) {
         const count = Number(backendMessage.split(':')[1]);
         const countText = Number.isFinite(count) ? count : undefined;
         return {

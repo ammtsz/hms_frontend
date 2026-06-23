@@ -1,19 +1,19 @@
 // Main component
-export { AttendanceHistoryCard } from "./AttendanceHistory/AttendanceHistoryCard";
+export { AppointmentHistoryCard } from "./AppointmentHistory/AppointmentHistoryCard";
 
 // Sub-components (exported for testing and potential reuse)
-export { AttendanceHistoryHeader } from "./AttendanceHistory/AttendanceHistoryHeader";
-export { StatusFilterButtons } from "./AttendanceHistory/StatusFilterButtons";
-export { AttendanceHistoryItem } from "./AttendanceHistory/AttendanceHistoryItem";
-export { AbsenceNote } from "./AttendanceHistory/AbsenceNote";
+export { AppointmentHistoryHeader } from "./AppointmentHistory/AppointmentHistoryHeader";
+export { StatusFilterButtons } from "./AppointmentHistory/StatusFilterButtons";
+export { AppointmentHistoryItem } from "./AppointmentHistory/AppointmentHistoryItem";
+export { AbsenceNote } from "./AppointmentHistory/AbsenceNote";
 
 // Hook
-export { useAttendanceHistory } from "./AttendanceHistory/hooks/useAttendanceHistory";
-export type { StatusFilter } from "./AttendanceHistory/hooks/useAttendanceHistory";
+export { useAppointmentHistory } from "./AppointmentHistory/hooks/useAppointmentHistory";
+export type { StatusFilter } from "./AppointmentHistory/hooks/useAppointmentHistory";
 
 // Utils
 export {
   getStatusConfig,
   getTreatmentTypeLabel,
-} from "./AttendanceHistory/utils";
-export type { AttendanceStatus, StatusConfig } from "./AttendanceHistory/utils";
+} from "./AppointmentHistory/utils";
+export type { AppointmentStatus, StatusConfig } from "./AppointmentHistory/utils";

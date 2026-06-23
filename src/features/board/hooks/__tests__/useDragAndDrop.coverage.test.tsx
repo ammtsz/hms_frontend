@@ -6,18 +6,18 @@ import {
 } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import { useDragAndDrop } from "../useDragAndDrop";
-import { useAttendanceBoardState } from "@/features/board/hooks/useAttendanceBoardState";
+import { useBoardState } from "@/features/board/hooks/useBoardState";
 import { usePatients } from "@/api/query/hooks/usePatientQueries";
 import { useDragDropStatusUpdater } from "../useDragDropStatusUpdater";
 import * as modalStore from "@/stores/modalStore";
-import * as attendanceQueries from "@/api/query/hooks/useAttendanceQueries";
-import { AttendanceByDate, AttendanceStatusDetail } from "@/types/types";
+import * as appointmentQueries from "@/api/query/hooks/useAppointmentQueries";
+import { AppointmentByDate, AppointmentStatusDetail } from "@/types/types";
 
-jest.mock("@/features/board/hooks/useAttendanceBoardState");
+jest.mock("@/features/board/hooks/useBoardState");
 jest.mock("@/api/query/hooks/usePatientQueries");
 jest.mock("../useDragDropStatusUpdater");
 jest.mock("@/stores/modalStore");
-jest.mock("@/api/query/hooks/useAttendanceQueries");
+jest.mock("@/api/query/hooks/useAppointmentQueries");
 jest.mock("@/contexts/ToastContext", () => ({
   useToast: () => ({
     showToast: jest.fn(),
@@ -26,16 +26,16 @@ jest.mock("@/contexts/ToastContext", () => ({
   }),
 }));
 
-const mockUseAttendanceBoardState =
-  useAttendanceBoardState as jest.MockedFunction<
-    typeof useAttendanceBoardState
+const mockUseAppointmentsBoardState =
+  useBoardState as jest.MockedFunction<
+    typeof useBoardState
   >;
 const mockUsePatients = usePatients as jest.MockedFunction<typeof usePatients>;
 const mockUseDragDropStatusUpdater =
   useDragDropStatusUpdater as jest.MockedFunction<
     typeof useDragDropStatusUpdater
   >;
-const mockUpdateAttendanceStatus = jest.fn();
+const mockUpdateAppointmentStatus = jest.fn();
 
 type MockMutationResult<TData = unknown, TVariables = unknown> = Omit<
   UseMutationResult<TData, Error, TVariables, unknown>,
@@ -123,27 +123,27 @@ const mockMarkMissedMutation: MockMutationResult = {
   context: undefined,
 };
 
-(attendanceQueries.useCheckInAttendance as jest.Mock).mockReturnValue(
+(appointmentQueries.useCheckInAppointment as jest.Mock).mockReturnValue(
   mockCheckInMutation,
 );
-(attendanceQueries.useCompleteAttendance as jest.Mock).mockReturnValue(
+(appointmentQueries.useCompleteAppointment as jest.Mock).mockReturnValue(
   mockCompleteMutation,
 );
-(attendanceQueries.useUpdateAttendance as jest.Mock).mockReturnValue(
+(appointmentQueries.useUpdateAppointment as jest.Mock).mockReturnValue(
   mockUpdateMutation,
 );
-(attendanceQueries.useMarkAttendanceAsMissed as jest.Mock).mockReturnValue(
+(appointmentQueries.useMarkAppointmentAsMissed as jest.Mock).mockReturnValue(
   mockMarkMissedMutation,
 );
 
-const mockOpenPostAttendance = jest.fn();
+const mockOpenPostAppointment = jest.fn();
 const mockOpenPostTreatment = jest.fn();
 const mockOpenNewPatientCheckIn = jest.fn();
 const mockOpenMultiSection = jest.fn();
 const mockOpenAssessmentBeforeTreatmentConfirm = jest.fn();
 
-(modalStore.useOpenPostAttendance as jest.Mock).mockReturnValue(
-  mockOpenPostAttendance,
+(modalStore.useOpenPostAppointment as jest.Mock).mockReturnValue(
+  mockOpenPostAppointment,
 );
 (modalStore.useOpenPostTreatment as jest.Mock).mockReturnValue(
   mockOpenPostTreatment,
@@ -159,7 +159,7 @@ const mockOpenAssessmentBeforeTreatmentConfirm = jest.fn();
 ).mockReturnValue(mockOpenAssessmentBeforeTreatmentConfirm);
 
 describe("useDragAndDrop - Coverage Enhancement", () => {
-  const mockSetAttendancesByDate = jest.fn();
+  const mockSetAppointmentsByDate = jest.fn();
   const consoleSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
   let queryClient: QueryClient;
 
@@ -168,13 +168,13 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
   );
 
   const createMockPatient = (
-    overrides: Partial<AttendanceStatusDetail> = {},
-  ): AttendanceStatusDetail => ({
+    overrides: Partial<AppointmentStatusDetail> = {},
+  ): AppointmentStatusDetail => ({
     name: "Test Patient",
     priority: "3",
     patientId: 1,
-    attendanceId: 100,
-    treatmentAttendanceIds: [100],
+    appointmentId: 100,
+    treatmentAppointmentIds: [100],
     ...overrides,
   });
 
@@ -201,13 +201,13 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
       error: null,
     } as never);
 
-    mockUpdateAttendanceStatus.mockResolvedValue({ success: true });
-    mockUseDragDropStatusUpdater.mockReturnValue(mockUpdateAttendanceStatus);
+    mockUpdateAppointmentStatus.mockResolvedValue({ success: true });
+    mockUseDragDropStatusUpdater.mockReturnValue(mockUpdateAppointmentStatus);
   });
 
   describe("Combined Treatment Logic", () => {
     it("should handle combined physiotherapy+tens treatment moves within physiotherapy/tens sections", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [],
@@ -234,9 +234,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -253,12 +253,12 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         await result.current.handleDropWithConfirm("tens", "checkedIn");
       });
 
-      expect(mockSetAttendancesByDate).toHaveBeenCalled();
+      expect(mockSetAppointmentsByDate).toHaveBeenCalled();
       expect(result.current.dragged).toBeNull();
     });
 
     it("should handle combined treatment moves from assessment section (move only assessment)", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [
@@ -283,9 +283,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -302,21 +302,21 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         await result.current.handleDropWithConfirm("assessment", "checkedIn");
       });
 
-      expect(mockSetAttendancesByDate).toHaveBeenCalled();
+      expect(mockSetAppointmentsByDate).toHaveBeenCalled();
       expect(result.current.dragged).toBeNull();
     });
   });
 
   describe("Completion Flow with Modal Handling", () => {
-    it("should open PostAttendanceModal for assessment completion", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+    it("should open PostConsultationModal for assessment completion", async () => {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [],
           checkedIn: [
             createMockPatient({
               patientId: 1,
-              attendanceId: 100,
+              appointmentId: 100,
               name: "Assessment Patient",
             }),
           ],
@@ -333,9 +333,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -347,27 +347,27 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         result.current.handleDragStart("assessment", 0, "checkedIn");
       });
 
-      // Drop to completed (should open PostAttendanceModal)
+      // Drop to completed (should open PostConsultationModal)
       await act(async () => {
         await result.current.handleDropWithConfirm("assessment", "completed");
       });
 
-      expect(mockOpenPostAttendance).toHaveBeenCalledWith({
-        attendanceId: 100,
+      expect(mockOpenPostAppointment).toHaveBeenCalledWith({
+        appointmentId: 100,
         patientId: 1,
         patientName: "Assessment Patient",
-        attendanceType: "assessment",
+        appointmentType: "assessment",
         currentTreatmentStatus: "T",
         currentStartDate: undefined,
         currentReturnWeeks: undefined,
-        isFirstAttendance: false,
+        isFirstAppointment: false,
         onComplete: expect.any(Function),
       });
       expect(result.current.dragged).toBeNull();
     });
 
     it("should open PostTreatmentModal for physiotherapy completion", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [],
@@ -380,7 +380,7 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
           checkedIn: [
             createMockPatient({
               patientId: 2,
-              attendanceId: 200,
+              appointmentId: 200,
               name: "Physiotherapy Patient",
             }),
           ],
@@ -391,9 +391,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -414,24 +414,24 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
       });
 
       expect(mockOpenPostTreatment).toHaveBeenCalledWith({
-        attendanceIds: [200],
+        appointmentIds: [200],
         patientId: 2,
         patientName: "Physiotherapy Patient",
-        attendanceType: "physiotherapy",
+        appointmentType: "physiotherapy",
         onComplete: expect.any(Function),
       });
       expect(result.current.dragged).toBeNull();
     });
 
     it("should handle first-time patient detection for assessment completion", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [],
           checkedIn: [
             createMockPatient({
               patientId: 3,
-              attendanceId: 300,
+              appointmentId: 300,
               name: "New Patient",
             }),
           ],
@@ -455,9 +455,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         error: null,
       } as never);
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -474,9 +474,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         await result.current.handleDropWithConfirm("assessment", "completed");
       });
 
-      expect(mockOpenPostAttendance).toHaveBeenCalledWith(
+      expect(mockOpenPostAppointment).toHaveBeenCalledWith(
         expect.objectContaining({
-          isFirstAttendance: true,
+          isFirstAppointment: true,
         }),
       );
     });
@@ -484,13 +484,13 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
 
   describe("Multi-Section Modal Handling", () => {
     it("should open multi-section modal for patient in both assessment and physiotherapy", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [
             createMockPatient({
               patientId: 4,
-              attendanceId: 401,
+              appointmentId: 401,
               name: "Multi Patient",
             }),
           ],
@@ -502,7 +502,7 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
           scheduled: [
             createMockPatient({
               patientId: 4,
-              attendanceId: 402,
+              appointmentId: 402,
               name: "Multi Patient",
             }),
           ],
@@ -514,9 +514,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -541,14 +541,14 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
     });
 
     it("should execute checkInAll functionality correctly", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [
             createMockPatient({
               patientId: 5,
-              attendanceId: 501,
-              treatmentAttendanceIds: [501],
+              appointmentId: 501,
+              treatmentAppointmentIds: [501],
               name: "Multi All Patient",
             }),
           ],
@@ -560,8 +560,8 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
           scheduled: [
             createMockPatient({
               patientId: 5,
-              attendanceId: 502,
-              treatmentAttendanceIds: [502],
+              appointmentId: 502,
+              treatmentAppointmentIds: [502],
               name: "Multi All Patient",
             }),
           ],
@@ -573,8 +573,8 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
           scheduled: [
             createMockPatient({
               patientId: 5,
-              attendanceId: 503,
-              treatmentAttendanceIds: [503],
+              appointmentId: 503,
+              treatmentAppointmentIds: [503],
               name: "Multi All Patient",
             }),
           ],
@@ -585,9 +585,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -611,23 +611,23 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         await checkInAllCallback();
       });
 
-      expect(mockUpdateAttendanceStatus).toHaveBeenCalledWith(501, "checkedIn");
-      expect(mockUpdateAttendanceStatus).toHaveBeenCalledWith(502, "checkedIn");
-      expect(mockUpdateAttendanceStatus).toHaveBeenCalledWith(503, "checkedIn");
+      expect(mockUpdateAppointmentStatus).toHaveBeenCalledWith(501, "checkedIn");
+      expect(mockUpdateAppointmentStatus).toHaveBeenCalledWith(502, "checkedIn");
+      expect(mockUpdateAppointmentStatus).toHaveBeenCalledWith(503, "checkedIn");
 
       // Should have updated local state
-      expect(mockSetAttendancesByDate).toHaveBeenCalled();
+      expect(mockSetAppointmentsByDate).toHaveBeenCalled();
     });
 
     it("should handle backend sync failures gracefully in checkInAll", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [
             createMockPatient({
               patientId: 6,
-              attendanceId: 601,
-              treatmentAttendanceIds: [601],
+              appointmentId: 601,
+              treatmentAppointmentIds: [601],
               name: "Error Patient",
             }),
           ],
@@ -639,8 +639,8 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
           scheduled: [
             createMockPatient({
               patientId: 6,
-              attendanceId: 602,
-              treatmentAttendanceIds: [602],
+              appointmentId: 602,
+              treatmentAppointmentIds: [602],
               name: "Error Patient",
             }),
           ],
@@ -652,11 +652,11 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUpdateAttendanceStatus.mockRejectedValue(new Error("Backend error"));
+      mockUpdateAppointmentStatus.mockRejectedValue(new Error("Backend error"));
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -680,14 +680,14 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
       });
 
       // Should still update local state even if backend sync fails (errors are caught)
-      expect(mockSetAttendancesByDate).toHaveBeenCalled();
-      expect(mockUpdateAttendanceStatus).toHaveBeenCalled();
+      expect(mockSetAppointmentsByDate).toHaveBeenCalled();
+      expect(mockUpdateAppointmentStatus).toHaveBeenCalled();
     });
   });
 
   describe("Edge Cases and Error Handling", () => {
     it("should handle completion move when patient is not found", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [],
@@ -705,9 +705,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -724,21 +724,21 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         await result.current.handleDropWithConfirm("assessment", "completed");
       });
 
-      expect(mockOpenPostAttendance).not.toHaveBeenCalled();
+      expect(mockOpenPostAppointment).not.toHaveBeenCalled();
       expect(result.current.dragged).toBeNull();
     });
 
-    it("should handle completion move when patient has no attendanceId", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+    it("should handle completion move when patient has no appointmentId", async () => {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [],
           checkedIn: [
             createMockPatient({
               patientId: 7,
-              attendanceId: undefined, // No attendanceId
+              appointmentId: undefined, // No appointmentId
               name: "No ID Patient",
-            }) as AttendanceStatusDetail,
+            }) as AppointmentStatusDetail,
           ],
           onGoing: [],
           completed: [],
@@ -753,39 +753,39 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         combined: { scheduled: [], checkedIn: [], onGoing: [], completed: [] },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
         wrapper: createWrapper,
       });
 
-      // Start drag from patient without attendanceId
+      // Start drag from patient without appointmentId
       act(() => {
         result.current.handleDragStart("assessment", 0, "checkedIn");
       });
 
-      // Drop to completed (should not open modal due to missing attendanceId)
+      // Drop to completed (should not open modal due to missing appointmentId)
       await act(async () => {
         await result.current.handleDropWithConfirm("assessment", "completed");
       });
 
-      expect(mockOpenPostAttendance).not.toHaveBeenCalled();
+      expect(mockOpenPostAppointment).not.toHaveBeenCalled();
       expect(result.current.dragged).toBeNull();
     });
   });
 
   describe("New Patient Check-In Modal Routing", () => {
     it("should open NewPatientCheckInModal when moving new patient from scheduled to checkedIn", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [
             createMockPatient({
               patientId: 8,
-              attendanceId: 801,
+              appointmentId: 801,
               name: "New Patient",
             }),
           ],
@@ -810,9 +810,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         error: null,
       } as never);
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -831,7 +831,7 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
 
       expect(mockOpenNewPatientCheckIn).toHaveBeenCalledWith(
         expect.objectContaining({
-          attendanceId: 801,
+          appointmentId: 801,
           patient: expect.objectContaining({ id: "8", status: "N" }),
         }),
       );
@@ -839,7 +839,7 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
     });
 
     it("should NOT open NewPatientCheckInModal when moving new patient from onGoing to checkedIn", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [],
@@ -847,7 +847,7 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
           onGoing: [
             createMockPatient({
               patientId: 9,
-              attendanceId: 901,
+              appointmentId: 901,
               name: "New Patient OnGoing",
             }),
           ],
@@ -870,9 +870,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         error: null,
       } as never);
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -895,17 +895,17 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
       // Verify modal was NOT opened
       expect(mockOpenNewPatientCheckIn).not.toHaveBeenCalled();
 
-      expect(mockUpdateAttendanceStatus).toHaveBeenCalledWith(901, "checkedIn");
+      expect(mockUpdateAppointmentStatus).toHaveBeenCalledWith(901, "checkedIn");
     });
 
     it("should NOT open NewPatientCheckInModal when moving existing patient from scheduled to checkedIn", async () => {
-      const mockAttendancesByDate: AttendanceByDate = {
+      const mockAppointmentsByDate: AppointmentByDate = {
         date: "2024-01-15",
         assessment: {
           scheduled: [
             createMockPatient({
               patientId: 10,
-              attendanceId: 1001,
+              appointmentId: 1001,
               name: "Existing Patient",
             }),
           ],
@@ -930,9 +930,9 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
         error: null,
       } as never);
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: mockAttendancesByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: mockAppointmentsByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -955,7 +955,7 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
       // Verify modal was NOT opened for existing patient
       expect(mockOpenNewPatientCheckIn).not.toHaveBeenCalled();
 
-      expect(mockUpdateAttendanceStatus).toHaveBeenCalledWith(
+      expect(mockUpdateAppointmentStatus).toHaveBeenCalledWith(
         1001,
         "checkedIn",
       );

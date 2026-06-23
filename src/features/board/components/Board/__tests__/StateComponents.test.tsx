@@ -8,7 +8,7 @@ describe("StateComponents", () => {
     it("renders with default message", () => {
       render(<LoadingState />);
 
-      expect(screen.getByText("Loading attendances...")).toBeInTheDocument();
+      expect(screen.getByText("Loading appointments...")).toBeInTheDocument();
     });
 
     it("renders with custom message", () => {
@@ -28,14 +28,14 @@ describe("StateComponents", () => {
         "h-64",
       );
 
-      const textElement = screen.getByText("Loading attendances...");
+      const textElement = screen.getByText("Loading appointments...");
       expect(textElement).toHaveClass("text-lg");
     });
 
     it("centers content properly", () => {
       render(<LoadingState />);
 
-      const textElement = screen.getByText("Loading attendances...");
+      const textElement = screen.getByText("Loading appointments...");
       const container = textElement.parentElement;
 
       expect(container).toHaveClass("flex", "items-center", "justify-center");
@@ -57,7 +57,7 @@ describe("StateComponents", () => {
       render(<ErrorState {...defaultProps} />);
 
       expect(
-        screen.getByText("Error loading attendances"),
+        screen.getByText("Error loading appointments"),
       ).toBeInTheDocument();
       expect(
         screen.getByText("Server connection error"),
@@ -111,7 +111,7 @@ describe("StateComponents", () => {
     it("has correct title styling", () => {
       render(<ErrorState {...defaultProps} />);
 
-      const title = screen.getByText("Error loading attendances");
+      const title = screen.getByText("Error loading appointments");
       expect(title).toHaveClass("text-lg", "text-red-600");
     });
 
@@ -142,7 +142,7 @@ describe("StateComponents", () => {
       );
 
       expect(
-        screen.getByText("Error loading attendances"),
+        screen.getByText("Error loading appointments"),
       ).toBeInTheDocument();
       expect(screen.getByText("Try again")).toBeInTheDocument();
 
@@ -162,7 +162,7 @@ describe("StateComponents", () => {
 
       expect(screen.getByText(longError)).toBeInTheDocument();
       expect(
-        screen.getByText("Error loading attendances"),
+        screen.getByText("Error loading appointments"),
       ).toBeInTheDocument();
     });
   });
@@ -171,7 +171,7 @@ describe("StateComponents", () => {
     it("LoadingState has proper text hierarchy", () => {
       render(<LoadingState />);
 
-      const text = screen.getByText("Loading attendances...");
+      const text = screen.getByText("Loading appointments...");
       expect(text).toHaveClass("text-lg");
     });
 
@@ -188,7 +188,7 @@ describe("StateComponents", () => {
       const mockOnRetry = jest.fn();
       render(<ErrorState error="Test error" onRetry={mockOnRetry} />);
 
-      const title = screen.getByText("Error loading attendances");
+      const title = screen.getByText("Error loading appointments");
       const error = screen.getByText("Test error");
 
       // Title should be more prominent (text-lg vs text-sm)

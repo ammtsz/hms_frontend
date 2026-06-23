@@ -18,8 +18,8 @@ export const usePatientFilter = () =>
   useScheduleStore((state) => state.patientFilter);
 export const useConfirmRemove = () =>
   useScheduleStore((state) => state.confirmRemove);
-export const useShowNewAttendance = () =>
-  useScheduleStore((state) => state.showNewAttendance);
+export const useShowNewAppointment = () =>
+  useScheduleStore((state) => state.showNewAppointment);
 export const useOpenAssessmentIdx = () =>
   useScheduleStore((state) => state.openAssessmentIdx);
 export const useOpenPhysiotherapyIdx = () =>
@@ -36,8 +36,8 @@ export const useSetPatientFilter = () =>
   useScheduleStore((state) => state.setPatientFilter);
 export const useSetConfirmRemove = () =>
   useScheduleStore((state) => state.setConfirmRemove);
-export const useSetShowNewAttendance = () =>
-  useScheduleStore((state) => state.setShowNewAttendance);
+export const useSetShowNewAppointment = () =>
+  useScheduleStore((state) => state.setShowNewAppointment);
 export const useSetOpenAssessmentIdx = () =>
   useScheduleStore((state) => state.setOpenAssessmentIdx);
 export const useSetOpenPhysiotherapyIdx = () =>
@@ -50,7 +50,7 @@ export const useScheduleActions = () => ({
   setScheduleStatusFilters: useSetScheduleStatusFilters(),
   setPatientFilter: useSetPatientFilter(),
   setConfirmRemove: useSetConfirmRemove(),
-  setShowNewAttendance: useSetShowNewAttendance(),
+  setShowNewAppointment: useSetShowNewAppointment(),
   setOpenAssessmentIdx: useSetOpenAssessmentIdx(),
   setOpenPhysiotherapyIdx: useSetOpenPhysiotherapyIdx(),
 });
@@ -65,7 +65,7 @@ export const useScheduleDateFilter = () => ({
 
 export const useScheduleModals = () => ({
   confirmRemove: useScheduleStore((state) => state.confirmRemove),
-  showNewAttendance: useScheduleStore((state) => state.showNewAttendance),
+  showNewAppointment: useScheduleStore((state) => state.showNewAppointment),
 });
 
 export const useScheduleAccordions = () => ({

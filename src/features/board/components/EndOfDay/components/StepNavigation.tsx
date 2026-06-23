@@ -2,19 +2,19 @@ import React from "react";
 
 interface StepNavigationProps {
   currentStep: "incomplete" | "absences" | "confirm";
-  incompleteAttendancesCount: number;
+  incompleteAppointmentsCount: number;
   scheduledAbsencesCount: number;
 }
 
 const StepNavigation: React.FC<StepNavigationProps> = ({
   currentStep,
-  incompleteAttendancesCount,
+  incompleteAppointmentsCount,
   scheduledAbsencesCount,
 }) => {
   const getStepStatus = (step: "incomplete" | "absences" | "confirm") => {
     switch (step) {
       case "incomplete":
-        if (incompleteAttendancesCount === 0) return "completed";
+        if (incompleteAppointmentsCount === 0) return "completed";
         return currentStep === step ? "current" : "pending";
       case "absences":
         if (currentStep === "confirm") return "completed";
@@ -49,7 +49,7 @@ const StepNavigation: React.FC<StepNavigationProps> = ({
           1
         </div>
         <div className="ml-3 min-w-0 text-sm font-medium text-gray-700">
-          Attendances
+          Appointments
         </div>
       </div>
       <div className="flex flex-1 items-center min-w-0">

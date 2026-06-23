@@ -43,9 +43,9 @@ alwaysApply: true
 
 Key files:
 
-- [AttendanceBoard](mdc:src/features/board/AttendanceBoard.tsx)
+- [AppointmentsBoard](mdc:src/features/board/AppointmentsBoard.tsx)
 - [useDragAndDrop.ts](mdc:src/features/board/hooks/useDragAndDrop.ts)
-- [attendanceStore.ts](mdc:src/stores/attendanceStore.ts)
+- [boardStore.ts](mdc:src/stores/boardStore.ts)
 
 Rules:
 
@@ -67,7 +67,7 @@ Rules:
 - Validate all patient data before submission
 - Support Portuguese error messages
 - Maintain treatment recommendations workflow
-- Keep attendance history integration
+- Keep appointment history integration
 
 ## Adding New Features
 
@@ -97,8 +97,8 @@ Before considering a feature complete:
 Some features depend on others. Check the project README for feature dependencies and status
 
 - Treatments (`hms_treatment`) depend on consultations and patient records
-- Day finalization depends on attendance status
-- Calendar depends on attendance scheduling
+- Day finalization depends on appointment status
+- Calendar depends on appointment scheduling
 - Session rows (`hms_session`) depend on treatment plans
 
 ## Future Features (Planned)

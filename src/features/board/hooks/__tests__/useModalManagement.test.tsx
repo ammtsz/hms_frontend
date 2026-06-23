@@ -118,21 +118,21 @@ describe("useModalManagement", () => {
     },
   };
 
-  const mockAttendanceDetails = {
+  const mockAppointmentDetails = {
     id: 123,
     patientId: 456,
     patientName: "Test Patient",
-    attendanceType: "assessment",
+    appointmentType: "assessment",
     currentTreatmentStatus: "T" as const,
     currentStartDate: new Date("2024-01-01"),
     currentReturnWeeks: 1,
-    isFirstAttendance: false,
+    isFirstAppointment: false,
   };
 
   const mockCreateTreatmentResponse = {
     consultation: {
       id: 789,
-      attendanceId: 123,
+      appointmentId: 123,
       createdDate: "2024-01-15",
       createdTime: "10:00:00",
       updatedDate: "2024-01-15",
@@ -195,7 +195,7 @@ describe("useModalManagement", () => {
       expect(result.current.editPatientModalOpen).toBe(false);
       expect(result.current.patientToEdit).toBe(null);
       expect(result.current.treatmentFormOpen).toBe(false);
-      expect(result.current.selectedAttendanceForTreatment).toBe(null);
+      expect(result.current.selectedAppointmentForTreatment).toBe(null);
     });
 
     it("should provide all expected handlers", () => {
@@ -314,12 +314,12 @@ describe("useModalManagement", () => {
       });
 
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       expect(result.current.treatmentFormOpen).toBe(true);
-      expect(result.current.selectedAttendanceForTreatment).toEqual(
-        mockAttendanceDetails,
+      expect(result.current.selectedAppointmentForTreatment).toEqual(
+        mockAppointmentDetails,
       );
     });
 
@@ -330,7 +330,7 @@ describe("useModalManagement", () => {
 
       // First open the modal
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       // Then cancel
@@ -339,7 +339,7 @@ describe("useModalManagement", () => {
       });
 
       expect(result.current.treatmentFormOpen).toBe(false);
-      expect(result.current.selectedAttendanceForTreatment).toBe(null);
+      expect(result.current.selectedAppointmentForTreatment).toBe(null);
     });
   });
 
@@ -352,7 +352,7 @@ describe("useModalManagement", () => {
 
       // First open the modal
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       let submitResult: { consultationId: number } | undefined;
@@ -364,7 +364,7 @@ describe("useModalManagement", () => {
 
       // Check API calls
       expect(mockCreateMutation.mutateAsync).toHaveBeenCalledWith({
-        attendanceId: 123,
+        appointmentId: 123,
         mainConcern: "Test complaint",
         patientStatus: "T",
         food: "Test food recommendation",
@@ -384,7 +384,7 @@ describe("useModalManagement", () => {
 
       // Check modal state
       expect(result.current.treatmentFormOpen).toBe(false);
-      expect(result.current.selectedAttendanceForTreatment).toBe(null);
+      expect(result.current.selectedAppointmentForTreatment).toBe(null);
       expect(mockRefreshData).toHaveBeenCalled();
     });
 
@@ -395,7 +395,7 @@ describe("useModalManagement", () => {
       );
 
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       const altaData = { ...mockTreatmentData, patientStatus: "D" as const };
@@ -419,7 +419,7 @@ describe("useModalManagement", () => {
       });
 
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       const dataWithoutPhysiotherapy = {
@@ -448,17 +448,17 @@ describe("useModalManagement", () => {
       );
     });
 
-    it("should throw error when no attendance selected", async () => {
+    it("should throw error when no appointment selected", async () => {
       const { result } = renderHook(() => useModalManagement(), {
         wrapper: createWrapper(),
       });
 
-      // Don't open modal, so no attendance is selected
+      // Don't open modal, so no appointment is selected
       await expect(async () => {
         await act(async () => {
           await result.current.handleTreatmentFormSubmit(mockTreatmentData);
         });
-      }).rejects.toThrow("No attendance selected for treatment");
+      }).rejects.toThrow("No appointment selected for treatment");
     });
 
     it("should handle consultation creation failure", async () => {
@@ -471,7 +471,7 @@ describe("useModalManagement", () => {
       });
 
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       await expect(async () => {
@@ -494,7 +494,7 @@ describe("useModalManagement", () => {
       });
 
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       await expect(async () => {
@@ -517,7 +517,7 @@ describe("useModalManagement", () => {
       });
 
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       await expect(async () => {
@@ -549,7 +549,7 @@ describe("useModalManagement", () => {
       );
 
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       const altaData = { ...mockTreatmentData, patientStatus: "D" as const };
@@ -590,7 +590,7 @@ describe("useModalManagement", () => {
       // Close and open treatment modal
       act(() => {
         result.current.handleEditPatientCancel();
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       expect(result.current.editPatientModalOpen).toBe(false);
@@ -620,7 +620,7 @@ describe("useModalManagement", () => {
         jest.clearAllMocks();
 
         act(() => {
-          result.current.openTreatmentFormModal(mockAttendanceDetails);
+          result.current.openTreatmentFormModal(mockAppointmentDetails);
         });
 
         const data = { ...mockTreatmentData, patientStatus: testCase.status };
@@ -648,7 +648,7 @@ describe("useModalManagement", () => {
       });
 
       act(() => {
-        result.current.openTreatmentFormModal(mockAttendanceDetails);
+        result.current.openTreatmentFormModal(mockAppointmentDetails);
       });
 
       const complexData = {

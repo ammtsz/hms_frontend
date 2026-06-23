@@ -10,7 +10,7 @@ Keep suggestions aligned with the docs in ./docs and the rule files under ./.cur
 - Use the shared axios client in src/api/lib/axios.ts and rely on the existing case-conversion interceptors.
 - Use React Query for server data, Zustand for UI state, and Context only for stable global settings.
 - Use YYYY-MM-DD strings for calendar dates and the timezone helpers from src/utils/timezoneDate.ts or src/hooks/useDateHelpers.ts.
-- Preserve the current auth/BFF flow, attendance grouping rules, and responsive modal/table patterns.
+- Preserve the current auth/BFF flow, appointment grouping rules, and responsive modal/table patterns.
 
 ## Before changing behavior
 

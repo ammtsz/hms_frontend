@@ -83,7 +83,7 @@ describe("PatientFormFields", () => {
         <PatientFormFields
           {...defaultProps}
           isEdit={false}
-          statusConfig={{ currentStatus: "T", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "T", hasCompletedAppointments: false }}
         />,
       );
 
@@ -96,7 +96,7 @@ describe("PatientFormFields", () => {
         <PatientFormFields
           {...defaultProps}
           isEdit={true}
-          statusConfig={{ currentStatus: "T", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "T", hasCompletedAppointments: false }}
         />,
       );
 
@@ -106,12 +106,12 @@ describe("PatientFormFields", () => {
   });
 
   describe("Status options - statusConfig", () => {
-    it("disables N when hasCompletedAttendances is true", () => {
+    it("disables N when hasCompletedAppointments is true", () => {
       render(
         <PatientFormFields
           {...defaultProps}
           isEdit={true}
-          statusConfig={{ currentStatus: "T", hasCompletedAttendances: true }}
+          statusConfig={{ currentStatus: "T", hasCompletedAppointments: true }}
         />,
       );
 
@@ -124,7 +124,7 @@ describe("PatientFormFields", () => {
         <PatientFormFields
           {...defaultProps}
           isEdit={true}
-          statusConfig={{ currentStatus: "T", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "T", hasCompletedAppointments: false }}
         />,
       );
 
@@ -132,13 +132,13 @@ describe("PatientFormFields", () => {
       expect(optionN).toBeDisabled();
     });
 
-    it("enables N when currentStatus is N and no completed attendances", () => {
+    it("enables N when currentStatus is N and no completed appointments", () => {
       render(
         <PatientFormFields
           {...defaultProps}
           patient={{ ...defaultPatient, status: "N" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "N", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "N", hasCompletedAppointments: false }}
         />,
       );
 
@@ -152,7 +152,7 @@ describe("PatientFormFields", () => {
           {...defaultProps}
           patient={{ ...defaultPatient, status: "D" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "D", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "D", hasCompletedAppointments: false }}
         />,
       );
 
@@ -165,7 +165,7 @@ describe("PatientFormFields", () => {
         <PatientFormFields
           {...defaultProps}
           isEdit={true}
-          statusConfig={{ currentStatus: "T", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "T", hasCompletedAppointments: false }}
         />,
       );
 
@@ -178,7 +178,7 @@ describe("PatientFormFields", () => {
         <PatientFormFields
           {...defaultProps}
           isEdit={true}
-          statusConfig={{ currentStatus: "T", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "T", hasCompletedAppointments: false }}
         />,
       );
 
@@ -194,7 +194,7 @@ describe("PatientFormFields", () => {
           {...defaultProps}
           patient={{ ...defaultPatient, status: "D" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "D", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "D", hasCompletedAppointments: false }}
         />,
       );
 
@@ -210,7 +210,7 @@ describe("PatientFormFields", () => {
           {...defaultProps}
           patient={{ ...defaultPatient, status: "C" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "C", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "C", hasCompletedAppointments: false }}
         />,
       );
 
@@ -225,7 +225,7 @@ describe("PatientFormFields", () => {
         <PatientFormFields
           {...defaultProps}
           isEdit={true}
-          statusConfig={{ currentStatus: "T", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "T", hasCompletedAppointments: false }}
         />,
       );
 
@@ -241,7 +241,7 @@ describe("PatientFormFields", () => {
           {...defaultProps}
           patient={{ ...defaultPatient, status: "C" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "C", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "C", hasCompletedAppointments: false }}
         />,
       );
 
@@ -257,7 +257,7 @@ describe("PatientFormFields", () => {
           {...defaultProps}
           patient={{ ...defaultPatient, status: "D" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "D", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "D", hasCompletedAppointments: false }}
         />,
       );
 

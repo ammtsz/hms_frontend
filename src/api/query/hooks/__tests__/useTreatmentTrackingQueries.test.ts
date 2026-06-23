@@ -17,7 +17,7 @@ const mockedTreatmentsApi = treatmentsApi as jest.Mocked<typeof treatmentsApi>;
 const createMockTreatment = (id = 1) => ({
   id,
   consultationId: 1,
-  attendanceId: 1,
+  appointmentId: 1,
   patientId: 1,
   treatmentType: 'physiotherapy' as const,
   bodyLocation: 'head',
@@ -66,7 +66,7 @@ describe('useTreatmentTrackingQueries', () => {
       const mockSession = createMockTreatment(99);
       const sessionData = {
         consultationId: 1,
-        attendanceId: 1,
+        appointmentId: 1,
         patientId: 1,
         treatmentType: 'physiotherapy' as const,
         bodyLocation: 'head',
@@ -107,7 +107,7 @@ describe('useTreatmentTrackingQueries', () => {
 
       const sessionData = {
         consultationId: 1,
-        attendanceId: 1,
+        appointmentId: 1,
         patientId: 1,
         treatmentType: 'physiotherapy' as const,
         bodyLocation: 'head',
@@ -140,7 +140,7 @@ describe('useTreatmentTrackingQueries', () => {
         treatments: [
           {
             consultationId: 1,
-            attendanceId: 1,
+            appointmentId: 1,
             patientId: 1,
             treatmentType: 'physiotherapy' as const,
             bodyLocation: 'head',
@@ -149,7 +149,7 @@ describe('useTreatmentTrackingQueries', () => {
           },
           {
             consultationId: 2,
-            attendanceId: 2,
+            appointmentId: 2,
             patientId: 2,
             treatmentType: 'tens' as const,
             bodyLocation: 'back',
@@ -203,7 +203,7 @@ describe('useTreatmentTrackingQueries', () => {
         treatments: [
           {
             consultationId: 1,
-            attendanceId: 1,
+            appointmentId: 1,
             patientId: 1,
             treatmentType: 'physiotherapy' as const,
             bodyLocation: 'head',

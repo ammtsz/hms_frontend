@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import SummaryStep from "../components/steps/SummaryStep";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import type { ProcessEndOfDayResponse } from "@/api/day-finalization";
 
 describe("SummaryStep", () => {
@@ -52,7 +52,7 @@ describe("SummaryStep", () => {
       ...defaultResult,
       rescheduled: [
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 10,
           patientName: "John Doe",
           type: "assessment",
@@ -67,7 +67,7 @@ describe("SummaryStep", () => {
     expect(screen.getByText("Rescheduled")).toBeInTheDocument();
     expect(screen.getByText(/John Doe/)).toBeInTheDocument();
     expect(
-      screen.getByText(new RegExp(getAttendanceTypeLabel("assessment"), "i")),
+      screen.getByText(new RegExp(getAppointmentTypeLabel("assessment"), "i")),
     ).toBeInTheDocument();
     expect(screen.getByText(/→/)).toBeInTheDocument();
   });
@@ -88,14 +88,14 @@ describe("SummaryStep", () => {
     expect(screen.getByText(/Jane Smith/)).toBeInTheDocument();
   });
 
-  it("displays cancelled for C section when attendances were cancelled", () => {
+  it("displays cancelled for C section when appointments were cancelled", () => {
     const result: ProcessEndOfDayResponse = {
       ...defaultResult,
       cancelledForC: [
         {
           patientId: 2,
           patientName: "Bob Wilson",
-          attendances: [
+          appointments: [
             { id: 10, type: "assessment", scheduledDate: "2024-01-20" },
           ],
         },
@@ -105,7 +105,7 @@ describe("SummaryStep", () => {
     render(<SummaryStep {...defaultProps} result={result} />);
 
     expect(
-      screen.getByText("Attendances canceled due to consecutive no-shows"),
+      screen.getByText("Appointments canceled due to consecutive no-shows"),
     ).toBeInTheDocument();
     expect(screen.getByText(/Bob Wilson/)).toBeInTheDocument();
   });
@@ -115,7 +115,7 @@ describe("SummaryStep", () => {
       ...defaultResult,
       couldNotReschedule: [
         {
-          attendanceId: 5,
+          appointmentId: 5,
           patientId: 3,
           patientName: "Alice Brown",
           type: "physiotherapy",
@@ -138,7 +138,7 @@ describe("SummaryStep", () => {
       ...defaultResult,
       rescheduled: [
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 10,
           patientName: "John Doe",
           type: "assessment",
@@ -158,7 +158,7 @@ describe("SummaryStep", () => {
       ...defaultResult,
       rescheduled: [
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 10,
           patientName: "John Doe",
           type: "physiotherapy",
@@ -178,7 +178,7 @@ describe("SummaryStep", () => {
       ...defaultResult,
       rescheduled: [
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 10,
           patientName: "John Doe",
           type: "physiotherapy",
@@ -186,7 +186,7 @@ describe("SummaryStep", () => {
           newDate: "2024-01-22",
         },
         {
-          attendanceId: 2,
+          appointmentId: 2,
           patientId: 10,
           patientName: "John Doe",
           type: "physiotherapy",

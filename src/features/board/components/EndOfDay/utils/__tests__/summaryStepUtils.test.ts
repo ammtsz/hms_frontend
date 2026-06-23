@@ -59,7 +59,7 @@ describe("summaryStepUtils", () => {
     it("groups by patient and aggregates by type+oldDate+newDate", () => {
       const items: RescheduledItem[] = [
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 10,
           patientName: "John",
           type: "physiotherapy",
@@ -67,7 +67,7 @@ describe("summaryStepUtils", () => {
           newDate: "2024-01-22",
         },
         {
-          attendanceId: 2,
+          appointmentId: 2,
           patientId: 10,
           patientName: "John",
           type: "physiotherapy",
@@ -75,7 +75,7 @@ describe("summaryStepUtils", () => {
           newDate: "2024-01-22",
         },
         {
-          attendanceId: 3,
+          appointmentId: 3,
           patientId: 10,
           patientName: "John",
           type: "assessment",
@@ -87,9 +87,9 @@ describe("summaryStepUtils", () => {
       expect(result).toHaveLength(1);
       expect(result[0].patientName).toBe("John");
       expect(result[0].patientId).toBe(10);
-      expect(result[0].attendances).toHaveLength(2);
-      const physiotherapy = result[0].attendances.find((a) => a.type === "physiotherapy");
-      const assessment = result[0].attendances.find((a) => a.type === "assessment");
+      expect(result[0].appointments).toHaveLength(2);
+      const physiotherapy = result[0].appointments.find((a) => a.type === "physiotherapy");
+      const assessment = result[0].appointments.find((a) => a.type === "assessment");
       expect(physiotherapy?.count).toBe(2);
       expect(assessment?.count).toBe(1);
     });
@@ -97,7 +97,7 @@ describe("summaryStepUtils", () => {
     it("sorts patients by first oldDate", () => {
       const items: RescheduledItem[] = [
         {
-          attendanceId: 2,
+          appointmentId: 2,
           patientId: 2,
           patientName: "Bob",
           type: "assessment",
@@ -105,7 +105,7 @@ describe("summaryStepUtils", () => {
           newDate: "2024-01-29",
         },
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 1,
           patientName: "Alice",
           type: "assessment",
@@ -121,7 +121,7 @@ describe("summaryStepUtils", () => {
     it("uses Patient when patientName is missing", () => {
       const items: RescheduledItem[] = [
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 99,
           patientName: "",
           type: "assessment",
@@ -139,12 +139,12 @@ describe("summaryStepUtils", () => {
       expect(groupCancelledByPatient([])).toEqual([]);
     });
 
-    it("aggregates attendances by type and scheduledDate within each patient", () => {
+    it("aggregates appointments by type and scheduledDate within each patient", () => {
       const items: CancelledForFItem[] = [
         {
           patientId: 1,
           patientName: "Jane",
-          attendances: [
+          appointments: [
             { id: 1, type: "physiotherapy", scheduledDate: "2024-01-20" },
             { id: 2, type: "physiotherapy", scheduledDate: "2024-01-20" },
             { id: 3, type: "assessment", scheduledDate: "2024-01-21" },
@@ -154,16 +154,16 @@ describe("summaryStepUtils", () => {
       const result = groupCancelledByPatient(items);
       expect(result).toHaveLength(1);
       expect(result[0].patientName).toBe("Jane");
-      expect(result[0].attendances).toHaveLength(2);
-      const physiotherapy = result[0].attendances.find((a) => a.type === "physiotherapy");
+      expect(result[0].appointments).toHaveLength(2);
+      const physiotherapy = result[0].appointments.find((a) => a.type === "physiotherapy");
       expect(physiotherapy?.count).toBe(2);
-      expect(result[0].attendances.find((a) => a.type === "assessment")?.count).toBe(1);
+      expect(result[0].appointments.find((a) => a.type === "assessment")?.count).toBe(1);
     });
 
     it("sorts by patientName", () => {
       const items: CancelledForFItem[] = [
-        { patientId: 2, patientName: "Bob", attendances: [] },
-        { patientId: 1, patientName: "Alice", attendances: [] },
+        { patientId: 2, patientName: "Bob", appointments: [] },
+        { patientId: 1, patientName: "Alice", appointments: [] },
       ];
       const result = groupCancelledByPatient(items);
       expect(result[0].patientName).toBe("Alice");
@@ -179,14 +179,14 @@ describe("summaryStepUtils", () => {
     it("groups by patient and aggregates by type+reason", () => {
       const items: CouldNotRescheduleItem[] = [
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 5,
           patientName: "Carl",
           type: "physiotherapy",
           reason: "No slots",
         },
         {
-          attendanceId: 2,
+          appointmentId: 2,
           patientId: 5,
           patientName: "Carl",
           type: "physiotherapy",
@@ -196,22 +196,22 @@ describe("summaryStepUtils", () => {
       const result = groupCouldNotRescheduleByPatient(items);
       expect(result).toHaveLength(1);
       expect(result[0].patientName).toBe("Carl");
-      expect(result[0].attendances).toHaveLength(1);
-      expect(result[0].attendances[0].count).toBe(2);
-      expect(result[0].attendances[0].reason).toBe("No slots");
+      expect(result[0].appointments).toHaveLength(1);
+      expect(result[0].appointments[0].count).toBe(2);
+      expect(result[0].appointments[0].reason).toBe("No slots");
     });
 
     it("sorts by patientName", () => {
       const items: CouldNotRescheduleItem[] = [
         {
-          attendanceId: 1,
+          appointmentId: 1,
           patientId: 2,
           patientName: "Zara",
           type: "assessment",
           reason: "X",
         },
         {
-          attendanceId: 2,
+          appointmentId: 2,
           patientId: 1,
           patientName: "Anna",
           type: "assessment",

@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PatientEditPage from "../PatientEditPage";
 import { ToastProvider } from "@/contexts/ToastContext";
 import {
-  usePatientWithAttendances,
+  usePatientWithAppointments,
   usePatients,
   useDeletePatient,
 } from "@/api/query/hooks/usePatientQueries";
@@ -26,7 +26,7 @@ jest.mock("next/navigation", () => ({
 
 // Mock hooks
 jest.mock("@/api/query/hooks/usePatientQueries", () => ({
-  usePatientWithAttendances: jest.fn(),
+  usePatientWithAppointments: jest.fn(),
   usePatients: jest.fn(),
   useDeletePatient: jest.fn(),
 }));
@@ -104,7 +104,7 @@ describe("PatientEditPage", () => {
     mainConcern: "Test complaint",
     startDate: new Date(),
     dischargeDate: null,
-    nextAttendanceDates: [],
+    nextAppointmentDates: [],
     currentRecommendations: {
       date: new Date(),
       food: "",
@@ -114,7 +114,7 @@ describe("PatientEditPage", () => {
       tens: false,
       returnWeeks: 0,
     },
-    previousAttendances: [],
+    previousAppointments: [],
   };
 
   const mockFormPatient = {
@@ -125,7 +125,7 @@ describe("PatientEditPage", () => {
     birthDate: new Date("1990-01-01"),
     mainConcern: "Test complaint",
     dischargeDate: null,
-    nextAttendanceDates: [],
+    nextAppointmentDates: [],
   };
 
   beforeEach(() => {
@@ -138,7 +138,7 @@ describe("PatientEditPage", () => {
     });
 
     // Setup default mocks
-    (usePatientWithAttendances as jest.Mock).mockReturnValue({
+    (usePatientWithAppointments as jest.Mock).mockReturnValue({
       data: mockPatient,
       isLoading: false,
       error: null,
@@ -188,7 +188,7 @@ describe("PatientEditPage", () => {
   };
 
   it("should render loading state initially", () => {
-    (usePatientWithAttendances as jest.Mock).mockReturnValue({
+    (usePatientWithAppointments as jest.Mock).mockReturnValue({
       data: null,
       isLoading: true,
       error: null,
@@ -202,7 +202,7 @@ describe("PatientEditPage", () => {
   });
 
   it("should render error state when patient not found", () => {
-    (usePatientWithAttendances as jest.Mock).mockReturnValue({
+    (usePatientWithAppointments as jest.Mock).mockReturnValue({
       data: null,
       isLoading: false,
       error: new Error("Patient not found"),
@@ -258,11 +258,11 @@ describe("PatientEditPage", () => {
     expect(deleteButton).toBeInTheDocument();
   });
 
-  it("should disable delete button when patient has attendance history", () => {
-    (usePatientWithAttendances as jest.Mock).mockReturnValue({
+  it("should disable delete button when patient has appointment history", () => {
+    (usePatientWithAppointments as jest.Mock).mockReturnValue({
       data: {
         ...mockPatient,
-        openAttendancesCount: 1,
+        openAppointmentsCount: 1,
       },
       isLoading: false,
       error: null,
@@ -275,7 +275,7 @@ describe("PatientEditPage", () => {
     expect(deleteButton).toBeDisabled();
     expect(deleteButton).toHaveAttribute(
       "title",
-      "Deletion is only allowed for patients without attendance history or with only canceled or missed appointments.",
+      "Deletion is only allowed for patients without appointment history or with only canceled or missed appointments.",
     );
   });
 

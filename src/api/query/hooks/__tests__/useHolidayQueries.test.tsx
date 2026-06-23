@@ -135,8 +135,8 @@ describe("useHolidayQueries", () => {
     it("checks for conflicts on a date", async () => {
       const mockConflict = {
         hasConflict: true,
-        attendanceCount: 2,
-        attendances: [
+        appointmentCount: 2,
+        appointments: [
           { id: 1, patientName: "John Doe", treatmentType: "assessment" },
         ],
       };

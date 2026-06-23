@@ -2,7 +2,7 @@ import React from "react";
 import type {
   PostConsultationFormData,
   PatientStatusValue,
-} from "../../hooks/usePostAttendanceForm";
+} from "../../hooks/usePostConsultationForm";
 import type { PatientResponseDto } from "@/api/types";
 import { getTreatmentStatusLabel } from "@/utils/patientUtils";
 import { Field, Input, Select, Textarea } from "@/components/ui";
@@ -58,7 +58,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
     <div className="space-y-4">
       <div className="mb-4">
         <h3 className="text-lg font-medium text-gray-900 mb-2">
-          Basic Attendance Information
+          Basic Appointment Information
         </h3>
         <p className="text-sm text-gray-600">
           Complete the essential information about this consultation.
@@ -144,7 +144,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
           value={formData.notes}
           onChange={handleInputChange}
           rows={3}
-          placeholder="Notes about the attendance..."
+          placeholder="Consultation notes..."
         />
       </Field>
     </div>

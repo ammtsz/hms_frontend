@@ -4,7 +4,7 @@ import { useParams } from "next/navigation";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { UseQueryResult } from "@tanstack/react-query";
 import PatientDetailPage from "../page";
-import { usePatientWithAttendances } from "@/api/query/hooks/usePatientQueries";
+import { usePatientWithAppointments } from "@/api/query/hooks/usePatientQueries";
 import type { Patient } from "@/types/types";
 
 jest.mock("next/navigation", () => ({
@@ -12,7 +12,7 @@ jest.mock("next/navigation", () => ({
 }));
 
 jest.mock("@/api/query/hooks/usePatientQueries", () => ({
-  usePatientWithAttendances: jest.fn(),
+  usePatientWithAppointments: jest.fn(),
 }));
 
 jest.mock("@/components/common/Breadcrumb", () => {
@@ -31,9 +31,9 @@ jest.mock("@/components/common/Breadcrumb", () => {
   };
 });
 
-const mockUsePatientWithAttendances =
-  usePatientWithAttendances as jest.MockedFunction<
-    typeof usePatientWithAttendances
+const mockUsePatientWithAppointments =
+  usePatientWithAppointments as jest.MockedFunction<
+    typeof usePatientWithAppointments
   >;
 const mockUseParams = useParams as jest.MockedFunction<typeof useParams>;
 
@@ -89,13 +89,13 @@ describe("PatientDetailPage Error Handling", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockUseParams.mockReturnValue({ id: "non-existent-id" });
-    mockUsePatientWithAttendances.mockReturnValue(
+    mockUsePatientWithAppointments.mockReturnValue(
       createMockPatientQuery({ refetch: mockRefetch }),
     );
   });
 
   it("shows patient not found error when patient does not exist", () => {
-    mockUsePatientWithAttendances.mockReturnValue(
+    mockUsePatientWithAppointments.mockReturnValue(
       createMockPatientQuery({
         error: new Error("Patient not found"),
         isError: true,
@@ -114,7 +114,7 @@ describe("PatientDetailPage Error Handling", () => {
   });
 
   it("shows generic server error with retry option for other errors", () => {
-    mockUsePatientWithAttendances.mockReturnValue(
+    mockUsePatientWithAppointments.mockReturnValue(
       createMockPatientQuery({
         error: new Error("Internal server error, please try again later"),
         isError: true,
@@ -135,7 +135,7 @@ describe("PatientDetailPage Error Handling", () => {
   });
 
   it("handles network errors gracefully", () => {
-    mockUsePatientWithAttendances.mockReturnValue(
+    mockUsePatientWithAppointments.mockReturnValue(
       createMockPatientQuery({
         error: new Error("Network error"),
         isError: true,
@@ -152,7 +152,7 @@ describe("PatientDetailPage Error Handling", () => {
   });
 
   it("shows patient not found error when patient is null", () => {
-    mockUsePatientWithAttendances.mockReturnValue(
+    mockUsePatientWithAppointments.mockReturnValue(
       createMockPatientQuery({ refetch: mockRefetch }),
     );
 
@@ -178,7 +178,7 @@ describe("PatientDetailPage Error Handling", () => {
   });
 
   it("renders proper breadcrumb items for not found page", () => {
-    mockUsePatientWithAttendances.mockReturnValue(
+    mockUsePatientWithAppointments.mockReturnValue(
       createMockPatientQuery({ refetch: mockRefetch }),
     );
 
@@ -190,7 +190,7 @@ describe("PatientDetailPage Error Handling", () => {
   });
 
   it("handles undefined patient data gracefully", () => {
-    mockUsePatientWithAttendances.mockReturnValue(
+    mockUsePatientWithAppointments.mockReturnValue(
       createMockPatientQuery({ refetch: mockRefetch }),
     );
 
@@ -204,7 +204,7 @@ describe("PatientDetailPage Error Handling", () => {
   });
 
   it("shows PageError component with correct props for not found patient", () => {
-    mockUsePatientWithAttendances.mockReturnValue(
+    mockUsePatientWithAppointments.mockReturnValue(
       createMockPatientQuery({ refetch: mockRefetch }),
     );
 

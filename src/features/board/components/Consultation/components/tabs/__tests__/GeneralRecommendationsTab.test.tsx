@@ -6,7 +6,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import GeneralRecommendationsTab from "../GeneralRecommendationsTab";
-import type { PostConsultationFormData } from "../../../hooks/usePostAttendanceForm";
+import type { PostConsultationFormData } from "../../../hooks/usePostConsultationForm";
 
 describe("GeneralRecommendationsTab", () => {
   const mockFormData: PostConsultationFormData = {

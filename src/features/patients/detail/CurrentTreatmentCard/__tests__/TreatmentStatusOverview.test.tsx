@@ -41,7 +41,7 @@ const mockPatient: Patient = {
   startDate: "2024-01-15",
   dischargeDate: "2024-06-15",
   timezone: "America/Sao_Paulo",
-  nextAttendanceDates: [
+  nextAppointmentDates: [
     {
       date: "2024-12-28",
       type: "assessment",
@@ -56,7 +56,7 @@ const mockPatient: Patient = {
     tens: false,
     returnWeeks: 2,
   },
-  previousAttendances: [],
+  previousAppointments: [],
   missingAppointmentsStreak: 0,
 };
 
@@ -73,19 +73,19 @@ describe("TreatmentStatusOverview", () => {
     expect(screen.getByText("Discharged on")).toBeInTheDocument();
   });
 
-  it("shows next attendance date when available", () => {
+  it("shows next appointment date when available", () => {
     render(<TreatmentStatusOverview patient={mockPatient} />);
 
     expect(screen.getByText(/12\/\d{2}\/2024/)).toBeInTheDocument();
   });
 
-  it("shows 'Not scheduled' when no next attendance", () => {
-    const patientWithoutNextAttendance = {
+  it("shows 'Not scheduled' when no next appointment", () => {
+    const patientWithoutNextAppointment = {
       ...mockPatient,
-      nextAttendanceDates: [],
+      nextAppointmentDates: [],
     };
 
-    render(<TreatmentStatusOverview patient={patientWithoutNextAttendance} />);
+    render(<TreatmentStatusOverview patient={patientWithoutNextAppointment} />);
 
     expect(screen.getByText("Not scheduled")).toBeInTheDocument();
   });

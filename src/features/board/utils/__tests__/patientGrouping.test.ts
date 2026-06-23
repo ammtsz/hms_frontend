@@ -5,66 +5,66 @@ import {
   type IGroupedPatient
 } from "../patientGrouping";
 
-import type { AttendanceType } from "@/types/types";
+import type { AppointmentType } from "@/types/types";
 
 import {
   createGroupingTestData,
-  createMockAttendanceStatusDetail
+  createMockAppointmentStatusDetail
 } from "../testUtilities";
 
 describe("patientGrouping", () => {
   describe("getTreatmentCombinationColor", () => {
     it("should return 'combined' when both physiotherapy and tens are present", () => {
-      const treatmentTypes: AttendanceType[] = ['physiotherapy', 'tens'];
+      const treatmentTypes: AppointmentType[] = ['physiotherapy', 'tens'];
       const result = getTreatmentCombinationColor(treatmentTypes);
       expect(result).toBe('combined');
     });
 
     it("should return 'combined' when physiotherapy, tens, and assessment are present", () => {
-      const treatmentTypes: AttendanceType[] = ['physiotherapy', 'tens', 'assessment'];
+      const treatmentTypes: AppointmentType[] = ['physiotherapy', 'tens', 'assessment'];
       const result = getTreatmentCombinationColor(treatmentTypes);
       expect(result).toBe('combined');
     });
 
     it("should return 'physiotherapy' when only physiotherapy is present", () => {
-      const treatmentTypes: AttendanceType[] = ['physiotherapy'];
+      const treatmentTypes: AppointmentType[] = ['physiotherapy'];
       const result = getTreatmentCombinationColor(treatmentTypes);
       expect(result).toBe('physiotherapy');
     });
 
     it("should return 'tens' when only tens is present", () => {
-      const treatmentTypes: AttendanceType[] = ['tens'];
+      const treatmentTypes: AppointmentType[] = ['tens'];
       const result = getTreatmentCombinationColor(treatmentTypes);
       expect(result).toBe('tens');
     });
 
     it("should return 'physiotherapy' when physiotherapy and assessment are present (no tens)", () => {
-      const treatmentTypes: AttendanceType[] = ['physiotherapy', 'assessment'];
+      const treatmentTypes: AppointmentType[] = ['physiotherapy', 'assessment'];
       const result = getTreatmentCombinationColor(treatmentTypes);
       expect(result).toBe('physiotherapy');
     });
 
     it("should return 'tens' when tens and assessment are present (no physiotherapy)", () => {
-      const treatmentTypes: AttendanceType[] = ['tens', 'assessment'];
+      const treatmentTypes: AppointmentType[] = ['tens', 'assessment'];
       const result = getTreatmentCombinationColor(treatmentTypes);
       expect(result).toBe('tens');
     });
 
     it("should return 'physiotherapy' as fallback when only assessment is present", () => {
-      const treatmentTypes: AttendanceType[] = ['assessment'];
+      const treatmentTypes: AppointmentType[] = ['assessment'];
       const result = getTreatmentCombinationColor(treatmentTypes);
       expect(result).toBe('physiotherapy');
     });
 
     it("should return 'physiotherapy' as fallback when empty array is passed", () => {
-      const treatmentTypes: AttendanceType[] = [];
+      const treatmentTypes: AppointmentType[] = [];
       const result = getTreatmentCombinationColor(treatmentTypes);
       expect(result).toBe('physiotherapy');
     });
 
     it("should handle mixed treatment order consistently", () => {
-      const treatmentTypes1: AttendanceType[] = ['physiotherapy', 'tens'];
-      const treatmentTypes2: AttendanceType[] = ['tens', 'physiotherapy'];
+      const treatmentTypes1: AppointmentType[] = ['physiotherapy', 'tens'];
+      const treatmentTypes2: AppointmentType[] = ['tens', 'physiotherapy'];
       
       const result1 = getTreatmentCombinationColor(treatmentTypes1);
       const result2 = getTreatmentCombinationColor(treatmentTypes2);
@@ -83,10 +83,10 @@ describe("patientGrouping", () => {
 
     it("should group physiotherapy patients only", () => {
       const physiotherapyPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Physiotherapy Patient",
           patientId: 1,
-          attendanceId: 1,
+          appointmentId: 1,
         }),
       ];
 
@@ -101,10 +101,10 @@ describe("patientGrouping", () => {
 
     it("should group tens patients only", () => {
       const tensPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "TENS Patient",
           patientId: 2,
-          attendanceId: 2,
+          appointmentId: 2,
         }),
       ];
 
@@ -134,18 +134,18 @@ describe("patientGrouping", () => {
     });
 
     it("should preserve all patient properties when combining", () => {
-      const physiotherapyPatient = createMockAttendanceStatusDetail({
+      const physiotherapyPatient = createMockAppointmentStatusDetail({
         name: "John Doe",
         patientId: 1,
-        attendanceId: 1,
+        appointmentId: 1,
         priority: "1",
         checkedInTime: "2024-01-15T10:00:00Z",
       });
 
-      const tensPatient = createMockAttendanceStatusDetail({
+      const tensPatient = createMockAppointmentStatusDetail({
         name: "John Doe",
         patientId: 1,
-        attendanceId: 2,
+        appointmentId: 2,
         priority: "1",
         onGoingTime: "2024-01-15T11:00:00Z",
       });
@@ -169,18 +169,18 @@ describe("patientGrouping", () => {
 
     it("should handle patients without patientId gracefully", () => {
       const physiotherapyPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "No ID Patient",
           patientId: undefined,
-          attendanceId: 1,
+          appointmentId: 1,
         }),
       ];
 
       const tensPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Valid Patient",
           patientId: 2,
-          attendanceId: 2,
+          appointmentId: 2,
         }),
       ];
 
@@ -194,23 +194,23 @@ describe("patientGrouping", () => {
 
     it("should handle multiple patients with same treatment type", () => {
       const physiotherapyPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Patient A",
           patientId: 1,
-          attendanceId: 1,
+          appointmentId: 1,
         }),
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Patient B",
           patientId: 2,
-          attendanceId: 2,
+          appointmentId: 2,
         }),
       ];
 
       const tensPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Patient C",
           patientId: 3,
-          attendanceId: 3,
+          appointmentId: 3,
         }),
       ];
 
@@ -229,18 +229,18 @@ describe("patientGrouping", () => {
 
     it("should maintain correct originalType when tens patient is added first", () => {
       const physiotherapyPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Combined Patient",
           patientId: 1,
-          attendanceId: 2,
+          appointmentId: 2,
         }),
       ];
 
       const tensPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Combined Patient",
           patientId: 1,
-          attendanceId: 1,
+          appointmentId: 1,
         }),
       ];
 
@@ -256,30 +256,30 @@ describe("patientGrouping", () => {
 
     it("should handle complex scenario with multiple combinations", () => {
       const physiotherapyPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Only Physiotherapy",
           patientId: 1,
         }),
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Combined A",
           patientId: 2,
         }),
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Combined B",
           patientId: 3,
         }),
       ];
 
       const tensPatients = [
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Combined A", // Same patient as physiotherapy
           patientId: 2,
         }),
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Combined B", // Same patient as physiotherapy
           patientId: 3,
         }),
-        createMockAttendanceStatusDetail({
+        createMockAppointmentStatusDetail({
           name: "Only TENS",
           patientId: 4,
         }),
@@ -302,8 +302,8 @@ describe("patientGrouping", () => {
   });
 
   describe("countTreatmentTypes", () => {
-    it("should count multiple physiotherapy attendances on one card", () => {
-      const treatmentTypes: AttendanceType[] = [
+    it("should count multiple physiotherapy appointments on one card", () => {
+      const treatmentTypes: AppointmentType[] = [
         "physiotherapy",
         "physiotherapy",
         "physiotherapy",
@@ -315,7 +315,7 @@ describe("patientGrouping", () => {
     });
 
     it("should count physiotherapy and tens separately", () => {
-      const treatmentTypes: AttendanceType[] = [
+      const treatmentTypes: AppointmentType[] = [
         "physiotherapy",
         "tens",
         "physiotherapy",
@@ -332,18 +332,18 @@ describe("patientGrouping", () => {
   });
 
   describe("IGroupedPatient interface", () => {
-    it("should extend AttendanceStatusDetail with additional properties", () => {
+    it("should extend AppointmentStatusDetail with additional properties", () => {
       const { physiotherapyPatients, tensPatients } = createGroupingTestData();
       const result = groupPatientsByTreatments(physiotherapyPatients, tensPatients);
       
       if (result.length > 0) {
         const groupedPatient: IGroupedPatient = result[0];
         
-        // Should have all AttendanceStatusDetail properties
+        // Should have all AppointmentStatusDetail properties
         expect(groupedPatient.name).toBeDefined();
         expect(groupedPatient.priority).toBeDefined();
         expect(groupedPatient.patientId).toBeDefined();
-        expect(groupedPatient.attendanceId).toBeDefined();
+        expect(groupedPatient.appointmentId).toBeDefined();
         
         // Should have the additional grouping properties
         expect(groupedPatient.originalType).toBeDefined();

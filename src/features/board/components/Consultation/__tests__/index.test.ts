@@ -5,9 +5,9 @@
 import * as ConsultationExports from '../index';
 
 describe('Consultation Index Exports', () => {
-  it('should export PostAttendanceModal component', () => {
-    expect(ConsultationExports.PostAttendanceModal).toBeDefined();
-    expect(typeof ConsultationExports.PostAttendanceModal).toBe('function');
+  it('should export PostConsultationModal component', () => {
+    expect(ConsultationExports.PostConsultationModal).toBeDefined();
+    expect(typeof ConsultationExports.PostConsultationModal).toBe('function');
   });
 
   it('should export TreatmentRecommendationsSection component', () => {
@@ -15,17 +15,17 @@ describe('Consultation Index Exports', () => {
     expect(typeof ConsultationExports.TreatmentRecommendationsSection).toBe('function');
   });
 
-  it('should export usePostAttendanceForm hook', () => {
-    expect(ConsultationExports.usePostAttendanceForm).toBeDefined();
-    expect(typeof ConsultationExports.usePostAttendanceForm).toBe('function');
+  it('should export usePostConsultationForm hook', () => {
+    expect(ConsultationExports.usePostConsultationForm).toBeDefined();
+    expect(typeof ConsultationExports.usePostConsultationForm).toBe('function');
   });
 
   it('should have correct export structure', () => {
     const exports = Object.keys(ConsultationExports);
     const expectedExports = [
-      'PostAttendanceModal',
+      'PostConsultationModal',
       'TreatmentRecommendationsSection', 
-      'usePostAttendanceForm'
+      'usePostConsultationForm'
     ];
     
     expectedExports.forEach(exportName => {

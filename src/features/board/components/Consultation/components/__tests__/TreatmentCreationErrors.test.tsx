@@ -9,7 +9,7 @@ const mockErrors: TreatmentCreationError[] = [
   {
     treatmentType: "physiotherapy",
     errors: [
-      "Failed to create attendance: Patient already has appointment at this time",
+      "Failed to create appointment: Patient already has appointment at this time",
       "Invalid schedule configuration for Tuesday sessions",
     ],
   },
@@ -87,7 +87,7 @@ describe("TreatmentCreationErrors", () => {
 
     expect(
       screen.getByText(
-        "Failed to create attendance: Patient already has appointment at this time",
+        "Failed to create appointment: Patient already has appointment at this time",
       ),
     ).toBeInTheDocument();
     expect(

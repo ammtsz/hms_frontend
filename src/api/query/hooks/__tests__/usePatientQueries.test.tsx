@@ -5,9 +5,9 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import {
-  usePatientWithAttendances,
+  usePatientWithAppointments,
   usePatient,
-  usePatientAttendances,
+  usePatientAppointments,
   usePatients,
   useCreatePatient,
   useUpdatePatient,
@@ -26,32 +26,32 @@ import {
   createPatient,
   deletePatient,
 } from "@/api/patients";
-import { getAttendancesByPatient } from "@/api/attendances";
+import { getAppointmentsByPatient } from "@/api/appointments";
 import {
   transformSinglePatientFromApi,
-  transformPatientWithAttendances,
+  transformPatientWithAppointments,
   transformPatientsFromApi,
 } from "@/utils/apiTransformers";
-import { Patient, Priority, Status, AttendanceType } from "@/types/types";
+import { Patient, Priority, Status, AppointmentType } from "@/types/types";
 import {
   PatientPriority,
   PatientStatus,
-  AttendanceType as AttendanceTypeEnum,
-  AttendanceStatus,
+  AppointmentType as AppointmentTypeEnum,
+  AppointmentStatus,
 } from "@/api/types";
 import React from "react";
 
 // Mock the API functions
 jest.mock("@/api/patients");
-jest.mock("@/api/attendances");
+jest.mock("@/api/appointments");
 jest.mock("@/utils/apiTransformers");
 
 const mockedGetPatientById = getPatientById as jest.MockedFunction<
   typeof getPatientById
 >;
-const mockedGetAttendancesByPatient =
-  getAttendancesByPatient as jest.MockedFunction<
-    typeof getAttendancesByPatient
+const mockedGetAppointmentsByPatient =
+  getAppointmentsByPatient as jest.MockedFunction<
+    typeof getAppointmentsByPatient
   >;
 const mockedUpdatePatient = updatePatient as jest.MockedFunction<
   typeof updatePatient
@@ -69,9 +69,9 @@ const mockedTransformSinglePatientFromApi =
   transformSinglePatientFromApi as jest.MockedFunction<
     typeof transformSinglePatientFromApi
   >;
-const mockedTransformPatientWithAttendances =
-  transformPatientWithAttendances as jest.MockedFunction<
-    typeof transformPatientWithAttendances
+const mockedTransformPatientWithAppointments =
+  transformPatientWithAppointments as jest.MockedFunction<
+    typeof transformPatientWithAppointments
   >;
 const mockedTransformPatientsFromApi =
   transformPatientsFromApi as jest.MockedFunction<
@@ -119,12 +119,12 @@ const mockPatientApiResponse = {
   updatedAt: "2023-01-01T10:00:00Z",
 };
 
-const mockAttendanceApiResponse = [
+const mockAppointmentApiResponse = [
   {
     id: 1,
     patientId: 1,
-    type: AttendanceTypeEnum.ASSESSMENT,
-    status: AttendanceStatus.COMPLETED,
+    type: AppointmentTypeEnum.ASSESSMENT,
+    status: AppointmentStatus.COMPLETED,
     scheduledDate: "2023-01-01",
     scheduledTime: "10:00",
     createdAt: "2023-01-01T10:00:00Z",
@@ -142,7 +142,7 @@ const mockTransformedPatient = {
   mainConcern: "Test complaint",
   startDate: "2023-01-01",
   dischargeDate: null,
-  nextAttendanceDates: [],
+  nextAppointmentDates: [],
   currentRecommendations: {
     date: "2023-01-01",
     food: "",
@@ -152,17 +152,17 @@ const mockTransformedPatient = {
     tens: false,
     returnWeeks: 0,
   },
-  previousAttendances: [],
+  previousAppointments: [],
   missingAppointmentsStreak: 0,
 };
 
-const mockTransformedPatientWithAttendances = {
+const mockTransformedPatientWithAppointments = {
   ...mockTransformedPatient,
-  previousAttendances: [
+  previousAppointments: [
     {
-      attendanceId: "attendance-1",
+      appointmentId: "appointment-1",
       date: "2023-01-01",
-      type: "assessment" as AttendanceType,
+      type: "assessment" as AppointmentType,
       notes: "",
       recommendations: null,
       createdDate: "2023-01-01",
@@ -209,30 +209,30 @@ describe("usePatientQueries", () => {
         "detail",
         "patient-1",
       ]);
-      expect(patientKeys.attendances("patient-1")).toEqual([
-        "attendances",
+      expect(patientKeys.appointments("patient-1")).toEqual([
+        "appointments",
         "patient",
         "patient-1",
       ]);
     });
   });
 
-  describe("usePatientWithAttendances", () => {
-    it("should fetch patient with attendances successfully", async () => {
+  describe("usePatientWithAppointments", () => {
+    it("should fetch patient with appointments successfully", async () => {
       mockedGetPatientById.mockResolvedValue({
         success: true,
         value: mockPatientApiResponse,
       });
-      mockedGetAttendancesByPatient.mockResolvedValue({
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: true,
-        value: mockAttendanceApiResponse,
+        value: mockAppointmentApiResponse,
       });
-      mockedTransformPatientWithAttendances.mockReturnValue(
-        mockTransformedPatientWithAttendances,
+      mockedTransformPatientWithAppointments.mockReturnValue(
+        mockTransformedPatientWithAppointments,
       );
 
       const { result } = renderHook(
-        () => usePatientWithAttendances("patient-1"),
+        () => usePatientWithAppointments("patient-1"),
         {
           wrapper: createWrapper(),
         },
@@ -243,31 +243,31 @@ describe("usePatientQueries", () => {
       });
 
       expect(result.current.data).toEqual(
-        mockTransformedPatientWithAttendances,
+        mockTransformedPatientWithAppointments,
       );
       expect(mockedGetPatientById).toHaveBeenCalledWith("patient-1");
-      expect(mockedGetAttendancesByPatient).toHaveBeenCalledWith("patient-1");
-      expect(mockedTransformPatientWithAttendances).toHaveBeenCalledWith(
+      expect(mockedGetAppointmentsByPatient).toHaveBeenCalledWith("patient-1");
+      expect(mockedTransformPatientWithAppointments).toHaveBeenCalledWith(
         mockPatientApiResponse,
-        mockAttendanceApiResponse,
+        mockAppointmentApiResponse,
       );
     });
 
-    it("should fallback to basic transformer when attendances fetch fails", async () => {
+    it("should fallback to basic transformer when appointments fetch fails", async () => {
       mockedGetPatientById.mockResolvedValue({
         success: true,
         value: mockPatientApiResponse,
       });
-      mockedGetAttendancesByPatient.mockResolvedValue({
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: false,
-        error: "Attendance error",
+        error: "Appointment error",
       });
       mockedTransformSinglePatientFromApi.mockReturnValue(
         mockTransformedPatient,
       );
 
       const { result } = renderHook(
-        () => usePatientWithAttendances("patient-1"),
+        () => usePatientWithAppointments("patient-1"),
         {
           wrapper: createWrapper(),
         },
@@ -282,8 +282,8 @@ describe("usePatientQueries", () => {
         mockPatientApiResponse,
       );
       expect(consoleSpy.warn).toHaveBeenCalledWith(
-        "Failed to load attendance data:",
-        "Attendance error",
+        "Failed to load appointment data:",
+        "Appointment error",
       );
     });
 
@@ -292,13 +292,13 @@ describe("usePatientQueries", () => {
         success: false,
         error: "Patient not found",
       });
-      mockedGetAttendancesByPatient.mockResolvedValue({
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: true,
-        value: mockAttendanceApiResponse,
+        value: mockAppointmentApiResponse,
       });
 
       const { result } = renderHook(
-        () => usePatientWithAttendances("patient-1"),
+        () => usePatientWithAppointments("patient-1"),
         {
           wrapper: createWrapper(),
         },
@@ -316,13 +316,13 @@ describe("usePatientQueries", () => {
         success: true,
         value: undefined,
       });
-      mockedGetAttendancesByPatient.mockResolvedValue({
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: true,
-        value: mockAttendanceApiResponse,
+        value: mockAppointmentApiResponse,
       });
 
       const { result } = renderHook(
-        () => usePatientWithAttendances("patient-1"),
+        () => usePatientWithAppointments("patient-1"),
         {
           wrapper: createWrapper(),
         },
@@ -336,7 +336,7 @@ describe("usePatientQueries", () => {
     });
 
     it("should not execute query when patientId is not provided", () => {
-      const { result } = renderHook(() => usePatientWithAttendances(""), {
+      const { result } = renderHook(() => usePatientWithAppointments(""), {
         wrapper: createWrapper(),
       });
 
@@ -414,14 +414,14 @@ describe("usePatientQueries", () => {
     });
   });
 
-  describe("usePatientAttendances", () => {
-    it("should fetch patient attendances successfully", async () => {
-      mockedGetAttendancesByPatient.mockResolvedValue({
+  describe("usePatientAppointments", () => {
+    it("should fetch patient appointments successfully", async () => {
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: true,
-        value: mockAttendanceApiResponse,
+        value: mockAppointmentApiResponse,
       });
 
-      const { result } = renderHook(() => usePatientAttendances("patient-1"), {
+      const { result } = renderHook(() => usePatientAppointments("patient-1"), {
         wrapper: createWrapper(),
       });
 
@@ -429,17 +429,17 @@ describe("usePatientQueries", () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(result.current.data).toEqual(mockAttendanceApiResponse);
-      expect(mockedGetAttendancesByPatient).toHaveBeenCalledWith("patient-1");
+      expect(result.current.data).toEqual(mockAppointmentApiResponse);
+      expect(mockedGetAppointmentsByPatient).toHaveBeenCalledWith("patient-1");
     });
 
-    it("should return empty array when attendances value is null", async () => {
-      mockedGetAttendancesByPatient.mockResolvedValue({
+    it("should return empty array when appointments value is null", async () => {
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: true,
         value: undefined,
       });
 
-      const { result } = renderHook(() => usePatientAttendances("patient-1"), {
+      const { result } = renderHook(() => usePatientAppointments("patient-1"), {
         wrapper: createWrapper(),
       });
 
@@ -450,13 +450,13 @@ describe("usePatientQueries", () => {
       expect(result.current.data).toEqual([]);
     });
 
-    it("should throw error when attendances fetch fails", async () => {
-      mockedGetAttendancesByPatient.mockResolvedValue({
+    it("should throw error when appointments fetch fails", async () => {
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: false,
-        error: "Attendances error",
+        error: "Appointments error",
       });
 
-      const { result } = renderHook(() => usePatientAttendances("patient-1"), {
+      const { result } = renderHook(() => usePatientAppointments("patient-1"), {
         wrapper: createWrapper(),
       });
 
@@ -464,13 +464,13 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Attendances error");
+      expect(result.current.error?.message).toBe("Appointments error");
     });
 
     it("should throw default error when no error message provided", async () => {
-      mockedGetAttendancesByPatient.mockResolvedValue({ success: false });
+      mockedGetAppointmentsByPatient.mockResolvedValue({ success: false });
 
-      const { result } = renderHook(() => usePatientAttendances("patient-1"), {
+      const { result } = renderHook(() => usePatientAppointments("patient-1"), {
         wrapper: createWrapper(),
       });
 
@@ -478,16 +478,16 @@ describe("usePatientQueries", () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(result.current.error?.message).toBe("Error loading attendances");
+      expect(result.current.error?.message).toBe("Error loading appointments");
     });
 
     it("should not execute query when patientId is not provided", () => {
-      const { result } = renderHook(() => usePatientAttendances(""), {
+      const { result } = renderHook(() => usePatientAppointments(""), {
         wrapper: createWrapper(),
       });
 
       expect(result.current.isFetching).toBe(false);
-      expect(mockedGetAttendancesByPatient).not.toHaveBeenCalled();
+      expect(mockedGetAppointmentsByPatient).not.toHaveBeenCalled();
     });
   });
 
@@ -788,7 +788,7 @@ describe("usePatientQueries", () => {
         queryKey: patientKeys.detail("patient-1"),
       });
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-        queryKey: patientKeys.attendances("patient-1"),
+        queryKey: patientKeys.appointments("patient-1"),
       });
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
         queryKey: patientNotesKeys.list("patient-1"),
@@ -942,12 +942,12 @@ describe("usePatientQueries", () => {
         success: true,
         value: mockPatientApiResponse,
       });
-      mockedGetAttendancesByPatient.mockResolvedValue({
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: true,
-        value: mockAttendanceApiResponse,
+        value: mockAppointmentApiResponse,
       });
-      mockedTransformPatientWithAttendances.mockReturnValue(
-        mockTransformedPatientWithAttendances,
+      mockedTransformPatientWithAppointments.mockReturnValue(
+        mockTransformedPatientWithAppointments,
       );
 
       const { result } = renderHook(() => usePrefetchPatient(), { wrapper });
@@ -961,7 +961,7 @@ describe("usePatientQueries", () => {
       });
     });
 
-    it("should prefetch patient data with fallback when attendances fail", async () => {
+    it("should prefetch patient data with fallback when appointments fail", async () => {
       const queryClient = new QueryClient();
       const prefetchQuerySpy = jest.spyOn(queryClient, "prefetchQuery");
 
@@ -975,9 +975,9 @@ describe("usePatientQueries", () => {
         success: true,
         value: mockPatientApiResponse,
       });
-      mockedGetAttendancesByPatient.mockResolvedValue({
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: false,
-        error: "Attendance error",
+        error: "Appointment error",
       });
       mockedTransformSinglePatientFromApi.mockReturnValue(
         mockTransformedPatient,
@@ -1018,9 +1018,9 @@ describe("usePatientQueries", () => {
         success: false,
         error: "Patient error",
       });
-      mockedGetAttendancesByPatient.mockResolvedValue({
+      mockedGetAppointmentsByPatient.mockResolvedValue({
         success: true,
-        value: mockAttendanceApiResponse,
+        value: mockAppointmentApiResponse,
       });
 
       const { result } = renderHook(() => usePrefetchPatient(), { wrapper });
@@ -1055,10 +1055,10 @@ describe("usePatientQueries", () => {
         queryKey: patientKeys.detail("patient-1"),
       });
 
-      // Test invalidatePatientAttendances
-      result.current.invalidatePatientAttendances("patient-1");
+      // Test invalidatePatientAppointments
+      result.current.invalidatePatientAppointments("patient-1");
       expect(invalidateQueriesSpy).toHaveBeenCalledWith({
-        queryKey: patientKeys.attendances("patient-1"),
+        queryKey: patientKeys.appointments("patient-1"),
       });
 
       // Test invalidatePatientNotes

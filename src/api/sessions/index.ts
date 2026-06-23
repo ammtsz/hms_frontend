@@ -39,9 +39,9 @@ export const getSessionsByPatient = async (patientId: string): Promise<ApiRespon
   }
 };
 
-export const getSessionsByAttendance = async (attendanceId: number): Promise<ApiResponse<SessionResponseDto[]>> => {
+export const getSessionsByAppointment = async (appointmentId: number): Promise<ApiResponse<SessionResponseDto[]>> => {
   try {
-    const { data } = await api.get(`/sessions/attendance/${attendanceId}`);
+    const { data } = await api.get(`/sessions/appointment/${appointmentId}`);
     return { success: true, value: data };
   } catch (error) {
     const message = getErrorMessage((error as AxiosError).status);

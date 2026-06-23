@@ -17,7 +17,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Healthcare Management System",
-  description: "Attendance and physiotherapy treatment management system",
+  description: "Appointment and physiotherapy treatment management system",
 };
 
 export default function RootLayout({

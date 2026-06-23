@@ -6,15 +6,15 @@ import {
 } from "@tanstack/react-query";
 import React from "react";
 import { useDragAndDrop } from "../useDragAndDrop";
-import { useAttendanceBoardState } from "@/features/board/hooks/useAttendanceBoardState";
-import { AttendanceByDate } from "@/types/types";
-import { AttendanceResponseDto } from "@/api/types";
+import { useBoardState } from "@/features/board/hooks/useBoardState";
+import { AppointmentByDate } from "@/types/types";
+import { AppointmentResponseDto } from "@/api/types";
 import * as modalStore from "@/stores/modalStore";
 
 // Mock all dependencies
-jest.mock("@/features/board/hooks/useAttendanceBoardState");
+jest.mock("@/features/board/hooks/useBoardState");
 jest.mock("@/api/query/hooks/usePatientQueries");
-jest.mock("@/api/query/hooks/useAttendanceQueries");
+jest.mock("@/api/query/hooks/useAppointmentQueries");
 jest.mock("@/stores/modalStore");
 jest.mock("@/contexts/ToastContext", () => ({
   useToast: () => ({
@@ -26,47 +26,47 @@ jest.mock("@/contexts/ToastContext", () => ({
 
 import { usePatients } from "@/api/query/hooks/usePatientQueries";
 import {
-  useCheckInAttendance,
-  useCompleteAttendance,
-  useUpdateAttendance,
-  useMarkAttendanceAsMissed,
-} from "@/api/query/hooks/useAttendanceQueries";
+  useCheckInAppointment,
+  useCompleteAppointment,
+  useUpdateAppointment,
+  useMarkAppointmentAsMissed,
+} from "@/api/query/hooks/useAppointmentQueries";
 import type {
-  CheckInAttendanceParams,
-  UpdateAttendanceParams,
+  CheckInAppointmentParams,
+  UpdateAppointmentParams,
   MarkMissedParams,
-  CompleteAttendanceParams,
-} from "@/api/query/hooks/useAttendanceQueries";
+  CompleteAppointmentParams,
+} from "@/api/query/hooks/useAppointmentQueries";
 
-const mockUseAttendanceBoardState =
-  useAttendanceBoardState as jest.MockedFunction<
-    typeof useAttendanceBoardState
+const mockUseAppointmentsBoardState =
+  useBoardState as jest.MockedFunction<
+    typeof useBoardState
   >;
 const mockUsePatients = usePatients as jest.MockedFunction<typeof usePatients>;
-const mockUseCheckInAttendance = useCheckInAttendance as jest.MockedFunction<
-  typeof useCheckInAttendance
+const mockUseCheckInAppointment = useCheckInAppointment as jest.MockedFunction<
+  typeof useCheckInAppointment
 >;
-const mockUseCompleteAttendance = useCompleteAttendance as jest.MockedFunction<
-  typeof useCompleteAttendance
+const mockUseCompleteAppointment = useCompleteAppointment as jest.MockedFunction<
+  typeof useCompleteAppointment
 >;
-const mockUseUpdateAttendance = useUpdateAttendance as jest.MockedFunction<
-  typeof useUpdateAttendance
+const mockUseUpdateAppointment = useUpdateAppointment as jest.MockedFunction<
+  typeof useUpdateAppointment
 >;
-const mockUseMarkAttendanceAsMissed =
-  useMarkAttendanceAsMissed as jest.MockedFunction<
-    typeof useMarkAttendanceAsMissed
+const mockUseMarkAppointmentAsMissed =
+  useMarkAppointmentAsMissed as jest.MockedFunction<
+    typeof useMarkAppointmentAsMissed
   >;
 
 // Mock modal functions
-const mockOpenPostAttendance = jest.fn();
+const mockOpenPostAppointment = jest.fn();
 const mockOpenPostTreatment = jest.fn();
 const mockOpenNewPatientCheckIn = jest.fn();
 const mockOpenMultiSection = jest.fn();
 const mockOpenAssessmentBeforeTreatmentConfirm = jest.fn();
 
 // Type-safe mock setup
-(modalStore.useOpenPostAttendance as jest.Mock).mockReturnValue(
-  mockOpenPostAttendance,
+(modalStore.useOpenPostAppointment as jest.Mock).mockReturnValue(
+  mockOpenPostAppointment,
 );
 (modalStore.useOpenPostTreatment as jest.Mock).mockReturnValue(
   mockOpenPostTreatment,
@@ -82,7 +82,7 @@ const mockOpenAssessmentBeforeTreatmentConfirm = jest.fn();
 ).mockReturnValue(mockOpenAssessmentBeforeTreatmentConfirm);
 
 describe("useDragAndDrop", () => {
-  const mockSetAttendancesByDate = jest.fn();
+  const mockSetAppointmentsByDate = jest.fn();
   let queryClient: QueryClient;
 
   // Create wrapper for React Query
@@ -192,14 +192,14 @@ describe("useDragAndDrop", () => {
     },
   ];
 
-  const mockAttendancesByDate: AttendanceByDate = {
+  const mockAppointmentsByDate: AppointmentByDate = {
     date: "2025-11-27",
     assessment: {
       scheduled: [],
       checkedIn: [
         {
           patientId: 1,
-          attendanceId: 101,
+          appointmentId: 101,
           name: "John Smith",
           priority: "1" as const,
         },
@@ -212,7 +212,7 @@ describe("useDragAndDrop", () => {
       checkedIn: [
         {
           patientId: 2,
-          attendanceId: 102,
+          appointmentId: 102,
           name: "Emily Williams",
           priority: "2" as const,
         },
@@ -263,33 +263,33 @@ describe("useDragAndDrop", () => {
     });
 
     // Mock the React Query hooks
-    mockUseCheckInAttendance.mockReturnValue(
+    mockUseCheckInAppointment.mockReturnValue(
       mockCheckInMutation as unknown as UseMutationResult<
-        AttendanceResponseDto | undefined,
+        AppointmentResponseDto | undefined,
         Error,
-        CheckInAttendanceParams,
+        CheckInAppointmentParams,
         unknown
       >,
     );
-    mockUseCompleteAttendance.mockReturnValue(
+    mockUseCompleteAppointment.mockReturnValue(
       mockCompleteMutation as unknown as UseMutationResult<
-        AttendanceResponseDto | undefined,
+        AppointmentResponseDto | undefined,
         Error,
-        CompleteAttendanceParams,
+        CompleteAppointmentParams,
         unknown
       >,
     );
-    mockUseUpdateAttendance.mockReturnValue(
+    mockUseUpdateAppointment.mockReturnValue(
       mockUpdateMutation as unknown as UseMutationResult<
-        AttendanceResponseDto | undefined,
+        AppointmentResponseDto | undefined,
         Error,
-        UpdateAttendanceParams,
+        UpdateAppointmentParams,
         unknown
       >,
     );
-    mockUseMarkAttendanceAsMissed.mockReturnValue(
+    mockUseMarkAppointmentAsMissed.mockReturnValue(
       mockMarkMissedMutation as unknown as UseMutationResult<
-        AttendanceResponseDto | undefined,
+        AppointmentResponseDto | undefined,
         Error,
         MarkMissedParams,
         unknown
@@ -321,9 +321,9 @@ describe("useDragAndDrop", () => {
       fetchStatus: "idle" as const,
     } as never);
 
-    mockUseAttendanceBoardState.mockReturnValue({
-      attendancesByDate: mockAttendancesByDate,
-      setAttendancesByDate: mockSetAttendancesByDate,
+    mockUseAppointmentsBoardState.mockReturnValue({
+      appointmentsByDate: mockAppointmentsByDate,
+      setAppointmentsByDate: mockSetAppointmentsByDate,
       loading: false,
       dataLoading: false,
       error: null,
@@ -331,11 +331,11 @@ describe("useDragAndDrop", () => {
       dayFinalized: false,
       endOfDayStatus: null,
       setSelectedDate: jest.fn(),
-      loadAttendancesByDate: jest.fn(),
+      loadAppointmentsByDate: jest.fn(),
       initializeSelectedDate: jest.fn(),
       refreshCurrentDate: jest.fn(),
       checkEndOfDayStatus: jest.fn(),
-      handleIncompleteAttendances: jest.fn(),
+      handleIncompleteAppointments: jest.fn(),
       handleAbsenceJustifications: jest.fn(),
     });
   });
@@ -391,10 +391,10 @@ describe("useDragAndDrop", () => {
       expect(completedList).toEqual([]);
     });
 
-    it("should return empty array when attendancesByDate is null", () => {
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: null,
-        setAttendancesByDate: mockSetAttendancesByDate,
+    it("should return empty array when appointmentsByDate is null", () => {
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: null,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -407,25 +407,25 @@ describe("useDragAndDrop", () => {
     it("should sort checkedIn patients by priority", () => {
       // Setup data with multiple patients having different priorities
       const multiPriorityData = {
-        ...mockAttendancesByDate,
+        ...mockAppointmentsByDate,
         assessment: {
-          ...mockAttendancesByDate.assessment,
+          ...mockAppointmentsByDate.assessment,
           checkedIn: [
             {
               patientId: 1,
-              attendanceId: 101,
+              appointmentId: 101,
               name: "Low Priority",
               priority: "3" as const,
             },
             {
               patientId: 2,
-              attendanceId: 102,
+              appointmentId: 102,
               name: "High Priority",
               priority: "1" as const,
             },
             {
               patientId: 3,
-              attendanceId: 103,
+              appointmentId: 103,
               name: "Medium Priority",
               priority: "2" as const,
             },
@@ -433,9 +433,9 @@ describe("useDragAndDrop", () => {
         },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: multiPriorityData,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: multiPriorityData,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -543,24 +543,24 @@ describe("useDragAndDrop", () => {
     it("should detect combined physiotherapy and tens treatments", () => {
       // Setup combined treatment data
       const combinedTreatmentData = {
-        ...mockAttendancesByDate,
+        ...mockAppointmentsByDate,
         physiotherapy: {
-          ...mockAttendancesByDate.physiotherapy,
+          ...mockAppointmentsByDate.physiotherapy,
           checkedIn: [
             {
               patientId: 1,
-              attendanceId: 201,
+              appointmentId: 201,
               name: "Combined Patient",
               priority: "1" as const,
             },
           ],
         },
         tens: {
-          ...mockAttendancesByDate.tens,
+          ...mockAppointmentsByDate.tens,
           checkedIn: [
             {
               patientId: 1,
-              attendanceId: 202,
+              appointmentId: 202,
               name: "Combined Patient",
               priority: "1" as const,
             },
@@ -568,9 +568,9 @@ describe("useDragAndDrop", () => {
         },
       };
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: combinedTreatmentData,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: combinedTreatmentData,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -593,10 +593,10 @@ describe("useDragAndDrop", () => {
   });
 
   describe("error handling and edge cases", () => {
-    it("should handle empty attendancesByDate gracefully", () => {
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: {} as AttendanceByDate,
-        setAttendancesByDate: mockSetAttendancesByDate,
+    it("should handle empty appointmentsByDate gracefully", () => {
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: {} as AppointmentByDate,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -610,10 +610,10 @@ describe("useDragAndDrop", () => {
       }).toThrow();
     });
 
-    it("should handle missing treatment type in attendancesByDate", () => {
+    it("should handle missing treatment type in appointmentsByDate", () => {
       const incompleteData = {
         date: new Date("2025-11-27"),
-        assessment: mockAttendancesByDate.assessment,
+        assessment: mockAppointmentsByDate.assessment,
         combined: {
           scheduled: [],
           checkedIn: [],
@@ -621,11 +621,11 @@ describe("useDragAndDrop", () => {
           completed: [],
         },
         // Missing physiotherapy and tens
-      } as unknown as AttendanceByDate;
+      } as unknown as AppointmentByDate;
 
-      mockUseAttendanceBoardState.mockReturnValue({
-        attendancesByDate: incompleteData,
-        setAttendancesByDate: mockSetAttendancesByDate,
+      mockUseAppointmentsBoardState.mockReturnValue({
+        appointmentsByDate: incompleteData,
+        setAppointmentsByDate: mockSetAppointmentsByDate,
       } as never);
 
       const { result } = renderHook(() => useDragAndDrop(), {
@@ -670,17 +670,17 @@ describe("useDragAndDrop", () => {
   });
 
   describe("integration with dependencies", () => {
-    it("should call attendance management hooks correctly", () => {
+    it("should call appointment management hooks correctly", () => {
       renderHook(() => useDragAndDrop(), { wrapper: createWrapper() });
 
-      expect(mockUseAttendanceBoardState).toHaveBeenCalled();
+      expect(mockUseAppointmentsBoardState).toHaveBeenCalled();
       expect(mockUsePatients).toHaveBeenCalled();
     });
 
     it("should call modal store hooks correctly", () => {
       renderHook(() => useDragAndDrop(), { wrapper: createWrapper() });
 
-      expect(modalStore.useOpenPostAttendance).toHaveBeenCalled();
+      expect(modalStore.useOpenPostAppointment).toHaveBeenCalled();
       expect(modalStore.useOpenPostTreatment).toHaveBeenCalled();
       expect(modalStore.useOpenNewPatientCheckIn).toHaveBeenCalled();
       expect(modalStore.useOpenMultiSection).toHaveBeenCalled();

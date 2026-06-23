@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { AttendanceProgression } from '@/types/types';
+import { AppointmentProgression } from '@/types/types';
 
 /**
  * useExpandableCards - Manages expansion state for treatment cards
@@ -29,7 +29,7 @@ export const useExpandableCards = () => {
    * If another card in the same column is expanded, it will be collapsed
    */
   const toggleExpansion = useCallback(
-    (status: AttendanceProgression, patientId: number) => {
+    (status: AppointmentProgression, patientId: number) => {
       setExpandedCards((prev) => {
         const currentExpanded = prev[status];
         
@@ -55,7 +55,7 @@ export const useExpandableCards = () => {
    * Check if a specific card is expanded
    */
   const isExpanded = useCallback(
-    (status: AttendanceProgression, patientId: number): boolean => {
+    (status: AppointmentProgression, patientId: number): boolean => {
       return expandedCards[status] === patientId;
     },
     [expandedCards]

@@ -1,4 +1,4 @@
-export { attendanceKeys } from '@/api/query/keys/attendanceKeys';
+export { appointmentKeys } from '@/api/query/keys/appointmentKeys';
 export { patientKeys } from '@/api/query/keys/patientKeys';
 export { consultationKeys } from '@/api/query/keys/consultationKeys';
 export { dayFinalizationKeys } from '@/api/query/keys/dayFinalizationKeys';

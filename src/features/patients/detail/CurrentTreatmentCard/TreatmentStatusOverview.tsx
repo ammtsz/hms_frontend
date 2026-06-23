@@ -24,11 +24,11 @@ export const TreatmentStatusOverview: React.FC<
     : 0;
   const isOverdue = isExpectedDischarge && daysOverdue > 0;
 
-  const scrollToScheduledAttendances = useCallback(() => {
-    setScrollTargetSectionId(PATIENT_PAGE_SECTION_IDS.scheduledAttendances);
+  const scrollToScheduledAppointments = useCallback(() => {
+    setScrollTargetSectionId(PATIENT_PAGE_SECTION_IDS.scheduledAppointments);
     setTimeout(() => {
       const element = document.getElementById(
-        PATIENT_PAGE_SECTION_IDS.scheduledAttendances,
+        PATIENT_PAGE_SECTION_IDS.scheduledAppointments,
       );
       element?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, SCROLL_AFTER_EXPAND_DELAY_MS);
@@ -47,15 +47,15 @@ export const TreatmentStatusOverview: React.FC<
 
       <button
         type="button"
-        onClick={scrollToScheduledAttendances}
+        onClick={scrollToScheduledAppointments}
         className={OVERVIEW_CARD_CLASS}
       >
         <div className="text-xs font-medium uppercase tracking-wide text-gray-500 mb-1">
           Next Appointment
         </div>
         <div className="text-lg font-semibold text-gray-900 break-words">
-          {patient.nextAttendanceDates[0]?.date ? (
-            formatDisplayDate(patient.nextAttendanceDates[0].date)
+          {patient.nextAppointmentDates[0]?.date ? (
+            formatDisplayDate(patient.nextAppointmentDates[0].date)
           ) : (
             <span className="font-medium text-gray-500">Not scheduled</span>
           )}

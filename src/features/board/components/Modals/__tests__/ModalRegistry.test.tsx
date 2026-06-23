@@ -15,11 +15,11 @@ const ModalRegistryWithSuspense = () => (
 );
 
 // Mock all the modal components
-jest.mock("@/features/board/components/AttendanceActions/ManageAttendanceModal", () => {
+jest.mock("@/features/board/components/AppointmentActions/ManageAppointmentsModal", () => {
   return {
     __esModule: true,
     default: () => (
-      <div data-testid="manage-attendance-modal">Manage Attendance Modal</div>
+      <div data-testid="manage-appointment-modal">Manage Appointment Modal</div>
     ),
   };
 });
@@ -55,11 +55,11 @@ jest.mock("@/features/board/components/WalkIn/NewPatientCheckInModal", () => {
   };
 });
 
-jest.mock("@/features/board/components/Consultation/PostAttendanceModal", () => {
+jest.mock("@/features/board/components/Consultation/PostConsultationModal", () => {
   return {
     __esModule: true,
     default: () => (
-      <div data-testid="post-attendance-modal">Post Attendance Modal</div>
+      <div data-testid="post-appointment-modal">Post Appointment Modal</div>
     ),
   };
 });
@@ -91,12 +91,12 @@ jest.mock("@/features/board/components/Consultation/ViewCompletedConsultationMod
   };
 });
 
-jest.mock("@/features/board/components/AttendanceActions/UnresolvedPastAttendancesModal", () => {
+jest.mock("@/features/board/components/AppointmentActions/UnresolvedPastAppointmentsModal", () => {
   return {
     __esModule: true,
     default: () => (
       <div data-testid="unresolved-past-modal">
-        Unresolved Past Attendances Modal
+        Unresolved Past Appointments Modal
       </div>
     ),
   };
@@ -149,11 +149,11 @@ describe("ModalRegistry", () => {
       const registeredModals = getRegisteredModals();
       const modalNames = registeredModals.map((modal) => modal.name);
 
-      expect(modalNames).toContain("manageAttendance");
+      expect(modalNames).toContain("manageAppointment");
       expect(modalNames).toContain("multiSection");
       expect(modalNames).toContain("assessmentBeforeTreatmentConfirm");
       expect(modalNames).toContain("newPatientCheckIn");
-      expect(modalNames).toContain("postAttendance");
+      expect(modalNames).toContain("postConsultation");
       expect(modalNames).toContain("endOfDay");
       expect(modalNames).toContain("postTreatment");
       expect(modalNames).toContain("viewCompletedConsultation");
@@ -176,8 +176,8 @@ describe("ModalRegistry", () => {
         registeredModals.map((modal) => [modal.name, modal.description]),
       );
 
-      expect(modalMap["manageAttendance"]).toBe(
-        "Handles attendance cancellation or postponement",
+      expect(modalMap["manageAppointment"]).toBe(
+        "Handles appointment cancellation or postponement",
       );
       expect(modalMap["multiSection"]).toBe(
         "Handles drag-drop operations affecting multiple sections",
@@ -188,8 +188,8 @@ describe("ModalRegistry", () => {
       expect(modalMap["newPatientCheckIn"]).toBe(
         "New patient registration and check-in workflow",
       );
-      expect(modalMap["postAttendance"]).toBe(
-        "Assessment treatment form for completed attendances",
+      expect(modalMap["postConsultation"]).toBe(
+        "Assessment treatment form for completed appointments",
       );
       expect(modalMap["endOfDay"]).toBe(
         "End of day finalization and absence justification",
@@ -201,7 +201,7 @@ describe("ModalRegistry", () => {
         "View completed assessment consultation details",
       );
       expect(modalMap["unresolvedPast"]).toBe(
-        "Alert for unresolved past attendances",
+        "Alert for unresolved past appointments",
       );
     });
   });

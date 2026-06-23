@@ -6,11 +6,11 @@
  */
 
 // Board/card components reused by tests and neighboring feature modules
-export { default as AttendanceColumn } from './components/Board/AttendanceColumn';
-export { default as AttendanceCard } from './components/Cards/AttendanceCard';
+export { default as AppointmentColumn } from './components/Board/AppointmentColumn';
+export { default as AppointmentCard } from './components/Cards/AppointmentCard';
 
 // Types
 export * from './types';
 
 // Main component - default export
-export { default } from './AttendanceBoard';
+export { default } from './AppointmentsBoard';

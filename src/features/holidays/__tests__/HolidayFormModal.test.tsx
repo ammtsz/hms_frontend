@@ -9,7 +9,7 @@ import {
 } from "@/api/query/hooks/useHolidayQueries";
 import { useDateHelpers } from "@/hooks/useDateHelpers";
 import { isValidDateRange } from "@/utils/holidayGrouping";
-import { getAttendanceTypeLabel } from "@/utils/apiTransformers";
+import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 
 jest.mock("@/api/query/hooks/useHolidayQueries");
 jest.mock("@/hooks/useDateHelpers");
@@ -88,7 +88,7 @@ describe("HolidayFormModal", () => {
     });
 
     mockCheckConflicts.mockResolvedValue({
-      data: { hasConflict: false, attendanceCount: 0 },
+      data: { hasConflict: false, appointmentCount: 0 },
     });
   });
 
@@ -218,7 +218,7 @@ describe("HolidayFormModal", () => {
 
   it("shows conflict error when conflicts exist", async () => {
     mockCheckConflicts.mockResolvedValue({
-      data: { hasConflict: true, attendanceCount: 3 },
+      data: { hasConflict: true, appointmentCount: 3 },
     });
 
     render(
@@ -233,7 +233,7 @@ describe("HolidayFormModal", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/This date has 3 attendance\(s\) scheduled/),
+        screen.getByText(/This date has 3 appointment\(s\) scheduled/),
       ).toBeInTheDocument();
     });
 
@@ -313,7 +313,7 @@ describe("HolidayFormModal", () => {
     );
 
     // Uncheck assessment consultation checkbox
-    const assessmentCheckbox = screen.getByLabelText(getAttendanceTypeLabel("assessment"));
+    const assessmentCheckbox = screen.getByLabelText(getAppointmentTypeLabel("assessment"));
     fireEvent.click(assessmentCheckbox);
 
     // Check "TENS"
@@ -697,7 +697,7 @@ describe("HolidayFormModal", () => {
         screen.getByText("Blocked Treatment Types"),
       ).toBeInTheDocument();
       expect(
-        screen.getByLabelText(getAttendanceTypeLabel("assessment")),
+        screen.getByLabelText(getAppointmentTypeLabel("assessment")),
       ).toBeInTheDocument();
       expect(screen.getByLabelText("Physiotherapy")).toBeInTheDocument();
       expect(screen.getByLabelText("TENS")).toBeInTheDocument();
@@ -709,7 +709,7 @@ describe("HolidayFormModal", () => {
       );
 
       const assessmentCheckbox = screen.getByLabelText(
-        getAttendanceTypeLabel("assessment"),
+        getAppointmentTypeLabel("assessment"),
       ) as HTMLInputElement;
       expect(assessmentCheckbox).toBeChecked();
 
@@ -726,7 +726,7 @@ describe("HolidayFormModal", () => {
         />,
       );
 
-      expect(screen.getByLabelText(getAttendanceTypeLabel("assessment"))).toBeChecked();
+      expect(screen.getByLabelText(getAppointmentTypeLabel("assessment"))).toBeChecked();
       expect(screen.getByLabelText("Physiotherapy")).toBeChecked();
       expect(screen.getByLabelText("TENS")).not.toBeChecked();
     });
@@ -775,7 +775,7 @@ describe("HolidayFormModal", () => {
         target: { value: "2026-02-03" },
       });
 
-      fireEvent.click(screen.getByLabelText(getAttendanceTypeLabel("assessment")));
+      fireEvent.click(screen.getByLabelText(getAppointmentTypeLabel("assessment")));
       fireEvent.click(screen.getByLabelText("TENS"));
 
       fireEvent.click(screen.getByText("Create Holiday"));
@@ -798,11 +798,11 @@ describe("HolidayFormModal", () => {
         <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
       );
 
-      fireEvent.click(screen.getByLabelText(getAttendanceTypeLabel("assessment")));
+      fireEvent.click(screen.getByLabelText(getAppointmentTypeLabel("assessment")));
 
       clickHolidayPeriodMode();
 
-      expect(screen.getByLabelText(getAttendanceTypeLabel("assessment"))).toBeChecked();
+      expect(screen.getByLabelText(getAppointmentTypeLabel("assessment"))).toBeChecked();
       expect(screen.getByLabelText("Physiotherapy")).toBeChecked();
       expect(screen.getByLabelText("TENS")).toBeChecked();
     });
@@ -812,9 +812,9 @@ describe("HolidayFormModal", () => {
         <HolidayFormModal onClose={mockOnClose} onSuccess={mockOnSuccess} />,
       );
 
-      fireEvent.click(screen.getByLabelText(getAttendanceTypeLabel("assessment")));
+      fireEvent.click(screen.getByLabelText(getAppointmentTypeLabel("assessment")));
       expect(
-        screen.getByLabelText(getAttendanceTypeLabel("assessment")),
+        screen.getByLabelText(getAppointmentTypeLabel("assessment")),
       ).not.toBeChecked();
 
       clickHolidayPeriodMode();
@@ -824,7 +824,7 @@ describe("HolidayFormModal", () => {
       fireEvent.click(typeRadios[0]);
 
       expect(
-        screen.getByLabelText(getAttendanceTypeLabel("assessment")),
+        screen.getByLabelText(getAppointmentTypeLabel("assessment")),
       ).not.toBeChecked();
     });
   });

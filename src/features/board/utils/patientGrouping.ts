@@ -1,15 +1,15 @@
-import type { AttendanceStatusDetail, AttendanceType } from "@/types/types";
+import type { AppointmentStatusDetail, AppointmentType } from "@/types/types";
 
 // Extended interface to include combined treatment information
-export interface IGroupedPatient extends AttendanceStatusDetail {
-  originalType: AttendanceType;
-  treatmentTypes: AttendanceType[];
+export interface IGroupedPatient extends AppointmentStatusDetail {
+  originalType: AppointmentType;
+  treatmentTypes: AppointmentType[];
   combinedType: 'physiotherapy' | 'tens' | 'combined';
-  attendanceIds: number[]; // Track all attendance IDs for this patient
+  appointmentIds: number[]; // Track all appointment IDs for this patient
 }
 
 // Define color mappings for treatment combinations
-export const getTreatmentCombinationColor = (treatmentTypes: AttendanceType[]): 'physiotherapy' | 'tens' | 'combined' => {
+export const getTreatmentCombinationColor = (treatmentTypes: AppointmentType[]): 'physiotherapy' | 'tens' | 'combined' => {
   const hasPhysiotherapy = treatmentTypes.includes('physiotherapy');
   const hasTens = treatmentTypes.includes('tens');
 
@@ -26,7 +26,7 @@ export const getTreatmentCombinationColor = (treatmentTypes: AttendanceType[]): 
 };
 
 const groupPatientsByTreatmentsAndStatus = (
-  patients: AttendanceStatusDetail[],
+  patients: AppointmentStatusDetail[],
   patientMap: Map<string | number, IGroupedPatient>,
   treatmentType: "physiotherapy" | "tens"
 ): Map<string | number, IGroupedPatient> => {
@@ -39,9 +39,9 @@ const groupPatientsByTreatmentsAndStatus = (
         // Patient already exists, add physiotherapy to their treatment types
         existingPatient.treatmentTypes.push(treatmentType);
         existingPatient.combinedType = getTreatmentCombinationColor(existingPatient.treatmentTypes);
-        // Add this attendance ID to the list
-        if (patient.attendanceId && !existingPatient.attendanceIds.includes(patient.attendanceId)) {
-          existingPatient.attendanceIds.push(patient.attendanceId);
+        // Add this appointment ID to the list
+        if (patient.appointmentId && !existingPatient.appointmentIds.includes(patient.appointmentId)) {
+          existingPatient.appointmentIds.push(patient.appointmentId);
         }
       } else {
         // New patient, create entry
@@ -50,7 +50,7 @@ const groupPatientsByTreatmentsAndStatus = (
           originalType: treatmentType,
           treatmentTypes: [treatmentType],
           combinedType: treatmentType,
-          attendanceIds: patient.attendanceId ? [patient.attendanceId] : []
+          appointmentIds: patient.appointmentId ? [patient.appointmentId] : []
         });
       }
     }
@@ -60,8 +60,8 @@ const groupPatientsByTreatmentsAndStatus = (
 
 // Group patients by patientId for the same day, combining their treatments
 export const groupPatientsByTreatments = (
-  physiotherapyPatients: AttendanceStatusDetail[],
-  tensPatients: AttendanceStatusDetail[]
+  physiotherapyPatients: AppointmentStatusDetail[],
+  tensPatients: AppointmentStatusDetail[]
 ): IGroupedPatient[] => {
   const patientMap = new Map<string | number, IGroupedPatient>();
 
@@ -71,14 +71,14 @@ export const groupPatientsByTreatments = (
   return Array.from(patientMap.values());
 };
 
-/** Count physiotherapy / tens attendances on a single grouped card. */
+/** Count physiotherapy / tens appointments on a single grouped card. */
 export interface TreatmentTypeCounts {
   physiotherapy: number;
   tens: number;
 }
 
 export const countTreatmentTypes = (
-  treatmentTypes: AttendanceType[],
+  treatmentTypes: AppointmentType[],
 ): TreatmentTypeCounts => {
   const counts: TreatmentTypeCounts = { physiotherapy: 0, tens: 0 };
   for (const treatmentType of treatmentTypes) {

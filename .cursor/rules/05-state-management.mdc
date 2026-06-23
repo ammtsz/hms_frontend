@@ -57,7 +57,7 @@ Consistent naming for cache management:
 
 ```typescript
 // ✅ CORRECT: Hierarchical keys
-["patients"][("patient", id)][("attendances", date)][("treatments", patientId)][ // All patients // Single patient // Attendances by date // Patient treatments
+["patients"][("patient", id)][("appointments", date)][("treatments", patientId)][ // All patients // Single patient // Appointments by date // Patient treatments
   // ❌ WRONG: Inconsistent keys
   "getPatients"
 ]["patient_1"];
@@ -186,5 +186,5 @@ const fetchPatients = useStore((state) => state.fetchPatients);
 ## See Also
 
 - [ARCHITECTURE.md - Hybrid State Management](mdc:docs/ARCHITECTURE.md)
-- [attendanceStore.ts](mdc:src/stores/attendanceStore.ts) - Example Zustand store
+- [boardStore.ts](mdc:src/stores/boardStore.ts) - Example Zustand store
 - [usePatientQueries.ts](mdc:src/api/query/hooks/usePatientQueries.ts) - Example React Query hooks

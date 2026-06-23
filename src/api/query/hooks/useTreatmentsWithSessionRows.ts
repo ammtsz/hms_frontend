@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getSessionsByAttendance } from '@/api/sessions';
+import { getSessionsByAppointment } from '@/api/sessions';
 import { getTreatmentById } from '@/api/treatments';
 import type { TreatmentResponseDto, SessionResponseDto } from '@/api/types';
 
@@ -10,17 +10,17 @@ export interface TreatmentPlanWithSessionRow {
 }
 
 /**
- * Fetches session rows for the given attendances and hydrates each with the parent treatment.
+ * Fetches session rows for the given appointments and hydrates each with the parent treatment.
  *
- * @param attendanceIds - Attendance IDs (e.g. grouped card) to load session rows for
+ * @param appointmentIds - Appointment IDs (e.g. grouped card) to load session rows for
  */
-export const useTreatmentsWithSessionRows = (attendanceIds: number[] | null) => {
+export const useTreatmentsWithSessionRows = (appointmentIds: number[] | null) => {
   const query = useQuery({
-    queryKey: ['treatmentsByAttendance', attendanceIds],
+    queryKey: ['treatmentsByAppointment', appointmentIds],
     queryFn: async () => {
-      if (!attendanceIds || attendanceIds.length === 0) return [];
+      if (!appointmentIds || appointmentIds.length === 0) return [];
 
-      const sessionFetchPromises = attendanceIds.map((id) => getSessionsByAttendance(id));
+      const sessionFetchPromises = appointmentIds.map((id) => getSessionsByAppointment(id));
       const sessionFetchResults = await Promise.all(sessionFetchPromises);
 
       const allSessionRows: SessionResponseDto[] = [];
@@ -56,7 +56,7 @@ export const useTreatmentsWithSessionRows = (attendanceIds: number[] | null) => 
 
       return combinedData;
     },
-    enabled: !!attendanceIds && attendanceIds.length > 0,
+    enabled: !!appointmentIds && appointmentIds.length > 0,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
   });

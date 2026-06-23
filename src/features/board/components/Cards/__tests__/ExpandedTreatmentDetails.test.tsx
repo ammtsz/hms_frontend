@@ -10,7 +10,7 @@ describe("ExpandedTreatmentDetails", () => {
       sessionRow: {
         id: 1,
         treatmentId: 1,
-        attendanceId: 101,
+        appointmentId: 101,
         scheduledDate: "2026-01-15",
         sessionNumber: 1,
         status: "scheduled",
@@ -22,7 +22,7 @@ describe("ExpandedTreatmentDetails", () => {
       treatment: {
         id: 1,
         consultationId: 1,
-        attendanceId: 1,
+        appointmentId: 1,
         patientId: 1,
         treatmentType: "physiotherapy",
         bodyLocation: "Head",
@@ -43,7 +43,7 @@ describe("ExpandedTreatmentDetails", () => {
       sessionRow: {
         id: 2,
         treatmentId: 2,
-        attendanceId: 102,
+        appointmentId: 102,
         scheduledDate: "2026-01-15",
         sessionNumber: 1,
         status: "scheduled",
@@ -55,7 +55,7 @@ describe("ExpandedTreatmentDetails", () => {
       treatment: {
         id: 2,
         consultationId: 1,
-        attendanceId: 1,
+        appointmentId: 1,
         patientId: 1,
         treatmentType: "tens",
         bodyLocation: "Back",

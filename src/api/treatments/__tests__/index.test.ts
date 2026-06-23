@@ -28,7 +28,7 @@ describe('Treatments API', () => {
   const mockTreatment = {
     id: 1,
     consultationId: 1,
-    attendanceId: 1,
+    appointmentId: 1,
     patientId: 1,
     treatmentType: 'physiotherapy' as const,
     bodyLocation: 'Head',
@@ -91,7 +91,7 @@ describe('Treatments API', () => {
     it('should create treatment session successfully', async () => {
       const sessionData = {
         consultationId: 1,
-        attendanceId: 1,
+        appointmentId: 1,
         patientId: 1,
         treatmentType: 'physiotherapy' as const,
         bodyLocation: 'chest',
@@ -116,7 +116,7 @@ describe('Treatments API', () => {
     it('should return error on validation failure', async () => {
       const sessionData = {
         consultationId: 0, // Invalid treatment_record_id
-        attendanceId: 0, // Invalid attendance_id
+        appointmentId: 0, // Invalid appointment_id
         patientId: 0, // Invalid patient_id
         treatmentType: 'physiotherapy' as const,
         bodyLocation: '', // Invalid empty body_location

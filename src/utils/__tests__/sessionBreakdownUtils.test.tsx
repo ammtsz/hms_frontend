@@ -13,8 +13,8 @@ import {
   determineGroupStatus,
   getStatusDates,
 } from "../sessionBreakdownUtils";
-import { ATTENDANCE_HISTORY_STATUS_LABELS } from "../attendanceStatusLabels";
-import { getAttendanceTypeLabel } from "../apiTransformers";
+import { APPOINTMENT_HISTORY_STATUS_LABELS } from "../appointmentStatusLabels";
+import { getAppointmentTypeLabel } from "../apiTransformers";
 
 describe("sessionBreakdownUtils", () => {
   describe("getStatusIcon", () => {
@@ -50,16 +50,16 @@ describe("sessionBreakdownUtils", () => {
   describe("getStatusLabel", () => {
     it("returns correct labels for known statuses", () => {
       expect(getStatusLabel("completed")).toBe(
-        ATTENDANCE_HISTORY_STATUS_LABELS.completed,
+        APPOINTMENT_HISTORY_STATUS_LABELS.completed,
       );
       expect(getStatusLabel("missed")).toBe(
-        ATTENDANCE_HISTORY_STATUS_LABELS.missed,
+        APPOINTMENT_HISTORY_STATUS_LABELS.missed,
       );
       expect(getStatusLabel("scheduled")).toBe(
-        ATTENDANCE_HISTORY_STATUS_LABELS.scheduled,
+        APPOINTMENT_HISTORY_STATUS_LABELS.scheduled,
       );
       expect(getStatusLabel("cancelled")).toBe(
-        ATTENDANCE_HISTORY_STATUS_LABELS.cancelled,
+        APPOINTMENT_HISTORY_STATUS_LABELS.cancelled,
       );
     });
 
@@ -95,9 +95,9 @@ describe("sessionBreakdownUtils", () => {
   describe("getTreatmentTypeLabel", () => {
     it("returns correct labels", () => {
       expect(getTreatmentTypeLabel("physiotherapy")).toBe(
-        getAttendanceTypeLabel("physiotherapy"),
+        getAppointmentTypeLabel("physiotherapy"),
       );
-      expect(getTreatmentTypeLabel("tens")).toBe(getAttendanceTypeLabel("tens"));
+      expect(getTreatmentTypeLabel("tens")).toBe(getAppointmentTypeLabel("tens"));
     });
 
     it("returns empty string for undefined", () => {

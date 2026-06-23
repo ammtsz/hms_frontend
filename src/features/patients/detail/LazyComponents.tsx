@@ -14,18 +14,18 @@ export const LazyCurrentTreatmentCard = React.lazy(() =>
   })),
 );
 
-export const LazyAttendanceHistoryCard = React.lazy(() =>
-  import("@/features/patients/detail/AttendanceHistory/AttendanceHistoryCard").then(
+export const LazyAppointmentHistoryCard = React.lazy(() =>
+  import("@/features/patients/detail/AppointmentHistory/AppointmentHistoryCard").then(
     (module) => ({
-      default: module.AttendanceHistoryCard,
+      default: module.AppointmentHistoryCard,
     }),
   ),
 );
 
-export const LazyScheduledAttendancesCard = React.lazy(() =>
-  import("@/features/patients/detail/ScheduledAttendances/ScheduledAttendancesCard").then(
+export const LazyScheduledAppointmentsCard = React.lazy(() =>
+  import("@/features/patients/detail/ScheduledAppointments/ScheduledAppointmentsCard").then(
     (module) => ({
-      default: module.ScheduledAttendancesCard,
+      default: module.ScheduledAppointmentsCard,
     }),
   ),
 );

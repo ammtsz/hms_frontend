@@ -52,18 +52,18 @@ jest.mock("@/features/board/components/WalkIn/NewPatientCheckInForm", () => {
     __esModule: true,
     default: ({
       patient,
-      attendanceId,
+      appointmentId,
       onSuccess,
       onCancel,
     }: {
       patient: Patient;
-      attendanceId?: number;
+      appointmentId?: number;
       onSuccess: (updatedPatient: Patient) => void;
       onCancel: () => void;
     }) => (
       <div data-testid="new-patient-checkin-form">
         <p>Patient: {patient.name}</p>
-        <p>Attendance ID: {attendanceId}</p>
+        <p>Appointment ID: {appointmentId}</p>
         <button
           data-testid="form-success"
           onClick={() => onSuccess({ ...patient, id: "123" })}
@@ -91,7 +91,7 @@ const mockPatientBasic: PatientBasic = {
 
 const mockNewPatientCheckInModal = {
   patient: mockPatientBasic,
-  attendanceId: 456,
+  appointmentId: 456,
   isOpen: true,
   onComplete: jest.fn(),
 };
@@ -167,17 +167,17 @@ describe("NewPatientCheckInModal", () => {
       const form = screen.getByTestId("new-patient-checkin-form");
       expect(form).toBeInTheDocument();
       expect(screen.getByText("Patient: Test Patient")).toBeInTheDocument();
-      expect(screen.getByText("Attendance ID: 456")).toBeInTheDocument();
+      expect(screen.getByText("Appointment ID: 456")).toBeInTheDocument();
     });
 
-    it("handles missing attendanceId", () => {
+    it("handles missing appointmentId", () => {
       mockModalStore.useNewPatientCheckInModal.mockReturnValue({
         ...mockNewPatientCheckInModal,
-        attendanceId: undefined,
+        appointmentId: undefined,
       });
 
       render(<NewPatientCheckInModal />);
-      expect(screen.getByText("Attendance ID:")).toBeInTheDocument();
+      expect(screen.getByText("Appointment ID:")).toBeInTheDocument();
     });
 
     it("creates Patient object with all required default fields", () => {
@@ -363,7 +363,7 @@ describe("NewPatientCheckInModal", () => {
 
       // Verify form receives correct data
       expect(screen.getByText("Patient: Test Patient")).toBeInTheDocument();
-      expect(screen.getByText("Attendance ID: 456")).toBeInTheDocument();
+      expect(screen.getByText("Appointment ID: 456")).toBeInTheDocument();
     });
   });
 });

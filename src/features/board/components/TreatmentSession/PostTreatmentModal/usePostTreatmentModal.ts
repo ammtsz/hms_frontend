@@ -2,11 +2,11 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useCloseModal, usePostTreatmentModal } from "@/stores/modalStore";
 import { useTreatmentsByPatient } from "@/api/query/hooks/useTreatmentsQueries";
 import {
-  useSessionsByAttendances,
+  useSessionsByAppointments,
   useSessionsByPatient,
   useCompleteSession,
 } from "@/api/query/hooks/useSessionsQueries";
-import { useCompleteAttendance, useDeleteAttendance } from "@/api/query/hooks/useAttendanceQueries";
+import { useCompleteAppointment, useDeleteAppointment } from "@/api/query/hooks/useAppointmentQueries";
 import type { PostTreatmentRow } from "./types";
 import {
   groupPatientSessionsByTreatmentPlan,
@@ -14,7 +14,7 @@ import {
 } from "./postTreatmentSession.utils";
 
 export function usePostTreatmentModalHook() {
-  const [completedAttendanceIds, setCompletedAttendanceIds] = useState<
+  const [completedAppointmentIds, setCompletedAppointmentIds] = useState<
     Set<number>
   >(new Set());
   const [cancellationReasons, setCancellationReasons] = useState<
@@ -25,20 +25,20 @@ export function usePostTreatmentModalHook() {
 
   const postTreatment = usePostTreatmentModal();
   const closeModal = useCloseModal();
-  const attendanceIds = useMemo(
-    () => postTreatment.attendanceIds ?? [],
-    [postTreatment.attendanceIds],
+  const appointmentIds = useMemo(
+    () => postTreatment.appointmentIds ?? [],
+    [postTreatment.appointmentIds],
   );
   const patientId = postTreatment.patientId ?? 0;
   const patientName = postTreatment.patientName ?? "";
   const onComplete = postTreatment.onComplete;
 
   const {
-    dataByAttendance,
+    dataByAppointment,
     isLoading: sessionRowsLoading,
     isError: sessionRowsError,
     refetch: refetchSessionRows,
-  } = useSessionsByAttendances(attendanceIds);
+  } = useSessionsByAppointments(appointmentIds);
   const patientSessionsQueryId =
     postTreatment.isOpen && patientId > 0 ? patientId.toString() : "";
   const {
@@ -54,30 +54,30 @@ export function usePostTreatmentModalHook() {
     refetch: refetchTreatments,
   } = useTreatmentsByPatient(patientId);
   const completeSessionMutation = useCompleteSession();
-  const completeAttendanceMutation = useCompleteAttendance();
-  const deleteAttendanceMutation = useDeleteAttendance();
+  const completeAppointmentMutation = useCompleteAppointment();
+  const deleteAppointmentMutation = useDeleteAppointment();
 
   const isSubmitting =
     completeSessionMutation.isPending ||
-    completeAttendanceMutation.isPending ||
-    deleteAttendanceMutation.isPending;
+    completeAppointmentMutation.isPending ||
+    deleteAppointmentMutation.isPending;
 
   useEffect(() => {
-    if (postTreatment.isOpen && attendanceIds.length > 0) {
-      setCompletedAttendanceIds(new Set(attendanceIds));
+    if (postTreatment.isOpen && appointmentIds.length > 0) {
+      setCompletedAppointmentIds(new Set(appointmentIds));
       setCancellationReasons(new Map());
       setGeneralNotes("");
       setSubmitError(null);
     }
-  }, [postTreatment.isOpen, attendanceIds]);
+  }, [postTreatment.isOpen, appointmentIds]);
 
   const rows = useMemo((): PostTreatmentRow[] => {
     const result: PostTreatmentRow[] = [];
     const patientHistoryByTreatmentPlan =
       groupPatientSessionsByTreatmentPlan(patientSessions);
 
-    attendanceIds.forEach((attendanceId) => {
-      const sessionRows = dataByAttendance.get(attendanceId) ?? [];
+    appointmentIds.forEach((appointmentId) => {
+      const sessionRows = dataByAppointment.get(appointmentId) ?? [];
       const scheduledSessionRow = sessionRows.find((r) => r.status === "scheduled");
       if (!scheduledSessionRow) return;
 
@@ -92,7 +92,7 @@ export function usePostTreatmentModalHook() {
         sessionRows,
       );
       result.push({
-        attendanceId,
+        appointmentId,
         treatmentType: treatment.treatmentType as "physiotherapy" | "tens",
         bodyLocation: treatment.bodyLocation,
         color: treatment.color,
@@ -107,7 +107,7 @@ export function usePostTreatmentModalHook() {
       });
     });
     return result;
-  }, [attendanceIds, dataByAttendance, treatments, patientSessions]);
+  }, [appointmentIds, dataByAppointment, treatments, patientSessions]);
 
   const rowsByType = useMemo(() => {
     const physiotherapy: PostTreatmentRow[] = [];
@@ -119,27 +119,27 @@ export function usePostTreatmentModalHook() {
     return { physiotherapy: physiotherapy, tens } as const;
   }, [rows]);
 
-  const toggleRow = useCallback((attendanceId: number) => {
-    setCompletedAttendanceIds((prev) => {
+  const toggleRow = useCallback((appointmentId: number) => {
+    setCompletedAppointmentIds((prev) => {
       const next = new Set(prev);
-      if (next.has(attendanceId)) {
-        next.delete(attendanceId);
+      if (next.has(appointmentId)) {
+        next.delete(appointmentId);
       } else {
-        next.add(attendanceId);
+        next.add(appointmentId);
       }
       return next;
     });
     setCancellationReasons((prev) => {
       const next = new Map(prev);
-      if (next.has(attendanceId)) next.delete(attendanceId);
+      if (next.has(appointmentId)) next.delete(appointmentId);
       return next;
     });
   }, []);
 
-  const setCancellationReason = useCallback((attendanceId: number, value: string) => {
+  const setCancellationReason = useCallback((appointmentId: number, value: string) => {
     setCancellationReasons((prev) => {
       const next = new Map(prev);
-      next.set(attendanceId, value);
+      next.set(appointmentId, value);
       return next;
     });
   }, []);
@@ -156,14 +156,14 @@ export function usePostTreatmentModalHook() {
     !loading &&
     !error &&
     rows.length > 0 &&
-    completedAttendanceIds.size > 0;
-  const uncheckedWithMissingReason = Array.from(attendanceIds).some(
+    completedAppointmentIds.size > 0;
+  const uncheckedWithMissingReason = Array.from(appointmentIds).some(
     (id) =>
-      !completedAttendanceIds.has(id) && !cancellationReasons.get(id)?.trim(),
+      !completedAppointmentIds.has(id) && !cancellationReasons.get(id)?.trim(),
   );
 
   const handleClose = useCallback(() => {
-    setCompletedAttendanceIds(new Set());
+    setCompletedAppointmentIds(new Set());
     setCancellationReasons(new Map());
     setGeneralNotes("");
     setSubmitError(null);
@@ -192,30 +192,30 @@ export function usePostTreatmentModalHook() {
 
     try {
       for (const row of rows) {
-        if (completedAttendanceIds.has(row.attendanceId)) {
+        if (completedAppointmentIds.has(row.appointmentId)) {
           await completeSessionMutation.mutateAsync({
             sessionRowId: row.sessionRow.id.toString(),
             treatmentId: row.treatmentId.toString(),
             completionData: { notes: generalNotes || "" },
             newCompletedCount: row.completedSessions + 1,
           });
-          await completeAttendanceMutation.mutateAsync({
-            id: row.attendanceId.toString(),
+          await completeAppointmentMutation.mutateAsync({
+            id: row.appointmentId.toString(),
           });
         } else {
           const reason =
-            cancellationReasons.get(row.attendanceId)?.trim() ||
+            cancellationReasons.get(row.appointmentId)?.trim() ||
             "NNot completed in this session";
-          await deleteAttendanceMutation.mutateAsync({
-            attendanceId: row.attendanceId,
+          await deleteAppointmentMutation.mutateAsync({
+            appointmentId: row.appointmentId,
             cancellationReason: reason,
           });
         }
       }
 
       const completedIds = rows
-        .filter((r) => completedAttendanceIds.has(r.attendanceId))
-        .map((r) => r.attendanceId);
+        .filter((r) => completedAppointmentIds.has(r.appointmentId))
+        .map((r) => r.appointmentId);
       onComplete?.(completedIds);
       handleClose();
     } catch (error) {
@@ -227,14 +227,14 @@ export function usePostTreatmentModalHook() {
     canSubmit,
     uncheckedWithMissingReason,
     rows,
-    completedAttendanceIds,
+    completedAppointmentIds,
     cancellationReasons,
     generalNotes,
     onComplete,
     handleClose,
     completeSessionMutation,
-    completeAttendanceMutation,
-    deleteAttendanceMutation,
+    completeAppointmentMutation,
+    deleteAppointmentMutation,
   ]);
 
   const onRetry = useCallback(async () => {
@@ -251,10 +251,10 @@ export function usePostTreatmentModalHook() {
   return {
     isOpen: postTreatment.isOpen,
     patientName,
-    attendanceIds,
+    appointmentIds,
     rows,
     rowsByType,
-    completedAttendanceIds,
+    completedAppointmentIds,
     cancellationReasons,
     generalNotes,
     setGeneralNotes,

@@ -4,7 +4,7 @@ import { PatientResponseDto } from "@/api/types";
 interface ExpandedAssessmentDetailsProps {
   patient: PatientResponseDto | null;
   patientName: string;
-  notes?: string; // Attendance notes
+  notes?: string; // Appointment notes
 }
 
 /**
@@ -12,7 +12,7 @@ interface ExpandedAssessmentDetailsProps {
  *
  * Displays:
  * - Main concern (from patient record)
- * - Attendance notes (if any)
+ * - Appointment notes (if any)
  */
 const ExpandedAssessmentDetails: React.FC<ExpandedAssessmentDetailsProps> = ({
   patient,
@@ -49,7 +49,7 @@ const ExpandedAssessmentDetails: React.FC<ExpandedAssessmentDetailsProps> = ({
         </div>
       )}
 
-      {/* Attendance Notes */}
+      {/* Appointment Notes */}
       {hasNotes && (
         <div className="bg-gray-50 rounded-lg p-3 text-sm">
           <div className="font-semibold text-gray-700 mb-1">Notes</div>

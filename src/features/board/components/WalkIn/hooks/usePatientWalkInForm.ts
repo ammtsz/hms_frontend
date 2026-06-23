@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Priority } from "@/types/types";
 import { usePatients, useCreatePatient } from "@/api/query/hooks/usePatientQueries";
 import {
-  useAttendancesByDate,
-  useCreateAttendance,
-  useCheckInAttendance,
+  useAppointmentsByDate,
+  useCreateAppointment,
+  useCheckInAppointment,
   useEligibleParentOptions,
-} from "@/api/query/hooks/useAttendanceQueries";
-import { useAttendanceHolidayForDate } from "@/features/board/hooks/useAttendanceHolidayForDate";
+} from "@/api/query/hooks/useAppointmentQueries";
+import { useBoardHolidayForDate } from "@/features/board/hooks/useBoardHolidayForDate";
 import { useSelectablePrioritiesForForm } from "@/features/board/hooks/useSelectablePrioritiesForForm";
 import { defaultPriorityFromSorted } from "@/utils/priorityOptions";
 import {
@@ -15,7 +15,7 @@ import {
 } from "@/utils/apiTransformers";
 import { validatePatientForm } from "@/utils/formUtils";
 import { getTodayClinic } from "@/utils/timezoneDate";
-import { AttendanceType } from "@/api/types";
+import { AppointmentType } from "@/api/types";
 export interface WalkInFormData {
   name: string;
   phone: string;
@@ -23,10 +23,10 @@ export interface WalkInFormData {
   priority: Priority;
   isNewPatient: boolean;
   selectedPatient: string;
-  selectedParentAttendance: string;
+  selectedParentAppointment: string;
 }
 
-export interface ParentAttendanceOption {
+export interface ParentAppointmentOption {
   id: number;
   date: string;
   mainConcern: string;
@@ -34,7 +34,7 @@ export interface ParentAttendanceOption {
 }
 
 interface UsePatientWalkInFormProps {
-  onRegisterNewAttendance?: (
+  onRegisterNewAppointment?: (
     patientName: string,
     types: string[],
     isNew: boolean,
@@ -43,16 +43,16 @@ interface UsePatientWalkInFormProps {
 }
 
 export const usePatientWalkInForm = ({
-  onRegisterNewAttendance,
+  onRegisterNewAppointment,
 }: UsePatientWalkInFormProps = {}) => {
   const { data: patients = [], refetch: refreshPatients } = usePatients();
   const today = getTodayClinic();
-  const { data: attendancesData, refetch: refreshCurrentDate } =
-    useAttendancesByDate(today);
+  const { data: appointmentsData, refetch: refreshCurrentDate } =
+    useAppointmentsByDate(today);
 
   const createPatientMutation = useCreatePatient();
-  const createAttendanceMutation = useCreateAttendance();
-  const checkInAttendanceMutation = useCheckInAttendance();
+  const createAppointmentMutation = useCreateAppointment();
+  const checkInAppointmentMutation = useCheckInAppointment();
 
   const [formData, setFormData] = useState<WalkInFormData>({
     name: "",
@@ -61,7 +61,7 @@ export const usePatientWalkInForm = ({
     priority: "5",
     isNewPatient: false,
     selectedPatient: "",
-    selectedParentAttendance: "",
+    selectedParentAppointment: "",
   });
 
   // Tracks which patient ID to fetch parent options for (set imperatively by the component)
@@ -69,14 +69,14 @@ export const usePatientWalkInForm = ({
 
   const { data: parentOptionsData, isLoading: loadingParentOptions } =
     useEligibleParentOptions(parentOptionsPatientId);
-  const parentAttendanceOptions: ParentAttendanceOption[] =
+  const parentAppointmentOptions: ParentAppointmentOption[] =
     parentOptionsData?.options ?? [];
 
   const {
     blockedLabels: holidayBlockedLabels,
     isLoading: holidayLoading,
     hasError: holidayError,
-  } = useAttendanceHolidayForDate(today);
+  } = useBoardHolidayForDate(today);
 
   const [showDropdown, setShowDropdown] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,7 +95,7 @@ export const usePatientWalkInForm = ({
         setFormData((prev) => ({ ...prev, priority: next })),
     });
 
-  const fetchParentAttendanceOptions = (patientId: string) => {
+  const fetchParentAppointmentOptions = (patientId: string) => {
     setParentOptionsPatientId(patientId);
   };
 
@@ -104,13 +104,13 @@ export const usePatientWalkInForm = ({
     : undefined;
   const patientStatus = selectedPatientData?.status;
 
-  const checkForDuplicateAttendances = (patientId: string): boolean => {
-    if (!attendancesData?.assessment) {
+  const checkForDuplicateAppointments = (patientId: string): boolean => {
+    if (!appointmentsData?.assessment) {
       return false;
     }
 
     // Check if patient already has a non-cancelled assessment consultation today
-    const hasDuplicate = Object.values(attendancesData.assessment)
+    const hasDuplicate = Object.values(appointmentsData.assessment)
       .flat()
       .some((att) => {
         const matchesPatient =
@@ -167,7 +167,7 @@ export const usePatientWalkInForm = ({
       priority: defaultPriority,
       isNewPatient: false,
       selectedPatient: "",
-      selectedParentAttendance: "",
+      selectedParentAppointment: "",
     });
     setShowDropdown(false);
     setParentOptionsPatientId(null);
@@ -244,7 +244,7 @@ export const usePatientWalkInForm = ({
       }
 
       await refreshCurrentDate();
-      const hasDuplicate = checkForDuplicateAttendances(patientId);
+      const hasDuplicate = checkForDuplicateAppointments(patientId);
 
       if (hasDuplicate) {
         const patientName = formData.isNewPatient
@@ -258,29 +258,29 @@ export const usePatientWalkInForm = ({
 
       const todayDate = getTodayClinic();
 
-      let parentAttendanceId: number | undefined;
+      let parentAppointmentId: number | undefined;
 
-      if (!formData.isNewPatient && formData.selectedParentAttendance) {
-        if (formData.selectedParentAttendance !== "new") {
-          parentAttendanceId = Number(formData.selectedParentAttendance);
+      if (!formData.isNewPatient && formData.selectedParentAppointment) {
+        if (formData.selectedParentAppointment !== "new") {
+          parentAppointmentId = Number(formData.selectedParentAppointment);
         }
       }
 
-      const createdAttendance = await createAttendanceMutation.mutateAsync({
+      const createdAppointment = await createAppointmentMutation.mutateAsync({
         patientId: Number(patientId),
-        attendanceType: "assessment" as AttendanceType,
+        appointmentType: "assessment" as AppointmentType,
         scheduledDate: todayDate,
-        parentAttendanceId,
+        parentAppointmentId,
       });
 
-      if (!createdAttendance?.id) {
-        setError("Failed to create attendance: ID not returned");
+      if (!createdAppointment?.id) {
+        setError("Failed to create appointment: ID not returned");
         await refreshCurrentDate();
         return false;
       }
 
-      await checkInAttendanceMutation.mutateAsync({
-        attendanceId: createdAttendance.id,
+      await checkInAppointmentMutation.mutateAsync({
+        appointmentId: createdAppointment.id,
         patientName: name,
       });
 
@@ -288,8 +288,8 @@ export const usePatientWalkInForm = ({
 
       await refreshCurrentDate();
 
-      if (onRegisterNewAttendance) {
-        onRegisterNewAttendance(
+      if (onRegisterNewAppointment) {
+        onRegisterNewAppointment(
           name,
           ["assessment"],
           formData.isNewPatient,
@@ -319,11 +319,11 @@ export const usePatientWalkInForm = ({
     setError,
     success,
     setSuccess,
-    parentAttendanceOptions,
+    parentAppointmentOptions,
     loadingParentOptions,
     patientStatus,
     filteredPatients,
-    fetchParentAttendanceOptions,
+    fetchParentAppointmentOptions,
     handleSubmit,
     prioritiesLoading,
     resetForm,

@@ -1,63 +1,63 @@
 import { useCallback } from 'react';
 import {
-  useCheckInAttendance,
-  useCompleteAttendance,
-  useUpdateAttendance,
-  useMarkAttendanceAsMissed,
-} from '@/api/query/hooks/useAttendanceQueries';
-import { AttendanceStatus as ApiAttendanceStatus } from '@/api/types';
-import type { AttendanceProgression } from '@/types/types';
+  useCheckInAppointment,
+  useCompleteAppointment,
+  useUpdateAppointment,
+  useMarkAppointmentAsMissed,
+} from '@/api/query/hooks/useAppointmentQueries';
+import { AppointmentStatus as ApiAppointmentStatus } from '@/api/types';
+import type { AppointmentProgression } from '@/types/types';
 
-export type UpdateAttendanceStatusFn = (
-  attendanceId: number,
-  newStatus: AttendanceProgression | 'missed' | 'cancelled',
+export type UpdateAppointmentStatusFn = (
+  appointmentId: number,
+  newStatus: AppointmentProgression | 'missed' | 'cancelled',
 ) => Promise<{ success: boolean; error?: string }>;
 
-export function useDragDropStatusUpdater(): UpdateAttendanceStatusFn {
-  const checkInMutation = useCheckInAttendance();
-  const completeMutation = useCompleteAttendance();
-  const updateMutation = useUpdateAttendance();
-  const markMissedMutation = useMarkAttendanceAsMissed();
+export function useDragDropStatusUpdater(): UpdateAppointmentStatusFn {
+  const checkInMutation = useCheckInAppointment();
+  const completeMutation = useCompleteAppointment();
+  const updateMutation = useUpdateAppointment();
+  const markMissedMutation = useMarkAppointmentAsMissed();
 
   return useCallback(
     async (
-      attendanceId: number,
-      newStatus: AttendanceProgression | 'missed' | 'cancelled',
+      appointmentId: number,
+      newStatus: AppointmentProgression | 'missed' | 'cancelled',
     ): Promise<{ success: boolean; error?: string }> => {
       try {
         switch (newStatus) {
           case 'checkedIn':
             await checkInMutation.mutateAsync({
-              attendanceId,
+              appointmentId,
               patientName: '',
             });
             break;
           case 'onGoing':
             await updateMutation.mutateAsync({
-              id: attendanceId.toString(),
-              status: ApiAttendanceStatus.IN_PROGRESS,
+              id: appointmentId.toString(),
+              status: ApiAppointmentStatus.IN_PROGRESS,
             });
             break;
           case 'completed':
             await completeMutation.mutateAsync({
-              id: attendanceId.toString(),
+              id: appointmentId.toString(),
             });
             break;
           case 'scheduled':
             await updateMutation.mutateAsync({
-              id: attendanceId.toString(),
-              status: ApiAttendanceStatus.SCHEDULED,
+              id: appointmentId.toString(),
+              status: ApiAppointmentStatus.SCHEDULED,
             });
             break;
           case 'cancelled':
             await updateMutation.mutateAsync({
-              id: attendanceId.toString(),
-              status: ApiAttendanceStatus.CANCELLED,
+              id: appointmentId.toString(),
+              status: ApiAppointmentStatus.CANCELLED,
             });
             break;
           case 'missed':
             await markMissedMutation.mutateAsync({
-              id: attendanceId.toString(),
+              id: appointmentId.toString(),
               justified: false,
               notes: '',
             });
@@ -70,7 +70,7 @@ export function useDragDropStatusUpdater(): UpdateAttendanceStatusFn {
         const errorMessage =
           error instanceof Error
             ? error.message
-            : 'Failed to update attendance status';
+            : 'Failed to update appointment status';
         return { success: false, error: errorMessage };
       }
     },

@@ -72,13 +72,13 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 
 // Specialized Empty States for specific cards
 
-// Attendance History Empty State
-interface AttendanceHistoryEmptyProps {
-  patient: { nextAttendanceDates: Array<{ date: string }> };
+// Appointment History Empty State
+interface AppointmentHistoryEmptyProps {
+  patient: { nextAppointmentDates: Array<{ date: string }> };
   statusFilter?: "all" | "completed" | "missed" | "cancelled";
 }
 
-export const AttendanceHistoryEmpty: React.FC<AttendanceHistoryEmptyProps> = ({
+export const AppointmentHistoryEmpty: React.FC<AppointmentHistoryEmptyProps> = ({
   patient,
   statusFilter = "all",
 }) => {
@@ -87,30 +87,30 @@ export const AttendanceHistoryEmpty: React.FC<AttendanceHistoryEmptyProps> = ({
     switch (statusFilter) {
       case "completed":
         return {
-          title: "No completed attendances",
+          title: "No completed appointments",
           description:
-            "This patient has no completed attendances yet. The history will appear here after attendances are finished.",
+            "This patient has no completed appointments yet. The history will appear here after appointments are finished.",
           iconBgColor: "bg-green-50",
         };
       case "missed":
         return {
           title: "No absences recorded",
           description:
-            "This patient has no recorded absences. Missed attendances will appear here when the patient does not show up.",
+            "This patient has no recorded absences. Missed appointments will appear here when the patient does not show up.",
           iconBgColor: "bg-yellow-50",
         };
       case "cancelled":
         return {
-          title: "No cancelled attendances",
+          title: "No cancelled appointments",
           description:
-            "This patient has no cancelled attendances. Cancellations will appear here when the patient cancels an appointment.",
+            "This patient has no cancelled appointments. Cancellations will appear here when the patient cancels an appointment.",
           iconBgColor: "bg-red-50",
         };
       default:
         return {
-          title: "No attendances recorded",
+          title: "No appointments recorded",
           description:
-            "This is a new patient or no attendances have been recorded yet. History will appear here after attendances are completed.",
+            "This is a new patient or no appointments have been recorded yet. History will appear here after appointments are completed.",
           iconBgColor: "bg-green-50",
         };
     }
@@ -129,9 +129,9 @@ export const AttendanceHistoryEmpty: React.FC<AttendanceHistoryEmptyProps> = ({
           <div className="text-sm">
             <div className="font-medium text-blue-900 mb-1">💡 Next steps:</div>
             <div className="text-blue-800">
-              {patient.nextAttendanceDates.length > 0
+              {patient.nextAppointmentDates.length > 0
                 ? `Next appointment scheduled for ${formatDisplayDate(
-                    patient.nextAttendanceDates[0].date,
+                    patient.nextAppointmentDates[0].date,
                   )}`
                 : "Schedule the first appointment to start treatment"}
             </div>
@@ -142,18 +142,18 @@ export const AttendanceHistoryEmpty: React.FC<AttendanceHistoryEmptyProps> = ({
   );
 };
 
-// Scheduled Attendances Empty State
-interface ScheduledAttendancesEmptyProps {
+// Scheduled Appointments Empty State
+interface ScheduledAppointmentsEmptyProps {
   patientId: string;
 }
 
-export const ScheduledAttendancesEmpty: React.FC<
-  ScheduledAttendancesEmptyProps
+export const ScheduledAppointmentsEmpty: React.FC<
+  ScheduledAppointmentsEmptyProps
 > = ({ patientId }) => (
   <EmptyState
     // icon="📅"
     title="No upcoming appointments"
-    description="This patient currently has no upcoming appointments. New Attendances will appear here when created."
+    description="This patient currently has no upcoming appointments. New Appointments will appear here when created."
     iconBgColor="bg-blue-50"
   >
     <div className="flex flex-col sm:flex-row gap-2 justify-center">

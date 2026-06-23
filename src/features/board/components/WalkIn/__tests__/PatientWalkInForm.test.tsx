@@ -3,30 +3,30 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import PatientWalkInForm from "../PatientWalkInForm";
 import {
-  getAttendancesByDate,
-  checkInAttendance,
+  getAppointmentsByDate,
+  checkInAppointment,
   getEligibleParentOptions,
-} from "@/api/attendances";
+} from "@/api/appointments";
 import {
-  transformAttendanceTypeToApi,
+  transformAppointmentTypeToApi,
   transformPriorityToApi,
 } from "@/utils/apiTransformers";
 import {
-  AttendanceType as ApiAttendanceType,
-  AttendanceStatus,
+  AppointmentType as ApiAppointmentType,
+  AppointmentStatus,
   PatientPriority,
   PatientStatus,
 } from "@/api/types";
-import { AttendanceType } from "@/types/types";
+import { AppointmentType } from "@/types/types";
 import { useSelectablePrioritiesForForm } from "@/features/board/hooks/useSelectablePrioritiesForForm";
 import { SystemOptionType } from "@/types/systemOptions";
 
 // Mock mutation functions
 const mockCreatePatientMutate = jest.fn();
-const mockCreateAttendanceMutate = jest.fn();
-const mockCheckInAttendanceMutate = jest.fn();
+const mockCreateAppointmentMutate = jest.fn();
+const mockCheckInAppointmentMutate = jest.fn();
 const mockRefetchPatients = jest.fn();
-const mockRefetchAttendances = jest.fn();
+const mockRefetchAppointments = jest.fn();
 
 // Mock React Query hooks
 jest.mock("@/api/query/hooks/usePatientQueries", () => ({
@@ -50,17 +50,17 @@ jest.mock("@/api/query/hooks/usePatientQueries", () => ({
   }),
 }));
 
-jest.mock("@/api/query/hooks/useAttendanceQueries", () => ({
-  useAttendancesByDate: () => ({
+jest.mock("@/api/query/hooks/useAppointmentQueries", () => ({
+  useAppointmentsByDate: () => ({
     data: [],
-    refetch: mockRefetchAttendances,
+    refetch: mockRefetchAppointments,
   }),
-  useCreateAttendance: () => ({
-    mutateAsync: mockCreateAttendanceMutate,
+  useCreateAppointment: () => ({
+    mutateAsync: mockCreateAppointmentMutate,
     isPending: false,
   }),
-  useCheckInAttendance: () => ({
-    mutateAsync: mockCheckInAttendanceMutate,
+  useCheckInAppointment: () => ({
+    mutateAsync: mockCheckInAppointmentMutate,
     isPending: false,
   }),
   useEligibleParentOptions: () => ({
@@ -74,7 +74,7 @@ jest.mock("@/features/board/hooks/useSelectablePrioritiesForForm", () => ({
 }));
 
 // Mock the API functions
-jest.mock("@/api/attendances");
+jest.mock("@/api/appointments");
 jest.mock("@/api/patients");
 jest.mock("@/utils/apiTransformers");
 jest.mock("@/api/holidays", () => ({
@@ -84,8 +84,8 @@ jest.mock("@/api/holidays", () => ({
   }),
 }));
 
-jest.mock("@/features/board/hooks/useAttendanceHolidayForDate", () => ({
-  useAttendanceHolidayForDate: jest.fn().mockReturnValue({
+jest.mock("@/features/board/hooks/useBoardHolidayForDate", () => ({
+  useBoardHolidayForDate: jest.fn().mockReturnValue({
     isLoading: false,
     hasError: false,
     blockedLabels: [],
@@ -94,24 +94,24 @@ jest.mock("@/features/board/hooks/useAttendanceHolidayForDate", () => ({
   }),
 }));
 
-const mockGetAttendancesByDate = getAttendancesByDate as jest.MockedFunction<
-  typeof getAttendancesByDate
+const mockGetAppointmentsByDate = getAppointmentsByDate as jest.MockedFunction<
+  typeof getAppointmentsByDate
 >;
 const mockGetEligibleParentOptions =
   getEligibleParentOptions as jest.MockedFunction<
     typeof getEligibleParentOptions
   >;
-const mockCheckInAttendance = checkInAttendance as jest.MockedFunction<
-  typeof checkInAttendance
+const mockCheckInAppointment = checkInAppointment as jest.MockedFunction<
+  typeof checkInAppointment
 >;
-const mockTransformAttendanceTypeToApi =
-  transformAttendanceTypeToApi as jest.MockedFunction<
-    typeof transformAttendanceTypeToApi
+const mockTransformAppointmentTypeToApi =
+  transformAppointmentTypeToApi as jest.MockedFunction<
+    typeof transformAppointmentTypeToApi
   >;
 const mockTransformPriorityToApi =
   transformPriorityToApi as jest.MockedFunction<typeof transformPriorityToApi>;
 
-const mockOnRegisterNewAttendance = jest.fn();
+const mockOnRegisterNewAppointment = jest.fn();
 
 describe("PatientWalkInForm", () => {
   beforeEach(() => {
@@ -155,17 +155,17 @@ describe("PatientWalkInForm", () => {
       refetch: jest.fn(),
     });
 
-    mockTransformAttendanceTypeToApi.mockImplementation(
-      (type: AttendanceType) => {
+    mockTransformAppointmentTypeToApi.mockImplementation(
+      (type: AppointmentType) => {
         switch (type) {
           case "assessment":
-            return ApiAttendanceType.ASSESSMENT;
+            return ApiAppointmentType.ASSESSMENT;
           case "physiotherapy":
-            return ApiAttendanceType.PHYSIOTHERAPY;
+            return ApiAppointmentType.PHYSIOTHERAPY;
           case "tens":
-            return ApiAttendanceType.TENS;
+            return ApiAppointmentType.TENS;
           default:
-            return ApiAttendanceType.ASSESSMENT;
+            return ApiAppointmentType.ASSESSMENT;
         }
       },
     );
@@ -204,22 +204,22 @@ describe("PatientWalkInForm", () => {
     });
 
     // Set up default mocks for React Query mutations
-    mockCreateAttendanceMutate.mockResolvedValue({
+    mockCreateAppointmentMutate.mockResolvedValue({
       id: 1,
-      type: ApiAttendanceType.ASSESSMENT,
+      type: ApiAppointmentType.ASSESSMENT,
       patientId: 1,
-      status: AttendanceStatus.SCHEDULED,
+      status: AppointmentStatus.SCHEDULED,
       scheduledDate: "2025-01-15",
       scheduledTime: "09:00",
       createdAt: "2025-01-15T09:00:00Z",
       updatedAt: "2025-01-15T09:00:00Z",
     });
 
-    mockCheckInAttendanceMutate.mockResolvedValue({
+    mockCheckInAppointmentMutate.mockResolvedValue({
       id: 1,
       patientId: 1,
-      type: ApiAttendanceType.ASSESSMENT,
-      status: AttendanceStatus.CHECKED_IN,
+      type: ApiAppointmentType.ASSESSMENT,
+      status: AppointmentStatus.CHECKED_IN,
       scheduledDate: "2025-01-15",
       scheduledTime: "09:00",
       createdAt: "2025-01-15T09:00:00Z",
@@ -238,18 +238,18 @@ describe("PatientWalkInForm", () => {
     });
 
     // Set up default mocks for API functions (legacy, some tests still use these)
-    mockGetAttendancesByDate.mockResolvedValue({
+    mockGetAppointmentsByDate.mockResolvedValue({
       success: true,
       value: [],
     });
 
-    mockCheckInAttendance.mockResolvedValue({
+    mockCheckInAppointment.mockResolvedValue({
       success: true,
       value: {
         id: 1,
         patientId: 1,
-        type: ApiAttendanceType.ASSESSMENT,
-        status: AttendanceStatus.CHECKED_IN,
+        type: ApiAppointmentType.ASSESSMENT,
+        status: AppointmentStatus.CHECKED_IN,
         scheduledDate: "2025-01-15",
         scheduledTime: "20:00",
         createdAt: "2025-01-15T20:00:00Z",
@@ -261,7 +261,7 @@ describe("PatientWalkInForm", () => {
   it("renders the form correctly", () => {
     render(
       <PatientWalkInForm
-        onRegisterNewAttendance={mockOnRegisterNewAttendance}
+        onRegisterNewAppointment={mockOnRegisterNewAppointment}
       />,
     );
 
@@ -270,16 +270,16 @@ describe("PatientWalkInForm", () => {
       screen.getByPlaceholderText("Search patient by name..."),
     ).toBeInTheDocument();
     expect(screen.getByText("Assessment Consultation")).toBeInTheDocument();
-    // Note: Physiotherapy and TENS removed - only created via PostAttendanceModal
+    // Note: Physiotherapy and TENS removed - only created via PostConsultationModal
   });
 
   describe("Duplicate Prevention", () => {
-    it("prevents duplicate attendance for existing patient with same type on same day", async () => {
+    it("prevents duplicate appointment for existing patient with same type on same day", async () => {
       const user = userEvent.setup();
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -298,40 +298,40 @@ describe("PatientWalkInForm", () => {
       const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
-      // The form defaults to assessment attendance type (no need to select)
-      // Submit the form - since useAttendancesByDate returns empty array by default,
-      // no duplicates will be detected and the form will attempt to create the attendance
+      // The form defaults to assessment appointment type (no need to select)
+      // Submit the form - since useAppointmentsByDate returns empty array by default,
+      // no duplicates will be detected and the form will attempt to create the appointment
       const submitButton = screen.getByRole("button", {
         name: /check.in|register|save/i,
       });
       await user.click(submitButton);
 
-      // Without duplicates in the mock data, the form will successfully create attendance
+      // Without duplicates in the mock data, the form will successfully create appointment
       await waitFor(() => {
-        expect(mockCreateAttendanceMutate).toHaveBeenCalled();
+        expect(mockCreateAppointmentMutate).toHaveBeenCalled();
       });
     });
 
-    it("allows attendance for existing patient with different type on same day", async () => {
+    it("allows appointment for existing patient with different type on same day", async () => {
       const user = userEvent.setup();
 
-      // Setup the mock to successfully create attendance
-      mockCreateAttendanceMutate.mockResolvedValue({
+      // Setup the mock to successfully create appointment
+      mockCreateAppointmentMutate.mockResolvedValue({
         id: 2,
-        type: ApiAttendanceType.ASSESSMENT,
+        type: ApiAppointmentType.ASSESSMENT,
         patientId: 1,
-        status: AttendanceStatus.SCHEDULED,
+        status: AppointmentStatus.SCHEDULED,
         scheduledDate: "2025-01-15",
         scheduledTime: "11:00",
         createdAt: "2025-01-15T11:00:00Z",
         updatedAt: "2025-01-15T11:00:00Z",
       });
 
-      mockCheckInAttendanceMutate.mockResolvedValue({
+      mockCheckInAppointmentMutate.mockResolvedValue({
         id: 2,
         patientId: 1,
-        type: ApiAttendanceType.ASSESSMENT,
-        status: AttendanceStatus.CHECKED_IN,
+        type: ApiAppointmentType.ASSESSMENT,
+        status: AppointmentStatus.CHECKED_IN,
         scheduledDate: "2025-01-15",
         scheduledTime: "11:00",
         createdAt: "2025-01-15T11:00:00Z",
@@ -340,7 +340,7 @@ describe("PatientWalkInForm", () => {
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -359,7 +359,7 @@ describe("PatientWalkInForm", () => {
       const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
-      // The form defaults to assessment attendance type (no need to select)
+      // The form defaults to assessment appointment type (no need to select)
       // Submit the form
       const submitButton = screen.getByRole("button", {
         name: /check.in|register|save/i,
@@ -372,9 +372,9 @@ describe("PatientWalkInForm", () => {
 
       await user.click(submitButton);
 
-      // Should create attendance successfully
+      // Should create appointment successfully
       await waitFor(() => {
-        expect(mockCreateAttendanceMutate).toHaveBeenCalled();
+        expect(mockCreateAppointmentMutate).toHaveBeenCalled();
       });
 
       // Should not show duplicate error
@@ -383,26 +383,26 @@ describe("PatientWalkInForm", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("successfully creates attendance when no duplicates exist", async () => {
+    it("successfully creates appointment when no duplicates exist", async () => {
       const user = userEvent.setup();
 
-      // Mock successful creation since duplicate check will pass (useAttendancesByDate returns empty)
-      mockCreateAttendanceMutate.mockResolvedValue({
+      // Mock successful creation since duplicate check will pass (useAppointmentsByDate returns empty)
+      mockCreateAppointmentMutate.mockResolvedValue({
         id: 1,
-        type: ApiAttendanceType.ASSESSMENT,
+        type: ApiAppointmentType.ASSESSMENT,
         patientId: 1,
-        status: AttendanceStatus.SCHEDULED,
+        status: AppointmentStatus.SCHEDULED,
         scheduledDate: "2025-01-15",
         scheduledTime: "20:00",
         createdAt: "2025-01-15T20:00:00Z",
         updatedAt: "2025-01-15T20:00:00Z",
       });
 
-      mockCheckInAttendanceMutate.mockResolvedValue({
+      mockCheckInAppointmentMutate.mockResolvedValue({
         id: 1,
         patientId: 1,
-        type: ApiAttendanceType.ASSESSMENT,
-        status: AttendanceStatus.CHECKED_IN,
+        type: ApiAppointmentType.ASSESSMENT,
+        status: AppointmentStatus.CHECKED_IN,
         scheduledDate: "2025-01-15",
         scheduledTime: "20:00",
         createdAt: "2025-01-15T20:00:00Z",
@@ -411,7 +411,7 @@ describe("PatientWalkInForm", () => {
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -430,7 +430,7 @@ describe("PatientWalkInForm", () => {
       const suggestion = screen.getByText("John Smith");
       await user.click(suggestion);
 
-      // The form defaults to assessment attendance type
+      // The form defaults to assessment appointment type
       // Submit the form
       const submitButton = screen.getByRole("button", {
         name: /check.in|register|save/i,
@@ -443,9 +443,9 @@ describe("PatientWalkInForm", () => {
 
       await user.click(submitButton);
 
-      // Should successfully create attendance
+      // Should successfully create appointment
       await waitFor(() => {
-        expect(mockCreateAttendanceMutate).toHaveBeenCalled();
+        expect(mockCreateAppointmentMutate).toHaveBeenCalled();
       });
     });
   });
@@ -455,7 +455,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -473,7 +473,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -491,7 +491,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -509,7 +509,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -529,7 +529,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -554,7 +554,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -586,11 +586,11 @@ describe("PatientWalkInForm", () => {
     });
   });
 
-  describe("Attendance Type Selection", () => {
-    it("displays assessment consultation as default attendance type", () => {
+  describe("Appointment Type Selection", () => {
+    it("displays assessment consultation as default appointment type", () => {
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -607,7 +607,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -630,11 +630,11 @@ describe("PatientWalkInForm", () => {
       expect(submitButton).toBeDisabled();
     });
 
-    it("requires at least one attendance type", async () => {
+    it("requires at least one appointment type", async () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -652,7 +652,7 @@ describe("PatientWalkInForm", () => {
       await user.click(suggestion);
 
       // The form defaults to assessment type, so submit button should be enabled
-      // after selecting a parent attendance option
+      // after selecting a parent appointment option
       const submitButton = screen.getByRole("button", {
         name: /^Check In$/i,
       });
@@ -665,7 +665,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -705,7 +705,7 @@ describe("PatientWalkInForm", () => {
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -758,7 +758,7 @@ describe("PatientWalkInForm", () => {
       const user = userEvent.setup();
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -798,7 +798,7 @@ describe("PatientWalkInForm", () => {
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -835,7 +835,7 @@ describe("PatientWalkInForm", () => {
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -861,7 +861,7 @@ describe("PatientWalkInForm", () => {
       // Input should now show selected patient name
       expect(nameInput).toHaveValue("John Smith");
 
-      // Test attendance type selection
+      // Test appointment type selection
 
       // Submit button should be enabled when form is complete
       const submitButton = screen.getByRole("button", {
@@ -885,7 +885,7 @@ describe("PatientWalkInForm", () => {
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -912,14 +912,14 @@ describe("PatientWalkInForm", () => {
     it("clears errors when form inputs change", async () => {
       const user = userEvent.setup();
 
-      // Mock attendance creation to reject
-      mockCreateAttendanceMutate.mockRejectedValueOnce(
+      // Mock appointment creation to reject
+      mockCreateAppointmentMutate.mockRejectedValueOnce(
         new Error("Creation failed"),
       );
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -942,7 +942,7 @@ describe("PatientWalkInForm", () => {
       });
       await user.click(submitButton);
 
-      // Wait for API error to appear (this is the message shown when attendance creation fails)
+      // Wait for API error to appear (this is the message shown when appointment creation fails)
       await waitFor(() => {
         expect(
           screen.getByText(/unexpected error processing check-in/i),
@@ -966,7 +966,7 @@ describe("PatientWalkInForm", () => {
 
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
         />,
       );
 
@@ -988,7 +988,7 @@ describe("PatientWalkInForm", () => {
       // Form should be filled with selected patient
       expect(nameInput).toHaveValue("John Smith");
 
-      // Select attendance type
+      // Select appointment type
 
       // Submit button should be enabled when form is valid
       const submitButton = screen.getByRole("button", {
@@ -1006,7 +1006,7 @@ describe("PatientWalkInForm", () => {
     it("renders with card styling when isDropdown is false", () => {
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
           isDropdown={false}
         />,
       );
@@ -1026,7 +1026,7 @@ describe("PatientWalkInForm", () => {
     it("renders without card styling when isDropdown is true", () => {
       render(
         <PatientWalkInForm
-          onRegisterNewAttendance={mockOnRegisterNewAttendance}
+          onRegisterNewAppointment={mockOnRegisterNewAppointment}
           isDropdown={true}
         />,
       );

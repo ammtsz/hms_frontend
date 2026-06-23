@@ -44,7 +44,7 @@ const mockPatient: Patient = {
   startDate: "2024-01-15",
   dischargeDate: null,
   timezone: "America/Sao_Paulo",
-  nextAttendanceDates: [
+  nextAppointmentDates: [
     {
       date: "2024-12-28",
       type: "assessment",
@@ -59,7 +59,7 @@ const mockPatient: Patient = {
     tens: false,
     returnWeeks: 2,
   },
-  previousAttendances: [],
+  previousAppointments: [],
   missingAppointmentsStreak: 0,
 };
 

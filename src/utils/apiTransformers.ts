@@ -2,22 +2,22 @@ import {
   PatientResponseDto, 
   PatientPriority,
   PatientStatus,
-  AttendanceResponseDto,
-  AttendanceType as ApiAttendanceType,
-  AttendanceStatus as ApiAttendanceStatus, 
+  AppointmentResponseDto,
+  AppointmentType as ApiAppointmentType,
+  AppointmentStatus as ApiAppointmentStatus, 
   UpdateConsultationResponseDto
 } from '@/api/types';
 import { formatDateClinic } from '@/utils/timezoneDate';
 import { 
   PatientBasic,
   Patient,
-  PreviousAttendance, 
+  PreviousAppointment, 
   Priority, 
   Status, 
-  AttendanceType,
-  AttendanceProgression,
-  AttendanceStatusDetail,
-  AttendanceByDate
+  AppointmentType,
+  AppointmentProgression,
+  AppointmentStatusDetail,
+  AppointmentByDate
 } from '@/types/types';
 import { ProcessEndOfDayResponse } from '@/api/day-finalization';
 
@@ -53,35 +53,35 @@ export const transformStatus = (apiStatus: PatientStatus): Status => {
   }
 };
 
-// Transform API AttendanceType to local AttendanceType
-export const transformAttendanceType = (apiType: ApiAttendanceType): AttendanceType => {
+// Transform API AppointmentType to local AppointmentType
+export const transformAppointmentType = (apiType: ApiAppointmentType): AppointmentType => {
   switch (apiType) {
-    case ApiAttendanceType.ASSESSMENT:
+    case ApiAppointmentType.ASSESSMENT:
       return "assessment";
-    case ApiAttendanceType.PHYSIOTHERAPY:
+    case ApiAppointmentType.PHYSIOTHERAPY:
       return "physiotherapy";
-    case ApiAttendanceType.TENS:
+    case ApiAppointmentType.TENS:
       return "tens";
     default:
       return "assessment";
   }
 };
 
-// Transform API AttendanceStatus to local AttendanceProgression
+// Transform API AppointmentStatus to local AppointmentProgression
 // Note: MISSED and CANCELLED statuses are shown in "scheduled" column with special flags
-export const transformAttendanceProgression = (apiStatus: ApiAttendanceStatus): AttendanceProgression => {
+export const transformAppointmentProgression = (apiStatus: ApiAppointmentStatus): AppointmentProgression => {
   switch (apiStatus) {
-    case ApiAttendanceStatus.SCHEDULED:
+    case ApiAppointmentStatus.SCHEDULED:
       return "scheduled";
-    case ApiAttendanceStatus.CHECKED_IN:
+    case ApiAppointmentStatus.CHECKED_IN:
       return "checkedIn";
-    case ApiAttendanceStatus.IN_PROGRESS:
+    case ApiAppointmentStatus.IN_PROGRESS:
       return "onGoing";
-    case ApiAttendanceStatus.COMPLETED:
+    case ApiAppointmentStatus.COMPLETED:
       return "completed";
-    case ApiAttendanceStatus.MISSED:
-    case ApiAttendanceStatus.CANCELLED:
-      // Show missed/cancelled attendances in scheduled column with disabled state
+    case ApiAppointmentStatus.MISSED:
+    case ApiAppointmentStatus.CANCELLED:
+      // Show missed/cancelled appointments in scheduled column with disabled state
       return "scheduled";
     default:
       return "scheduled";
@@ -114,7 +114,7 @@ export const transformSinglePatientFromApi = (apiPatient: PatientResponseDto): P
     startDate: apiPatient.startDate, // Keep as string: "YYYY-MM-DD"
     dischargeDate: apiPatient.dischargeDate || null, // Keep as string or null
     missingAppointmentsStreak: apiPatient.missingAppointmentsStreak ?? 0,
-    nextAttendanceDates: [],
+    nextAppointmentDates: [],
     currentRecommendations: {
       date: formatDateClinic(), // String: "YYYY-MM-DD"
       food: '',
@@ -124,99 +124,99 @@ export const transformSinglePatientFromApi = (apiPatient: PatientResponseDto): P
       tens: false,
       returnWeeks: 0
     },
-    previousAttendances: []
+    previousAppointments: []
   };
 };
 
-// Transform attendance API data to PreviousAttendance format
-export const transformAttendanceToPrevious = (apiAttendance: AttendanceResponseDto): PreviousAttendance => {
+// Transform appointment API data to PreviousAppointment format
+export const transformAppointmentToPrevious = (apiAppointment: AppointmentResponseDto): PreviousAppointment => {
   return {
-    attendanceId: apiAttendance.id.toString(),
-    date: apiAttendance.scheduledDate, // Keep as string: "YYYY-MM-DD"
-    type: transformAttendanceType(apiAttendance.type),
-    notes: apiAttendance.notes || '',
+    appointmentId: apiAppointment.id.toString(),
+    date: apiAppointment.scheduledDate, // Keep as string: "YYYY-MM-DD"
+    type: transformAppointmentType(apiAppointment.type),
+    notes: apiAppointment.notes || '',
     recommendations: null, // TODO: We need to implement recommendations mapping when backend provides this data
-    status: apiAttendance.status as 'completed' | 'missed' | 'cancelled',
-    absenceNotes: apiAttendance.absenceNotes,
-    absenceJustified: apiAttendance.absenceJustified,
-    createdDate: apiAttendance.createdAt.split("T")[0],
-    updatedDate: apiAttendance.updatedAt.split("T")[0],
-    cancelledDate: apiAttendance.cancelledDate,
+    status: apiAppointment.status as 'completed' | 'missed' | 'cancelled',
+    absenceNotes: apiAppointment.absenceNotes,
+    absenceJustified: apiAppointment.absenceJustified,
+    createdDate: apiAppointment.createdAt.split("T")[0],
+    updatedDate: apiAppointment.updatedAt.split("T")[0],
+    cancelledDate: apiAppointment.cancelledDate,
   };
 };
 
-// Transform attendance API data to next attendance format
-export const transformAttendanceToNext = (apiAttendance: AttendanceResponseDto): {
-  attendanceId: string;
+// Transform appointment API data to next appointment format
+export const transformAppointmentToNext = (apiAppointment: AppointmentResponseDto): {
+  appointmentId: string;
   date: string;
-  type: AttendanceType;
-  parentAttendanceId?: number;
+  type: AppointmentType;
+  parentAppointmentId?: number;
   status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
   absenceNotes?: string;
-  notes?: string; // Attendance notes for assessment consultations
+  notes?: string; // Appointment notes for assessment consultations
   createdDate: string;
   updatedDate: string;
   cancelledDate?: string;
 } => {
   return {
-    attendanceId: String(apiAttendance.id),
-    date: apiAttendance.scheduledDate, // Keep as string: "YYYY-MM-DD"
-    type: transformAttendanceType(apiAttendance.type),
-    parentAttendanceId: apiAttendance.parentAttendanceId,
-    status: apiAttendance.status as 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled',
-    absenceNotes: apiAttendance.absenceNotes,
-    notes: apiAttendance.notes,
-    createdDate: apiAttendance.createdAt.split("T")[0],
-    updatedDate: apiAttendance.updatedAt.split("T")[0],
-    cancelledDate: apiAttendance.cancelledDate,
+    appointmentId: String(apiAppointment.id),
+    date: apiAppointment.scheduledDate, // Keep as string: "YYYY-MM-DD"
+    type: transformAppointmentType(apiAppointment.type),
+    parentAppointmentId: apiAppointment.parentAppointmentId,
+    status: apiAppointment.status as 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled',
+    absenceNotes: apiAppointment.absenceNotes,
+    notes: apiAppointment.notes,
+    createdDate: apiAppointment.createdAt.split("T")[0],
+    updatedDate: apiAppointment.updatedAt.split("T")[0],
+    cancelledDate: apiAppointment.cancelledDate,
   };
 };
 
-// Enhanced patient transformer that includes attendance history
-export const transformPatientWithAttendances = (
+// Enhanced patient transformer that includes appointment history
+export const transformPatientWithAppointments = (
   apiPatient: PatientResponseDto, 
-  attendances: AttendanceResponseDto[]
+  appointments: AppointmentResponseDto[]
 ): Patient => {
   const basePatient = transformSinglePatientFromApi(apiPatient);
   
-  // Filter completed attendances and transform them
-  const previousAttendances = attendances
-    .filter(attendance => attendance.status === 'completed')
+  // Filter completed appointments and transform them
+  const previousAppointments = appointments
+    .filter(appointment => appointment.status === 'completed')
     .sort((a, b) => b.scheduledDate.localeCompare(a.scheduledDate)) // String comparison
-    .map(transformAttendanceToPrevious);
+    .map(transformAppointmentToPrevious);
   
-  // Filter future attendances (scheduled, checked_in, in_progress) and transform them
+  // Filter future appointments (scheduled, checked_in, in_progress) and transform them
   const currentDate = formatDateClinic(); // Today as string: "YYYY-MM-DD"
   
-  const nextAttendanceDates = attendances
-    .filter(attendance => {
-      const isNotCompleted = ['scheduled', 'checked_in', 'in_progress'].includes(attendance.status);
-      const isFuture = attendance.scheduledDate >= currentDate; // String comparison
+  const nextAppointmentDates = appointments
+    .filter(appointment => {
+      const isNotCompleted = ['scheduled', 'checked_in', 'in_progress'].includes(appointment.status);
+      const isFuture = appointment.scheduledDate >= currentDate; // String comparison
       return isNotCompleted && isFuture;
     })
     .sort((a, b) => a.scheduledDate.localeCompare(b.scheduledDate)) // String comparison
-    .map(transformAttendanceToNext);
+    .map(transformAppointmentToNext);
 
-  const openAttendancesCount = attendances.filter(attendance =>
-    ['scheduled', 'checked_in', 'in_progress'].includes(attendance.status),
+  const openAppointmentsCount = appointments.filter(appointment =>
+    ['scheduled', 'checked_in', 'in_progress'].includes(appointment.status),
   ).length;
     
   return {
     ...basePatient,
-    previousAttendances,
-    nextAttendanceDates,
-    openAttendancesCount,
+    previousAppointments,
+    nextAppointmentDates,
+    openAppointmentsCount,
   };
 };
 
-// Transform array of attendances by date into AttendanceByDate format
-export const transformAttendanceWithPatientByDate = (
-  apiAttendances: AttendanceResponseDto[], 
+// Transform array of appointments by date into AppointmentByDate format
+export const transformAppointmentWithPatientByDate = (
+  apiAppointments: AppointmentResponseDto[], 
   date: string
-): AttendanceByDate => {
+): AppointmentByDate => {
   // date is already in YYYY-MM-DD format - no conversion needed
   
-  const result: AttendanceByDate = {
+  const result: AppointmentByDate = {
     date: date, // Keep as YYYY-MM-DD string
     assessment: {
       scheduled: [],
@@ -244,14 +244,14 @@ export const transformAttendanceWithPatientByDate = (
     }
   };
 
-  // Group attendances by type and status
-  apiAttendances.forEach(attendance => {
-    const attendanceType = transformAttendanceType(attendance.type);
-    const attendanceStatus = transformAttendanceProgression(attendance.status);
-    const statusDetail = transformAttendanceStatusFromApi(attendance);
+  // Group appointments by type and status
+  apiAppointments.forEach(appointment => {
+    const appointmentType = transformAppointmentType(appointment.type);
+    const appointmentStatus = transformAppointmentProgression(appointment.status);
+    const statusDetail = transformAppointmentStatusFromApi(appointment);
 
     // Add to the appropriate category
-    result[attendanceType][attendanceStatus].push(statusDetail);
+    result[appointmentType][appointmentStatus].push(statusDetail);
   });
 
   return result;
@@ -296,52 +296,52 @@ export const transformStatusToApi = (localStatus: Status): PatientStatus => {
   }
 };
 
-// Transform local attendance type to API attendance type
-export const transformAttendanceTypeToApi = (localType: AttendanceType): ApiAttendanceType => {
+// Transform local appointment type to API appointment type
+export const transformAppointmentTypeToApi = (localType: AppointmentType): ApiAppointmentType => {
   switch (localType) {
     case "assessment":
-      return ApiAttendanceType.ASSESSMENT;
+      return ApiAppointmentType.ASSESSMENT;
     case "physiotherapy":
-      return ApiAttendanceType.PHYSIOTHERAPY;
+      return ApiAppointmentType.PHYSIOTHERAPY;
     case "tens":
-      return ApiAttendanceType.TENS;
+      return ApiAppointmentType.TENS;
     default:
-      return ApiAttendanceType.ASSESSMENT;
+      return ApiAppointmentType.ASSESSMENT;
   }
 };
 
-// Transform local attendance progression to API attendance status
-export const transformAttendanceProgressionToApi = (localProgression: AttendanceProgression): ApiAttendanceStatus => {
+// Transform local appointment progression to API appointment status
+export const transformAppointmentProgressionToApi = (localProgression: AppointmentProgression): ApiAppointmentStatus => {
   switch (localProgression) {
     case "scheduled":
-      return ApiAttendanceStatus.SCHEDULED;
+      return ApiAppointmentStatus.SCHEDULED;
     case "checkedIn":
-      return ApiAttendanceStatus.CHECKED_IN;
+      return ApiAppointmentStatus.CHECKED_IN;
     case "onGoing":
-      return ApiAttendanceStatus.IN_PROGRESS;
+      return ApiAppointmentStatus.IN_PROGRESS;
     case "completed":
-      return ApiAttendanceStatus.COMPLETED;
+      return ApiAppointmentStatus.COMPLETED;
     default:
-      return ApiAttendanceStatus.SCHEDULED;
+      return ApiAppointmentStatus.SCHEDULED;
   }
 };
 
-// Transform attendance status details from API
-export const transformAttendanceStatusFromApi = (apiAttendance: AttendanceResponseDto): AttendanceStatusDetail => {
-  const patientName = apiAttendance.patient?.name || `Patient ${apiAttendance.patientId}`;
-  const patientPriority = apiAttendance.patient?.priority || PatientPriority.LEVEL_1;
+// Transform appointment status details from API
+export const transformAppointmentStatusFromApi = (apiAppointment: AppointmentResponseDto): AppointmentStatusDetail => {
+  const patientName = apiAppointment.patient?.name || `Patient ${apiAppointment.patientId}`;
+  const patientPriority = apiAppointment.patient?.priority || PatientPriority.LEVEL_1;
   
   return {
     name: patientName,
     priority: transformPriority(patientPriority),
-    checkedInTime: apiAttendance.checkedInTime,
-    onGoingTime: apiAttendance.startedTime,
-    completedTime: apiAttendance.completedTime,
-    attendanceId: apiAttendance.id,
-    patientId: apiAttendance.patientId,
-    // Set metadata flags for missed/cancelled attendances
-    isMissed: apiAttendance.status === ApiAttendanceStatus.MISSED,
-    isCancelled: apiAttendance.status === ApiAttendanceStatus.CANCELLED,
+    checkedInTime: apiAppointment.checkedInTime,
+    onGoingTime: apiAppointment.startedTime,
+    completedTime: apiAppointment.completedTime,
+    appointmentId: apiAppointment.id,
+    patientId: apiAppointment.patientId,
+    // Set metadata flags for missed/cancelled appointments
+    isMissed: apiAppointment.status === ApiAppointmentStatus.MISSED,
+    isCancelled: apiAppointment.status === ApiAppointmentStatus.CANCELLED,
   };
 };
 
@@ -349,16 +349,16 @@ export const transformAttendanceStatusFromApi = (apiAttendance: AttendanceRespon
 export const transformProcessEndOfDayResponse = (apiResponse: ProcessEndOfDayResponse): ProcessEndOfDayResponse => {
   return {
     ...apiResponse,
-    rescheduled: apiResponse.rescheduled.map(attendance => ({
-      ...attendance,
-      type: attendance.type === 'physiotherapy' ? 'physiotherapy' : attendance.type,
+    rescheduled: apiResponse.rescheduled.map(appointment => ({
+      ...appointment,
+      type: appointment.type === 'physiotherapy' ? 'physiotherapy' : appointment.type,
     })),
     statusChangedToC: apiResponse.statusChangedToC,
-    cancelledForC: apiResponse.cancelledForC.map(attendance => ({
-      ...attendance,
-      attendances: attendance.attendances.map(attendance => ({
-        ...attendance,
-        type: attendance.type === 'physiotherapy' ? 'physiotherapy' : attendance.type,
+    cancelledForC: apiResponse.cancelledForC.map(appointment => ({
+      ...appointment,
+      appointments: appointment.appointments.map(appointment => ({
+        ...appointment,
+        type: appointment.type === 'physiotherapy' ? 'physiotherapy' : appointment.type,
       })),
     })),
     couldNotReschedule: apiResponse.couldNotReschedule,
@@ -371,17 +371,17 @@ export const transformConsultationResponse = (
 ): UpdateConsultationResponseDto => {
   return {
     ...apiResponse,
-    cancelledAttendances: apiResponse.cancelledAttendances?.map(attendance => ({
-      ...attendance,
-      type: attendance.type === 'physiotherapy' ? 'physiotherapy' : attendance.type,
+    cancelledAppointments: apiResponse.cancelledAppointments?.map(appointment => ({
+      ...appointment,
+      type: appointment.type === 'physiotherapy' ? 'physiotherapy' : appointment.type,
     })),
   };
 };
 
 /**
- * Transform attendance type label for display
+ * Transform appointment type label for display
  */
-export const getAttendanceTypeLabel = (type: AttendanceType): string => {
+export const getAppointmentTypeLabel = (type: AppointmentType): string => {
   switch (type) {
     case "assessment":
       return "Assessment Consultation";
@@ -394,13 +394,13 @@ export const getAttendanceTypeLabel = (type: AttendanceType): string => {
   }
 };
 
-export const getAttendanceStatusLabel = (
+export const getAppointmentStatusLabel = (
   checkedInTime?: string | null,
   onGoingTime?: string | null,
   completedTime?: string | null
 ): string => {
-  if (completedTime) return "Attendance completed";
-  if (onGoingTime) return "Attendance not completed";
+  if (completedTime) return "Appointment completed";
+  if (onGoingTime) return "Appointment not completed";
   if (checkedInTime) return "Checked in";
   return "Scheduled";
 };

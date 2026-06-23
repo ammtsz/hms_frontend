@@ -4,8 +4,8 @@ import "@testing-library/jest-dom";
 import {
   LazyHeaderCard,
   LazyCurrentTreatmentCard,
-  LazyAttendanceHistoryCard,
-  LazyScheduledAttendancesCard,
+  LazyAppointmentHistoryCard,
+  LazyScheduledAppointmentsCard,
   LazyPatientNotesCard,
   LazySessionBreakdownCard,
   LazyComponentWrapper,
@@ -24,20 +24,20 @@ jest.mock("@/features/patients/detail/CurrentTreatmentCard", () => ({
 }));
 
 jest.mock(
-  "@/features/patients/detail/AttendanceHistory/AttendanceHistoryCard",
+  "@/features/patients/detail/AppointmentHistory/AppointmentHistoryCard",
   () => ({
-    AttendanceHistoryCard: () => (
-      <div data-testid="attendance-history-card">Attendance History Card</div>
+    AppointmentHistoryCard: () => (
+      <div data-testid="appointment-history-card">Appointment History Card</div>
     ),
   }),
 );
 
 jest.mock(
-  "@/features/patients/detail/ScheduledAttendances/ScheduledAttendancesCard",
+  "@/features/patients/detail/ScheduledAppointments/ScheduledAppointmentsCard",
   () => ({
-    ScheduledAttendancesCard: () => (
-      <div data-testid="scheduled-attendances-card">
-        Scheduled Attendances Card
+    ScheduledAppointmentsCard: () => (
+      <div data-testid="scheduled-appointments-card">
+        Scheduled Appointments Card
       </div>
     ),
   }),
@@ -101,34 +101,34 @@ describe("LazyComponents", () => {
     });
   });
 
-  describe("LazyAttendanceHistoryCard", () => {
-    it("should render LazyAttendanceHistoryCard when loaded", async () => {
+  describe("LazyAppointmentHistoryCard", () => {
+    it("should render LazyAppointmentHistoryCard when loaded", async () => {
       render(
         <React.Suspense fallback={<div data-testid="loading">Loading...</div>}>
-          <LazyAttendanceHistoryCard patient={mockPatient} />
+          <LazyAppointmentHistoryCard patient={mockPatient} />
         </React.Suspense>,
       );
 
       expect(
-        await screen.findByTestId("attendance-history-card"),
+        await screen.findByTestId("appointment-history-card"),
       ).toBeInTheDocument();
-      expect(screen.getByText("Attendance History Card")).toBeInTheDocument();
+      expect(screen.getByText("Appointment History Card")).toBeInTheDocument();
     });
   });
 
-  describe("LazyScheduledAttendancesCard", () => {
-    it("should render LazyScheduledAttendancesCard when loaded", async () => {
+  describe("LazyScheduledAppointmentsCard", () => {
+    it("should render LazyScheduledAppointmentsCard when loaded", async () => {
       render(
         <React.Suspense fallback={<div data-testid="loading">Loading...</div>}>
-          <LazyScheduledAttendancesCard patient={mockPatient} />
+          <LazyScheduledAppointmentsCard patient={mockPatient} />
         </React.Suspense>,
       );
 
       expect(
-        await screen.findByTestId("scheduled-attendances-card"),
+        await screen.findByTestId("scheduled-appointments-card"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("Scheduled Attendances Card"),
+        screen.getByText("Scheduled Appointments Card"),
       ).toBeInTheDocument();
     });
   });

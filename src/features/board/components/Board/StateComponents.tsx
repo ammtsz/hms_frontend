@@ -6,7 +6,7 @@ interface LoadingStateProps {
 }
 
 export const LoadingState: React.FC<LoadingStateProps> = ({
-  message = "Loading attendances...",
+  message = "Loading appointments...",
 }) => {
   return (
     <div className="flex items-center justify-center h-64">
@@ -28,7 +28,7 @@ export const ErrorState: React.FC<ErrorStateProps> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-center h-64 gap-4">
-      <div className="text-lg text-red-600">Error loading attendances</div>
+      <div className="text-lg text-red-600">Error loading appointments</div>
       <div className="text-sm text-[color:var(--text-muted)]">{error}</div>
       <Button type="button" onClick={onRetry}>
         {retryButtonText}

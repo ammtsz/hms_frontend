@@ -1,6 +1,6 @@
 // Business logic for scheduling, priorities, and status
 
-import { AttendanceStatusDetail, AttendanceByDate } from "@/types/types";
+import { AppointmentStatusDetail, AppointmentByDate } from "@/types/types";
 
 /**
  * Priority Queue Rules for Checked-In Patients
@@ -67,19 +67,19 @@ export const sortPatientsByPriority = <T extends {
  */
 export const isPatientAlreadyScheduledForAssessment = (
   patientName: string,
-  attendancesByDate: AttendanceByDate | null,
+  appointmentsByDate: AppointmentByDate | null,
 ): boolean => {
-  if (!attendancesByDate?.assessment) return false;
+  if (!appointmentsByDate?.assessment) return false;
 
   const normalizedName = patientName.toLowerCase();
   const allStatuses = ["scheduled", "checkedIn", "onGoing", "completed"] as const;
 
   for (const status of allStatuses) {
-    const statusAttendances = attendancesByDate.assessment[status];
+    const statusAppointments = appointmentsByDate.assessment[status];
     if (
-      statusAttendances?.some(
-        (attendance: AttendanceStatusDetail) =>
-          attendance.name.toLowerCase() === normalizedName,
+      statusAppointments?.some(
+        (appointment: AppointmentStatusDetail) =>
+          appointment.name.toLowerCase() === normalizedName,
       )
     ) {
       return true;

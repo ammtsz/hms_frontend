@@ -1,7 +1,7 @@
 import React from "react";
 import BaseModal from "@/components/common/BaseModal";
 import StepNavigation from "./components/StepNavigation";
-import IncompleteAttendancesStep from "./components/steps/IncompleteAttendancesStep";
+import IncompleteAppointmentsStep from "./components/steps/IncompleteAppointmentsStep";
 import AbsenceJustificationStep from "./components/steps/AbsenceJustificationStep";
 import ConfirmationStep from "./components/steps/ConfirmationStep";
 import SummaryStep from "./components/steps/SummaryStep";
@@ -20,8 +20,8 @@ const EndOfDayContainer: React.FC = () => {
     isSubmitting,
     processResult,
     scheduledAbsences,
-    completedAttendances,
-    incompleteAttendances,
+    completedAppointments,
+    incompleteAppointments,
     handleJustificationChange,
     handleNext,
     handleBack,
@@ -41,8 +41,8 @@ const EndOfDayContainer: React.FC = () => {
     switch (currentStep) {
       case "incomplete":
         return (
-          <IncompleteAttendancesStep
-            incompleteAttendances={incompleteAttendances}
+          <IncompleteAppointmentsStep
+            incompleteAppointments={incompleteAppointments}
             selectedDate={selectedDate}
             onNext={handleNext}
             onCancel={handleClose}
@@ -54,7 +54,7 @@ const EndOfDayContainer: React.FC = () => {
             scheduledAbsences={scheduledAbsences.map((absence) => ({
               patientId: absence.patientId || 0,
               patientName: absence.patientName,
-              attendanceType: absence.attendanceType,
+              appointmentType: absence.appointmentType,
             }))}
             selectedDate={selectedDate}
             absenceJustifications={absenceJustifications}
@@ -67,11 +67,11 @@ const EndOfDayContainer: React.FC = () => {
         return (
           <ConfirmationStep
             selectedDate={selectedDate}
-            completedAttendances={completedAttendances}
+            completedAppointments={completedAppointments}
             scheduledAbsences={scheduledAbsences.map((absence) => ({
               patientId: absence.patientId || 0,
               patientName: absence.patientName,
-              attendanceType: absence.attendanceType,
+              appointmentType: absence.appointmentType,
             }))}
             absenceJustifications={absenceJustifications}
             isSubmitting={isSubmitting}
@@ -104,7 +104,7 @@ const EndOfDayContainer: React.FC = () => {
         {currentStep !== "summary" ? (
           <StepNavigation
             currentStep={currentStep}
-            incompleteAttendancesCount={incompleteAttendances.length}
+            incompleteAppointmentsCount={incompleteAppointments.length}
             scheduledAbsencesCount={scheduledAbsences.length}
           />
         ) : null}

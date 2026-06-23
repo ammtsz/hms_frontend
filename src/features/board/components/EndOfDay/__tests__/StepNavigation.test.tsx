@@ -6,14 +6,14 @@ import StepNavigation from "../components/StepNavigation";
 describe("StepNavigation", () => {
   const defaultProps = {
     currentStep: "incomplete" as const,
-    incompleteAttendancesCount: 0,
+    incompleteAppointmentsCount: 0,
     scheduledAbsencesCount: 0,
   };
 
   it("renders all three steps", () => {
     render(<StepNavigation {...defaultProps} />);
 
-    expect(screen.getByText("Attendances")).toBeInTheDocument();
+    expect(screen.getByText("Appointments")).toBeInTheDocument();
     expect(screen.getByText("Absences")).toBeInTheDocument();
     expect(screen.getByText("Confirmation")).toBeInTheDocument();
   });
@@ -31,15 +31,15 @@ describe("StepNavigation", () => {
     expect(step2).toHaveClass("bg-blue-500", "text-white");
   });
 
-  it("shows completed step when incomplete attendances is 0", () => {
-    render(<StepNavigation {...defaultProps} incompleteAttendancesCount={0} />);
+  it("shows completed step when incomplete appointments is 0", () => {
+    render(<StepNavigation {...defaultProps} incompleteAppointmentsCount={0} />);
 
     const step1 = screen.getByText("1");
     expect(step1).toHaveClass("bg-green-500", "text-white");
   });
 
-  it("shows pending step when there are incomplete attendances", () => {
-    render(<StepNavigation {...defaultProps} incompleteAttendancesCount={2} />);
+  it("shows pending step when there are incomplete appointments", () => {
+    render(<StepNavigation {...defaultProps} incompleteAppointmentsCount={2} />);
 
     const step1 = screen.getByText("1");
     expect(step1).toHaveClass("bg-blue-500", "text-white");
@@ -76,7 +76,7 @@ describe("StepNavigation", () => {
       <StepNavigation
         {...defaultProps}
         currentStep="confirm"
-        incompleteAttendancesCount={0}
+        incompleteAppointmentsCount={0}
         scheduledAbsencesCount={0}
       />
     );
@@ -103,7 +103,7 @@ describe("StepNavigation", () => {
       <StepNavigation
         {...defaultProps}
         currentStep="incomplete"
-        incompleteAttendancesCount={1}
+        incompleteAppointmentsCount={1}
         scheduledAbsencesCount={1}
       />
     );
