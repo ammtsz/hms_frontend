@@ -3,6 +3,7 @@ import { CheckCircle, XCircle, Clock, Ban } from "lucide-react";
 import { SessionResponseDto } from "@/api/types";
 import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import { APPOINTMENT_HISTORY_STATUS_LABELS } from "@/utils/appointmentStatusLabels";
+import { formatDisplayDate } from "@/utils/dateUtils";
 
 export const getStatusIcon = (status: string) => {
   switch (status) {
@@ -40,11 +41,10 @@ export const formatTime = (time?: string) => {
   return time.substring(0, 5);
 };
 
+/** Format as MM/DD (short US display, no year). */
 export const formatDate = (dateStr: string) => {
-  // Extract just the date part (YYYY-MM-DD) in case of ISO datetime
   const datePart = dateStr.split("T")[0];
-  const [, month, day] = datePart.split("-");
-  return `${day}/${month}`;
+  return formatDisplayDate(datePart).slice(0, 5);
 };
 
 export const getTreatmentTypeLabel = (type?: string) => {

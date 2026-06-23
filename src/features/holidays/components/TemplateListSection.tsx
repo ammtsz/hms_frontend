@@ -192,8 +192,8 @@ export const TemplateListSection: React.FC<TemplateListSectionProps> = ({
                               >
                                 <div className="w-16 flex-shrink-0 text-center">
                                   <div className="text-lg font-semibold text-gray-900">
-                                    {String(holiday.day).padStart(2, "0")}/
-                                    {String(holiday.month).padStart(2, "0")}
+                                    {String(holiday.month).padStart(2, "0")}/
+                                    {String(holiday.day).padStart(2, "0")}
                                   </div>
                                   <div className="text-xs text-gray-500">
                                     {MONTHS[holiday.month - 1].substring(0, 3)}

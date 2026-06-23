@@ -83,12 +83,12 @@ describe("sessionBreakdownUtils", () => {
   });
 
   describe("formatDate", () => {
-    it("formats YYYY-MM-DD as DD/MM", () => {
-      expect(formatDate("2024-03-15")).toBe("15/03");
+    it("formats YYYY-MM-DD as MM/DD", () => {
+      expect(formatDate("2024-03-15")).toBe("03/15");
     });
 
     it("extracts date part from ISO datetime", () => {
-      expect(formatDate("2024-03-15T10:30:00.000Z")).toBe("15/03");
+      expect(formatDate("2024-03-15T10:30:00.000Z")).toBe("03/15");
     });
   });
 

@@ -17,6 +17,7 @@ import {
   useCreateBodyLocation,
 } from "@/api/query/hooks/useSystemOptionsQueries";
 import { TREATMENT_SLOTS_UNAVAILABLE_MESSAGE } from "@/utils/scheduleTreatmentSlots";
+import { formatDisplayDate } from "@/utils/dateUtils";
 import type {
   PhysiotherapyLocationTreatment,
   TensLocationTreatment,
@@ -517,6 +518,7 @@ const TreatmentRecommendationTable = forwardRef<
                             )}
                             <Input
                               type="date"
+                              lang="en-US"
                               value={treatment.startDate}
                               onChange={(e) =>
                                 handleFieldChange(
@@ -551,9 +553,7 @@ const TreatmentRecommendationTable = forwardRef<
                                 className="text-red-600"
                               />
                             )}
-                            {new Date(
-                              treatment.startDate + "T00:00:00",
-                            ).toLocaleDateString("en-US")}
+                            {formatDisplayDate(treatment.startDate)}
                           </span>
                         )}
                       </td>

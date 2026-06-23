@@ -86,6 +86,7 @@ export const RescheduleAppointmentModal: React.FC<
           <Input
             id="reschedule-date"
             type="date"
+            lang="en-US"
             min={today}
             value={scheduledDate}
             onChange={(e) => setScheduledDate(e.target.value)}

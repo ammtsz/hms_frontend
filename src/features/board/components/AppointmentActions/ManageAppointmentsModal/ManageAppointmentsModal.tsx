@@ -550,6 +550,7 @@ export const ManageAppointmentsModal: React.FC<ManageAppointmentsModalProps> = (
                     <Input
                       id="reschedule-date"
                       type="date"
+                      lang="en-US"
                       value={selectedDate}
                       onChange={(e) => setSelectedDate(e.target.value)}
                       min={getMinDate()}

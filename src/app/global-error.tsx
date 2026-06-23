@@ -20,7 +20,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   }, [error]);
 
   return (
-    <html lang="pt-br">
+    <html lang="en-US">
       <body>
         <div className="flex flex-col items-center justify-center min-h-screen gap-4 p-8 text-center font-sans">
           <h1 className="text-2xl font-bold text-gray-800">System Error</h1>

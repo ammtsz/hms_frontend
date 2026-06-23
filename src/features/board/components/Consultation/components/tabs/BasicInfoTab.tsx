@@ -124,6 +124,7 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
       >
         <Input
           type="date"
+          lang="en-US"
           id="startDate"
           value={formatDateForInput(formData.startDate)}
           onChange={onDateChange("startDate")}

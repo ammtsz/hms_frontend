@@ -370,6 +370,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
           >
             <Input
               type="date"
+              lang="en-US"
               id="holidayDate"
               name="holidayDate"
               value={formData.holidayDate}
@@ -388,6 +389,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
             >
               <Input
                 type="date"
+                lang="en-US"
                 id="startDate"
                 name="startDate"
                 value={periodData.startDate}
@@ -399,6 +401,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
             <Field label="End Date *" htmlFor="endDate" error={errors.endDate}>
               <Input
                 type="date"
+                lang="en-US"
                 id="endDate"
                 name="endDate"
                 value={periodData.endDate}

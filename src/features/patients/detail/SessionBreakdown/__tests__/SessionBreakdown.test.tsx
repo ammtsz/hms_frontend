@@ -337,7 +337,7 @@ describe("SessionBreakdownCard", () => {
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/10\/02/)).toBeInTheDocument();
+      expect(screen.getByText(/02\/10/)).toBeInTheDocument();
     });
   });
 
@@ -484,7 +484,7 @@ describe("SessionBreakdownCard", () => {
     await expandCard();
 
     await waitFor(() => {
-      expect(screen.getByText(/15\/02/)).toBeInTheDocument();
+      expect(screen.getByText(/02\/15/)).toBeInTheDocument();
     });
 
     expect(screen.queryByText(/às/)).not.toBeInTheDocument();

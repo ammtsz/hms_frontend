@@ -14,7 +14,7 @@ describe("SessionRow", () => {
   it("renders session number, date and status label", () => {
     render(<SessionRow session={baseSession} />);
     expect(screen.getByText(/Session 1/)).toBeInTheDocument();
-    expect(screen.getByText(/10\/02/)).toBeInTheDocument();
+    expect(screen.getByText(/02\/10/)).toBeInTheDocument();
     expect(screen.getAllByText(/Completed/)[0]).toBeInTheDocument();
   });
 

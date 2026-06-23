@@ -224,6 +224,7 @@ const NewAppointmentForm: React.FC<NewAppointmentFormProps> = ({
           <Field label="Appointment Date" error={dateSlotError}>
             <Input
               type="date"
+              lang="en-US"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               invalid={Boolean(dateSlotError)}

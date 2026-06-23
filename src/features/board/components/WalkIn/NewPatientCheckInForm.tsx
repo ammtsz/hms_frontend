@@ -190,6 +190,7 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
           <Input
             id="new-patient-checkin-birth-date"
             type="date"
+            lang="en-US"
             value={formData.birthDate}
             onChange={(e) => handleInputChange("birthDate", e.target.value)}
             disabled={isSubmitting}

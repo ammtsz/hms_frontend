@@ -121,7 +121,7 @@ describe("UnresolvedPastAppointmentsModal", () => {
 
       render(<UnresolvedPastAppointmentsModal />);
 
-      // Check formatted dates (formatDateBR converts to DD/MM/YYYY)
+      // Check formatted dates (formatDisplayDate uses MM/DD/YYYY)
       expect(screen.getByText("01/30/2026")).toBeInTheDocument();
       expect(screen.getByText("01/28/2026")).toBeInTheDocument();
 
@@ -130,7 +130,7 @@ describe("UnresolvedPastAppointmentsModal", () => {
       expect(screen.getByText(/2\s+2\s+appointments/)).toBeInTheDocument();
     });
 
-    it("should translate statuses to Portuguese", () => {
+    it("should translate statuses to English labels", () => {
       (useUnresolvedPastModal as jest.Mock).mockReturnValue({
         isOpen: true,
         dates: [

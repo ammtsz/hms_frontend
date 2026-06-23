@@ -64,6 +64,7 @@ export const NewPatientFields: React.FC<NewPatientFieldsProps> = ({
             id="birthDate"
             name="birthDate"
             type="date"
+            lang="en-US"
             value={formatDateForInput(birthDate)}
             onChange={handleDateChange}
             disabled={isSubmitting}

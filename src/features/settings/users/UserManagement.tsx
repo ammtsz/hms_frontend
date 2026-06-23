@@ -29,6 +29,8 @@ import DeleteUserModal from "./DeleteUserModal";
 import ResetPasswordModal from "./ResetPasswordModal";
 import { UserListCard } from "./UserListCard";
 
+const DISPLAY_LOCALE = "en-US";
+
 export default function UserManagement() {
   const { user: currentUser, isLoading: authLoading } = useAuthContext();
   const { showToast } = useToast();
@@ -95,7 +97,11 @@ export default function UserManagement() {
 
   const formatDate = (date: Date | null) => {
     if (!date) return "Never";
-    return new Date(date).toLocaleDateString();
+    return new Date(date).toLocaleDateString(DISPLAY_LOCALE, {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
   };
 
   const filteredUsers =
