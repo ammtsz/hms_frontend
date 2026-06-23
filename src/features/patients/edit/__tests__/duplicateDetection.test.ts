@@ -6,21 +6,21 @@ describe("duplicateDetection", () => {
     {
       id: "1",
       name: "John Smith",
-      phone: "(11) 98765-4321",
+      phone: "(555) 321-6547",
       priority: "3",
       status: "T",
     },
     {
       id: "2",
       name: "Emily Williams",
-      phone: "(21) 91234-5678",
+      phone: "(718) 234-5678",
       priority: "2",
       status: "N",
     },
     {
       id: "3",
       name: "John Williams",
-      phone: "(11) 98765-4321",
+      phone: "(555) 321-6547",
       priority: "3",
       status: "T",
     },
@@ -30,7 +30,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "John Smith",
-      "(99) 99999-9999",
+      "(999) 888-7777",
       "999"
     );
 
@@ -43,19 +43,19 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "Different Name",
-      "(11) 98765-4321",
+      "(555) 321-6547",
       "999"
     );
 
     expect(duplicates.length).toBeGreaterThanOrEqual(1);
-    expect(duplicates.some((d) => d.phone === "(11) 98765-4321")).toBe(true);
+    expect(duplicates.some((d) => d.phone === "(555) 321-6547")).toBe(true);
   });
 
   it("should be case insensitive for names", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "john smith",
-      "(99) 99999-9999",
+      "(999) 888-7777",
       "999"
     );
 
@@ -67,7 +67,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "Jöhn Smith",
-      "(99) 99999-9999",
+      "(999) 888-7777",
       "999"
     );
 
@@ -79,7 +79,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "Different Name",
-      "11987654321", // Without formatting
+      "5553216547", // Without formatting
       "999"
     );
 
@@ -90,7 +90,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "John Smith",
-      "(11) 98765-4321",
+      "(555) 321-6547",
       "1" // Current patient ID
     );
 
@@ -102,7 +102,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "Jon Smith", // Missing letter (fuzzy match)
-      "(99) 99999-9999",
+      "(999) 888-7777",
       "999"
     );
 
@@ -113,7 +113,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "Completely Different Name",
-      "(00) 00000-0000",
+      "(000) 000-0000",
       "999"
     );
 
@@ -124,7 +124,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       [],
       "John Smith",
-      "(11) 98765-4321",
+      "(555) 321-6547",
       "999"
     );
 
@@ -157,7 +157,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "John Smith",
-      "(11) 98765-4321",
+      "(555) 321-6547",
       "999"
     );
 
@@ -173,7 +173,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "New Patient",
-      "(11) 98765-4321",
+      "(555) 321-6547",
       "999"
     );
 
@@ -185,7 +185,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "Jo",
-      "(99) 99999-9999",
+      "(999) 888-7777",
       "999"
     );
 
@@ -197,7 +197,7 @@ describe("duplicateDetection", () => {
     const duplicates = checkForDuplicatePatients(
       mockPatients,
       "  John Smith  ", // With whitespace
-      "(99) 99999-9999",
+      "(999) 888-7777",
       "999"
     );
 

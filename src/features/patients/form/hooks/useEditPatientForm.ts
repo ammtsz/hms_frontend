@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useUpdatePatient, useDeletePatient, usePatients } from "@/api/query/hooks/usePatientQueries";
 import { transformPriorityToApi, transformStatusToApi } from "@/utils/apiTransformers";
-import { formatPhoneNumber } from "@/utils/formUtils";
+import { formatPhoneNumber, validatePhoneFormat, PHONE_FORMAT_MESSAGE } from "@/utils/formUtils";
 import type { UpdatePatientRequest, PatientResponseDto } from "@/api/types";
 import { checkForDuplicatePatients } from "@/features/patients/edit/utils/duplicateDetection";
 import { formatDisplayDate } from "@/utils/dateUtils";
@@ -129,8 +129,8 @@ export const useEditPatientForm = ({
     }
 
     // Validate phone format if provided
-    if (patient.phone && !/^\(\d{2}\) \d{5}-\d{4}$/.test(patient.phone)) {
-      setError("Phone must be in format (XX) XXXXX-XXXX");
+    if (patient.phone && !validatePhoneFormat(patient.phone)) {
+      setError(PHONE_FORMAT_MESSAGE);
       return false;
     }
 

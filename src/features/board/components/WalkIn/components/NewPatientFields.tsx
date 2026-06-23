@@ -54,7 +54,7 @@ export const NewPatientFields: React.FC<NewPatientFieldsProps> = ({
             value={phone}
             onChange={handlePhoneChange}
             disabled={isSubmitting}
-            placeholder="(XX) XXXXX-XXXX"
+            placeholder="(XXX) XXX-XXXX"
             required
           />
         </Field>

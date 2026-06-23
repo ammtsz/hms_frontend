@@ -26,7 +26,7 @@ const patients: PatientBasic[] = [
   {
     id: "1",
     name: "John Smith",
-    phone: "(11) 99999-9999",
+    phone: "(555) 123-4567",
     priority: "3",
     status: "T",
   },

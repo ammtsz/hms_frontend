@@ -44,7 +44,7 @@ jest.mock("@/features/board/hooks/useSelectablePrioritiesForForm", () => ({
 const mockPatient: Patient = {
   id: "1",
   name: "John Smith",
-  phone: "(11) 99999-9999",
+  phone: "(555) 123-4567",
   birthDate: "1990-01-01",
   priority: "2",
   status: "N",
@@ -169,7 +169,7 @@ describe("NewPatientCheckInForm", () => {
     renderComponent();
 
     expect(screen.getByDisplayValue("John Smith")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("(11) 99999-9999")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("(555) 123-4567")).toBeInTheDocument();
     expect(screen.getByDisplayValue("1990-01-01")).toBeInTheDocument();
 
     // Check priority select by getting the element and checking its value
@@ -197,7 +197,7 @@ describe("NewPatientCheckInForm", () => {
     renderComponent();
 
     // Clear phone field
-    const phoneInput = screen.getByDisplayValue("(11) 99999-9999");
+    const phoneInput = screen.getByDisplayValue("(555) 123-4567");
     fireEvent.change(phoneInput, { target: { value: "" } });
 
     // Try to submit
@@ -226,10 +226,10 @@ describe("NewPatientCheckInForm", () => {
   it("handles phone number formatting", () => {
     renderComponent();
 
-    const phoneInput = screen.getByDisplayValue("(11) 99999-9999");
-    fireEvent.change(phoneInput, { target: { value: "11988887777" } });
+    const phoneInput = screen.getByDisplayValue("(555) 123-4567");
+    fireEvent.change(phoneInput, { target: { value: "5558887777" } });
 
-    expect(phoneInput).toHaveValue("(11) 98888-7777");
+    expect(phoneInput).toHaveValue("(555) 888-7777");
   });
 
   it("handles priority field changes", () => {
@@ -261,7 +261,7 @@ describe("NewPatientCheckInForm", () => {
         patientId: "1",
         data: expect.objectContaining({
           name: "John Smith",
-          phone: "(11) 99999-9999",
+          phone: "(555) 123-4567",
           birthDate: "1990-01-01",
         }),
       });
@@ -311,7 +311,7 @@ describe("NewPatientCheckInForm", () => {
       expect(onSuccess).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "John Smith",
-          phone: "(11) 99999-9999",
+          phone: "(555) 123-4567",
           status: "T",
         }),
       );

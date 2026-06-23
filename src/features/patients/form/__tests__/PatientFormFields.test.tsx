@@ -18,7 +18,7 @@ const mockGetTodayDate = jest.fn(() => "2026-03-09");
 
 const defaultPatient = {
   name: "Test Patient",
-  phone: "(11) 99999-9999",
+  phone: "(555) 123-4567",
   birthDate: "1990-01-01",
   priority: "3",
   status: "T",

@@ -48,21 +48,21 @@ const mockPatients: PatientBasic[] = [
   {
     id: "1",
     name: "John Smith",
-    phone: "(11) 99999-9999",
+    phone: "(555) 123-4567",
     priority: "1",
     status: "T",
   },
   {
     id: "2",
     name: "Emily Williams",
-    phone: "(11) 88888-8888",
+    phone: "(555) 987-6543",
     priority: "2",
     status: "D",
   },
   {
     id: "3",
     name: "Michael Taylor",
-    phone: "(11) 77777-7777",
+    phone: "(555) 456-7890",
     priority: "3",
     status: "C",
   },
@@ -191,9 +191,9 @@ describe("PatientList", () => {
     expect(table.getByText("John Smith")).toBeInTheDocument();
     expect(table.getByText("Emily Williams")).toBeInTheDocument();
     expect(table.getByText("Michael Taylor")).toBeInTheDocument();
-    expect(table.getByText("(11) 99999-9999")).toBeInTheDocument();
-    expect(table.getByText("(11) 88888-8888")).toBeInTheDocument();
-    expect(table.getByText("(11) 77777-7777")).toBeInTheDocument();
+    expect(table.getByText("(555) 123-4567")).toBeInTheDocument();
+    expect(table.getByText("(555) 987-6543")).toBeInTheDocument();
+    expect(table.getByText("(555) 456-7890")).toBeInTheDocument();
 
     const cards = within(screen.getByTestId("patient-list-cards"));
     expect(cards.getByText("John Smith")).toBeInTheDocument();

@@ -7,7 +7,7 @@ import {
   Status,
 } from "@/types/types";
 
-import { formatPhoneNumber } from "@/utils/formUtils";
+import { formatPhoneNumber, validatePhoneFormat, PHONE_FORMAT_MESSAGE } from "@/utils/formUtils";
 import { transformPriorityToApi, transformStatusToApi } from "@/utils/apiTransformers";
 import type { CreatePatientRequest, AppointmentType } from "@/api/types";
 import { formatDateClinic } from "@/utils/timezoneDate";
@@ -80,11 +80,8 @@ export function usePatientForm() {
     }
 
     // Phone format validation (optional field, but must be valid if provided)
-    if (patient.phone.trim()) {
-      const phoneRegex = /^\(\d{2}\) \d{4,5}-\d{4}$/;
-      if (!phoneRegex.test(patient.phone.trim())) {
-        errors.phone = "Phone must be in format (XX) XXXXX-XXXX or (XX) XXXX-XXXX";
-      }
+    if (patient.phone.trim() && !validatePhoneFormat(patient.phone.trim())) {
+      errors.phone = PHONE_FORMAT_MESSAGE;
     }
 
     // First consultation date: must have assessment slots on that day (when schedule settings are available)

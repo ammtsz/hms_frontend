@@ -14,7 +14,13 @@ jest.mock('next/navigation');
 jest.mock('@/api/query/hooks/usePatientQueries');
 jest.mock('@/api/query/hooks/useScheduleQueries');
 jest.mock('@/api/query/hooks/useScheduleSettingQueries');
-jest.mock('@/utils/formUtils');
+jest.mock('@/utils/formUtils', () => {
+  const actual = jest.requireActual<typeof import('@/utils/formUtils')>('@/utils/formUtils');
+  return {
+    ...actual,
+    formatPhoneNumber: jest.fn(actual.formatPhoneNumber),
+  };
+});
 jest.mock('@/utils/apiTransformers');
 jest.mock('@/api/day-finalization', () => ({
   getDayFinalizationStatus: jest.fn().mockResolvedValue({
@@ -135,18 +141,18 @@ describe('usePatientForm', () => {
     });
 
     it('should handle phone number formatting', () => {
-      mockedFormatPhoneNumber.mockReturnValue('(11) 99999-9999');
+      mockedFormatPhoneNumber.mockReturnValue('(555) 123-4567');
       
       const { result } = renderHook(() => usePatientForm());
 
       act(() => {
         result.current.handleChange({
-          target: { name: 'phone', value: '11999999999', type: 'text' }
+          target: { name: 'phone', value: '5551234567', type: 'text' }
         } as unknown as React.ChangeEvent<HTMLInputElement>);
       });
 
-      expect(mockedFormatPhoneNumber).toHaveBeenCalledWith('11999999999');
-      expect(result.current.patient.phone).toBe('(11) 99999-9999');
+      expect(mockedFormatPhoneNumber).toHaveBeenCalledWith('5551234567');
+      expect(result.current.patient.phone).toBe('(555) 123-4567');
     });
 
     it('should store birth date as entered without defaulting to today', () => {
@@ -372,7 +378,7 @@ describe('usePatientForm', () => {
           ...result.current.patient,
           name: 'John Doe',
           birthDate: VALID_BIRTH_DATE,
-          phone: '(11) 99999-9999'
+          phone: '(555) 123-4567'
         });
       });
 
@@ -437,7 +443,7 @@ describe('usePatientForm', () => {
     it('should include phone when provided', async () => {
       const mockCreatedPatient = { id: 1, name: 'John Doe' };
       mockCreatePatientMutateAsync.mockResolvedValue(mockCreatedPatient);
-      mockedFormatPhoneNumber.mockReturnValue('(11) 99999-9999');
+      mockedFormatPhoneNumber.mockReturnValue('(555) 123-4567');
 
       const { result } = renderHook(() => usePatientForm());
 
@@ -446,7 +452,7 @@ describe('usePatientForm', () => {
           ...result.current.patient,
           name: 'John Doe',
           birthDate: VALID_BIRTH_DATE,
-          phone: '(11) 99999-9999'
+          phone: '(555) 123-4567'
         });
       });
 
@@ -458,7 +464,7 @@ describe('usePatientForm', () => {
 
       expect(mockCreatePatientMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
-          phone: '(11) 99999-9999'
+          phone: '(555) 123-4567'
         })
       );
     });
@@ -663,7 +669,7 @@ describe('usePatientForm', () => {
           ...result.current.patient,
           name: 'John Doe',
           birthDate: VALID_BIRTH_DATE,
-          phone: '(11) 99999-9999'
+          phone: '(555) 123-4567'
         });
       });
 

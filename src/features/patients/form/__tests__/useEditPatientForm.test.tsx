@@ -27,10 +27,14 @@ jest.mock("@/utils/apiTransformers", () => ({
   transformStatusToApi: jest.fn((status) => status),
 }));
 
-// Mock form helpers
-jest.mock("@/utils/formUtils", () => ({
-  formatPhoneNumber: jest.fn((phone) => phone),
-}));
+// Mock form helpers (keep real validation, mock formatter only when needed)
+jest.mock("@/utils/formUtils", () => {
+  const actual = jest.requireActual<typeof import("@/utils/formUtils")>("@/utils/formUtils");
+  return {
+    ...actual,
+    formatPhoneNumber: jest.fn(actual.formatPhoneNumber),
+  };
+});
 
 describe("useEditPatientForm", () => {
   const mockOnClose = jest.fn();
@@ -42,7 +46,7 @@ describe("useEditPatientForm", () => {
 
   const defaultInitialData = {
     name: "Test Patient",
-    phone: "(11) 99999-9999",
+    phone: "(555) 123-4567",
     birthDate: "1990-01-01",
     priority: "2",
     status: "D",
@@ -88,12 +92,12 @@ describe("useEditPatientForm", () => {
 
     act(() => {
       const mockEvent = {
-        target: { name: "phone", value: "11999999999", type: "text" },
+        target: { name: "phone", value: "5551234567", type: "text" },
       } as React.ChangeEvent<HTMLInputElement>;
       result.current.handleChange(mockEvent);
     });
 
-    expect(result.current.patient.phone).toBe("11999999999");
+    expect(result.current.patient.phone).toBe("(555) 123-4567");
   });
 
   it("handles date field changes", () => {
@@ -185,7 +189,7 @@ describe("useEditPatientForm", () => {
 
     // Other fields should remain unchanged
     expect(result.current.patient.name).toBe("New Name");
-    expect(result.current.patient.phone).toBe("(11) 99999-9999");
+    expect(result.current.patient.phone).toBe("(555) 123-4567");
   });
 
   // Tests for uncovered functionality
@@ -385,7 +389,7 @@ describe("useEditPatientForm", () => {
       });
 
       expect(result.current.error).toBe(
-        "Phone must be in format (XX) XXXXX-XXXX",
+        "Phone must be in the format (XXX) XXX-XXXX",
       );
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
@@ -397,7 +401,7 @@ describe("useEditPatientForm", () => {
       // Set valid phone format
       act(() => {
         const mockEvent = {
-          target: { name: "phone", value: "(11) 98765-4321", type: "text" },
+          target: { name: "phone", value: "(555) 321-6547", type: "text" },
         } as React.ChangeEvent<HTMLInputElement>;
         result.current.handleChange(mockEvent);
       });
@@ -565,7 +569,7 @@ describe("useEditPatientForm", () => {
         patientId: "123",
         data: expect.objectContaining({
           name: "Test Patient",
-          phone: "(11) 99999-9999",
+          phone: "(555) 123-4567",
           birthDate: "1990-01-01",
           mainConcern: "Test complaint",
         }),

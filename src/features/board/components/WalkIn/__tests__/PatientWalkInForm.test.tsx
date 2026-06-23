@@ -35,7 +35,7 @@ jest.mock("@/api/query/hooks/usePatientQueries", () => ({
       {
         id: "1",
         name: "John Smith",
-        phone: "11999999999",
+        phone: "5551234567",
         priority: "Normal" as const,
         status: "T" as const,
         startDate: "2025-01-01",
@@ -481,10 +481,10 @@ describe("PatientWalkInForm", () => {
       const newPatientSwitch = screen.getByLabelText(/New patient/i);
       await user.click(newPatientSwitch);
 
-      const phoneInput = screen.getByPlaceholderText("(XX) XXXXX-XXXX");
-      await user.type(phoneInput, "11999999999");
+      const phoneInput = screen.getByPlaceholderText("(XXX) XXX-XXXX");
+      await user.type(phoneInput, "5551234567");
 
-      expect(phoneInput).toHaveValue("(11) 99999-9999");
+      expect(phoneInput).toHaveValue("(555) 123-4567");
     });
 
     it("handles date input correctly", async () => {
@@ -685,8 +685,8 @@ describe("PatientWalkInForm", () => {
       expect(submitButton).toBeDisabled();
 
       // Fill phone number (required field)
-      const phoneInput = screen.getByPlaceholderText("(XX) XXXXX-XXXX");
-      await user.type(phoneInput, "11999999999");
+      const phoneInput = screen.getByPlaceholderText("(XXX) XXX-XXXX");
+      await user.type(phoneInput, "5551234567");
 
       // Still disabled without birth date
       expect(submitButton).toBeDisabled();
@@ -733,9 +733,9 @@ describe("PatientWalkInForm", () => {
       await user.type(nameInput, "New Patient");
       expect(nameInput).toHaveValue("New Patient");
 
-      const phoneInput = screen.getByPlaceholderText("(XX) XXXXX-XXXX");
-      await user.type(phoneInput, "11999999999");
-      expect(phoneInput).toHaveValue("(11) 99999-9999"); // Should be formatted
+      const phoneInput = screen.getByPlaceholderText("(XXX) XXX-XXXX");
+      await user.type(phoneInput, "5551234567");
+      expect(phoneInput).toHaveValue("(555) 123-4567"); // Should be formatted
 
       const birthDateInput = screen.getByLabelText("Date of Birth *");
       await user.type(birthDateInput, "2000-01-15");
@@ -770,8 +770,8 @@ describe("PatientWalkInForm", () => {
       const nameInput = screen.getByPlaceholderText("Name of new patient...");
       await user.type(nameInput, "John Smith"); // Existing patient name
 
-      const phoneInput = screen.getByPlaceholderText("(XX) XXXXX-XXXX");
-      await user.type(phoneInput, "11999999999");
+      const phoneInput = screen.getByPlaceholderText("(XXX) XXX-XXXX");
+      await user.type(phoneInput, "5551234567");
 
       const birthDateInput = screen.getByLabelText("Date of Birth *");
       await user.type(birthDateInput, "2000-01-15");
@@ -809,8 +809,8 @@ describe("PatientWalkInForm", () => {
       const nameInput = screen.getByPlaceholderText("Name of new patient...");
       await user.type(nameInput, "Failed Patient");
 
-      const phoneInput = screen.getByPlaceholderText("(XX) XXXXX-XXXX");
-      await user.type(phoneInput, "11999999999");
+      const phoneInput = screen.getByPlaceholderText("(XXX) XXX-XXXX");
+      await user.type(phoneInput, "5551234567");
 
       const birthDateInput = screen.getByLabelText("Date of Birth *");
       await user.type(birthDateInput, "2000-01-15");

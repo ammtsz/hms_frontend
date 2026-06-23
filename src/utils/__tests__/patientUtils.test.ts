@@ -73,7 +73,7 @@ describe("patientUtils", () => {
     it("should accept phone with formatting characters", () => {
       const result = validatePatientData({
         name: "John Smith",
-        phone: "(11) 99999-9999",
+        phone: "(555) 123-4567",
         birthDate: "1990-01-01",
       });
 

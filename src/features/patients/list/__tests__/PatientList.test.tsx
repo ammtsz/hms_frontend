@@ -35,14 +35,14 @@ const mockPatients = [
   {
     id: 1,
     name: "John Smith",
-    phone: "(11) 99999-9999",
+    phone: "(555) 123-4567",
     priority: "3",
     status: "T",
   },
   {
     id: 2,
     name: "Emily Williams",
-    phone: "(11) 88888-8888",
+    phone: "(555) 987-6543",
     priority: "1",
     status: "D",
   },
@@ -165,8 +165,8 @@ describe("PatientList", () => {
       const table = within(screen.getByTestId("patient-list-table"));
       expect(table.getByText("John Smith")).toBeInTheDocument();
       expect(table.getByText("Emily Williams")).toBeInTheDocument();
-      expect(table.getByText("(11) 99999-9999")).toBeInTheDocument();
-      expect(table.getByText("(11) 88888-8888")).toBeInTheDocument();
+      expect(table.getByText("(555) 123-4567")).toBeInTheDocument();
+      expect(table.getByText("(555) 987-6543")).toBeInTheDocument();
     });
 
     it("should make table rows clickable", () => {

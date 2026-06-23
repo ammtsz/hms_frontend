@@ -54,7 +54,7 @@ jest.mock("@/features/patients/detail/shared/ShowMoreButton", () => ({
 const mockPatient: Patient = {
   id: "1",
   name: "John Smith",
-  phone: "(11) 99999-9999",
+  phone: "(555) 123-4567",
   birthDate: "1980-05-15",
   mainConcern: "Frequent headaches",
   status: "D",

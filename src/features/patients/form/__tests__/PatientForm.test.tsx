@@ -294,7 +294,7 @@ describe("PatientForm", () => {
       const patientWithData = {
         ...mockPatient,
         name: "John Smith",
-        phone: "(11) 99999-9999",
+        phone: "(555) 123-4567",
         mainConcern: "Headache",
       };
 
@@ -306,7 +306,7 @@ describe("PatientForm", () => {
       renderWithProviders(<PatientForm />);
 
       expect(screen.getByDisplayValue("John Smith")).toBeInTheDocument();
-      expect(screen.getByDisplayValue("(11) 99999-9999")).toBeInTheDocument();
+      expect(screen.getByDisplayValue("(555) 123-4567")).toBeInTheDocument();
       expect(screen.getByDisplayValue("Headache")).toBeInTheDocument();
     });
   });
@@ -364,7 +364,7 @@ describe("PatientForm", () => {
         validationErrors: {
           name: "Name is required",
           birthDate: "Date of birth is required",
-          phone: "Phone must be in format (XX) XXXXX-XXXX",
+          phone: "Phone must be in the format (XXX) XXX-XXXX",
         },
       });
 
@@ -373,7 +373,7 @@ describe("PatientForm", () => {
       expect(screen.getByText("Name is required")).toBeInTheDocument();
       expect(screen.getByText("Date of birth is required")).toBeInTheDocument();
       expect(
-        screen.getByText("Phone must be in format (XX) XXXXX-XXXX"),
+        screen.getByText("Phone must be in the format (XXX) XXX-XXXX"),
       ).toBeInTheDocument();
     });
 

@@ -36,7 +36,7 @@ jest.mock("next/link", () => {
 const mockPatient: Patient = {
   id: "1",
   name: "John Smith",
-  phone: "(11) 99999-9999",
+  phone: "(555) 123-4567",
   birthDate: "1980-05-15",
   mainConcern: "Frequent headaches",
   status: "D",
@@ -96,7 +96,7 @@ describe("HeaderCard", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("#1")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: "(11) 99999-9999" }),
+      screen.getByRole("link", { name: "(555) 123-4567" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Discharged")).toBeInTheDocument();
     expect(screen.getByText("Frequent headaches")).toBeInTheDocument();

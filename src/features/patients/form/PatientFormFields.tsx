@@ -163,7 +163,7 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
               value={patient.phone}
               onChange={handleChange}
               invalid={Boolean(validationErrors.phone)}
-              placeholder="(11) 99999-9999"
+              placeholder="(555) 123-4567"
             />
           </Field>
         </div>

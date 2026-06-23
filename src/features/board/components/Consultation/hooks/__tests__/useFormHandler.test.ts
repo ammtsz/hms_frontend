@@ -280,12 +280,12 @@ describe('usePatientFormHandler', () => {
 
     act(() => {
       const event = {
-        target: { name: 'phone', value: '11999887766', type: 'text' }
+        target: { name: 'phone', value: '5551234567', type: 'text' }
       } as React.ChangeEvent<HTMLInputElement>;
       result.current.handleChange(event);
     });
 
-    expect(result.current.formData.phone).toBe('(11) 99988-7766');
+    expect(result.current.formData.phone).toBe('(555) 123-4567');
   });
 
   it('should handle birth date formatting', () => {

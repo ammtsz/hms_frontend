@@ -1,26 +1,29 @@
 // Common form utility functions
 
+/** User-facing hint for the expected phone display format */
+export const PHONE_FORMAT_MESSAGE = "Phone must be in the format (XXX) XXX-XXXX";
+
 /**
- * Formats phone number for Brazilian standards
+ * Formats phone number for US standards
  * @param value - Raw phone input
- * @returns Formatted phone number (XX) XXXXX-XXXX
+ * @returns Formatted phone number (XXX) XXX-XXXX
  */
 export function formatPhoneNumber(value: string): string {
   if (!value) return "";
-  
+
   // Remove all non-numeric characters
   const numbers = value.replace(/\D/g, "");
-  
-  // Format as (XX) XXXXX-XXXX for Brazilian phones
-  if (numbers.length <= 2) {
+
+  // Format as (XXX) XXX-XXXX for US phones
+  if (numbers.length <= 3) {
     return numbers;
-  } else if (numbers.length <= 7) {
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
-  } else if (numbers.length <= 11) {
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+  } else if (numbers.length <= 6) {
+    return `(${numbers.slice(0, 3)}) ${numbers.slice(3)}`;
+  } else if (numbers.length <= 10) {
+    return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6)}`;
   } else {
-    // Limit to 11 digits
-    return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+    // Limit to 10 digits
+    return `(${numbers.slice(0, 3)}) ${numbers.slice(3, 6)}-${numbers.slice(6, 10)}`;
   }
 }
 
@@ -42,7 +45,7 @@ export function createSafeDate(dateString: string): Date {
  */
 export function validatePhoneFormat(phone: string): boolean {
   if (!phone) return true; // Optional field
-  return /^\(\d{2}\) \d{5}-\d{4}$/.test(phone);
+  return /^\(\d{3}\) \d{3}-\d{4}$/.test(phone);
 }
 
 /**
@@ -74,7 +77,7 @@ export function validatePatientForm(
   }
 
   if (data.phone && !validatePhoneFormat(data.phone)) {
-    return "Phone must be in the format (XX) XXXXX-XXXX";
+    return PHONE_FORMAT_MESSAGE;
   }
 
   return null;

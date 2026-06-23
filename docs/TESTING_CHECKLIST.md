@@ -91,7 +91,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 - [ ] Form renders all fields correctly
 - [ ] Required field validation works
-- [ ] Phone number auto-formats: (XX) XXXXX-XXXX
+- [ ] Phone number auto-formats: (XXX) XXX-XXXX
 - [ ] Birth date starts empty (not prefilled with today)
 - [ ] Birth date can be entered segment-by-segment (mm/dd/yyyy) without jumping to today
 - [ ] Birth date validation (required, no future dates)

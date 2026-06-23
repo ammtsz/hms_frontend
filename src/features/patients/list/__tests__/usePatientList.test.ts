@@ -36,28 +36,28 @@ const mockPatients: PatientBasic[] = [
   {
     id: "1",
     name: "John Smith",
-    phone: "(11) 99999-9999",
+    phone: "(555) 123-4567",
     priority: "1",
     status: "T",
   },
   {
     id: "2",
     name: "Emily Williams",
-    phone: "(11) 88888-8888",
+    phone: "(555) 987-6543",
     priority: "2",
     status: "D",
   },
   {
     id: "3",
     name: "Michael Taylor",
-    phone: "(11) 77777-7777",
+    phone: "(555) 456-7890",
     priority: "3",
     status: "C",
   },
   {
     id: "4",
     name: "Sarah Stevens",
-    phone: "(11) 55555-5555",
+    phone: "(555) 111-2222",
     priority: "1",
     status: "T",
   },
@@ -182,7 +182,7 @@ describe("usePatientList", () => {
         {
           id: "1",
           name: "John Smith",
-          phone: "(11) 99999-9999",
+          phone: "(555) 123-4567",
           priority: "1",
           status: "T",
         },
@@ -200,7 +200,7 @@ describe("usePatientList", () => {
         {
           id: "2",
           name: "Emily Williams",
-          phone: "(11) 88888-8888",
+          phone: "(555) 987-6543",
           priority: "2",
           status: "D",
         },
@@ -218,7 +218,7 @@ describe("usePatientList", () => {
         {
           id: "1",
           name: "John Smith",
-          phone: "(11) 99999-9999",
+          phone: "(555) 123-4567",
           priority: "1",
           status: "T",
         },
@@ -318,7 +318,7 @@ describe("usePatientList", () => {
         {
           id: "1",
           name: "John Smith",
-          phone: "(11) 99999-9999",
+          phone: "(555) 123-4567",
           priority: "1",
           status: "T",
         },

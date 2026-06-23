@@ -23,7 +23,7 @@ jest.mock("next/link", () => {
 const patient = {
   id: "1",
   name: "John Smith",
-  phone: "(11) 99999-9999",
+  phone: "(555) 123-4567",
   priority: "3",
   status: "T",
 };
@@ -39,7 +39,7 @@ describe("PatientListCard", () => {
     );
 
     expect(screen.getByText("John Smith")).toBeInTheDocument();
-    expect(screen.getByText("(11) 99999-9999")).toBeInTheDocument();
+    expect(screen.getByText("(555) 123-4567")).toBeInTheDocument();
     expect(screen.getByText("In Treatment")).toBeInTheDocument();
     expect(screen.getByText("Priority 3")).toBeInTheDocument();
 

@@ -97,7 +97,7 @@ describe("PatientEditPage", () => {
   const mockPatient = {
     id: "123",
     name: "John Smith",
-    phone: "(11) 98765-4321",
+    phone: "(555) 321-6547",
     priority: "3",
     status: "T",
     birthDate: new Date("1990-01-01"),
@@ -119,7 +119,7 @@ describe("PatientEditPage", () => {
 
   const mockFormPatient = {
     name: "John Smith",
-    phone: "(11) 98765-4321",
+    phone: "(555) 321-6547",
     priority: "3",
     status: "T",
     birthDate: new Date("1990-01-01"),

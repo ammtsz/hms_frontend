@@ -9,14 +9,14 @@ describe("DuplicateWarningModal", () => {
     {
       id: "1",
       name: "John Smith",
-      phone: "(11) 98765-4321",
+      phone: "(555) 321-6547",
       priority: "3",
       status: "T",
     },
     {
       id: "2",
       name: "John Williams",
-      phone: "(11) 98765-4321",
+      phone: "(555) 321-6547",
       priority: "2",
       status: "N",
     },
@@ -60,7 +60,7 @@ describe("DuplicateWarningModal", () => {
 
     expect(screen.getByText("John Smith")).toBeInTheDocument();
     expect(screen.getByText("John Williams")).toBeInTheDocument();
-    expect(screen.getAllByText("(11) 98765-4321")).toHaveLength(2);
+    expect(screen.getAllByText("(555) 321-6547")).toHaveLength(2);
   });
 
   it("should show patient IDs", () => {
@@ -172,7 +172,7 @@ describe("DuplicateWarningModal", () => {
     const manyDuplicates = Array.from({ length: 10 }, (_, i) => ({
       id: String(i),
       name: `Patient ${i}`,
-      phone: `(11) 9876${i}-4321`,
+      phone: `(555) 321-654${i}`,
       priority: "3",
       status: "T",
     }));

@@ -99,10 +99,10 @@ describe("NewPatientFields", () => {
   });
 
   it("should display phone value correctly", () => {
-    render(<NewPatientFields {...mockProps} phone="(11) 98765-4321" />);
+    render(<NewPatientFields {...mockProps} phone="(555) 321-6547" />);
 
     const phoneInput = screen.getByLabelText("Phone *") as HTMLInputElement;
-    expect(phoneInput.value).toBe("(11) 98765-4321");
+    expect(phoneInput.value).toBe("(555) 321-6547");
   });
 
   it("should disable all inputs when submitting", () => {

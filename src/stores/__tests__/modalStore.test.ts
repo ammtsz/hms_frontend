@@ -283,7 +283,7 @@ describe('Modal Store', () => {
       const patient: PatientBasic = {
         id: '1',
         name: 'Jane Doe',
-        phone: '(11) 99999-9999',
+        phone: '(555) 123-4567',
         priority: '2',
         status: 'D'
       };
@@ -308,7 +308,7 @@ describe('Modal Store', () => {
       const patient: PatientBasic = {
         id: '1',
         name: 'Jane Doe',
-        phone: '(11) 99999-9999',
+        phone: '(555) 123-4567',
         priority: '2',
         status: 'D'
       };

@@ -39,35 +39,35 @@ describe('formUtils', () => {
   });
 
   describe('formatPhoneNumber', () => {
-    it('should format phone numbers in Brazilian format', () => {
-      expect(formatPhoneNumber('11999887766')).toBe('(11) 99988-7766');
-      expect(formatPhoneNumber('21987654321')).toBe('(21) 98765-4321');
+    it('should format phone numbers in US format', () => {
+      expect(formatPhoneNumber('5551234567')).toBe('(555) 123-4567');
+      expect(formatPhoneNumber('7183216547')).toBe('(718) 321-6547');
     });
 
     it('should handle partially entered numbers', () => {
-      expect(formatPhoneNumber('11')).toBe('11');
-      expect(formatPhoneNumber('119')).toBe('(11) 9');
-      expect(formatPhoneNumber('1199988')).toBe('(11) 99988');
+      expect(formatPhoneNumber('555')).toBe('555');
+      expect(formatPhoneNumber('5551')).toBe('(555) 1');
+      expect(formatPhoneNumber('555123')).toBe('(555) 123');
     });
 
     it('should handle numbers with existing formatting', () => {
-      expect(formatPhoneNumber('(11) 99988-7766')).toBe('(11) 99988-7766');
-      expect(formatPhoneNumber('11 99988-7766')).toBe('(11) 99988-7766');
+      expect(formatPhoneNumber('(555) 123-4567')).toBe('(555) 123-4567');
+      expect(formatPhoneNumber('555 123-4567')).toBe('(555) 123-4567');
     });
 
     it('should handle empty and invalid inputs', () => {
       expect(formatPhoneNumber('')).toBe('');
       expect(formatPhoneNumber('abc')).toBe('');
-      expect(formatPhoneNumber('123')).toBe('(12) 3');
+      expect(formatPhoneNumber('123')).toBe('123');
     });
 
     it('should handle numbers longer than expected', () => {
-      expect(formatPhoneNumber('119998877661234')).toBe('(11) 99988-7766');
+      expect(formatPhoneNumber('55512345678901')).toBe('(555) 123-4567');
     });
 
     it('should remove all non-digit characters', () => {
-      expect(formatPhoneNumber('11-99988.7766')).toBe('(11) 99988-7766');
-      expect(formatPhoneNumber('+55 11 99988-7766')).toBe('(55) 11999-8877');
+      expect(formatPhoneNumber('555-123.4567')).toBe('(555) 123-4567');
+      expect(formatPhoneNumber('+1 555 123 4567')).toBe('(155) 512-3456');
     });
   });
 
@@ -102,17 +102,17 @@ describe('formUtils', () => {
   });
 
   describe('validatePhoneFormat', () => {
-    it('should validate correct Brazilian phone format', () => {
-      expect(validatePhoneFormat('(11) 99988-7766')).toBe(true);
-      expect(validatePhoneFormat('(21) 98765-4321')).toBe(true);
-      expect(validatePhoneFormat('(85) 12345-6789')).toBe(true);
+    it('should validate correct US phone format', () => {
+      expect(validatePhoneFormat('(555) 123-4567')).toBe(true);
+      expect(validatePhoneFormat('(718) 321-6547')).toBe(true);
+      expect(validatePhoneFormat('(850) 123-4567')).toBe(true);
     });
 
     it('should reject incorrect formats', () => {
-      expect(validatePhoneFormat('11999887766')).toBe(false); // No formatting
-      expect(validatePhoneFormat('(11) 9998-7766')).toBe(false); // Wrong digit count
-      expect(validatePhoneFormat('11 99988-7766')).toBe(false); // Wrong separator
-      expect(validatePhoneFormat('(111) 99988-7766')).toBe(false); // Too many area code digits
+      expect(validatePhoneFormat('5551234567')).toBe(false); // No formatting
+      expect(validatePhoneFormat('(55) 123-4567')).toBe(false); // Wrong area code length
+      expect(validatePhoneFormat('555 123-4567')).toBe(false); // Wrong separator
+      expect(validatePhoneFormat('(5555) 123-4567')).toBe(false); // Too many area code digits
     });
 
     it('should return true for empty strings (optional field)', () => {
@@ -121,15 +121,15 @@ describe('formUtils', () => {
 
     it('should handle various invalid inputs', () => {
       expect(validatePhoneFormat('abc')).toBe(false);
-      expect(validatePhoneFormat('(11) abc-def')).toBe(false);
-      expect(validatePhoneFormat('11999887766123')).toBe(false);
+      expect(validatePhoneFormat('(555) abc-defg')).toBe(false);
+      expect(validatePhoneFormat('55512345678901')).toBe(false);
     });
   });
 
   describe('validatePatientForm', () => {
     const validData = {
       name: 'John Smith',
-      phone: '(11) 99988-7766',
+      phone: '(555) 123-4567',
       birthDate: '1990-05-15',
     };
 
@@ -167,9 +167,9 @@ describe('formUtils', () => {
     });
 
     it('should validate phone format when provided', () => {
-      const dataWithBadPhone = { ...validData, phone: '11999887766' };
+      const dataWithBadPhone = { ...validData, phone: '5551234567' };
       expect(validatePatientForm(dataWithBadPhone))
-        .toMatch(/Phone must be in the format \(XX\) XXXXX-XXXX/);
+        .toMatch(/Phone must be in the format \(XXX\) XXX-XXXX/);
     });
 
     it('should handle combination of requirements', () => {
