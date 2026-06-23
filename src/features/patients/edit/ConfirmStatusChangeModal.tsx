@@ -11,9 +11,9 @@ interface ConfirmStatusChangeModalProps {
   isSaving: boolean;
 }
 
-const STATUS_LABELS: Record<"A" | "F", string> = {
-  A: "Discharged",
-  F: "Missed — consecutive",
+const STATUS_LABELS: Record<"D" | "C", string> = {
+  D: "Discharged",
+  C: "Consecutive no-shows",
 };
 
 const ConfirmStatusChangeModal: React.FC<ConfirmStatusChangeModalProps> = ({

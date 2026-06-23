@@ -196,7 +196,7 @@ describe("useDragAndDrop - Coverage Enhancement", () => {
     mockMarkMissedMutation.mutateAsync.mockResolvedValue({});
 
     mockUsePatients.mockReturnValue({
-      data: [{ id: 1, name: "Test Patient", status: "A" }],
+      data: [{ id: 1, name: "Test Patient", status: "D" }],
       isLoading: false,
       error: null,
     } as never);

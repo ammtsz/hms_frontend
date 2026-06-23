@@ -285,7 +285,7 @@ describe('Modal Store', () => {
         name: 'Jane Doe',
         phone: '(11) 99999-9999',
         priority: '2',
-        status: 'A'
+        status: 'D'
       };
       const onComplete = jest.fn();
 
@@ -310,7 +310,7 @@ describe('Modal Store', () => {
         name: 'Jane Doe',
         phone: '(11) 99999-9999',
         priority: '2',
-        status: 'A'
+        status: 'D'
       };
       const onComplete = jest.fn();
 

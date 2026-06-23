@@ -28,8 +28,8 @@ export const ParentAttendanceSelector: React.FC<
   const showOngoingList =
     patientStatus === "T" && parentAttendanceOptions.length > 0;
   const showNewComplaintOnly =
-    patientStatus === "A" ||
-    patientStatus === "F" ||
+    patientStatus === "D" ||
+    patientStatus === "C" ||
     (patientStatus === "T" && parentAttendanceOptions.length === 0);
 
   const singleOptionLabel = showNewComplaintOnly

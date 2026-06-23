@@ -47,7 +47,7 @@ interface UseManageAttendanceModalState {
   postponeMode: PostponeMode;
   reason: string;
   cancelAllOpenAttendances: boolean;
-  cancelAllNewStatus: PatientStatus.DISCHARGED | PatientStatus.ABSENT;
+  cancelAllNewStatus: PatientStatus.DISCHARGED | PatientStatus.CONSECUTIVE_NO_SHOWS;
   nextAvailableDates: Record<string, string | null>;
   loadingNextAvailable: boolean;
   attendanceDate?: string;
@@ -64,7 +64,7 @@ interface UseManageAttendanceModalHandlers {
   setPostponeMode: (mode: PostponeMode) => void;
   setCancelAllOpenAttendances: (value: boolean) => void;
   setCancelAllNewStatus: (
-    value: PatientStatus.DISCHARGED | PatientStatus.ABSENT,
+    value: PatientStatus.DISCHARGED | PatientStatus.CONSECUTIVE_NO_SHOWS,
   ) => void;
   handleConfirmCancellation: (event: FormEvent) => Promise<void>;
   handleConfirmPostpone: (event: FormEvent) => Promise<void>;
@@ -103,8 +103,8 @@ export const useManageAttendanceModal = (
   );
   const [cancelAllOpenAttendances, setCancelAllOpenAttendances] = useState<boolean>(false);
   const [cancelAllNewStatus, setCancelAllNewStatus] = useState<
-    PatientStatus.DISCHARGED | PatientStatus.ABSENT
-  >(PatientStatus.ABSENT);
+    PatientStatus.DISCHARGED | PatientStatus.CONSECUTIVE_NO_SHOWS
+  >(PatientStatus.CONSECUTIVE_NO_SHOWS);
   const [postponeFeedback, setPostponeFeedback] =
     useState<PostponeFeedbackData | null>(null);
 
@@ -149,7 +149,7 @@ export const useManageAttendanceModal = (
     setError("");
     setSelectedAttendanceIds([]);
     setCancelAllOpenAttendances(false);
-    setCancelAllNewStatus(PatientStatus.ABSENT);
+    setCancelAllNewStatus(PatientStatus.CONSECUTIVE_NO_SHOWS);
     setPostponeFeedback(null);
   }, []);
 

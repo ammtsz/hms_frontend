@@ -73,12 +73,12 @@ export function calculateAge(birthDate: string): number {
   return age;
 }
 
-/** Canonical treatment status labels (N/T/A/F) */
+/** Canonical treatment status labels (N/T/D/C) */
 export const TREATMENT_STATUS_LABELS = {
   N: "New patient",
   T: "In Treatment",
-  A: "Discharged",
-  F: "Missed — consecutive",
+  D: "Discharged",
+  C: "Consecutive no-shows",
 } as const;
 
 /**

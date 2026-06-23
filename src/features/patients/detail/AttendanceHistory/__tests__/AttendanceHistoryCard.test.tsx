@@ -57,7 +57,7 @@ const mockPatient: Patient = {
   phone: "(11) 99999-9999",
   birthDate: "1980-05-15",
   mainConcern: "Frequent headaches",
-  status: "A",
+  status: "D",
   priority: "2",
   startDate: "2024-01-15",
   dischargeDate: null,

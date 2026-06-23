@@ -2,34 +2,34 @@
 
 // Enums matching backend
 export enum PatientPriority {
-  LEVEL_1 = '1',
-  LEVEL_2 = '2',
-  LEVEL_3 = '3',
-  LEVEL_4 = '4',
-  LEVEL_5 = '5',
+  LEVEL_1 = "1",
+  LEVEL_2 = "2",
+  LEVEL_3 = "3",
+  LEVEL_4 = "4",
+  LEVEL_5 = "5",
 }
 
-/** Lifecycle status on patient and consultation snapshot (N/T/A/F). */
+/** Lifecycle status on patient and consultation snapshot (N/T/D/C). */
 export enum PatientStatus {
-  NEW_PATIENT = 'N',
-  IN_TREATMENT = 'T',
-  DISCHARGED = 'A',
-  ABSENT = 'F',
+  NEW_PATIENT = "N",
+  IN_TREATMENT = "T",
+  DISCHARGED = "D",
+  CONSECUTIVE_NO_SHOWS = "C",
 }
 
 export enum AttendanceType {
-  ASSESSMENT = 'assessment',
-  PHYSIOTHERAPY = 'physiotherapy',
-  TENS = 'tens'
+  ASSESSMENT = "assessment",
+  PHYSIOTHERAPY = "physiotherapy",
+  TENS = "tens",
 }
 
 export enum AttendanceStatus {
-  SCHEDULED = 'scheduled',
-  CHECKED_IN = 'checked_in',
-  IN_PROGRESS = 'in_progress',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
-  MISSED = 'missed'
+  SCHEDULED = "scheduled",
+  CHECKED_IN = "checked_in",
+  IN_PROGRESS = "in_progress",
+  COMPLETED = "completed",
+  CANCELLED = "cancelled",
+  MISSED = "missed",
 }
 
 // API Response DTOs matching backend (note: responses are automatically converted to camelCase by axios interceptor)
@@ -88,7 +88,7 @@ export interface ConsultationResponseDto {
   id: number;
   attendanceId: number;
   mainConcern?: string;
-  patientStatus?: string; // N, T, A, or F
+  patientStatus?: string; // N, T, D, or C
   food?: string;
   water?: string;
   ointments?: string;
@@ -105,7 +105,7 @@ export interface ConsultationResponseDto {
   updatedTime: string; // HH:mm:ss - time from backend
 }
 
-/** Item returned when attendances were cancelled (e.g. status A or F) */
+/** Item returned when attendances were cancelled (e.g. status D or C) */
 export interface CancelledAttendanceItemDto {
   id: number;
   type: string;
@@ -125,7 +125,7 @@ export interface TreatmentsResultDto {
 export interface UpdateConsultationResponseDto {
   consultation: ConsultationResponseDto;
   treatments?: TreatmentsResultDto;
-  /** Present when treatment status was set to Discharged (A) or Missed (F) */
+  /** Present when treatment status was set to Discharged (D) or Consecutive no-shows (C) */
   cancelledAttendances?: CancelledAttendanceItemDto[];
 }
 
@@ -196,7 +196,7 @@ export interface UpdateAttendanceRequest {
 export interface CreateConsultationRequest {
   attendanceId: number;
   mainConcern?: string;
-  patientStatus?: string; // N, T, A, or F - Stored on consultation and used for patient update
+  patientStatus?: string; // N, T, D, or C - Stored on consultation and used for patient update
   food?: string;
   water?: string;
   ointments?: string;
@@ -212,7 +212,7 @@ export interface CreateConsultationRequest {
 export interface UpdateConsultationRequest {
   attendanceId?: number;
   mainConcern?: string;
-  patientStatus?: string; // N, T, A, or F - Stored on consultation and used for patient update
+  patientStatus?: string; // N, T, D, or C - Stored on consultation and used for patient update
   food?: string;
   water?: string;
   ointments?: string;
@@ -252,10 +252,10 @@ export interface ApiResponse<T> {
 
 /** Workflow status for a treatment plan row (`hms_treatment`). */
 export type TreatmentPlanStatus =
-  | 'scheduled'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled';
+  | "scheduled"
+  | "in_progress"
+  | "completed"
+  | "cancelled";
 
 /** One treatment plan row (`hms_treatment`) from the API. */
 export interface TreatmentResponseDto {
@@ -263,7 +263,7 @@ export interface TreatmentResponseDto {
   consultationId: number;
   attendanceId: number;
   patientId: number;
-  treatmentType: 'physiotherapy' | 'tens';
+  treatmentType: "physiotherapy" | "tens";
   bodyLocation: string;
   startDate: string; // ISO date string
   plannedSessions: number;
@@ -285,7 +285,7 @@ export interface CreateTreatmentRequest {
   consultationId: number;
   attendanceId: number;
   patientId: number;
-  treatmentType: 'physiotherapy' | 'tens';
+  treatmentType: "physiotherapy" | "tens";
   bodyLocation: string;
   startDate: string; // ISO date string
   plannedSessions: number;
@@ -339,10 +339,10 @@ export interface BulkCreateTreatmentsResponse {
 
 /** Row status for one scheduled occurrence (`hms_session`). */
 export type SessionAttendanceStatus =
-  | 'scheduled'
-  | 'completed'
-  | 'missed'
-  | 'cancelled';
+  | "scheduled"
+  | "completed"
+  | "missed"
+  | "cancelled";
 
 /** One session row (`hms_session`), optionally hydrated with parent treatment fields. */
 export interface SessionResponseDto {
@@ -361,7 +361,7 @@ export interface SessionResponseDto {
   createdTime: string;
   updatedDate: string;
   updatedTime: string;
-  treatmentType?: 'physiotherapy' | 'tens';
+  treatmentType?: "physiotherapy" | "tens";
   bodyLocation?: string;
   plannedSessions?: number;
   completedSessions?: number;

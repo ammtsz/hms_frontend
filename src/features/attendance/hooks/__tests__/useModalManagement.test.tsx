@@ -388,7 +388,7 @@ describe("useModalManagement", () => {
       expect(mockRefreshData).toHaveBeenCalled();
     });
 
-    it('should update patient status when treatment status is "A" (discharged)', async () => {
+    it('should update patient status when treatment status is "D" (discharged)', async () => {
       const { result } = renderHook(
         () => useModalManagement({ refreshData: mockRefreshData }),
         { wrapper: createWrapper() },
@@ -398,7 +398,7 @@ describe("useModalManagement", () => {
         result.current.openTreatmentFormModal(mockAttendanceDetails);
       });
 
-      const altaData = { ...mockTreatmentData, patientStatus: "A" as const };
+      const altaData = { ...mockTreatmentData, patientStatus: "D" as const };
 
       await act(async () => {
         await result.current.handleTreatmentFormSubmit(altaData);
@@ -552,7 +552,7 @@ describe("useModalManagement", () => {
         result.current.openTreatmentFormModal(mockAttendanceDetails);
       });
 
-      const altaData = { ...mockTreatmentData, patientStatus: "A" as const };
+      const altaData = { ...mockTreatmentData, patientStatus: "D" as const };
 
       // Should not throw error even if patient update fails
       let submitResult: { consultationId: number } | undefined;
@@ -612,8 +612,8 @@ describe("useModalManagement", () => {
       const testCases = [
         { status: "N" as const, shouldUpdatePatient: false },
         { status: "T" as const, shouldUpdatePatient: false },
-        { status: "A" as const, shouldUpdatePatient: true },
-        { status: "F" as const, shouldUpdatePatient: false },
+        { status: "D" as const, shouldUpdatePatient: true },
+        { status: "C" as const, shouldUpdatePatient: false },
       ];
 
       for (const testCase of testCases) {

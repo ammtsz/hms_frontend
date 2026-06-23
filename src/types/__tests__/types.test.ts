@@ -29,13 +29,13 @@ describe('Type System', () => {
     it('should define Status type correctly', () => {
       const statusN: Status = "N";
       const statusT: Status = "T";
-      const statusA: Status = "A";
-      const statusF: Status = "F";
+      const statusD: Status = "D";
+      const statusC: Status = "C";
       
       expect(statusN).toBe("N");
       expect(statusT).toBe("T");
-      expect(statusA).toBe("A");
-      expect(statusF).toBe("F");
+      expect(statusD).toBe("D");
+      expect(statusC).toBe("C");
     });
 
     it('should define AttendanceTypeUnified correctly', () => {
@@ -160,8 +160,8 @@ describe('Type System', () => {
     it('should expose PatientStatus enum', () => {
       expect(PatientStatus.NEW_PATIENT).toBe('N');
       expect(PatientStatus.IN_TREATMENT).toBe('T');
-      expect(PatientStatus.DISCHARGED).toBe('A');
-      expect(PatientStatus.ABSENT).toBe('F');
+      expect(PatientStatus.DISCHARGED).toBe('D');
+      expect(PatientStatus.CONSECUTIVE_NO_SHOWS).toBe('C');
     });
   });
 

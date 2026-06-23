@@ -45,7 +45,7 @@ describe("useEditPatientForm", () => {
     phone: "(11) 99999-9999",
     birthDate: "1990-01-01",
     priority: "2",
-    status: "A",
+    status: "D",
     mainConcern: "Test complaint",
     dischargeDate: null,
     nextAttendanceDates: [],
@@ -433,11 +433,11 @@ describe("useEditPatientForm", () => {
     });
   });
 
-  describe("Status change confirmation (Discharged/Missed)", () => {
-    it("should set pendingStatusChange when submitting with status A and openAttendancesCount > 0", async () => {
+  describe("Status change confirmation (Discharged/Consecutive no-shows)", () => {
+    it("should set pendingStatusChange when submitting with status D and openAttendancesCount > 0", async () => {
       const propsWithOpenAttendances = {
         ...defaultProps,
-        initialData: { ...defaultInitialData, status: "A" },
+        initialData: { ...defaultInitialData, status: "D" },
         openAttendancesCount: 2,
       };
       const { result } = renderHook(() =>
@@ -450,16 +450,16 @@ describe("useEditPatientForm", () => {
       });
 
       expect(result.current.pendingStatusChange).toEqual({
-        newStatus: "A",
+        newStatus: "D",
         openCount: 2,
       });
       expect(mockMutateAsync).not.toHaveBeenCalled();
     });
 
-    it("should set pendingStatusChange when submitting with status F and openAttendancesCount > 0", async () => {
+    it("should set pendingStatusChange when submitting with status C and openAttendancesCount > 0", async () => {
       const propsWithOpenAttendances = {
         ...defaultProps,
-        initialData: { ...defaultInitialData, status: "F" },
+        initialData: { ...defaultInitialData, status: "C" },
         openAttendancesCount: 1,
       };
       const { result } = renderHook(() =>
@@ -472,7 +472,7 @@ describe("useEditPatientForm", () => {
       });
 
       expect(result.current.pendingStatusChange).toEqual({
-        newStatus: "F",
+        newStatus: "C",
         openCount: 1,
       });
       expect(mockMutateAsync).not.toHaveBeenCalled();
@@ -482,7 +482,7 @@ describe("useEditPatientForm", () => {
       mockMutateAsync.mockResolvedValue({ id: 123, name: "Updated" });
       const propsNoOpenAttendances = {
         ...defaultProps,
-        initialData: { ...defaultInitialData, status: "A" },
+        initialData: { ...defaultInitialData, status: "D" },
         openAttendancesCount: 0,
       };
       const { result } = renderHook(() =>
@@ -502,7 +502,7 @@ describe("useEditPatientForm", () => {
       mockMutateAsync.mockResolvedValue({ id: 123, name: "Updated" });
       const propsWithOpenAttendances = {
         ...defaultProps,
-        initialData: { ...defaultInitialData, status: "A" },
+        initialData: { ...defaultInitialData, status: "D" },
         openAttendancesCount: 2,
       };
       const { result } = renderHook(() =>
@@ -529,7 +529,7 @@ describe("useEditPatientForm", () => {
     it("should clear pendingStatusChange when cancelStatusChange is called", async () => {
       const propsWithOpenAttendances = {
         ...defaultProps,
-        initialData: { ...defaultInitialData, status: "A" },
+        initialData: { ...defaultInitialData, status: "D" },
         openAttendancesCount: 2,
       };
       const { result } = renderHook(() =>

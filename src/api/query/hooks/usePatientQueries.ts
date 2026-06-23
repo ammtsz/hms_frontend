@@ -207,7 +207,7 @@ export function useUpdatePatient() {
     onSuccess: (_, { patientId }) => {
       // Detail query (usePatientWithAttendances) and separate attendance cache
       // (ScheduledAttendancesCard, AttendanceHistory) must both refresh — e.g. when
-      // status A/F cancels open attendances on the backend.
+      // status D/C cancels open attendances on the backend.
       queryClient.invalidateQueries({ queryKey: patientKeys.detail(patientId) });
       queryClient.invalidateQueries({ queryKey: patientKeys.attendances(patientId) });
       queryClient.invalidateQueries({ queryKey: patientNotesKeys.list(patientId) });

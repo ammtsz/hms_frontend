@@ -16,7 +16,7 @@ export interface ModalManagementState {
     patientId: number;
     patientName: string;
     attendanceType: string;
-    currentTreatmentStatus: "N" | "T" | "A" | "F";
+    currentTreatmentStatus: "N" | "T" | "D" | "C";
     currentStartDate?: Date;
     currentReturnWeeks?: number;
     isFirstAttendance: boolean;
@@ -49,7 +49,7 @@ export const useModalManagement = ({
       patientId: number;
       patientName: string;
       attendanceType: string;
-      currentTreatmentStatus: "N" | "T" | "A" | "F";
+      currentTreatmentStatus: "N" | "T" | "D" | "C";
       currentStartDate?: Date;
       currentReturnWeeks?: number;
       isFirstAttendance: boolean;
@@ -88,7 +88,7 @@ export const useModalManagement = ({
       patientId: number;
       patientName: string;
       attendanceType: string;
-      currentTreatmentStatus: "N" | "T" | "A" | "F";
+      currentTreatmentStatus: "N" | "T" | "D" | "C";
       currentStartDate?: Date;
       currentReturnWeeks?: number;
       isFirstAttendance: boolean;
@@ -130,7 +130,7 @@ export const useModalManagement = ({
         }
 
         // Update patient treatment status and discharge date if applicable
-        if (data.patientStatus === 'A') {
+        if (data.patientStatus === 'D') {
           try {
             await updatePatientMutation.mutateAsync({
               patientId: selectedAttendanceForTreatment.patientId.toString(),

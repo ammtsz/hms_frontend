@@ -31,8 +31,8 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
   );
 
   const groupedCancelled = useMemo(
-    () => groupCancelledByPatient(result.cancelledForF),
-    [result.cancelledForF],
+    () => groupCancelledByPatient(result.cancelledForC),
+    [result.cancelledForC],
   );
 
   const groupedNotRescheduled = useMemo(
@@ -42,7 +42,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
 
   const hasAnyAction =
     groupedRescheduled.length > 0 ||
-    result.statusChangedToF.length > 0 ||
+    result.statusChangedToC.length > 0 ||
     groupedCancelled.length > 0 ||
     groupedNotRescheduled.length > 0;
 
@@ -96,13 +96,13 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
             </div>
           )}
 
-          {result.statusChangedToF.length > 0 && (
+          {result.statusChangedToC.length > 0 && (
             <div className="bg-amber-50 border border-amber-200 rounded-md p-4">
               <h4 className="text-md font-medium text-amber-800 mb-3">
-                Patients with status changed to &quot;Missed — consecutive&quot;
+                Patients with status changed to &quot;Consecutive no-shows&quot;
               </h4>
               <ul className="space-y-2">
-                {result.statusChangedToF.map((item) => (
+                {result.statusChangedToC.map((item) => (
                   <li key={item.patientId} className="text-sm text-amber-700">
                     • {item.patientName}
                   </li>
@@ -114,7 +114,7 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
           {groupedCancelled.length > 0 && (
             <div className="bg-red-50 border border-red-200 rounded-md p-4">
               <h4 className="text-md font-medium text-red-800 mb-3">
-                Attendances canceled due to consecutive absences
+                Attendances canceled due to consecutive no-shows
               </h4>
               <ul className="space-y-3">
                 {groupedCancelled.map((item) => (

@@ -179,14 +179,14 @@ describe("useDragAndDrop", () => {
     {
       id: "1",
       name: "John Smith",
-      status: "A" as const,
+      status: "D" as const,
       phone: "11999999999",
       priority: "1" as const,
     },
     {
       id: "2",
       name: "Emily Williams",
-      status: "A" as const,
+      status: "D" as const,
       phone: "11988888888",
       priority: "2" as const,
     },

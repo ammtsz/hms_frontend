@@ -89,7 +89,7 @@ const mockPatient: Patient = {
   phone: "(11) 99999-9999",
   birthDate: "1980-05-15",
   mainConcern: "Frequent headaches",
-  status: "A",
+  status: "D",
   priority: "2",
   startDate: "2024-01-15",
   dischargeDate: "2024-06-15",
@@ -186,7 +186,7 @@ describe("CurrentTreatmentCard", () => {
     expect(
       screen.getByText(/Next Appointment|Next Appointment/),
     ).toBeInTheDocument();
-    // Patient with status "A" shows "Discharged on"; others show "Expected Discharge"
+    // Patient with status "D" shows "Discharged on"; others show "Expected Discharge"
     expect(screen.getByText(/Discharged on/)).toBeInTheDocument();
   });
 

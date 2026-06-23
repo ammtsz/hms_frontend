@@ -179,8 +179,8 @@ describe("patientUtils", () => {
     it("should return correct treatment status labels", () => {
       expect(getTreatmentStatusLabel("N")).toBe("New patient");
       expect(getTreatmentStatusLabel("T")).toBe("In Treatment");
-      expect(getTreatmentStatusLabel("A")).toBe("Discharged");
-      expect(getTreatmentStatusLabel("F")).toBe("Missed — consecutive");
+      expect(getTreatmentStatusLabel("D")).toBe("Discharged");
+      expect(getTreatmentStatusLabel("C")).toBe("Consecutive no-shows");
       expect(getTreatmentStatusLabel("unknown")).toBe("unknown");
     });
   });

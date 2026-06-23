@@ -189,7 +189,7 @@ const ViewCompletedConsultationModal: React.FC = () => {
                     : undefined
                 }
                 patientStatus={
-                  consultation.patientStatus as "N" | "T" | "A" | "F"
+                  consultation.patientStatus as "N" | "T" | "D" | "C"
                 }
                 createdDate={consultation.createdDate}
               />

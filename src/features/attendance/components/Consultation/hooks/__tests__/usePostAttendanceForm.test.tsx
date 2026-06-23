@@ -478,9 +478,9 @@ describe("usePostAttendanceForm", () => {
 
       expect(result.current.getTreatmentStatusLabel("N")).toBe("New patient");
       expect(result.current.getTreatmentStatusLabel("T")).toBe("In Treatment");
-      expect(result.current.getTreatmentStatusLabel("A")).toBe("Discharged");
-      expect(result.current.getTreatmentStatusLabel("F")).toBe(
-        "Missed — consecutive",
+      expect(result.current.getTreatmentStatusLabel("D")).toBe("Discharged");
+      expect(result.current.getTreatmentStatusLabel("C")).toBe(
+        "Consecutive no-shows",
       );
     });
   });
@@ -987,7 +987,7 @@ describe("usePostAttendanceForm", () => {
       );
     });
 
-    it("should skip treatment recommendations validation when treatmentStatus is A", () => {
+    it("should skip treatment recommendations validation when treatmentStatus is D", () => {
       renderHook(() => usePostAttendanceForm(), {
         wrapper: TestWrapper,
       });
@@ -996,7 +996,7 @@ describe("usePostAttendanceForm", () => {
 
       const result = validateFn({
         mainConcern: "Test complaint",
-        patientStatus: "A",
+        patientStatus: "D",
         startDate: "2024-01-15",
         returnWeeks: 0,
         recommendations: {
@@ -1156,14 +1156,14 @@ describe("usePostAttendanceForm", () => {
       });
     });
 
-    it("should complete without creating sessions when treatmentStatus is Discharged (A)", async () => {
+    it("should complete without creating sessions when treatmentStatus is Discharged (D)", async () => {
       renderHook(() => usePostAttendanceForm(), {
         wrapper: TestWrapper,
       });
 
       const altaData = {
         mainConcern: "Discharged",
-        patientStatus: "A" as const,
+        patientStatus: "D" as const,
         startDate: "2024-01-15",
         returnWeeks: 0,
         food: "",

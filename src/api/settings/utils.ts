@@ -66,4 +66,3 @@ export function getResponseMessageOrFallback(
   const axiosError = error as AxiosError<{ message?: string }>;
   return axiosError.response?.data?.message || fallback;
 }
-

@@ -28,12 +28,12 @@ describe("ConfirmStatusChangeModal", () => {
   const mockOnConfirm = jest.fn();
 
   const pendingDischarge: PendingStatusChange = {
-    newStatus: "A",
+    newStatus: "D",
     openCount: 2,
   };
 
   const pendingMissed: PendingStatusChange = {
-    newStatus: "F",
+    newStatus: "C",
     openCount: 1,
   };
 
@@ -56,7 +56,7 @@ describe("ConfirmStatusChangeModal", () => {
     expect(container.firstChild).toBeNull();
   });
 
-  it("renders modal with Discharged title and content when newStatus is A", () => {
+  it("renders modal with Discharged title and content when newStatus is D", () => {
     render(
       <ConfirmStatusChangeModal
         isOpen={true}
@@ -79,7 +79,7 @@ describe("ConfirmStatusChangeModal", () => {
     expect(screen.getByText("Do you want to continue?")).toBeInTheDocument();
   });
 
-  it("renders modal with Missed — consecutive title when newStatus is F", () => {
+  it("renders modal with Consecutive no-shows title when newStatus is C", () => {
     render(
       <ConfirmStatusChangeModal
         isOpen={true}
@@ -91,7 +91,7 @@ describe("ConfirmStatusChangeModal", () => {
     );
 
     expect(
-      screen.getByText("Confirm change to Missed — consecutive"),
+      screen.getByText("Confirm change to Consecutive no-shows"),
     ).toBeInTheDocument();
     expect(screen.getAllByText(/will be cancelled/).length).toBeGreaterThan(0);
   });

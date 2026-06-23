@@ -359,7 +359,7 @@ describe("useConsultationSubmission", () => {
       const mockConsultation = createMockConsultation(111, 400);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
-      const treatmentStatuses: PatientStatusValue[] = ["N", "T", "A", "F"];
+      const treatmentStatuses: PatientStatusValue[] = ["N", "T", "D", "C"];
 
       const { result } = renderHook(() => useConsultationSubmission(), {
         wrapper: createWrapper,
@@ -418,7 +418,7 @@ describe("useConsultationSubmission", () => {
       );
     });
 
-    it("should return cancelledAttendances when create response includes them (Discharged/Missed)", async () => {
+    it("should return cancelledAttendances when create response includes them (Discharged/Consecutive no-shows)", async () => {
       const mockConsultation = createMockConsultation(888, 700);
       const cancelledAttendances = [
         { id: 10, type: "assessment", scheduledDate: "2026-01-25" },
@@ -429,7 +429,7 @@ describe("useConsultationSubmission", () => {
       });
 
       const treatmentData = createMockPostConsultationFormData({
-        patientStatus: "A",
+        patientStatus: "D",
       });
       const { result } = renderHook(() => useConsultationSubmission(), {
         wrapper: createWrapper,
@@ -662,7 +662,7 @@ describe("useConsultationSubmission", () => {
       });
 
       const treatmentData = createMockPostConsultationFormData({
-        patientStatus: "A",
+        patientStatus: "D",
       });
       const { result } = renderHook(() => useConsultationSubmission(), {
         wrapper: createWrapper,
@@ -780,7 +780,7 @@ describe("useConsultationSubmission", () => {
 
       const treatmentData = createMockPostConsultationFormData({
         mainConcern: "Custom complaint",
-        patientStatus: "A",
+        patientStatus: "D",
         food: "Custom food recommendation",
         water: "Custom water recommendation",
         ointments: "Custom ointment recommendation",
@@ -800,7 +800,7 @@ describe("useConsultationSubmission", () => {
         expect.objectContaining({
           attendanceId: 1200,
           mainConcern: "Custom complaint",
-          patientStatus: "A",
+          patientStatus: "D",
           food: "Custom food recommendation",
           water: "Custom water recommendation",
           ointments: "Custom ointment recommendation",

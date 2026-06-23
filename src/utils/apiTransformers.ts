@@ -45,9 +45,9 @@ export const transformStatus = (apiStatus: PatientStatus): Status => {
     case PatientStatus.IN_TREATMENT:
       return "T";
     case PatientStatus.DISCHARGED:
-      return "A";
-    case PatientStatus.ABSENT:
-      return "F";
+      return "D";
+    case PatientStatus.CONSECUTIVE_NO_SHOWS:
+      return "C";
     default:
       return "T";
   }
@@ -287,10 +287,10 @@ export const transformStatusToApi = (localStatus: Status): PatientStatus => {
       return PatientStatus.NEW_PATIENT;
     case "T":
       return PatientStatus.IN_TREATMENT;
-    case "A":
+    case "D":
       return PatientStatus.DISCHARGED;
-    case "F":
-      return PatientStatus.ABSENT;
+    case "C":
+      return PatientStatus.CONSECUTIVE_NO_SHOWS;
     default:
       return PatientStatus.NEW_PATIENT; // Default to NEW_PATIENT for new patients
   }
@@ -353,8 +353,8 @@ export const transformProcessEndOfDayResponse = (apiResponse: ProcessEndOfDayRes
       ...attendance,
       type: attendance.type === 'physiotherapy' ? 'physiotherapy' : attendance.type,
     })),
-    statusChangedToF: apiResponse.statusChangedToF,
-    cancelledForF: apiResponse.cancelledForF.map(attendance => ({
+    statusChangedToC: apiResponse.statusChangedToC,
+    cancelledForC: apiResponse.cancelledForC.map(attendance => ({
       ...attendance,
       attendances: attendance.attendances.map(attendance => ({
         ...attendance,

@@ -151,8 +151,8 @@ describe("DuplicateWarningModal", () => {
     const allStatuses = [
       { id: "1", name: "Test 1", phone: "", priority: "3", status: "N" },
       { id: "2", name: "Test 2", phone: "", priority: "3", status: "T" },
-      { id: "3", name: "Test 3", phone: "", priority: "3", status: "A" },
-      { id: "4", name: "Test 4", phone: "", priority: "3", status: "F" },
+      { id: "3", name: "Test 3", phone: "", priority: "3", status: "D" },
+      { id: "4", name: "Test 4", phone: "", priority: "3", status: "C" },
     ];
 
     render(
@@ -165,7 +165,7 @@ describe("DuplicateWarningModal", () => {
     expect(screen.getByText("New patient")).toBeInTheDocument();
     expect(screen.getByText("In Treatment")).toBeInTheDocument();
     expect(screen.getByText("Discharged")).toBeInTheDocument();
-    expect(screen.getByText("Missed — consecutive")).toBeInTheDocument();
+    expect(screen.getByText("Consecutive no-shows")).toBeInTheDocument();
   });
 
   it("should scroll when many duplicates are present", () => {

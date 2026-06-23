@@ -355,7 +355,7 @@ describe("ManageAttendanceModal", () => {
       expect(mockUpdatePatientMutate).toHaveBeenCalledWith({
         patientId: "42",
         data: {
-          patientStatus: "F",
+          patientStatus: "C",
           cancellationReason: "Reason test",
         },
       });

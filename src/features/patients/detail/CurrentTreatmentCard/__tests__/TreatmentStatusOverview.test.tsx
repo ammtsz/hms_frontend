@@ -18,9 +18,7 @@ jest.mock("next/link", () => {
 // Mock the dateHelpers utility
 jest.mock("@/utils/dateUtils", () => ({
   formatDisplayDate: (date: string) => {
-    const d = new Date(
-      date.includes("T") ? date : `${date}T00:00:00`,
-    );
+    const d = new Date(date.includes("T") ? date : `${date}T00:00:00`);
     return d.toLocaleDateString("en-US", {
       month: "2-digit",
       day: "2-digit",
@@ -38,7 +36,7 @@ const mockPatient: Patient = {
   phone: "(11) 99999-9999",
   birthDate: "1980-05-15",
   mainConcern: "Frequent headaches",
-  status: "A",
+  status: "D",
   priority: "2",
   startDate: "2024-01-15",
   dischargeDate: "2024-06-15",
@@ -131,7 +129,7 @@ describe("TreatmentStatusOverview", () => {
     expect(screen.getByText("(1 day overdue)")).toBeInTheDocument();
   });
 
-  it("does not show overdue alert when status is A (discharge received)", () => {
+  it("does not show overdue alert when status is D (discharge received)", () => {
     (getDaysOverdue as jest.Mock).mockReturnValue(100);
 
     render(<TreatmentStatusOverview patient={mockPatient} />);
@@ -154,7 +152,7 @@ describe("TreatmentStatusOverview", () => {
     );
   });
 
-  it("does not render link when status is A (discharge received)", () => {
+  it("does not render link when status is D (discharge received)", () => {
     render(<TreatmentStatusOverview patient={mockPatient} />);
 
     expect(
@@ -163,10 +161,10 @@ describe("TreatmentStatusOverview", () => {
     expect(screen.getByText("Discharged on")).toBeInTheDocument();
   });
 
-  it("renders link when status is F (consecutive absences)", () => {
-    const patientWithStatusF: Patient = { ...mockPatient, status: "F" };
+  it("renders link when status is C (consecutive no-shows)", () => {
+    const patientWithStatusC: Patient = { ...mockPatient, status: "C" };
 
-    render(<TreatmentStatusOverview patient={patientWithStatusF} />);
+    render(<TreatmentStatusOverview patient={patientWithStatusC} />);
 
     const editLink = screen.getByRole("link", { name: /Update date/i });
     expect(editLink).toHaveAttribute(

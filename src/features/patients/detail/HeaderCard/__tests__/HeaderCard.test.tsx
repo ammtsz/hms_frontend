@@ -39,7 +39,7 @@ const mockPatient: Patient = {
   phone: "(11) 99999-9999",
   birthDate: "1980-05-15",
   mainConcern: "Frequent headaches",
-  status: "A",
+  status: "D",
   priority: "2",
   startDate: "2024-01-15",
   dischargeDate: null,
@@ -213,12 +213,12 @@ describe("HeaderCard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows historical streak in muted style for status F", () => {
+  it("shows historical streak in muted style for status C", () => {
     renderWithQueryClient(
       <HeaderCard
         patient={{
           ...mockPatient,
-          status: "F",
+          status: "C",
           missingAppointmentsStreak: 3,
         }}
       />,
@@ -236,7 +236,7 @@ describe("HeaderCard", () => {
       <HeaderCard
         patient={{
           ...mockPatient,
-          status: "A",
+          status: "D",
           missingAppointmentsStreak: 2,
         }}
       />,

@@ -102,7 +102,7 @@ describe("ParentAttendanceSelector", () => {
       <ParentAttendanceSelector
         {...mockProps}
         parentAttendanceOptions={[]}
-        patientStatus="A"
+        patientStatus="D"
       />,
     );
 

@@ -67,9 +67,9 @@ const PostAttendanceModal: React.FC = () => {
     }
   }, [postAttendance.isOpen, attendanceId]);
 
-  // When treatment discharge (A) is selected, leave the treatment tab if active
+  // When treatment discharge (D) is selected, leave the treatment tab if active
   useEffect(() => {
-    if (formData.patientStatus === "A" && activeTab === "treatment") {
+    if (formData.patientStatus === "D" && activeTab === "treatment") {
       setActiveTab("basic");
     }
   }, [formData.patientStatus, activeTab]);
@@ -90,7 +90,7 @@ const PostAttendanceModal: React.FC = () => {
     formData.recommendations.tens?.treatments,
   );
   const isTreatmentTabValid =
-    formData.patientStatus === "A" ||
+    formData.patientStatus === "D" ||
     formData.noTreatmentRecommendations ||
     (hasTreatmentRecommendations && !hasInvalidDates);
 
@@ -109,7 +109,7 @@ const PostAttendanceModal: React.FC = () => {
       id: "treatment",
       label: "Automatic Scheduling",
       isValid: isTreatmentTabValid,
-      disabled: formData.patientStatus === "A", // Not applicable for treatment discharge
+      disabled: formData.patientStatus === "D", // Not applicable for treatment discharge
       disabledTitle: "Unavailable for treatment discharge",
     },
   ];
@@ -137,14 +137,14 @@ const PostAttendanceModal: React.FC = () => {
     // For now, we'll just reset the error state
   };
 
-  // When treatment discharge (A) is selected, set return weeks to 0 in both
+  // When treatment discharge (D) is selected, set return weeks to 0 in both
   // top-level and recommendations so the UI and submit logic both see 0
   const handleBasicInfoFormDataChange = useCallback(
     (field: keyof PostConsultationFormData, value: string | number | Date) => {
-      if (field === "patientStatus" && value === "A") {
+      if (field === "patientStatus" && value === "D") {
         setFormData((prev) => ({
           ...prev,
-          patientStatus: "A",
+          patientStatus: "D",
           returnWeeks: 0,
           recommendations: {
             ...prev.recommendations,

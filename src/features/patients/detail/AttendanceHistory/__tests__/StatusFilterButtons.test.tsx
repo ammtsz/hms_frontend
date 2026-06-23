@@ -21,7 +21,9 @@ describe("StatusFilterButtons", () => {
     expect(
       screen.getByRole("button", { name: /^Completed$/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /^Missed$/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^Missed$/i }),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /^Cancelled$/i }),
     ).toBeInTheDocument();

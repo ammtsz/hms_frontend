@@ -151,7 +151,7 @@ describe("useDragAndDrop - Focused Coverage", () => {
       {
         id: "1",
         name: "Test Patient",
-        status: "A",
+        status: "D",
         phone: "123-456-7890",
         priority: "3",
       },

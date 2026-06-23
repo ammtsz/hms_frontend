@@ -58,7 +58,7 @@ export function useFetchDayFinalizationStatus() {
 }
 
 /**
- * Mutation hook to process endOfDay (mark absences, reschedule/F+cancel, finalize)
+ * Mutation hook to process endOfDay (mark absences, reschedule/C+cancel, finalize)
  *
  * Replaces the previous flow of markMissed + handleAbsenceJustifications
  * with a single API call.

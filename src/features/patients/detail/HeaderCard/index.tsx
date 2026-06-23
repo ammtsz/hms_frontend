@@ -33,7 +33,7 @@ export const HeaderCard: React.FC<HeaderCardProps> = ({
 }) => {
   const streak = patient.missingAppointmentsStreak ?? 0;
   const showActiveStreakAlert = patient.status === "T" && streak > 0;
-  const showHistoricalStreak = patient.status === "F" && streak > 0;
+  const showHistoricalStreak = patient.status === "C" && streak > 0;
 
   const metadataItems: React.ReactNode[] = [
     <span key="id" className="text-gray-500">

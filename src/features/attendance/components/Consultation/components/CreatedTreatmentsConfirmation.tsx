@@ -57,10 +57,10 @@ interface CreatedTreatmentsConfirmationProps {
   /** Error message if fetching attendances failed */
   attendancesError?: string;
   /** Patient lifecycle status (consultation) to detect assessment discharge */
-  patientStatus?: "N" | "T" | "A" | "F";
+  patientStatus?: "N" | "T" | "D" | "C";
   /** Optional created date for the consultation */
   createdDate?: string;
-  /** Attendances cancelled when status was set to A or F (e.g. from PostAttendanceModal) */
+  /** Attendances cancelled when status was set to D or C (e.g. from PostAttendanceModal) */
   cancelledAttendances?: CancelledAttendanceItemDto[];
 }
 
@@ -103,7 +103,7 @@ const CreatedTreatmentsConfirmation: React.FC<
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col">
       {onAcknowledge && <SuccessHeader customMessage={customMessage} />}
 
-      {patientStatus === "A" && (
+      {patientStatus === "D" && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-start gap-3">
             <span className="text-2xl">✅</span>
@@ -123,12 +123,12 @@ const CreatedTreatmentsConfirmation: React.FC<
       )}
 
       {groupedCancelled.length > 0 &&
-        (patientStatus === "A" || patientStatus === "F") && (
+        (patientStatus === "D" || patientStatus === "C") && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
             <h4 className="text-md font-medium text-red-800 mb-3">
-              {patientStatus === "A"
+              {patientStatus === "D"
                 ? "Attendances Cancelled due to Discharged"
-                : "Attendances Cancelled due to Missed — consecutive"}
+                : "Attendances Cancelled due to Consecutive no-shows"}
             </h4>
             <ul className="space-y-3">
               {groupedCancelled.map((item) => (

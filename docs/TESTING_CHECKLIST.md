@@ -345,7 +345,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Submit disabled until valid
 - [ ] Submit creates consultation (`POST /consultations`)
 - [ ] Submit updates patient status
-- [ ] Discharge date set if status = 'A'
+- [ ] Discharge date set if status = 'D'
 
 ### Treatment plan creation (physiotherapy / tens)
 
@@ -496,15 +496,15 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Implemented in codebase (mobile HMS)
 
-| Area              | What shipped                                                                                                           |
-| ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Shell             | `TabNav` 44px + scroll-snap; `TopNavigation` touch targets; `main` flex min-height                                     |
-| Attendance        | `grid-cols-1 md:2 lg:4` columns; `MobileDesktopDnDAlert` below `lg`; legend wrap                                       |
-| Modals            | `BaseModal` (`max-h-[90dvh]`); custom shells migrated; `TabbedModal` scrollable tabs                                   |
-| Patients          | List cards `< md`; detail FAB (menu opens upward) + desktop section rail `lg+`; card headers; forms `grid-cols-1 md:*` |
+| Area                | What shipped                                                                                                           |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Shell               | `TabNav` 44px + scroll-snap; `TopNavigation` touch targets; `main` flex min-height                                     |
+| Attendance          | `grid-cols-1 md:2 lg:4` columns; `MobileDesktopDnDAlert` below `lg`; legend wrap                                       |
+| Modals              | `BaseModal` (`max-h-[90dvh]`); custom shells migrated; `TabbedModal` scrollable tabs                                   |
+| Patients            | List cards `< md`; detail FAB (menu opens upward) + desktop section rail `lg+`; card headers; forms `grid-cols-1 md:*` |
 | Schedule / holidays | Stacked columns; holiday/template cards; filter touch targets                                                          |
-| Settings / login  | User cards; stacked settings tables; login `max-w-sm`                                                                  |
-| Dense tables      | `stackedTableClasses` + `TableMobileLabel` in `@/components/ui/Table.tsx`                                              |
+| Settings / login    | User cards; stacked settings tables; login `max-w-sm`                                                                  |
+| Dense tables        | `stackedTableClasses` + `TableMobileLabel` in `@/components/ui/Table.tsx`                                              |
 
 ### Mobile (< 640px) — release QA
 

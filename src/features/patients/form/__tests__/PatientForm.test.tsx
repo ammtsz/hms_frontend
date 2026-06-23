@@ -206,7 +206,7 @@ describe("PatientForm", () => {
         (option) =>
           option.textContent?.includes("In Treatment") ||
           option.textContent?.includes("Discharged") ||
-          option.textContent?.includes("Missed — consecutive"),
+          option.textContent?.includes("Consecutive no-shows"),
       );
 
       expect(statusOptions).toHaveLength(3);

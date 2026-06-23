@@ -64,7 +64,7 @@ describe('useAttendanceForm', () => {
   const mockPatients: PatientBasic[] = [
     { id: '1', name: 'John Smith', phone: '11999999999', priority: '2', status: 'T' },
     { id: '2', name: 'Emily Williams', phone: '11888888888', priority: '1', status: 'N' },
-    { id: '3', name: 'Michael Miller', phone: '11777777777', priority: '3', status: 'A' }
+    { id: '3', name: 'Michael Miller', phone: '11777777777', priority: '3', status: 'D' }
   ];
 
   const mockQueryClient = {

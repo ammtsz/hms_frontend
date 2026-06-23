@@ -46,7 +46,7 @@ interface PatientFormFieldsProps {
   /** When true, shows discharge date in the basic info section (e.g. on edit page) */
   showDischargeDate?: boolean;
   validationErrors?: Record<string, string>;
-  /** When provided (e.g. on edit page), applies status rules: disable N if has completed attendances, disable T (schedule instead), disable A unless current status is T */
+  /** When provided (e.g. on edit page), applies status rules: disable N if has completed attendances, disable T (schedule instead), disable D unless current status is T */
   statusConfig?: {
     currentStatus: string;
     hasCompletedAttendances: boolean;
@@ -126,7 +126,7 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
     const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
       handleChange(e);
       if (
-        e.target.value === "A" &&
+        e.target.value === "D" &&
         !patient.dischargeDate &&
         showDischargeDate
       ) {
@@ -156,11 +156,7 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
               placeholder="Patient full name"
             />
           </Field>
-          <Field
-            label="Phone"
-            htmlFor="phone"
-            error={validationErrors.phone}
-          >
+          <Field label="Phone" htmlFor="phone" error={validationErrors.phone}>
             <Input
               id="phone"
               name="phone"
@@ -253,40 +249,40 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
                 {getTreatmentStatusLabel("T")}
               </option>
               <option
-                value="A"
+                value="D"
                 disabled={
                   statusConfig
                     ? statusConfig.currentStatus !== "T" &&
-                      statusConfig.currentStatus !== "A"
+                      statusConfig.currentStatus !== "D"
                     : false
                 }
                 title={
                   statusConfig &&
                   statusConfig.currentStatus !== "T" &&
-                  statusConfig.currentStatus !== "A"
+                  statusConfig.currentStatus !== "D"
                     ? "Only patients in treatment can receive discharge."
                     : undefined
                 }
               >
-                {getTreatmentStatusLabel("A")}
+                {getTreatmentStatusLabel("D")}
               </option>
               <option
-                value="F"
+                value="C"
                 disabled={
                   statusConfig
                     ? statusConfig.currentStatus !== "T" &&
-                      statusConfig.currentStatus !== "F"
+                      statusConfig.currentStatus !== "C"
                     : false
                 }
                 title={
                   statusConfig &&
                   statusConfig.currentStatus !== "T" &&
-                  statusConfig.currentStatus !== "F"
-                    ? "Only patients in treatment can receive Missed — consecutive."
+                  statusConfig.currentStatus !== "C"
+                    ? "Only patients in treatment can receive Consecutive no-shows."
                     : undefined
                 }
               >
-                {getTreatmentStatusLabel("F")}
+                {getTreatmentStatusLabel("C")}
               </option>
             </Select>
           </Field>
@@ -295,7 +291,7 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
         {showDischargeDate && (
           <Field
             label={
-              patient.status === "A"
+              patient.status === "D"
                 ? "Discharged on"
                 : "Expected Discharge (optional)"
             }

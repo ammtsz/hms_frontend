@@ -246,7 +246,7 @@ describe("TreatmentRecommendationsTab", () => {
   it("should show warning for discharged patients", () => {
     const dischargedFormData = {
       ...mockFormData,
-      patientStatus: "A" as const,
+      patientStatus: "D" as const,
     };
 
     render(

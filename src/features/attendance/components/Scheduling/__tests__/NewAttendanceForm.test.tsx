@@ -127,7 +127,7 @@ jest.mock(
         }>;
         loadingParentOptions: boolean;
         isSubmitting: boolean;
-        patientStatus?: "N" | "T" | "A" | "F";
+        patientStatus?: "N" | "T" | "D" | "C";
         onParentAttendanceChange: (value: string) => void;
       }) => (
         <div data-testid="parent-attendance-selector">

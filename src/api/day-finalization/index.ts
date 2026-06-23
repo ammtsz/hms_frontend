@@ -37,7 +37,7 @@ export const getDayFinalizationStatus = async (
 };
 
 /**
- * Process endOfDay: mark absences, reschedule or F+cancel, finalize
+ * Process endOfDay: mark absences, reschedule or C+cancel, finalize
  * @param params Date and absence justifications
  */
 export interface ProcessEndOfDayParams {
@@ -58,11 +58,11 @@ export interface ProcessEndOfDayResponse {
     oldDate: string;
     newDate: string;
   }>;
-  statusChangedToF: Array<{
+  statusChangedToC: Array<{
     patientId: number;
     patientName: string;
   }>;
-  cancelledForF: Array<{
+  cancelledForC: Array<{
     patientId: number;
     patientName: string;
     attendances: Array<{

@@ -101,7 +101,7 @@ export default function SystemSettings() {
           >
             <p className="text-sm text-gray-600">
               Define how many consecutive missed appointments without
-              justification will lead to the patient being marked with the F
+              justification will lead to the patient being marked with the C
               (Missing Appointments) status.
             </p>
             {thresholdLoading ? (
@@ -139,8 +139,8 @@ export default function SystemSettings() {
                 <p className="text-sm text-gray-500">
                   The current value is {serverValue}. When the patient reaches
                   this number of consecutive missed appointments without
-                  justification, the system will change the status to F (Missing
-                  Appointments) and cancel future appointments.
+                  justification, the system will change the status to C (Consecutive
+                  no-shows) and cancel future appointments.
                 </p>
                 {!isAdmin && (
                   <p className="text-sm text-amber-700">

@@ -11,8 +11,8 @@ describe("TreatmentStatusBadge", () => {
     expect(badge).toHaveClass("bg-blue-50", "text-blue-700", "border-blue-500");
   });
 
-  it("renders Discharged for status A with purple styling", () => {
-    render(<TreatmentStatusBadge status="A" />);
+  it("renders Discharged for status D with purple styling", () => {
+    render(<TreatmentStatusBadge status="D" />);
 
     const badge = screen.getByText("Discharged");
     expect(badge).toBeInTheDocument();

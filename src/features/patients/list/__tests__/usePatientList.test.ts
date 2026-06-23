@@ -45,14 +45,14 @@ const mockPatients: PatientBasic[] = [
     name: "Emily Williams",
     phone: "(11) 88888-8888",
     priority: "2",
-    status: "A",
+    status: "D",
   },
   {
     id: "3",
     name: "Michael Taylor",
     phone: "(11) 77777-7777",
     priority: "3",
-    status: "F",
+    status: "C",
   },
   {
     id: "4",
@@ -202,7 +202,7 @@ describe("usePatientList", () => {
           name: "Emily Williams",
           phone: "(11) 88888-8888",
           priority: "2",
-          status: "A",
+          status: "D",
         },
       ]);
     });
@@ -307,10 +307,10 @@ describe("usePatientList", () => {
       });
 
       expect(result.current.sortBy).toBe("status");
-      // Status A comes before F which comes before T alphabetically
+      // Status C comes before D which comes before T alphabetically
       const statusOrder = result.current.sorted.map((p) => p.status);
-      expect(statusOrder.indexOf("A")).toBeLessThan(statusOrder.indexOf("F"));
-      expect(statusOrder.indexOf("F")).toBeLessThan(statusOrder.indexOf("T"));
+      expect(statusOrder.indexOf("C")).toBeLessThan(statusOrder.indexOf("D"));
+      expect(statusOrder.indexOf("D")).toBeLessThan(statusOrder.indexOf("T"));
     });
 
     test("should handle undefined values in sorting", () => {
@@ -322,7 +322,7 @@ describe("usePatientList", () => {
           priority: "1",
           status: "T",
         },
-        { id: "2", name: "", phone: "", priority: "2", status: "A" }, // Empty values
+        { id: "2", name: "", phone: "", priority: "2", status: "D" }, // Empty values
       ];
 
       mockUsePatients.mockReturnValue(
@@ -443,8 +443,8 @@ describe("usePatientList", () => {
       expect(result.current.statusLegend).toEqual({
         N: "New patient",
         T: "In Treatment",
-        A: "Discharged",
-        F: "Missed — consecutive",
+        D: "Discharged",
+        C: "Consecutive no-shows",
       });
     });
 

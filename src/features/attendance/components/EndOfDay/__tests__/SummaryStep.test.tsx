@@ -8,8 +8,8 @@ import type { ProcessEndOfDayResponse } from "@/api/day-finalization";
 describe("SummaryStep", () => {
   const defaultResult: ProcessEndOfDayResponse = {
     rescheduled: [],
-    statusChangedToF: [],
-    cancelledForF: [],
+    statusChangedToC: [],
+    cancelledForC: [],
     couldNotReschedule: [],
   };
 
@@ -72,26 +72,26 @@ describe("SummaryStep", () => {
     expect(screen.getByText(/→/)).toBeInTheDocument();
   });
 
-  it("displays status changed to F section when patients have status change", () => {
+  it("displays status changed to C section when patients have status change", () => {
     const result: ProcessEndOfDayResponse = {
       ...defaultResult,
-      statusChangedToF: [{ patientId: 1, patientName: "Jane Smith" }],
+      statusChangedToC: [{ patientId: 1, patientName: "Jane Smith" }],
     };
 
     render(<SummaryStep {...defaultProps} result={result} />);
 
     expect(
       screen.getByText(
-        /Patients with status changed to "Missed — consecutive"/,
+        /Patients with status changed to "Consecutive no-shows"/,
       ),
     ).toBeInTheDocument();
     expect(screen.getByText(/Jane Smith/)).toBeInTheDocument();
   });
 
-  it("displays cancelled for F section when attendances were cancelled", () => {
+  it("displays cancelled for C section when attendances were cancelled", () => {
     const result: ProcessEndOfDayResponse = {
       ...defaultResult,
-      cancelledForF: [
+      cancelledForC: [
         {
           patientId: 2,
           patientName: "Bob Wilson",
@@ -105,7 +105,7 @@ describe("SummaryStep", () => {
     render(<SummaryStep {...defaultProps} result={result} />);
 
     expect(
-      screen.getByText("Attendances canceled due to consecutive absences"),
+      screen.getByText("Attendances canceled due to consecutive no-shows"),
     ).toBeInTheDocument();
     expect(screen.getByText(/Bob Wilson/)).toBeInTheDocument();
   });
@@ -129,9 +129,7 @@ describe("SummaryStep", () => {
     expect(screen.getByText("Could not reschedule")).toBeInTheDocument();
     expect(screen.getByText(/Alice Brown/)).toBeInTheDocument();
     expect(
-      screen.getByText(
-        /Could not find available date within 52 weeks/,
-      ),
+      screen.getByText(/Could not find available date within 52 weeks/),
     ).toBeInTheDocument();
   });
 

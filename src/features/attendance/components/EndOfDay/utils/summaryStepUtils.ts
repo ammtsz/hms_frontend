@@ -110,7 +110,7 @@ export function groupRescheduledByPatient(items: RescheduledItem[]): Array<{
   return groups;
 }
 
-/** Group cancelled-by-F by patient; within each patient aggregate by type + scheduledDate (with count for non-assessment). */
+/** Group cancelled-by-C by patient; within each patient aggregate by type + scheduledDate (with count for non-assessment). */
 export function groupCancelledByPatient(items: CancelledForFItem[]): Array<{
   patientId: number;
   patientName: string;

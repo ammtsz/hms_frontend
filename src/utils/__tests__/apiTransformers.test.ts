@@ -55,12 +55,12 @@ describe('API Transformers', () => {
       expect(transformStatus(PatientStatus.IN_TREATMENT)).toBe('T');
     });
 
-    it('should transform DISCHARGED to "A"', () => {
-      expect(transformStatus(PatientStatus.DISCHARGED)).toBe('A');
+    it('should transform DISCHARGED to "D"', () => {
+      expect(transformStatus(PatientStatus.DISCHARGED)).toBe('D');
     });
 
-    it('should transform ABSENT to "F"', () => {
-      expect(transformStatus(PatientStatus.ABSENT)).toBe('F');
+    it('should transform CONSECUTIVE_NO_SHOWS to "C"', () => {
+      expect(transformStatus(PatientStatus.CONSECUTIVE_NO_SHOWS)).toBe('C');
     });
 
     it('should default to "T" for unknown status', () => {
@@ -125,12 +125,12 @@ describe('API Transformers', () => {
       expect(transformStatusToApi('T')).toBe(PatientStatus.IN_TREATMENT);
     });
 
-    it('should transform "A" to DISCHARGED', () => {
-      expect(transformStatusToApi('A')).toBe(PatientStatus.DISCHARGED);
+    it('should transform "D" to DISCHARGED', () => {
+      expect(transformStatusToApi('D')).toBe(PatientStatus.DISCHARGED);
     });
 
-    it('should transform "F" to ABSENT', () => {
-      expect(transformStatusToApi('F')).toBe(PatientStatus.ABSENT);
+    it('should transform "C" to CONSECUTIVE_NO_SHOWS', () => {
+      expect(transformStatusToApi('C')).toBe(PatientStatus.CONSECUTIVE_NO_SHOWS);
     });
 
     it('should default to NEW_PATIENT for unknown status', () => {
@@ -488,8 +488,8 @@ describe('API Transformers', () => {
             newDate: '2024-01-22',
           },
         ],
-        statusChangedToF: [],
-        cancelledForF: [],
+        statusChangedToC: [],
+        cancelledForC: [],
         couldNotReschedule: [],
       };
 
@@ -498,11 +498,11 @@ describe('API Transformers', () => {
       expect(result.rescheduled[0].type).toBe('physiotherapy');
     });
 
-    it('should convert physiotherapy to physiotherapy in cancelledForF attendances', () => {
+    it('should convert physiotherapy to physiotherapy in cancelledForC attendances', () => {
       const apiResponse = {
         rescheduled: [],
-        statusChangedToF: [],
-        cancelledForF: [
+        statusChangedToC: [],
+        cancelledForC: [
           {
             patientId: 1,
             patientName: 'Jane',
@@ -516,7 +516,7 @@ describe('API Transformers', () => {
 
       const result = transformProcessEndOfDayResponse(apiResponse);
 
-      expect(result.cancelledForF[0].attendances[0].type).toBe('physiotherapy');
+      expect(result.cancelledForC[0].attendances[0].type).toBe('physiotherapy');
     });
 
     it('should leave assessment and tens types unchanged', () => {
@@ -539,8 +539,8 @@ describe('API Transformers', () => {
             newDate: '2024-01-22',
           },
         ],
-        statusChangedToF: [],
-        cancelledForF: [],
+        statusChangedToC: [],
+        cancelledForC: [],
         couldNotReschedule: [],
       };
 
@@ -553,8 +553,8 @@ describe('API Transformers', () => {
     it('should preserve all other response fields', () => {
       const apiResponse = {
         rescheduled: [],
-        statusChangedToF: [{ patientId: 1, patientName: 'Bob' }],
-        cancelledForF: [],
+        statusChangedToC: [{ patientId: 1, patientName: 'Bob' }],
+        cancelledForC: [],
         couldNotReschedule: [
           {
             attendanceId: 5,
@@ -568,7 +568,7 @@ describe('API Transformers', () => {
 
       const result = transformProcessEndOfDayResponse(apiResponse);
 
-      expect(result.statusChangedToF).toEqual(apiResponse.statusChangedToF);
+      expect(result.statusChangedToC).toEqual(apiResponse.statusChangedToC);
       expect(result.couldNotReschedule).toEqual(apiResponse.couldNotReschedule);
     });
   });

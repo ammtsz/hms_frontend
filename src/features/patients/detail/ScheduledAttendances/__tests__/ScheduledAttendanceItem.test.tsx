@@ -131,7 +131,9 @@ describe("ScheduledAttendanceItem", () => {
       />,
     );
 
-    expect(screen.getAllByText(/Assessment Consultation/)[0]).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/Assessment Consultation/)[0],
+    ).toBeInTheDocument();
     expect(screen.getByText("Return for assessment")).toBeInTheDocument();
   });
 
@@ -316,12 +318,12 @@ describe("ScheduledAttendanceItem", () => {
       ).toBeInTheDocument();
     });
 
-    it("should not show Reschedule button when patient is discharged (A)", () => {
+    it("should not show Reschedule button when patient is discharged (D)", () => {
       render(
         <ScheduledAttendanceItem
           groupedScheduled={cancelledWithPhysiotherapy}
           isFirstItem={false}
-          patientTreatmentStatus="A"
+          patientTreatmentStatus="D"
         />,
       );
 
@@ -330,12 +332,12 @@ describe("ScheduledAttendanceItem", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("should not show Reschedule button when patient has consecutive absences (F)", () => {
+    it("should not show Reschedule button when patient has consecutive no-shows (C)", () => {
       render(
         <ScheduledAttendanceItem
           groupedScheduled={cancelledWithPhysiotherapy}
           isFirstItem={false}
-          patientTreatmentStatus="F"
+          patientTreatmentStatus="C"
         />,
       );
 

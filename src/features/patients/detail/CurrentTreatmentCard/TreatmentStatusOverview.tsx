@@ -18,7 +18,7 @@ export const TreatmentStatusOverview: React.FC<
   TreatmentStatusOverviewProps
 > = ({ patient }) => {
   const { setScrollTargetSectionId } = usePatientPageScrollTarget();
-  const isExpectedDischarge = patient.status !== "A";
+  const isExpectedDischarge = patient.status !== "D";
   const daysOverdue = patient.dischargeDate
     ? getDaysOverdue(patient.dischargeDate)
     : 0;
@@ -65,7 +65,7 @@ export const TreatmentStatusOverview: React.FC<
         </div>
       </button>
 
-      {patient.status === "A" ? (
+      {patient.status === "D" ? (
         <div className="bg-white border border-gray-200 p-4 rounded-lg block w-full text-left">
           <div className="flex items-center gap-1 text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">
             Discharged on

@@ -4,7 +4,7 @@ import React from "react";
 import { getTreatmentStatusLabel } from "@/utils/patientUtils";
 
 interface TreatmentStatusBadgeProps {
-  /** Treatment status (N, T, A, F) */
+  /** Treatment status (N, T, D, C) */
   status: string;
   /** Additional CSS classes */
   className?: string;
@@ -33,12 +33,12 @@ export const TreatmentStatusBadge: React.FC<TreatmentStatusBadgeProps> = ({
           className: `${baseClasses} border-green-500 text-green-700 bg-green-50`,
           label,
         };
-      case "A":
+      case "D":
         return {
           className: `${baseClasses} border-purple-500 text-purple-700 bg-purple-50`,
           label,
         };
-      case "F":
+      case "C":
         return {
           className: `${baseClasses} border-orange-500 text-orange-700 bg-orange-50`,
           label,

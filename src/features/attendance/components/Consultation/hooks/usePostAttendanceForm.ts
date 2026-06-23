@@ -34,8 +34,8 @@ import { getTodayClinic } from "@/utils/timezoneDate";
 import { getTreatmentStatusLabel } from "@/utils/patientUtils";
 import { ERROR_MESSAGE } from "@/api/utils/messages";
 
-// Patient lifecycle status (N/T/A/F) for consultation form
-export type PatientStatusValue = "N" | "T" | "A" | "F";
+// Patient lifecycle status (N/T/D/C) for consultation form
+export type PatientStatusValue = "N" | "T" | "D" | "C";
 
 export interface PostConsultationFormData {
   // Main form fields from requirements
@@ -629,8 +629,8 @@ export function usePostAttendanceForm() {
         }
       }
 
-      // Treatment recommendations tab: if not acknowledged as "none apply", must have at least one (skip when Discharged (A))
-      if (data.patientStatus !== "A" && !data.noTreatmentRecommendations) {
+      // Treatment recommendations tab: if not acknowledged as "none apply", must have at least one (skip when Discharged (D))
+      if (data.patientStatus !== "D" && !data.noTreatmentRecommendations) {
         const hasTreatmentRecommendation =
           (data.recommendations.physiotherapy?.treatments.length ?? 0) > 0 ||
           (data.recommendations.tens?.treatments.length ?? 0) > 0;
@@ -732,7 +732,7 @@ export function usePostAttendanceForm() {
         }
 
         // MedicalDischarge: do not create physiotherapy/tens sessions or schedule return
-        if (data.patientStatus === "A") {
+        if (data.patientStatus === "D") {
           setCreatedTreatments([]);
           setCancelledAttendances(result.cancelledAttendances ?? []);
           if (onComplete) onComplete([]);
@@ -759,7 +759,7 @@ export function usePostAttendanceForm() {
           setCreatedTreatments(newTreatments);
 
           // Handle legacy mode return scheduling (if not using auto-schedule)
-          // (Status "A" already returned above, so we only reach here when not discharged)
+          // (Status "D" already returned above, so we only reach here when not discharged)
           if (!autoScheduleReturn && data.recommendations.returnWeeks > 0) {
             await scheduleReturn({
               consultationId: result.consultationId,
@@ -972,7 +972,7 @@ export function usePostAttendanceForm() {
           // PatientPriority enum values are '1', '2', '3'
           const priority = patient.priority as PatientPriority;
 
-          // Transform status from "N"|"T"|"A"|"F" to PatientStatus enum
+          // Transform status from "N"|"T"|"D"|"C" to PatientStatus enum
           const patient_status_enum =
             patient.status as unknown as PatientStatus;
 

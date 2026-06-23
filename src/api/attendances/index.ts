@@ -70,7 +70,7 @@ export const getAttendancesByPatient = async (
   }
 };
 
-/** Eligible parent (root) attendances for linking a new assessment consultation. Excludes finished treatments (A/F). */
+/** Eligible parent (root) attendances for linking a new assessment consultation. Excludes finished treatments (D/C). */
 export const getEligibleParentOptions = async (
   patientId: string
 ): Promise<ApiResponse<EligibleParentOptionsResponseDto>> => {

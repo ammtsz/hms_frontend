@@ -423,12 +423,12 @@ describe("AttendanceHistoryItem", () => {
       ).toBeInTheDocument();
     });
 
-    it("should not show Reschedule button when patient is discharged (A)", () => {
+    it("should not show Reschedule button when patient is discharged (D)", () => {
       render(
         <AttendanceHistoryItem
           groupedAttendance={cancelledWithPhysiotherapy}
           treatments={mockTreatments}
-          patientTreatmentStatus="A"
+          patientTreatmentStatus="D"
         />,
       );
 
@@ -437,12 +437,12 @@ describe("AttendanceHistoryItem", () => {
       ).not.toBeInTheDocument();
     });
 
-    it("should not show Reschedule button when patient has consecutive absences (F)", () => {
+    it("should not show Reschedule button when patient has consecutive no-shows (C)", () => {
       render(
         <AttendanceHistoryItem
           groupedAttendance={cancelledWithPhysiotherapy}
           treatments={mockTreatments}
-          patientTreatmentStatus="F"
+          patientTreatmentStatus="C"
         />,
       );
 

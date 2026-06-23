@@ -26,7 +26,7 @@ export {
 
 // Primary types (modern naming without I-prefix)
 export type Priority = "1" | "2" | "3" | "4" | "5";
-export type Status = "N" | "T" | "A" | "F";
+export type Status = "N" | "T" | "D" | "C";
 export type AttendanceType = "assessment" | "physiotherapy" | "tens" | "combined"; // combined for calendar view
 export type AttendanceProgression = "scheduled" | "checkedIn" | "onGoing" | "completed";
 

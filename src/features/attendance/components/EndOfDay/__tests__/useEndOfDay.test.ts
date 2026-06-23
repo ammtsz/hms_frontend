@@ -84,8 +84,8 @@ describe("useEndOfDay", () => {
 
     mockProcessEndOfDayMutateAsync.mockResolvedValue({
       rescheduled: [],
-      statusChangedToF: [],
-      cancelledForF: [],
+      statusChangedToC: [],
+      cancelledForC: [],
       couldNotReschedule: [],
     });
 
@@ -149,8 +149,8 @@ describe("useEndOfDay", () => {
 
     mockProcessEndOfDayMutateAsync.mockResolvedValue({
       rescheduled: [],
-      statusChangedToF: [],
-      cancelledForF: [],
+      statusChangedToC: [],
+      cancelledForC: [],
       couldNotReschedule: [],
     });
 
@@ -202,8 +202,8 @@ describe("useEndOfDay", () => {
 
     mockProcessEndOfDayMutateAsync.mockResolvedValue({
       rescheduled: [],
-      statusChangedToF: [],
-      cancelledForF: [],
+      statusChangedToC: [],
+      cancelledForC: [],
       couldNotReschedule: [],
     });
 

@@ -83,7 +83,7 @@ const TreatmentRecommendationsTab: React.FC<
 
       {/* Acknowledgment checkbox - prevents accidental submit without reviewing */}
       <div className="py-6 my-6 border-y border-gray-200">
-        {formData.patientStatus !== "A" &&
+        {formData.patientStatus !== "D" &&
           !formData.noTreatmentRecommendations &&
           !hasActiveTreatments && (
             <div
@@ -181,19 +181,19 @@ const TreatmentRecommendationsTab: React.FC<
           label={
             <span
               className={
-                formData.patientStatus === "A" ? "text-gray-500" : undefined
+                formData.patientStatus === "D" ? "text-gray-500" : undefined
               }
             >
               {hasActiveTreatments &&
               formData.recommendations.returnWhenTreatmentComplete
                 ? "Weeks until return after treatment ends"
                 : "Weeks until return"}
-              {formData.patientStatus !== "A" && " *"}
+              {formData.patientStatus !== "D" && " *"}
             </span>
           }
           htmlFor="returnWeeks"
           helpText={
-            formData.patientStatus === "A"
+            formData.patientStatus === "D"
               ? "Patient discharged does not require return"
               : formData.recommendations.returnWhenTreatmentComplete
                 ? `The return will be scheduled for ${formData.recommendations.returnWeeks} week(s) after the last treatment`
@@ -211,12 +211,12 @@ const TreatmentRecommendationsTab: React.FC<
             }
             min="0"
             max="52"
-            disabled={formData.patientStatus === "A"}
+            disabled={formData.patientStatus === "D"}
           />
         </Field>
 
         {/* Warning for discharge */}
-        {formData.patientStatus === "A" && (
+        {formData.patientStatus === "D" && (
           <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-md">
             <p className="text-xs text-amber-800 font-medium flex items-center gap-2">
               <span className="text-base">⚠️</span>

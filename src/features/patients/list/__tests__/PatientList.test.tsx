@@ -44,7 +44,7 @@ const mockPatients = [
     name: "Emily Williams",
     phone: "(11) 88888-8888",
     priority: "1",
-    status: "A",
+    status: "D",
   },
 ];
 
@@ -60,8 +60,8 @@ const defaultMockReturn = {
   statusLegend: {
     N: "New patient",
     T: "In Treatment",
-    A: "Discharged",
-    F: "Missed — consecutive",
+    D: "Discharged",
+    C: "Consecutive no-shows",
   },
   priorityLegend: {
     "1": "Priority",
@@ -226,13 +226,13 @@ describe("PatientList", () => {
       ).toBeInTheDocument();
       expect(
         screen.getByText(
-          (content, element) => element?.textContent === "A: Discharged",
+          (content, element) => element?.textContent === "D: Discharged",
         ),
       ).toBeInTheDocument();
       expect(
         screen.getByText(
           (content, element) =>
-            element?.textContent === "F: Missed — consecutive",
+            element?.textContent === "C: Consecutive no-shows",
         ),
       ).toBeInTheDocument();
     });

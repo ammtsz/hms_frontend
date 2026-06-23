@@ -150,9 +150,9 @@ describe("PatientFormFields", () => {
       render(
         <PatientFormFields
           {...defaultProps}
-          patient={{ ...defaultPatient, status: "A" }}
+          patient={{ ...defaultPatient, status: "D" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "A", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "D", hasCompletedAttendances: false }}
         />,
       );
 
@@ -173,7 +173,7 @@ describe("PatientFormFields", () => {
       expect(optionT).not.toBeDisabled();
     });
 
-    it("enables A when currentStatus is T", () => {
+    it("enables D when currentStatus is T", () => {
       render(
         <PatientFormFields
           {...defaultProps}
@@ -188,13 +188,13 @@ describe("PatientFormFields", () => {
       expect(optionA).not.toBeDisabled();
     });
 
-    it("enables A when currentStatus is A", () => {
+    it("enables D when currentStatus is D", () => {
       render(
         <PatientFormFields
           {...defaultProps}
-          patient={{ ...defaultPatient, status: "A" }}
+          patient={{ ...defaultPatient, status: "D" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "A", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "D", hasCompletedAttendances: false }}
         />,
       );
 
@@ -204,13 +204,13 @@ describe("PatientFormFields", () => {
       expect(optionA).not.toBeDisabled();
     });
 
-    it("disables A when currentStatus is neither T nor A", () => {
+    it("disables D when currentStatus is neither T nor D", () => {
       render(
         <PatientFormFields
           {...defaultProps}
-          patient={{ ...defaultPatient, status: "F" }}
+          patient={{ ...defaultPatient, status: "C" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "F", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "C", hasCompletedAttendances: false }}
         />,
       );
 
@@ -220,7 +220,7 @@ describe("PatientFormFields", () => {
       expect(optionA).toBeDisabled();
     });
 
-    it("enables F when currentStatus is T", () => {
+    it("enables C when currentStatus is T", () => {
       render(
         <PatientFormFields
           {...defaultProps}
@@ -230,39 +230,39 @@ describe("PatientFormFields", () => {
       );
 
       const optionF = screen.getByRole("option", {
-        name: "Missed — consecutive",
+        name: "Consecutive no-shows",
       });
       expect(optionF).not.toBeDisabled();
     });
 
-    it("enables F when currentStatus is F", () => {
+    it("enables C when currentStatus is C", () => {
       render(
         <PatientFormFields
           {...defaultProps}
-          patient={{ ...defaultPatient, status: "F" }}
+          patient={{ ...defaultPatient, status: "C" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "F", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "C", hasCompletedAttendances: false }}
         />,
       );
 
       const optionF = screen.getByRole("option", {
-        name: "Missed — consecutive",
+        name: "Consecutive no-shows",
       });
       expect(optionF).not.toBeDisabled();
     });
 
-    it("disables F when currentStatus is neither T nor F", () => {
+    it("disables C when currentStatus is neither T nor C", () => {
       render(
         <PatientFormFields
           {...defaultProps}
-          patient={{ ...defaultPatient, status: "A" }}
+          patient={{ ...defaultPatient, status: "D" }}
           isEdit={true}
-          statusConfig={{ currentStatus: "A", hasCompletedAttendances: false }}
+          statusConfig={{ currentStatus: "D", hasCompletedAttendances: false }}
         />,
       );
 
       const optionF = screen.getByRole("option", {
-        name: "Missed — consecutive",
+        name: "Consecutive no-shows",
       });
       expect(optionF).toBeDisabled();
     });
@@ -276,7 +276,7 @@ describe("PatientFormFields", () => {
   });
 
   describe("handleStatusChange - auto-fill discharge date", () => {
-    it("calls handleChange with dischargeDate when selecting A and no discharge date and showDischargeDate", () => {
+    it("calls handleChange with dischargeDate when selecting D and no discharge date and showDischargeDate", () => {
       const handleChange = jest.fn();
       render(
         <PatientFormFields
@@ -290,7 +290,7 @@ describe("PatientFormFields", () => {
 
       const statusSelect = screen.getByLabelText("Status");
       fireEvent.change(statusSelect, {
-        target: { name: "status", value: "A" },
+        target: { name: "status", value: "D" },
       });
 
       expect(handleChange).toHaveBeenCalledTimes(2);
@@ -319,7 +319,7 @@ describe("PatientFormFields", () => {
 
       const statusSelect = screen.getByLabelText("Status");
       fireEvent.change(statusSelect, {
-        target: { name: "status", value: "A" },
+        target: { name: "status", value: "D" },
       });
 
       expect(handleChange).toHaveBeenCalledTimes(1);
@@ -339,7 +339,7 @@ describe("PatientFormFields", () => {
       );
 
       const statusSelect = screen.getByLabelText("Status");
-      fireEvent.change(statusSelect, { target: { value: "A" } });
+      fireEvent.change(statusSelect, { target: { value: "D" } });
 
       expect(handleChange).toHaveBeenCalledTimes(1);
     });

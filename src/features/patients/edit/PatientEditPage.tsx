@@ -348,7 +348,7 @@ const PatientEditPage: React.FC<PatientEditPageProps> = ({ patientId }) => {
         onStay={handleStayOnPage}
       />
 
-      {/* Confirm status change (Discharged (A) / Missed (F)) – cancels open attendances */}
+      {/* Confirm status change (Discharged (D) / Consecutive no-shows (C)) – cancels open attendances */}
       <ConfirmStatusChangeModal
         isOpen={pendingStatusChange !== null}
         onClose={cancelStatusChange}

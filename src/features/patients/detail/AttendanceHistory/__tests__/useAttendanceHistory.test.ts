@@ -20,9 +20,8 @@ jest.mock("@/utils/attendanceHistoryUtils", () => ({
 const mockUsePatientAttendances = usePatientAttendances as jest.MockedFunction<
   typeof usePatientAttendances
 >;
-const mockUseTreatmentsByPatient = useTreatmentsByPatient as jest.MockedFunction<
-  typeof useTreatmentsByPatient
->;
+const mockUseTreatmentsByPatient =
+  useTreatmentsByPatient as jest.MockedFunction<typeof useTreatmentsByPatient>;
 const mockUseConsultations = useConsultations as jest.MockedFunction<
   typeof useConsultations
 >;
@@ -169,11 +168,27 @@ describe("useAttendanceHistory", () => {
       updatedAt: "2026-01-17T10:00:00Z",
       notes: "",
     };
-    
+
     mockUsePatientAttendances.mockReturnValue({
       data: [
-        { id: "1", attendanceId: "1", status: "scheduled" as const, scheduledDate: "2026-01-15", createdAt: "2026-01-15T10:00:00Z", updatedAt: "2026-01-15T10:00:00Z", notes: "" },
-        { id: "2", attendanceId: "2", status: "checked_in" as const, scheduledDate: "2026-01-16", createdAt: "2026-01-16T10:00:00Z", updatedAt: "2026-01-16T10:00:00Z", notes: "" },
+        {
+          id: "1",
+          attendanceId: "1",
+          status: "scheduled" as const,
+          scheduledDate: "2026-01-15",
+          createdAt: "2026-01-15T10:00:00Z",
+          updatedAt: "2026-01-15T10:00:00Z",
+          notes: "",
+        },
+        {
+          id: "2",
+          attendanceId: "2",
+          status: "checked_in" as const,
+          scheduledDate: "2026-01-16",
+          createdAt: "2026-01-16T10:00:00Z",
+          updatedAt: "2026-01-16T10:00:00Z",
+          notes: "",
+        },
         completedAttendance,
       ] as any,
       isLoading: false,
@@ -221,8 +236,24 @@ describe("useAttendanceHistory", () => {
     mockUsePatientAttendances.mockReturnValue({
       data: [
         completedAttendance,
-        { id: "2", attendanceId: "2", status: "missed" as const, scheduledDate: "2026-01-16", createdAt: "2026-01-16T10:00:00Z", updatedAt: "2026-01-16T10:00:00Z", notes: "" },
-        { id: "3", attendanceId: "3", status: "cancelled" as const, scheduledDate: "2026-01-17", createdAt: "2026-01-17T10:00:00Z", updatedAt: "2026-01-17T10:00:00Z", notes: "" },
+        {
+          id: "2",
+          attendanceId: "2",
+          status: "missed" as const,
+          scheduledDate: "2026-01-16",
+          createdAt: "2026-01-16T10:00:00Z",
+          updatedAt: "2026-01-16T10:00:00Z",
+          notes: "",
+        },
+        {
+          id: "3",
+          attendanceId: "3",
+          status: "cancelled" as const,
+          scheduledDate: "2026-01-17",
+          createdAt: "2026-01-17T10:00:00Z",
+          updatedAt: "2026-01-17T10:00:00Z",
+          notes: "",
+        },
       ] as any,
       isLoading: false,
       error: null,
@@ -266,9 +297,25 @@ describe("useAttendanceHistory", () => {
 
     mockUsePatientAttendances.mockReturnValue({
       data: [
-        { id: "1", attendanceId: "1", status: "completed" as const, scheduledDate: "2026-01-15", createdAt: "2026-01-15T10:00:00Z", updatedAt: "2026-01-15T10:00:00Z", notes: "" },
+        {
+          id: "1",
+          attendanceId: "1",
+          status: "completed" as const,
+          scheduledDate: "2026-01-15",
+          createdAt: "2026-01-15T10:00:00Z",
+          updatedAt: "2026-01-15T10:00:00Z",
+          notes: "",
+        },
         missedAttendance,
-        { id: "3", attendanceId: "3", status: "cancelled" as const, scheduledDate: "2026-01-17", createdAt: "2026-01-17T10:00:00Z", updatedAt: "2026-01-17T10:00:00Z", notes: "" },
+        {
+          id: "3",
+          attendanceId: "3",
+          status: "cancelled" as const,
+          scheduledDate: "2026-01-17",
+          createdAt: "2026-01-17T10:00:00Z",
+          updatedAt: "2026-01-17T10:00:00Z",
+          notes: "",
+        },
       ] as any,
       isLoading: false,
       error: null,
@@ -312,8 +359,24 @@ describe("useAttendanceHistory", () => {
 
     mockUsePatientAttendances.mockReturnValue({
       data: [
-        { id: "1", attendanceId: "1", status: "completed" as const, scheduledDate: "2026-01-15", createdAt: "2026-01-15T10:00:00Z", updatedAt: "2026-01-15T10:00:00Z", notes: "" },
-        { id: "2", attendanceId: "2", status: "missed" as const, scheduledDate: "2026-01-16", createdAt: "2026-01-16T10:00:00Z", updatedAt: "2026-01-16T10:00:00Z", notes: "" },
+        {
+          id: "1",
+          attendanceId: "1",
+          status: "completed" as const,
+          scheduledDate: "2026-01-15",
+          createdAt: "2026-01-15T10:00:00Z",
+          updatedAt: "2026-01-15T10:00:00Z",
+          notes: "",
+        },
+        {
+          id: "2",
+          attendanceId: "2",
+          status: "missed" as const,
+          scheduledDate: "2026-01-16",
+          createdAt: "2026-01-16T10:00:00Z",
+          updatedAt: "2026-01-16T10:00:00Z",
+          notes: "",
+        },
         cancelledAttendance,
       ] as any,
       isLoading: false,

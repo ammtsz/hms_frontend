@@ -2,23 +2,23 @@
 alwaysApply: true
 ---
 
-# Patient Status A/F – Cancel Open Attendances
+# Patient Status D/C – Cancel Open Attendances
 
-**CRITICAL**: Whenever a patient's treatment status is set to **A** (Discharge) or **F** (Missed), all **open** attendances for that patient must be cancelled (statuses: scheduled, checked_in, in_progress).
+**CRITICAL**: Whenever a patient's treatment status is set to **D** (Discharged) or **C** (Consecutive no-shows), all **open** attendances for that patient must be cancelled (statuses: scheduled, checked_in, in_progress).
 
 ## Where This Rule Is Applied
 
-1. **Patient PATCH** (`PATCH /patients/:id` with `treatment_status: A` or `F`) – backend uses `setTreatmentStatus`; cancels open attendances and non-completed treatments (`hms_treatment`).
-2. **End-of-day process** – uses `setTreatmentStatus`; summary shows cancelled attendances in SummaryStep (e.g. `cancelledForF`).
-3. **Consultation create/update** (PostAttendanceModal – “discharge”) – when saving a consultation with `treatment_status: A` or `F`, the backend calls `setTreatmentStatus` and returns `cancelledAttendances` in the response.
+1. **Patient PATCH** (`PATCH /patients/:id` with `patient_status: D` or `C`) – backend uses `setPatientStatus`; cancels open attendances and non-completed treatments (`hms_treatment`).
+2. **End-of-day process** – uses `setPatientStatus`; summary shows cancelled attendances in SummaryStep (e.g. `cancelledForC`).
+3. **Consultation create/update** (PostAttendanceModal – “discharge”) – when saving a consultation with `patient_status: D` or `C`, the backend calls `setPatientStatus` and returns `cancelledAttendances` in the response.
 
 ## Display of Cancelled Attendances
 
-- **PostAttendanceModal** (after submit with status A): show the list of cancelled attendances in `CreatedTreatmentsConfirmation` (red box), using the same grouping/labels as SummaryStep.
+- **PostAttendanceModal** (after submit with status D): show the list of cancelled attendances in `CreatedTreatmentsConfirmation` (red box), using the same grouping/labels as SummaryStep.
 - **ViewCompletedConsultationModal**: does **not** show the cancelled list (option A – not persisted for past consultations).
 - **SummaryStep** (endOfDay): shows cancelled attendances from the process result.
 
 ## Implementation Notes
 
-- Backend: use `PatientService.setTreatmentStatus(patientId, status, options?)` for A/F; do **not** update the patient with a direct repository update when status is A or F from the consultation flow.
-- Frontend: consultation create/update API response includes optional `cancelledAttendances`; pass it to the confirmation UI when showing success after Discharged (A) / Missed (F).
+- Backend: use `PatientService.setPatientStatus(patientId, status, options?)` for D/C; do **not** update the patient with a direct repository update when status is D or C from the consultation flow.
+- Frontend: consultation create/update API response includes optional `cancelledAttendances`; pass it to the confirmation UI when showing success after Discharged (D) / Consecutive no-shows (C).

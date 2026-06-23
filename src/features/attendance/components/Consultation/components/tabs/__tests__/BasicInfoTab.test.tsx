@@ -243,24 +243,24 @@ describe("BasicInfoTab", () => {
       />,
     );
 
-    // Only T and A options are shown in the select dropdown
+    // Only T and D options are shown in the select dropdown
     expect(screen.getByText("T - In treatment")).toBeInTheDocument();
-    expect(screen.getByText("A - Discharged")).toBeInTheDocument();
+    expect(screen.getByText("D - Discharged")).toBeInTheDocument();
 
-    // N and F are not shown in dropdown, but current status is displayed below the select
+    // N and C are not shown in dropdown, but current status is displayed below the select
     expect(screen.getByText("Current status: New patient")).toBeInTheDocument();
   });
 
   it("should display discharge warning when appropriate", () => {
     const dischargeFormData = {
       ...mockFormData,
-      patientStatus: "A" as const,
+      patientStatus: "D" as const,
     };
 
     render(
       <BasicInfoTab
         formData={dischargeFormData}
-        currentTreatmentStatus="A"
+        currentTreatmentStatus="D"
         patientData={mockPatientData}
         onFormDataChange={mockOnFormDataChange}
         onDateChange={mockOnDateChange}
@@ -274,8 +274,8 @@ describe("BasicInfoTab", () => {
     const testCases: Array<{ status: PatientStatusValue; label: string }> = [
       { status: "N", label: "New patient" },
       { status: "T", label: "In Treatment" },
-      { status: "A", label: "Discharged" },
-      { status: "F", label: "Missed — consecutive" },
+      { status: "D", label: "Discharged" },
+      { status: "C", label: "Consecutive no-shows" },
     ];
 
     testCases.forEach(({ status, label }) => {

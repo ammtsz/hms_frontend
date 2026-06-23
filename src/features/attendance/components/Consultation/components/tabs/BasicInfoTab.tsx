@@ -44,9 +44,9 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
         Math.max(0, Math.min(52, parseInt(value) || 0)),
       );
     } else if (name === "patientStatus") {
-      // When assessment discharge (A) is selected, automatically set returnWeeks to 0
+      // When assessment discharge (D) is selected, automatically set returnWeeks to 0
       onFormDataChange(name as keyof PostConsultationFormData, value);
-      if (value === "A") {
+      if (value === "D") {
         onFormDataChange("returnWeeks", 0);
       }
     } else {
@@ -95,11 +95,11 @@ const BasicInfoTab: React.FC<BasicInfoTabProps> = ({
             required
           >
             <option value="T">T - In treatment</option>
-            <option value="A">A - Discharged</option>
+            <option value="D">D - Discharged</option>
           </Select>
         </Field>
       </div>
-      {formData.patientStatus === "A" && (
+      {formData.patientStatus === "D" && (
         <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
           <p className="text-xs text-amber-800 font-medium flex items-center gap-2">
             <span className="text-base">⚠️</span>

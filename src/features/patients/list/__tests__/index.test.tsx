@@ -57,14 +57,14 @@ const mockPatients: PatientBasic[] = [
     name: "Emily Williams",
     phone: "(11) 88888-8888",
     priority: "2",
-    status: "A",
+    status: "D",
   },
   {
     id: "3",
     name: "Michael Taylor",
     phone: "(11) 77777-7777",
     priority: "3",
-    status: "F",
+    status: "C",
   },
 ];
 
@@ -89,8 +89,8 @@ const createMockUsePatientList = (
   statusLegend: {
     N: "New patient",
     T: "In Treatment",
-    A: "Discharged",
-    F: "Missed — consecutive",
+    D: "Discharged",
+    C: "Consecutive no-shows",
   },
   priorityLegend: {
     "1": "Priority",
@@ -280,10 +280,10 @@ describe("PatientList", () => {
     expect(screen.getByText(": In Treatment")).toBeInTheDocument();
     expect(
       screen.getByText(
-        (content, element) => element?.textContent === "A: Discharged",
+        (content, element) => element?.textContent === "D: Discharged",
       ),
     ).toBeInTheDocument();
-    expect(screen.getByText(": Missed — consecutive")).toBeInTheDocument();
+    expect(screen.getByText(": Consecutive no-shows")).toBeInTheDocument();
 
     // Priority legend
     expect(screen.getByText("Priority Legend:")).toBeInTheDocument();

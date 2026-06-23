@@ -17,9 +17,9 @@ export interface EditPatientFormData {
   nextAttendanceDates: { date: string; type: string }[]; // dates as YYYY-MM-DD strings
 }
 
-/** Shown when user tries to change status to A or F and there are open attendances to cancel */
+/** Shown when user tries to change status to D or C and there are open attendances to cancel */
 export interface PendingStatusChange {
-  newStatus: "A" | "F";
+  newStatus: "D" | "C";
   openCount: number;
 }
 
@@ -28,7 +28,7 @@ interface UseEditPatientFormProps {
   initialData: EditPatientFormData;
   /** YYYY-MM-DD: discharge date cannot be earlier than this (e.g. last completed attendance date) */
   minDischargeDate?: string | null;
-  /** Count of open (scheduled/checked_in/in_progress) attendances; used to confirm status change to A or F */
+  /** Count of open (scheduled/checked_in/in_progress) attendances; used to confirm status change to D or C */
   openAttendancesCount?: number;
   onClose: () => void;
   onSuccess?: (updatedPatient: PatientResponseDto) => void;
@@ -161,14 +161,14 @@ export const useEditPatientForm = ({
       return;
     }
 
-    // When changing to Discharged (A) or Missed (F), confirm cancellation of open attendances
+    // When changing to Discharged (D) or Consecutive no-shows (C), confirm cancellation of open attendances
     if (
       !skipStatusChangeConfirm &&
-      (patient.status === "A" || patient.status === "F") &&
+      (patient.status === "D" || patient.status === "C") &&
       openAttendancesCount > 0
     ) {
       setPendingStatusChange({
-        newStatus: patient.status as "A" | "F",
+        newStatus: patient.status as "D" | "C",
         openCount: openAttendancesCount,
       });
       return;
@@ -202,7 +202,7 @@ export const useEditPatientForm = ({
       const updateData: UpdatePatientRequest = {
         name: patient.name.trim(),
         priority: transformPriorityToApi(patient.priority as "1" | "2" | "3"),
-        patientStatus: transformStatusToApi(patient.status as "N" | "T" | "A" | "F"),
+        patientStatus: transformStatusToApi(patient.status as "N" | "T" | "D" | "C"),
         mainConcern: patient.mainConcern.trim() || undefined,
       };
 

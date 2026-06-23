@@ -302,7 +302,7 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                           setCancelAllNewStatus(
                             e.target.value as
                               | PatientStatus.DISCHARGED
-                              | PatientStatus.ABSENT,
+                              | PatientStatus.CONSECUTIVE_NO_SHOWS,
                           )
                         }
                         disabled={isSubmitting}
@@ -310,8 +310,8 @@ export const ManageAttendanceModal: React.FC<ManageAttendanceModalProps> = ({
                         <option value={PatientStatus.DISCHARGED}>
                           Discharged ({PatientStatus.DISCHARGED})
                         </option>
-                        <option value={PatientStatus.ABSENT}>
-                          Missed — consecutive ({PatientStatus.ABSENT})
+                        <option value={PatientStatus.CONSECUTIVE_NO_SHOWS}>
+                          Consecutive no-shows ({PatientStatus.CONSECUTIVE_NO_SHOWS})
                         </option>
                       </Select>
                     </Field>
