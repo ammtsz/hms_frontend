@@ -19,7 +19,7 @@ export function LoginPageContent() {
     if (!isLoading && isAuthenticated && user) {
       const defaultPath = user.mustChangePassword
         ? "/force-password-change"
-        : "/attendance";
+        : "/board";
       const returnUrl = searchParams.get("returnUrl");
       const redirectPath = getSafeRedirectPath(returnUrl, defaultPath);
       router.replace(redirectPath);

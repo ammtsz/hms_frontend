@@ -14,7 +14,7 @@ import { TreatmentStatusOverview } from "./TreatmentStatusOverview";
 import { ActiveTreatments } from "./ActiveTreatments";
 import { TreatmentRecommendationsDisplay } from "./TreatmentRecommendationsDisplay";
 import ConfirmModal from "@/components/common/ConfirmModal";
-import EditTreatmentModal from "@/features/attendance/components/TreatmentSession/EditTreatmentModal";
+import EditTreatmentModal from "@/features/board/components/TreatmentSession/EditTreatmentModal";
 import type { TreatmentResponseDto } from "@/api/types";
 import { DetailCardCollapsibleHeader } from "@/features/patients/detail/shared/DetailCardCollapsibleHeader";
 import { Card, CardBody, Checkbox, Field, Textarea } from "@/components/ui";

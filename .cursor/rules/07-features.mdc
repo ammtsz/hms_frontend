@@ -24,7 +24,7 @@ alwaysApply: true
 
 ### Core Workflows
 
-- **Attendance Management** (/attendance) - Drag & drop, real-time status updates
+- **Board** (/board) - Drag & drop, real-time status updates
 - **Session completion** - Post-treatment modal, body location selector (`/sessions` API)
 - **Day Finalization Workflow** - End-of-day processing with undo
 - **Patient Management** (/patients) - CRUD operations, patient details
@@ -39,12 +39,12 @@ alwaysApply: true
 
 ## Feature-Specific Rules
 
-### Attendance Management
+### Board
 
 Key files:
 
-- [AttendanceBoard](mdc:src/features/attendance/AttendanceBoard.tsx)
-- [useDragAndDrop.ts](mdc:src/features/attendance/hooks/useDragAndDrop.ts)
+- [AttendanceBoard](mdc:src/features/board/AttendanceBoard.tsx)
+- [useDragAndDrop.ts](mdc:src/features/board/hooks/useDragAndDrop.ts)
 - [attendanceStore.ts](mdc:src/stores/attendanceStore.ts)
 
 Rules:

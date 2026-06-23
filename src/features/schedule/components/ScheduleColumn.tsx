@@ -1,5 +1,5 @@
 import React from "react";
-import AttendanceTypeTag from "@/features/attendance/components/Cards/AttendanceTypeTag";
+import AttendanceTypeTag from "@/features/board/components/Cards/AttendanceTypeTag";
 import { AttendanceType } from "@/types/types";
 import { AttendanceStatus } from "@/api/types";
 import Spinner from "@/components/common/Spinner";

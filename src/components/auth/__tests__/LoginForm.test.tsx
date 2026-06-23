@@ -60,7 +60,7 @@ describe("LoginForm", () => {
     expect(loginAction).not.toHaveBeenCalled();
   });
 
-  it("on successful login without returnUrl redirects to /attendance", async () => {
+  it("on successful login without returnUrl redirects to /board", async () => {
     (loginAction as jest.Mock).mockResolvedValue({
       success: true,
       data: {
@@ -86,7 +86,7 @@ describe("LoginForm", () => {
         ["auth", "currentUser"],
         expect.any(Object),
       );
-      expect(mockPush).toHaveBeenCalledWith("/attendance");
+      expect(mockPush).toHaveBeenCalledWith("/board");
       expect(mockRefresh).toHaveBeenCalled();
     });
   });
@@ -202,7 +202,7 @@ describe("LoginForm", () => {
     expect(mockPush).not.toHaveBeenCalled();
   });
 
-  it("ignores unsafe returnUrl and redirects to /attendance", async () => {
+  it("ignores unsafe returnUrl and redirects to /board", async () => {
     (useSearchParams as jest.Mock).mockReturnValue(
       new URLSearchParams({ returnUrl: "//evil.com/path" }),
     );
@@ -227,7 +227,7 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: /Sign in/i }));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/attendance");
+      expect(mockPush).toHaveBeenCalledWith("/board");
     });
   });
 });

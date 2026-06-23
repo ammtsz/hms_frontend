@@ -156,9 +156,9 @@ function useAttendanceWorkflow() {
 
 - **Query Hooks** - React Query wrappers in `src/api/query/hooks` (`usePatientQueries.ts`, `useTreatmentsWithSessionRows.ts`)
 - **Query Keys** - Cache identity factories in `src/api/query/keys` (import keys from here, not from hooks)
-- **Business Logic Hooks** - Feature workflow rules, owned by the feature that uses them (`features/attendance/hooks/useDragAndDrop.ts`)
-- **UI Hooks** - UI state and interactions near their owning feature or component group (`features/attendance/hooks/useModalManagement.ts`)
-- **Form Hooks** - Form handling near the form workflow (`features/patients/form/hooks/usePatientForm.ts`, `features/attendance/components/Scheduling/hooks/useAttendanceForm.ts`)
+- **Business Logic Hooks** - Feature workflow rules, owned by the feature that uses them (`features/board/hooks/useDragAndDrop.ts`)
+- **UI Hooks** - UI state and interactions near their owning feature or component group (`features/board/hooks/useModalManagement.ts`)
+- **Form Hooks** - Form handling near the form workflow (`features/patients/form/hooks/usePatientForm.ts`, `features/board/components/Scheduling/hooks/useAttendanceForm.ts`)
 - **Shared Non-Query Hooks** - Cross-feature utilities in `src/hooks` (`useDateHelpers.ts`)
 
 ### 4. API Integration Pattern
@@ -420,7 +420,7 @@ function usePatientForm() {
 
 ```typescript
 const AttendanceBoard = lazy(
-  () => import("@/features/attendance/AttendanceBoard")
+  () => import("@/features/board/AttendanceBoard")
 );
 
 // In page

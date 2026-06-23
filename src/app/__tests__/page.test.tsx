@@ -16,10 +16,10 @@ describe("Home Page", () => {
     jest.clearAllMocks();
   });
 
-  it("redirects to /attendance", () => {
+  it("redirects to /board", () => {
     render(<Home />);
 
     expect(redirect).toHaveBeenCalledTimes(1);
-    expect(redirect).toHaveBeenCalledWith("/attendance");
+    expect(redirect).toHaveBeenCalledWith("/board");
   });
 });

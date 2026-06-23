@@ -52,23 +52,23 @@ describe("TabNav Component", () => {
 
   describe("Rendering", () => {
     it("should render all navigation tabs", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
-      expect(screen.getByText("Attendances")).toBeInTheDocument();
+      expect(screen.getByText("Board")).toBeInTheDocument();
       expect(screen.getByText("Schedule")).toBeInTheDocument();
       expect(screen.getByText("Patients")).toBeInTheDocument();
     });
 
     it("should render tabs as links with correct hrefs", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
-      expect(screen.getByText("Attendances").closest("a")).toHaveAttribute(
+      expect(screen.getByText("Board").closest("a")).toHaveAttribute(
         "href",
-        "/attendance",
+        "/board",
       );
       expect(screen.getByText("Schedule").closest("a")).toHaveAttribute(
         "href",
@@ -81,7 +81,7 @@ describe("TabNav Component", () => {
     });
 
     it("should have proper navigation structure", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
@@ -93,11 +93,11 @@ describe("TabNav Component", () => {
 
   describe("Active State", () => {
     it("should mark attendance tab as active when on attendance page", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
-      const attendanceTab = screen.getByText("Attendances").closest("a");
+      const attendanceTab = screen.getByText("Board").closest("a");
       expect(attendanceTab).toHaveClass("active");
       expect(attendanceTab).toHaveAttribute("aria-current", "page");
     });
@@ -133,7 +133,7 @@ describe("TabNav Component", () => {
     });
 
     it("should only have one active tab at a time", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
@@ -141,13 +141,13 @@ describe("TabNav Component", () => {
         .getAllByRole("link")
         .filter((link) => link.classList.contains("active"));
       expect(activeTabs).toHaveLength(1);
-      expect(activeTabs[0]).toHaveTextContent("Attendances");
+      expect(activeTabs[0]).toHaveTextContent("Board");
     });
   });
 
   describe("Inactive State", () => {
     it("should not mark inactive tabs with active class", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
@@ -164,7 +164,7 @@ describe("TabNav Component", () => {
 
   describe("Styling", () => {
     it("should apply base styling classes to all tabs", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
@@ -181,7 +181,7 @@ describe("TabNav Component", () => {
     });
 
     it("should apply shadow-based container styling", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
@@ -198,7 +198,7 @@ describe("TabNav Component", () => {
     });
 
     it("should have sticky navigation positioning", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
@@ -222,7 +222,7 @@ describe("TabNav Component", () => {
 
       render(<TabNav />);
 
-      const attendanceTab = screen.getByText("Attendances").closest("a");
+      const attendanceTab = screen.getByText("Board").closest("a");
       const scheduleTab = screen.getByText("Schedule").closest("a");
 
       expect(attendanceTab).not.toHaveAttribute("aria-current");
@@ -230,7 +230,7 @@ describe("TabNav Component", () => {
     });
 
     it("should have navigation landmark", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
@@ -238,7 +238,7 @@ describe("TabNav Component", () => {
     });
 
     it("should have keyboard accessible links", () => {
-      mockUsePathname.mockReturnValue("/attendance");
+      mockUsePathname.mockReturnValue("/board");
 
       render(<TabNav />);
 
@@ -302,11 +302,11 @@ describe("TabNav Component", () => {
     });
 
     it("should not match partial route names", () => {
-      mockUsePathname.mockReturnValue("/attend"); // partial of /attendance
+      mockUsePathname.mockReturnValue("/boa"); // partial of /board
 
       render(<TabNav />);
 
-      expect(screen.getByText("Attendances").closest("a")).not.toHaveClass(
+      expect(screen.getByText("Board").closest("a")).not.toHaveClass(
         "active",
       );
     });
@@ -317,7 +317,7 @@ describe("TabNav Component", () => {
       render(<TabNav />);
 
       expect(screen.getByText("Patients").closest("a")).toHaveClass("active");
-      expect(screen.getByText("Attendances").closest("a")).not.toHaveClass(
+      expect(screen.getByText("Board").closest("a")).not.toHaveClass(
         "active",
       );
       expect(screen.getByText("Schedule").closest("a")).not.toHaveClass(

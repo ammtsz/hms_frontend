@@ -38,7 +38,7 @@ This authentication layer uses four parts:
 
 ### Protected route access
 
-1. The user visits a protected page such as `/attendance`
+1. The user visits a protected page such as `/board`
 2. `proxy.ts` checks the access token signature locally
 3. If the token is valid, the page renders
 4. The UI loads user data from `/api/auth/me`

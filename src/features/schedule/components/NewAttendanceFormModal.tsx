@@ -1,5 +1,5 @@
 import React from "react";
-import NewAttendanceForm from "@/features/attendance/components/Scheduling/NewAttendanceForm";
+import NewAttendanceForm from "@/features/board/components/Scheduling/NewAttendanceForm";
 import BaseModal from "@/components/common/BaseModal";
 
 interface NewAttendanceFormModalProps {

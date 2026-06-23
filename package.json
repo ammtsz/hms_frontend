@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest --forceExit",
-    "verify:import-casing": "node scripts/verify-attendance-import-casing.mjs",
+    "verify:import-casing": "node scripts/verify-board-import-casing.mjs",
     "verify:paths": "node scripts/verify-refactor-paths.mjs",
     "prebuild": "npm run verify:paths && npm run verify:import-casing",
     "test:cov": "jest --coverage",

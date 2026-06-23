@@ -43,7 +43,7 @@ describe("LoginPageContent", () => {
     expect(mockReplace).not.toHaveBeenCalled();
   });
 
-  it("redirects to /attendance when authenticated and no returnUrl", () => {
+  it("redirects to /board when authenticated and no returnUrl", () => {
     (useAuthContext as jest.Mock).mockReturnValue({
       isAuthenticated: true,
       user: {
@@ -55,7 +55,7 @@ describe("LoginPageContent", () => {
 
     render(<LoginPageContent />, { wrapper });
 
-    expect(mockReplace).toHaveBeenCalledWith("/attendance");
+    expect(mockReplace).toHaveBeenCalledWith("/board");
   });
 
   it("redirects to returnUrl when authenticated with returnUrl in query", () => {

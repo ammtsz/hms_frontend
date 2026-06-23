@@ -42,7 +42,7 @@ jest.mock("../components/ScheduleColumn", () => {
 });
 
 jest.mock(
-  "@/features/attendance/components/AttendanceActions/ManageAttendanceModal",
+  "@/features/board/components/AttendanceActions/ManageAttendanceModal",
   () => {
     return function MockManageAttendanceModal() {
       return null;

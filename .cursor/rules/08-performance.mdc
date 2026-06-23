@@ -17,7 +17,7 @@ import { lazy, Suspense } from "react";
 
 // ✅ CORRECT: Lazy load heavy components
 const AttendanceBoard = lazy(
-  () => import("@/features/attendance/AttendanceBoard")
+  () => import("@/features/board/AttendanceBoard")
 );
 
 export default function AttendancePage() {

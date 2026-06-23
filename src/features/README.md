@@ -15,7 +15,7 @@ src/features/<feature>/
 
 ## Naming rules
 
-- Use lowercase for one-word feature folders: `attendance`, `patients`
+- Use lowercase for one-word feature folders: `board`, `patients`
 - Use PascalCase for component folders and component files inside `components/`
 - Use lowercase for `hooks/`, `utils/`, and similar helper folders
 - Avoid kebab-case under `src/features/`
@@ -24,7 +24,7 @@ src/features/<feature>/
 ## Example layout
 
 ```text
-src/features/attendance/
+src/features/board/
 ├── components/
 │   ├── Board/
 │   ├── Cards/

@@ -62,7 +62,7 @@ If a patient has only assessment consultation, display as **one entry**: "Consul
 **ALWAYS** use `groupAttendancesForDisplayWithBodyLocation` from `confirmationStepUtils.ts` (includes body-location counts for treatments):
 
 ```typescript
-import { groupAttendancesForDisplayWithBodyLocation } from "@/features/attendance/components/EndOfDay/utils/confirmationStepUtils";
+import { groupAttendancesForDisplayWithBodyLocation } from "@/features/board/components/EndOfDay/utils/confirmationStepUtils";
 
 // In your component
 const groupedAttendances = useMemo(
@@ -118,7 +118,7 @@ Apply this grouping pattern in:
 When working with attendance lists, use the proper type:
 
 ```typescript
-import type { IAttendanceStatusDetailWithType } from "@/features/attendance/utils/attendanceDataUtils";
+import type { IAttendanceStatusDetailWithType } from "@/features/board/utils/attendanceDataUtils";
 
 // Input type
 const attendances: IAttendanceStatusDetailWithType[] = [...];
@@ -158,10 +158,10 @@ This grouping approach:
 
 ## Related Files
 
-- Utility: [confirmationStepUtils.ts](mdc:src/features/attendance/components/EndOfDay/utils/confirmationStepUtils.ts)
-- Types: [attendanceDataUtils.ts](mdc:src/features/attendance/utils/attendanceDataUtils.ts) (`GroupedAttendanceDisplay`, `IAttendanceStatusDetailWithType`)
-- Tests: [confirmationStepUtils.test.ts](mdc:src/features/attendance/components/EndOfDay/utils/__tests__/confirmationStepUtils.test.ts)
-- Example Usage: [ConfirmationStep.tsx](mdc:src/features/attendance/components/EndOfDay/components/steps/ConfirmationStep.tsx)
+- Utility: [confirmationStepUtils.ts](mdc:src/features/board/components/EndOfDay/utils/confirmationStepUtils.ts)
+- Types: [attendanceDataUtils.ts](mdc:src/features/board/utils/attendanceDataUtils.ts) (`GroupedAttendanceDisplay`, `IAttendanceStatusDetailWithType`)
+- Tests: [confirmationStepUtils.test.ts](mdc:src/features/board/components/EndOfDay/utils/__tests__/confirmationStepUtils.test.ts)
+- Example Usage: [ConfirmationStep.tsx](mdc:src/features/board/components/EndOfDay/components/steps/ConfirmationStep.tsx)
 
 ## Before Implementing Attendance Features
 

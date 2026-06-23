@@ -15,7 +15,7 @@ import {
   AttendanceByDate,
   AttendanceStatus
 } from '@/types/types';
-import type { IDraggedItem } from '@/features/attendance/types';
+import type { IDraggedItem } from '@/features/board/types';
 import { getTodayClinic } from '@/utils/timezoneDate';
 
 // End-of-day workflow types

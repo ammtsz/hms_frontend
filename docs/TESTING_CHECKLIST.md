@@ -19,7 +19,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Login with valid credentials succeeds
 - [ ] Login with invalid credentials shows error
 - [ ] Login with empty fields shows validation errors
-- [ ] Redirect to `/attendance` after successful login
+- [ ] Redirect to `/board` after successful login
 - [ ] Session persists across page refresh
 - [ ] Protected routes redirect to `/login` when unauthenticated
 
@@ -47,7 +47,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Tab Navigation
 
-- [ ] All tabs visible: Attendances, Schedule, Patients, Treatments
+- [ ] All tabs visible: Board, Schedule, Patients, Treatments
 - [ ] Active tab highlighted correctly
 - [ ] Tab navigation works (page switches)
 - [ ] `aria-current="page"` set on active tab
@@ -56,7 +56,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Home Page
 
-- [ ] Home page (`/`) redirects to `/attendance`
+- [ ] Home page (`/`) redirects to `/board`
 
 ---
 
@@ -127,7 +127,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ---
 
-## 📋 5. Attendance Management (`/attendance`)
+## 📋 5. Board (`/board`)
 
 ### Walk-In Panel
 
@@ -510,7 +510,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 - [ ] Top navigation: labels truncate; user menu opens; no overflow
 - [ ] Tab navigation: 44px targets; horizontal scroll if needed; active tab visible
-- [ ] `/attendance`: columns stack vertically; no page-level horizontal scroll; DnD banner visible below `lg`
+- [ ] `/board`: columns stack vertically; no page-level horizontal scroll; DnD banner visible below `lg`
 - [ ] `/patients`: card list readable; tap opens detail; sort toolbar works
 - [ ] `/patients/[id]`: section FAB reachable; FAB menu opens upward and all section labels visible; desktop rail (`lg+`) icons/labels align; cards and history items wrap; no clipped actions
 - [ ] `/schedule`: filters and columns usable; patient rows stack in columns
@@ -519,7 +519,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Modals: fit viewport; body scrolls inside modal; close control reachable
 - [ ] Touch targets: primary actions ≥ 44px (buttons, `IconButton`, tab nav)
 - [ ] Attendance status changes on phone: read-only layout OK; DnD remains desktop (`MobileDesktopDnDAlert`) — touch DnD **not** HMS (optional follow-up)
-- [ ] No unintended horizontal scroll on `/attendance`, `/schedule`, `/patients`
+- [ ] No unintended horizontal scroll on `/board`, `/schedule`, `/patients`
 
 ### Tablet (640px – 1024px) — release QA
 

@@ -25,18 +25,18 @@ const untracked = gitLines('git ls-files --others --exclude-standard "src/**" "s
 const allRepoPaths = new Set([...tracked, ...untracked]);
 
 const legacyGitPrefixes = [
-  'src/features/attendance/components/board/',
-  'src/features/attendance/components/cards/',
-  'src/features/attendance/components/modals/',
-  'src/features/attendance/components/consultation/',
-  'src/features/attendance/components/scheduling/',
-  'src/features/attendance/components/walkIn/',
-  'src/features/attendance/components/endOfDay/',
-  'src/features/attendance/components/treatmentSession/',
-  'src/features/attendance/components/treatmentRecommendations/',
-  'src/features/attendance/components/attendanceActions/',
-  'src/features/attendance/AttendanceManagement.tsx',
-  'src/features/attendance/hooks/useAttendanceManagement.ts',
+  'src/features/board/components/board/',
+  'src/features/board/components/cards/',
+  'src/features/board/components/modals/',
+  'src/features/board/components/consultation/',
+  'src/features/board/components/scheduling/',
+  'src/features/board/components/walkIn/',
+  'src/features/board/components/endOfDay/',
+  'src/features/board/components/treatmentSession/',
+  'src/features/board/components/treatmentRecommendations/',
+  'src/features/board/components/attendanceActions/',
+  'src/features/board/AttendanceManagement.tsx',
+  'src/features/board/hooks/useAttendanceManagement.ts',
   'src/api/dayFinalization/',
   'src/api/query/hooks/usePatientComplaint.ts',
   'src/features/settings/ProfileSettings.tsx',
@@ -59,17 +59,17 @@ const attendanceLegacyFolders = {
 };
 
 const legacyImportSubstrings = [
-  'features/attendance/components/board/',
-  'features/attendance/components/cards/',
-  'features/attendance/components/modals/',
-  'features/attendance/components/consultation/',
-  'features/attendance/components/scheduling/',
-  'features/attendance/components/walkIn/',
-  'features/attendance/components/endOfDay/',
-  'features/attendance/components/treatmentSession/',
-  'features/attendance/components/treatmentRecommendations/',
-  'features/attendance/components/attendanceActions/',
-  'features/attendance/AttendanceManagement',
+  'features/board/components/board/',
+  'features/board/components/cards/',
+  'features/board/components/modals/',
+  'features/board/components/consultation/',
+  'features/board/components/scheduling/',
+  'features/board/components/walkIn/',
+  'features/board/components/endOfDay/',
+  'features/board/components/treatmentSession/',
+  'features/board/components/treatmentRecommendations/',
+  'features/board/components/attendanceActions/',
+  'features/board/AttendanceManagement',
   'hooks/useAttendanceManagement',
   'api/dayFinalization',
   'query/hooks/usePatientComplaint',
@@ -179,7 +179,7 @@ for (const file of walk(join(ROOT, 'src'))) {
       }
     }
 
-    const absFolderMatch = spec.match(/features\/attendance\/components\/([^/'"]+)/);
+    const absFolderMatch = spec.match(/features\/board\/components\/([^/'"]+)/);
     if (absFolderMatch && absFolderMatch[1] in attendanceLegacyFolders) {
       errors.push(
         `${relative(ROOT, file)}: use ${attendanceLegacyFolders[absFolderMatch[1]]} in ${spec}`,

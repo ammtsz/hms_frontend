@@ -52,22 +52,22 @@ describe('proxy', () => {
   });
 
   it('redirects unauthenticated users from protected routes', async () => {
-    const response = (await proxy(createRequest('/attendance'))) as unknown as MockResponse;
+    const response = (await proxy(createRequest('/board'))) as unknown as MockResponse;
 
     expect(response).toEqual({
       type: 'redirect',
-      url: 'http://localhost/login?returnUrl=%2Fattendance',
+      url: 'http://localhost/login?returnUrl=%2Fboard',
     });
   });
 
   it('redirects users with invalid tokens from protected routes', async () => {
     jwtVerifyMock.mockRejectedValueOnce(new Error('Invalid token'));
 
-    const response = (await proxy(createRequest('/attendance', 'bad-token'))) as unknown as MockResponse;
+    const response = (await proxy(createRequest('/board', 'bad-token'))) as unknown as MockResponse;
 
     expect(response).toEqual({
       type: 'redirect',
-      url: 'http://localhost/login?returnUrl=%2Fattendance',
+      url: 'http://localhost/login?returnUrl=%2Fboard',
     });
   });
 });

@@ -138,7 +138,7 @@ const { data: patient, isLoading, error } = usePatient(id);
 
 ```typescript
 // ✅ CORRECT: Use the utility function
-import { groupAttendancesForDisplayWithBodyLocation } from "@/features/attendance/components/EndOfDay/utils/confirmationStepUtils";
+import { groupAttendancesForDisplayWithBodyLocation } from "@/features/board/components/EndOfDay/utils/confirmationStepUtils";
 
 const groupedAttendances = useMemo(
   () => groupAttendancesForDisplayWithBodyLocation(attendances),

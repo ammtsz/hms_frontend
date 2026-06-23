@@ -5,7 +5,7 @@ import NewAttendanceFormModal from "../components/NewAttendanceFormModal";
 
 // Mock the NewAttendanceForm component
 jest.mock(
-  "@/features/attendance/components/Scheduling/NewAttendanceForm",
+  "@/features/board/components/Scheduling/NewAttendanceForm",
   () => {
     return function MockNewAttendanceForm({
       showDateField,

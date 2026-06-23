@@ -40,7 +40,7 @@ jest.mock('next/navigation', () => ({
     forward: jest.fn(),
     refresh: jest.fn(),
   })),
-  usePathname: jest.fn(() => '/attendance'),
+  usePathname: jest.fn(() => '/board'),
   useSearchParams: jest.fn(() => new URLSearchParams()),
   redirect: jest.fn(),
 }));

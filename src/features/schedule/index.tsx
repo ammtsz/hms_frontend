@@ -1,7 +1,7 @@
 "use client";
 
 import React, { lazy, Suspense } from "react";
-import ManageAttendanceModal from "@/features/attendance/components/AttendanceActions/ManageAttendanceModal";
+import ManageAttendanceModal from "@/features/board/components/AttendanceActions/ManageAttendanceModal";
 import ScheduleColumn from "./components/ScheduleColumn";
 import ScheduleCalendarFilters from "./components/ScheduleCalendarFilters";
 import UpcomingHolidaysWidget from "./components/UpcomingHolidaysWidget";

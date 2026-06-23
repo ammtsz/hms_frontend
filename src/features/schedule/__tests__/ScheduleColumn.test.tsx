@@ -7,7 +7,7 @@ import { AttendanceType } from "@/types/types";
 import { AttendanceStatus } from "@/api/types";
 import { useOpenCancellation } from "@/stores/modalStore";
 
-jest.mock("@/features/attendance/components/Cards/AttendanceTypeTag", () => {
+jest.mock("@/features/board/components/Cards/AttendanceTypeTag", () => {
   return function MockAttendanceTypeTag({
     type,
     count,

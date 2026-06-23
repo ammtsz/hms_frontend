@@ -90,7 +90,7 @@ Use lazy loading for route-level components:
 
 ```typescript
 const AttendanceBoard = lazy(
-  () => import("@/features/attendance/AttendanceBoard")
+  () => import("@/features/board/AttendanceBoard")
 );
 
 <Suspense fallback={<LoadingFallback />}>
