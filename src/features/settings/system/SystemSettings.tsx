@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import TreatmentOptionsList from "./TreatmentOptionsList";
-import { SystemOptionType } from "@/types/systemOptions";
 import PriorityManagementList from "./PriorityManagementList";
 import NoteCategoriesManagementList from "./NoteCategoriesManagementList";
 import {
@@ -36,7 +35,6 @@ function stringifyThreshold(n: number): string {
 
 export default function SystemSettings() {
   const [bodyLocationsExpanded, setBodyLocationsExpanded] = useState(false);
-  const [colorsExpanded, setColorsExpanded] = useState(false);
   const [prioritiesExpanded, setPrioritiesExpanded] = useState(false);
   const [noteCategoriesExpanded, setNoteCategoriesExpanded] = useState(false);
   const [thresholdExpanded, setThresholdExpanded] = useState(false);
@@ -180,19 +178,7 @@ export default function SystemSettings() {
             isOpen={bodyLocationsExpanded}
             onToggle={() => setBodyLocationsExpanded(!bodyLocationsExpanded)}
           >
-            <TreatmentOptionsList type={SystemOptionType.BODY_LOCATION} />
-          </SectionDisclosure>
-
-          {/* Colors Section */}
-          <SectionDisclosure
-            title={SYSTEM_SETTINGS_LABELS.colorsPhysiotherapy}
-            isOpen={colorsExpanded}
-            onToggle={() => setColorsExpanded(!colorsExpanded)}
-          >
-            <TreatmentOptionsList
-              type={SystemOptionType.COLOR}
-              maxValueLength={50}
-            />
+            <TreatmentOptionsList />
           </SectionDisclosure>
         </CardBody>
       </Card>

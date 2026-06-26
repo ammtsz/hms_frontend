@@ -5,8 +5,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import {
   useUpdateBodyLocation,
   useDeleteBodyLocation,
-  useUpdateColor,
-  useDeleteColor,
 } from "@/api/query/hooks/useSystemOptionsQueries";
 import { UserRole } from "@/types/auth";
 import { SystemOptionType, type SystemOption } from "@/types/systemOptions";
@@ -22,12 +20,6 @@ const mockUseUpdateBodyLocation = useUpdateBodyLocation as jest.MockedFunction<
 >;
 const mockUseDeleteBodyLocation = useDeleteBodyLocation as jest.MockedFunction<
   typeof useDeleteBodyLocation
->;
-const mockUseUpdateColor = useUpdateColor as jest.MockedFunction<
-  typeof useUpdateColor
->;
-const mockUseDeleteColor = useDeleteColor as jest.MockedFunction<
-  typeof useDeleteColor
 >;
 
 describe("TreatmentOptionRow", () => {
@@ -66,16 +58,6 @@ describe("TreatmentOptionRow", () => {
     updatedAt: "2024-01-01T00:00:00.000Z",
   };
 
-  const mockColor: SystemOption = {
-    id: 2,
-    type: SystemOptionType.COLOR,
-    value: "Red",
-    isActive: true,
-    usageCount: 3,
-    createdAt: "2024-01-01T00:00:00.000Z",
-    updatedAt: "2024-01-01T00:00:00.000Z",
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -86,18 +68,6 @@ describe("TreatmentOptionRow", () => {
     } as any);
 
     mockUseDeleteBodyLocation.mockReturnValue({
-      mutateAsync: mockMutateAsync,
-      isPending: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
-
-    mockUseUpdateColor.mockReturnValue({
-      mutateAsync: mockMutateAsync,
-      isPending: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any);
-
-    mockUseDeleteColor.mockReturnValue({
       mutateAsync: mockMutateAsync,
       isPending: false,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -356,46 +326,6 @@ describe("TreatmentOptionRow", () => {
       expect(screen.getByText("Right Arm")).toBeInTheDocument();
       expect(screen.getByText("5 sessions")).toBeInTheDocument();
       expect(screen.getByText("● Active")).toBeInTheDocument();
-    });
-  });
-
-  describe("Color Options", () => {
-    beforeEach(() => {
-      mockUseAuth.mockReturnValue({
-        user: mockAdminUser,
-        isAuthenticated: true,
-        isLoading: false,
-        refreshUser: mockRefreshUser,
-      });
-    });
-
-    it("should use color mutations for color type options", async () => {
-      render(
-        <table>
-          <tbody>
-            <TreatmentOptionRow
-              option={mockColor}
-              type={SystemOptionType.COLOR}
-            />
-          </tbody>
-        </table>,
-      );
-
-      const editButton = screen.getByTitle("Edit");
-      fireEvent.click(editButton);
-
-      const input = screen.getByDisplayValue("Red");
-      fireEvent.change(input, { target: { value: "Blue" } });
-
-      const saveButton = screen.getByTitle("Save");
-      fireEvent.click(saveButton);
-
-      await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalledWith({
-          id: 2,
-          updates: { value: "Blue" },
-        });
-      });
     });
   });
 

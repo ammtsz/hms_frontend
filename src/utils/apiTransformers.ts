@@ -117,9 +117,9 @@ export const transformSinglePatientFromApi = (apiPatient: PatientResponseDto): P
     nextAppointmentDates: [],
     currentRecommendations: {
       date: formatDateClinic(), // String: "YYYY-MM-DD"
-      food: '',
-      water: '',
-      ointment: '',
+      homeExercises: '',
+      painManagement: '',
+      medications: '',
       physiotherapy: false,
       tens: false,
       returnWeeks: 0

@@ -60,7 +60,9 @@ export const SessionGroup: React.FC<SessionGroupProps> = ({ group }) => {
             </div>
             <p className="break-words text-sm text-gray-800">
               {group.locations.join(", ").toUpperCase()}
-              {group.color ? ` • ${group.color.toUpperCase()}` : ""}
+              {group.durationMinutes != null
+                ? ` • ${group.durationMinutes} min`
+                : ""}
             </p>
           </div>
           <div className="shrink-0 self-start">

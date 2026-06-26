@@ -145,12 +145,12 @@ export const AppointmentHistoryItem: React.FC<AppointmentHistoryItemProps> = ({
           {/* Physiotherapy Details */}
           {groupedAppointment.treatments.physiotherapy && (
             <PhysiotherapyDetails
-              bodyLocationsWithColors={
-                groupedAppointment.treatments.physiotherapy
-                  .bodyLocationsWithColors
+              bodyLocations={
+                groupedAppointment.treatments.physiotherapy.bodyLocations
               }
-              color={groupedAppointment.treatments.physiotherapy.color}
-              duration={groupedAppointment.treatments.physiotherapy.duration}
+              durationMinutes={
+                groupedAppointment.treatments.physiotherapy.durationMinutes
+              }
               sessionNumber={
                 groupedAppointment.treatments.physiotherapy.sessionNumber
               }

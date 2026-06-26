@@ -48,43 +48,43 @@ describe("AssessmentDetails", () => {
     expect(screen.getByText("Notes during the consultation")).toBeInTheDocument();
   });
 
-  it("should display food recommendation", () => {
+  it("should display home exercises recommendation", () => {
     render(
       <AssessmentDetails
         recommendations={{
-          food: "Avoid red meats",
+          homeExercises: "Stretch daily",
         }}
       />,
     );
 
-    expect(screen.getByText(/Food/)).toBeInTheDocument();
-    expect(screen.getByText("Avoid red meats")).toBeInTheDocument();
+    expect(screen.getByText(/Home Exercises/)).toBeInTheDocument();
+    expect(screen.getByText("Stretch daily")).toBeInTheDocument();
   });
 
-  it("should display water recommendation", () => {
+  it("should display pain management recommendation", () => {
     render(
       <AssessmentDetails
         recommendations={{
-          water: "Water 3x daily",
+          painManagement: "Ice after activity",
         }}
       />,
     );
 
-    expect(screen.getAllByText(/Water/)[0]).toBeInTheDocument();
-    expect(screen.getByText("Water 3x daily")).toBeInTheDocument();
+    expect(screen.getAllByText(/Pain Management/)[0]).toBeInTheDocument();
+    expect(screen.getByText("Ice after activity")).toBeInTheDocument();
   });
 
-  it("should display ointment recommendation", () => {
+  it("should display medications recommendation", () => {
     render(
       <AssessmentDetails
         recommendations={{
-          ointment: "Apply to affected area",
+          medications: "Ibuprofen",
         }}
       />,
     );
 
-    expect(screen.getByText(/Ointment/)).toBeInTheDocument();
-    expect(screen.getByText("Apply to affected area")).toBeInTheDocument();
+    expect(screen.getByText(/Medications/)).toBeInTheDocument();
+    expect(screen.getByText("Ibuprofen")).toBeInTheDocument();
   });
 
   it("should display return weeks", () => {
@@ -150,7 +150,6 @@ describe("AssessmentDetails", () => {
         bodyLocation: "Head",
         plannedSessions: 3,
         completedSessions: 0,
-        color: "Blue",
         status: "scheduled",
       },
     ];
@@ -228,7 +227,6 @@ describe("AssessmentDetails", () => {
         bodyLocation: "Head",
         plannedSessions: 2,
         completedSessions: 0,
-        color: "Blue",
         status: "scheduled",
       },
     ];
@@ -238,9 +236,9 @@ describe("AssessmentDetails", () => {
         preConsultationNotes="Patient shows good receptivity"
         consultationNotes="Oriented about treatment"
         recommendations={{
-          food: "Avoid red meat",
-          water: "Water",
-          ointment: "Apply 2x daily",
+          homeExercises: "Cat-camel and pelvic tilt, 3x daily",
+          painManagement: "Ice 15 min after activity",
+          medications: "Diclofenac gel twice daily",
           returnWeeks: 3,
         }}
         physiotherapySessions={physiotherapySessions}
@@ -249,9 +247,9 @@ describe("AssessmentDetails", () => {
     );
 
     expect(screen.getByText(/Recommendations:/)).toBeInTheDocument();
-    expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
-    expect(screen.getAllByText(/Water/)[0]).toBeInTheDocument();
-    expect(screen.getByText("Apply 2x daily")).toBeInTheDocument();
+    expect(screen.getByText("Cat-camel and pelvic tilt, 3x daily")).toBeInTheDocument();
+    expect(screen.getAllByText(/Pain Management/)[0]).toBeInTheDocument();
+    expect(screen.getByText("Diclofenac gel twice daily")).toBeInTheDocument();
     expect(screen.getByText("3 weeks")).toBeInTheDocument();
     expect(screen.getByText(/2 sessions - Head/)).toBeInTheDocument();
   });

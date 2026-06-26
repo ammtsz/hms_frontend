@@ -89,9 +89,9 @@ export interface ConsultationResponseDto {
   appointmentId: number;
   mainConcern?: string;
   patientStatus?: string; // N, T, D, or C
-  food?: string;
-  water?: string;
-  ointments?: string;
+  homeExercises?: string;
+  painManagement?: string;
+  medications?: string;
   physiotherapy?: boolean;
   tens?: boolean;
   returnWeeks?: number;
@@ -197,9 +197,9 @@ export interface CreateConsultationRequest {
   appointmentId: number;
   mainConcern?: string;
   patientStatus?: string; // N, T, D, or C - Stored on consultation and used for patient update
-  food?: string;
-  water?: string;
-  ointments?: string;
+  homeExercises?: string;
+  painManagement?: string;
+  medications?: string;
   physiotherapy?: boolean;
   tens?: boolean;
   returnWeeks?: number; // 1-52 weeks
@@ -213,9 +213,9 @@ export interface UpdateConsultationRequest {
   appointmentId?: number;
   mainConcern?: string;
   patientStatus?: string; // N, T, D, or C - Stored on consultation and used for patient update
-  food?: string;
-  water?: string;
-  ointments?: string;
+  homeExercises?: string;
+  painManagement?: string;
+  medications?: string;
   physiotherapy?: boolean;
   tens?: boolean;
   returnWeeks?: number; // 1-52 weeks
@@ -271,7 +271,6 @@ export interface TreatmentResponseDto {
   endDate?: string; // ISO date string
   status: string;
   durationMinutes?: number;
-  color?: string;
   notes?: string;
   cancellationReason?: string;
   sessions?: SessionResponseDto[];
@@ -290,8 +289,7 @@ export interface CreateTreatmentRequest {
   startDate: string; // ISO date string
   plannedSessions: number;
   endDate?: string; // ISO date string
-  durationMinutes?: number; // Required for physiotherapy
-  color?: string; // Required for physiotherapy
+  durationMinutes?: number;
   notes?: string;
   /**
    * When true, the first `hms_session` row reuses an existing appointment instead of
@@ -315,8 +313,7 @@ export interface UpdateTreatmentRequest {
   notes?: string;
   /** Edit config: only allowed when treatment has no completed session rows */
   bodyLocation?: string;
-  durationMinutes?: number; // physiotherapy only (7min units)
-  color?: string; // physiotherapy only
+  durationMinutes?: number;
 }
 
 export interface BulkCreateTreatmentsRequest {
@@ -366,7 +363,6 @@ export interface SessionResponseDto {
   plannedSessions?: number;
   completedSessions?: number;
   durationMinutes?: number;
-  color?: string;
   treatmentNotes?: string;
   cancellationReason?: string;
   /** Status of the parent treatment plan (`hms_treatment.status`). */

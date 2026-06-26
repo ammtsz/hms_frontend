@@ -4,7 +4,7 @@ import { getStatusDates } from "@/utils/sessionBreakdownUtils";
 
 export interface SessionGroup {
   treatmentType?: string;
-  color?: string;
+  durationMinutes?: number;
   plannedSessions?: number;
   treatmentNotes?: string;
   cancellationReason?: string;
@@ -19,7 +19,6 @@ export interface SessionGroup {
     endTime?: string;
     bodyLocation?: string;
     treatmentType?: string;
-    color?: string;
     plannedSessions?: number;
     durationMinutes?: number;
     completedSessions?: number;
@@ -39,19 +38,19 @@ export const useSessionBreakdown = (patientId: string) => {
   } = useSessionsByPatient(patientId);
 
   const sessionGroups = useMemo(() => {
-    // Group sessions by treatment type, color, and planned sessions
+    // Group sessions by treatment type, duration, and planned sessions
     const grouped = sessions.reduce(
       (acc, session) => {
         const scheduledDates = getStatusDates(sessions, session, "scheduled");
         const cancelledDates = getStatusDates(sessions, session, "cancelled");
         const missedDates = getStatusDates(sessions, session, "missed");
 
-        const key = `${session.treatmentType}-${session.color || "none"}-${session.plannedSessions}-${session.durationMinutes || "0"}-${session.completedSessions}-scheduled_${scheduledDates}-cancelled_${cancelledDates}-missed_${missedDates}`;
+        const key = `${session.treatmentType}-${session.plannedSessions}-${session.durationMinutes || "0"}-${session.completedSessions}-scheduled_${scheduledDates}-cancelled_${cancelledDates}-missed_${missedDates}`;
 
         if (!acc[key]) {
           acc[key] = {
             treatmentType: session.treatmentType,
-            color: session.color,
+            durationMinutes: session.durationMinutes,
             plannedSessions: session.plannedSessions,
             treatmentNotes: session.treatmentNotes,
             cancellationReason: session.cancellationReason,
@@ -71,7 +70,7 @@ export const useSessionBreakdown = (patientId: string) => {
         string,
         {
           treatmentType?: string;
-          color?: string;
+          durationMinutes?: number;
           plannedSessions?: number;
           treatmentNotes?: string;
           cancellationReason?: string;
@@ -112,7 +111,7 @@ export const useSessionBreakdown = (patientId: string) => {
 
         return {
           treatmentType: group.treatmentType,
-          color: group.color,
+          durationMinutes: group.durationMinutes,
           plannedSessions: group.plannedSessions,
           treatmentNotes: group.treatmentNotes,
           cancellationReason: reasons.length > 0 ? reasons.join(`, \n`) : undefined,

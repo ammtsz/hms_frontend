@@ -142,12 +142,8 @@ describe("ScheduledAppointmentItem", () => {
       ...baseAppointment,
       treatments: {
         physiotherapy: {
-          bodyLocationsWithColors: [
-            { bodyLocation: "Head", color: "Blue" },
-            { bodyLocation: "Chest", color: "Blue" },
-          ],
-          color: "Blue",
-          duration: 15,
+          bodyLocations: ["Head", "Chest"],
+          durationMinutes: 45,
           sessionNumber: "2/5",
           notes: undefined,
         },
@@ -163,7 +159,7 @@ describe("ScheduledAppointmentItem", () => {
 
     expect(screen.getAllByText(/Physiotherapy/)[0]).toBeInTheDocument();
     expect(screen.getByText(/Head, Chest/)).toBeInTheDocument();
-    expect(screen.getByText("Blue")).toBeInTheDocument();
+    expect(screen.getByText(/45 min/)).toBeInTheDocument();
   });
 
   it("should display tens treatment", () => {
@@ -262,9 +258,8 @@ describe("ScheduledAppointmentItem", () => {
       ...baseAppointment,
       treatments: {
         physiotherapy: {
-          bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
-          color: "Blue",
-          duration: 10,
+          bodyLocations: ["Head"],
+          durationMinutes: 45,
           sessionNumber: "1/3",
           notes: undefined,
         },
@@ -295,9 +290,8 @@ describe("ScheduledAppointmentItem", () => {
       status: "cancelled" as const,
       treatments: {
         physiotherapy: {
-          bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
-          color: "Blue",
-          duration: 15,
+          bodyLocations: ["Head"],
+          durationMinutes: 45,
           sessionNumber: "1/3",
           notes: undefined,
         },

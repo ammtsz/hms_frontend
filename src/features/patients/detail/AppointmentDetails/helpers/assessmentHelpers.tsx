@@ -1,4 +1,5 @@
 import React from "react";
+import { formatTreatmentDurationMinutes } from "@/constants/treatment";
 
 /** Physiotherapy / tens treatment row shown in assessment details and recommendation boxes. */
 export interface ActiveTreatmentRow {
@@ -7,11 +8,11 @@ export interface ActiveTreatmentRow {
   bodyLocation: string;
   plannedSessions: number;
   completedSessions: number;
-  color?: string;
+  durationMinutes?: number;
   status: string;
 }
 
-/** Format active treatment rows for display (locations, colors, planned session counts). */
+/** Format active treatment rows for display (locations, duration, planned session counts). */
 export const formatActiveTreatmentRows = (
   rows: ActiveTreatmentRow[],
 ): string[] => {
@@ -19,16 +20,17 @@ export const formatActiveTreatmentRows = (
 
   return rows.map((row) => {
     const location = row.bodyLocation || "not specified";
-    const color = row.color ? ` (color: ${row.color})` : "";
+    const duration = row.durationMinutes
+      ? ` (${formatTreatmentDurationMinutes(row.durationMinutes)})`
+      : "";
     const sessionsText =
       row.plannedSessions === 1
         ? "1 session"
         : `${row.plannedSessions} sessions`;
-    return `${sessionsText} - ${location}${color}`;
+    return `${sessionsText} - ${location}${duration}`;
   });
 };
 
-// Helper: Render recommendation item
 interface RecommendationItemProps {
   icon: string;
   label: string;

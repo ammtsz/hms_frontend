@@ -17,8 +17,6 @@ import {
 import {
   useUpdateBodyLocation,
   useDeleteBodyLocation,
-  useUpdateColor,
-  useDeleteColor,
 } from "@/api/query/hooks/useSystemOptionsQueries";
 import { SystemOptionType, SystemOption } from "@/types/systemOptions";
 import { useAuth } from "@/contexts/AuthContext";
@@ -41,21 +39,8 @@ export default function TreatmentOptionRow({
   const [error, setError] = useState("");
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  const isBodyLocation = type === SystemOptionType.BODY_LOCATION;
-
-  // Call all hooks unconditionally
-  const updateBodyLocationMutation = useUpdateBodyLocation();
-  const deleteBodyLocationMutation = useDeleteBodyLocation();
-  const updateColorMutation = useUpdateColor();
-  const deleteColorMutation = useDeleteColor();
-
-  // Select the correct hooks based on type
-  const updateMutation = isBodyLocation
-    ? updateBodyLocationMutation
-    : updateColorMutation;
-  const deleteMutation = isBodyLocation
-    ? deleteBodyLocationMutation
-    : deleteColorMutation;
+  const updateMutation = useUpdateBodyLocation();
+  const deleteMutation = useDeleteBodyLocation();
 
   const handleEdit = () => {
     setIsEditing(true);

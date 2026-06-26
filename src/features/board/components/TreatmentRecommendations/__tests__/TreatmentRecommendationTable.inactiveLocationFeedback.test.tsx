@@ -50,13 +50,6 @@ jest.mock("@/api/query/hooks/useSystemOptionsQueries", () => ({
       : mockBodyLocationsData.active,
     isLoading: false,
   })),
-  useColors: jest.fn(() => ({
-    data: [
-      { id: 1, value: "Red", isActive: true, usageCount: 3 },
-      { id: 2, value: "Blue", isActive: true, usageCount: 1 },
-    ],
-    isLoading: false,
-  })),
   useCreateBodyLocation: jest.fn(() => ({
     mutateAsync: mockCreateBodyLocation,
     isPending: false,
@@ -164,8 +157,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const existingTreatments = [
       {
         locations: [],
-        color: "",
-        duration: 1,
+        duration: 45,
         quantity: 1,
         startDate: "2026-02-17",
       },
@@ -219,8 +211,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const existingTreatments = [
       {
         locations: [],
-        color: "",
-        duration: 1,
+        duration: 45,
         quantity: 1,
         startDate: "2026-02-17",
       },
@@ -268,8 +259,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const existingTreatments = [
       {
         locations: [],
-        color: "",
-        duration: 1,
+        duration: 45,
         quantity: 1,
         startDate: "2026-02-17",
       },
@@ -314,8 +304,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const existingTreatments = [
       {
         locations: [],
-        color: "",
-        duration: 1,
+        duration: 45,
         quantity: 1,
         startDate: "2026-02-17",
       },
@@ -373,8 +362,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const existingTreatments = [
       {
         locations: [],
-        color: "",
-        duration: 1,
+        duration: 45,
         quantity: 1,
         startDate: "2026-02-17",
       },
@@ -432,8 +420,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const existingTreatments = [
       {
         locations: [],
-        color: "",
-        duration: 1,
+        duration: 45,
         quantity: 1,
         startDate: "2026-02-17",
       },
@@ -489,8 +476,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const existingTreatments = [
       {
         locations: [],
-        color: "",
-        duration: 1,
+        duration: 45,
         quantity: 1,
         startDate: "2026-02-17",
       },
@@ -555,8 +541,7 @@ describe("TreatmentRecommendationTable - Inactive Location Feedback", () => {
     const existingTreatments = [
       {
         locations: [],
-        color: "",
-        duration: 1,
+        duration: 45,
         quantity: 1,
         startDate: "2026-02-17",
       },

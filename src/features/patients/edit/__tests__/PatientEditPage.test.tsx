@@ -107,9 +107,9 @@ describe("PatientEditPage", () => {
     nextAppointmentDates: [],
     currentRecommendations: {
       date: new Date(),
-      food: "",
-      water: "",
-      ointment: "",
+      homeExercises: "",
+      painManagement: "",
+      medications: "",
       physiotherapy: false,
       tens: false,
       returnWeeks: 0,

@@ -53,7 +53,7 @@ const mockSession = {
   treatment: {
     treatmentType: "physiotherapy",
     bodyLocation: "Head",
-    color: "Blue",
+    durationMinutes: 45,
   },
 };
 

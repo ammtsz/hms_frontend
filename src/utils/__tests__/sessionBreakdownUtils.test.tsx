@@ -176,10 +176,9 @@ describe("sessionBreakdownUtils", () => {
       updatedTime: "00:00:00",
       treatmentType: "physiotherapy" as const,
       bodyLocation: "Head",
-      color: "Blue",
       plannedSessions: 3,
       completedSessions: 0,
-      durationMinutes: 7,
+      durationMinutes: 45,
     };
 
     it("filters and returns matching session dates joined by underscore", () => {

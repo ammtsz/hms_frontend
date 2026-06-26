@@ -95,7 +95,6 @@ export function usePostTreatmentModalHook() {
         appointmentId,
         treatmentType: treatment.treatmentType as "physiotherapy" | "tens",
         bodyLocation: treatment.bodyLocation,
-        color: treatment.color,
         durationMinutes: treatment.durationMinutes,
         plannedSessions: treatment.plannedSessions,
         completedSessions: treatment.completedSessions,

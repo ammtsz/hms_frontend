@@ -4,7 +4,11 @@ alwaysApply: true
 
 # Appointment Grouping Pattern
 
-**CRITICAL**: This project uses a specific grouping approach for displaying appointments, especially for treatment types (physiotherapy and tens). Always follow this pattern when working with appointment data.
+**CRITICAL**: This project uses a specific grouping approach for displaying appointments, especially for treatment types (physiotherapy and TENS). Always follow this pattern when working with appointment data.
+
+**Display labels** (via `getAppointmentTypeLabel`): Assessment Consultation, Physiotherapy, TENS. Combined treatments show as **Physiotherapy e TENS** when both types exist for the same patient on the same date.
+
+**Scheduling / conflicts** use **body location** (same patient and date).
 
 ## Core Grouping Rules
 
@@ -29,7 +33,7 @@ If a patient has only treatments (no assessment), display as **one entry**:
 
 ### Rule 4: Assessment Only
 
-If a patient has only assessment consultation, display as **one entry**: "Consultation"
+If a patient has only assessment consultation, display as **one entry**: "Assessment Consultation"
 
 ## Visual Examples
 
@@ -38,7 +42,7 @@ If a patient has only assessment consultation, display as **one entry**: "Consul
 **Input:** Patient 10 has assessment, physiotherapy, and tens appointments
 **Output:**
 
-- Patient 10 (Consultation)
+- Patient 10 (Assessment Consultation)
 - Patient 10 (Physiotherapy e TENS)
 
 ### Example 2: Patient with Only Physiotherapy
@@ -142,7 +146,7 @@ it("should group patient with assessment and treatments as two entries", () => {
   const result = groupAppointmentsForDisplayWithBodyLocation(appointments);
 
   expect(result).toHaveLength(2); // assessment + combined treatments
-  expect(result[0].label).toContain("Consultation");
+  expect(result[0].label).toContain("Assessment Consultation");
   expect(result[1].label).toMatch(/Physiotherapy|TENS/);
 });
 ```

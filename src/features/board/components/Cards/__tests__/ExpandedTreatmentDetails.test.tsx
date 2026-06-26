@@ -30,8 +30,7 @@ describe("ExpandedTreatmentDetails", () => {
         plannedSessions: 10,
         completedSessions: 3,
         status: "in_progress",
-        durationMinutes: 14,
-        color: "blue",
+        durationMinutes: 45,
         notes: "Treatment progressing well",
         createdDate: "2026-01-15",
         createdTime: "10:00:00",
@@ -80,10 +79,9 @@ describe("ExpandedTreatmentDetails", () => {
     );
 
     expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
-    expect(screen.getByText("blue")).toBeInTheDocument();
     expect(screen.getByText(/Session 1\/10/)).toBeInTheDocument();
     expect(screen.getByText("Head")).toBeInTheDocument();
-    expect(screen.getByText(/14 minutes/)).toBeInTheDocument();
+    expect(screen.getByText(/45 minutes/)).toBeInTheDocument();
   });
 
   it("should render tens session details", () => {
@@ -134,14 +132,23 @@ describe("ExpandedTreatmentDetails", () => {
     expect(screen.getByText("Treatment progressing well")).toBeInTheDocument();
   });
 
-  it("should not render duration for tens treatments", () => {
+  it("should render tens session details with duration when provided", () => {
     render(
       <ExpandedTreatmentDetails
-        treatmentsWithSessionRows={[mockSessionsWithRecords[1]]}
+        treatmentsWithSessionRows={[
+          {
+            ...mockSessionsWithRecords[1],
+            treatment: {
+              ...mockSessionsWithRecords[1].treatment,
+              durationMinutes: 30,
+            },
+          },
+        ]}
         patientName="Test"
       />,
     );
 
-    expect(screen.queryByText(/Tempo:/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Duration:/)).toBeInTheDocument();
+    expect(screen.getByText(/30 minutes/)).toBeInTheDocument();
   });
 });

@@ -145,9 +145,9 @@ const mockTransformedPatient = {
   nextAppointmentDates: [],
   currentRecommendations: {
     date: "2023-01-01",
-    food: "",
-    water: "",
-    ointment: "",
+    homeExercises: "",
+    painManagement: "",
+    medications: "",
     physiotherapy: false,
     tens: false,
     returnWeeks: 0,

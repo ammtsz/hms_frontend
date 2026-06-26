@@ -49,9 +49,9 @@ const mockPatient: Patient = {
   ],
   currentRecommendations: {
     date: "2024-12-20",
-    food: "Light meals",
-    water: "2L/day",
-    ointment: "Apply 2x daily",
+    homeExercises: "Stretching daily",
+    painManagement: "Ice after activity",
+    medications: "Diclofenac gel twice daily",
     physiotherapy: true,
     tens: false,
     returnWeeks: 2,

@@ -241,8 +241,8 @@ const TreatmentRecommendationsSection: React.FC<
                 locations by typing or choosing from the list
               </li>
               <li>
-                • <strong>Step 3:</strong> Configure the parameters: light
-                color, duration (minutes), and number of sessions
+                • <strong>Step 3:</strong> Configure the parameters: duration
+                (30, 45, or 60 minutes) and number of sessions
               </li>
               <li>
                 • <strong>Step 4:</strong> Set the start date of the treatment
@@ -304,8 +304,8 @@ const TreatmentRecommendationsSection: React.FC<
                 locations by typing or choosing from the list
               </li>
               <li>
-                • <strong>Step 3:</strong> Configure the parameters: number of
-                sessions
+                • <strong>Step 3:</strong> Configure the parameters: duration
+                (30, 45, or 60 minutes) and number of sessions
               </li>
               <li>
                 • <strong>Step 4:</strong> Set the start date of the treatment

@@ -7,9 +7,15 @@ import {
   useUpdateConsultation,
   useFetchConsultationByAppointment,
 } from "@/api/query/hooks/useConsultationQueries";
-import type { PostConsultationFormData, PatientStatusValue } from "../..";
-import type { ConsultationResponseDto } from "@/api/types";
+import type { PostConsultationFormData } from "../..";
 import { AxiosError } from "axios";
+import {
+  createMockConsultationResponse,
+  createMockPostConsultationFormData,
+  EXAMPLE_HOME_EXERCISES,
+  EXAMPLE_PAIN_MANAGEMENT,
+  EXAMPLE_MEDICATIONS,
+} from "@/testFixtures/physiotherapyContext";
 
 // Mock the React Query hooks
 jest.mock("@/api/query/hooks/useConsultationQueries");
@@ -34,70 +40,6 @@ const mockGetConsultationByAppointment =
   getConsultationByAppointment as jest.MockedFunction<
     typeof getConsultationByAppointment
   >;
-
-// Helper: build a ConsultationResponseDto for mocks
-const createMockConsultation = (
-  id: number,
-  appointmentId = 456,
-): ConsultationResponseDto => ({
-  id,
-  appointmentId,
-  mainConcern: "Test complaint",
-  food: "Test food recommendation",
-  water: "Test water recommendation",
-  ointments: "Test ointment recommendation",
-  physiotherapy: true,
-  tens: true,
-  returnWeeks: 4,
-  notes: "Test notes",
-  createdDate: "2024-01-15",
-  createdTime: "10:00:00",
-  updatedDate: "2024-01-15",
-  updatedTime: "10:00:00",
-});
-
-// Helper: build PostConsultationFormData for mocks
-const createMockPostConsultationFormData = (
-  overrides: Partial<PostConsultationFormData> = {},
-): PostConsultationFormData => ({
-  mainConcern: "Back pain",
-  patientStatus: "T" as PatientStatusValue,
-  startDate: "2024-01-15",
-  returnWeeks: 4,
-  food: "Avoid fried foods",
-  water: "Drink 2 liters per day",
-  ointments: "Apply anti-inflammatory ointment",
-  recommendations: {
-    physiotherapy: {
-      startDate: "2024-01-15",
-      treatments: [
-        {
-          locations: ["Back"],
-          color: "blue",
-          startDate: "2024-01-15",
-          duration: 21,
-          quantity: 3,
-        },
-      ],
-    },
-    tens: {
-      startDate: "2024-01-15",
-      treatments: [
-        {
-          locations: ["Right Ankle"],
-          startDate: "2024-01-15",
-          quantity: 2,
-        },
-      ],
-    },
-    returnWeeks: 4,
-    returnWhenTreatmentComplete: false,
-  },
-  notes: "Patient reports gradual improvement",
-  noGeneralRecommendations: false,
-  noTreatmentRecommendations: false,
-  ...overrides,
-});
 
 describe("useConsultationSubmission", () => {
   const mockConsoleError = jest
@@ -199,7 +141,7 @@ describe("useConsultationSubmission", () => {
 
   describe("submitConsultation - Success scenarios", () => {
     it("should submit consultation successfully with complete data", async () => {
-      const mockConsultation = createMockConsultation(123);
+      const mockConsultation = createMockConsultationResponse(123);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const { result } = renderHook(() => useConsultationSubmission(), {
@@ -223,11 +165,11 @@ describe("useConsultationSubmission", () => {
       });
       expect(mockMutateAsync).toHaveBeenCalledWith({
         appointmentId: 456,
-        mainConcern: "Back pain",
+        mainConcern: "Lower back pain",
         patientStatus: "T",
-        food: "Avoid fried foods",
-        water: "Drink 2 liters per day",
-        ointments: "Apply anti-inflammatory ointment",
+        homeExercises: EXAMPLE_HOME_EXERCISES,
+        painManagement: EXAMPLE_PAIN_MANAGEMENT,
+        medications: EXAMPLE_MEDICATIONS,
         returnWeeks: 4,
         returnWhenTreatmentComplete: false,
         notes: "Patient reports gradual improvement",
@@ -237,7 +179,7 @@ describe("useConsultationSubmission", () => {
     });
 
     it("should handle treatment data with only physiotherapy recommendation", async () => {
-      const mockConsultation = createMockConsultation(789, 100);
+      const mockConsultation = createMockConsultationResponse(789, 100);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentData = createMockPostConsultationFormData({
@@ -247,9 +189,9 @@ describe("useConsultationSubmission", () => {
             treatments: [
               {
                 locations: ["Head"],
-                color: "green",
-                startDate: "2024-01-15",
-                duration: 21,
+                duration: 45,
+          startDate: "2024-01-15",
+                duration: 45,
                 quantity: 3,
               },
             ],
@@ -281,7 +223,7 @@ describe("useConsultationSubmission", () => {
     });
 
     it("should handle treatment data with only tens recommendation", async () => {
-      const mockConsultation = createMockConsultation(321, 200);
+      const mockConsultation = createMockConsultationResponse(321, 200);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentData = createMockPostConsultationFormData({
@@ -323,7 +265,7 @@ describe("useConsultationSubmission", () => {
     });
 
     it("should handle treatment data with no recommendations", async () => {
-      const mockConsultation = createMockConsultation(654, 300);
+      const mockConsultation = createMockConsultationResponse(654, 300);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentData = createMockPostConsultationFormData({
@@ -350,13 +292,13 @@ describe("useConsultationSubmission", () => {
       expect(submitResult).toMatchObject({ consultationId: 654 });
       expect(mockMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
-          mainConcern: "Back pain",
+          mainConcern: "Lower back pain",
         }),
       );
     });
 
     it("should handle different treatment status values", async () => {
-      const mockConsultation = createMockConsultation(111, 400);
+      const mockConsultation = createMockConsultationResponse(111, 400);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentStatuses: PatientStatusValue[] = ["N", "T", "D", "C"];
@@ -383,14 +325,14 @@ describe("useConsultationSubmission", () => {
     });
 
     it("should handle empty strings and null values gracefully", async () => {
-      const mockConsultation = createMockConsultation(999, 500);
+      const mockConsultation = createMockConsultationResponse(999, 500);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentData = createMockPostConsultationFormData({
         mainConcern: "",
-        food: "",
-        water: "",
-        ointments: "",
+        homeExercises: "",
+        painManagement: "",
+        medications: "",
         notes: "",
       });
 
@@ -410,16 +352,16 @@ describe("useConsultationSubmission", () => {
       expect(mockMutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           mainConcern: "",
-          food: "",
-          water: "",
-          ointments: "",
+          homeExercises: "",
+          painManagement: "",
+          medications: "",
           notes: "",
         }),
       );
     });
 
     it("should return cancelledAppointments when create response includes them (Discharged/Consecutive no-shows)", async () => {
-      const mockConsultation = createMockConsultation(888, 700);
+      const mockConsultation = createMockConsultationResponse(888, 700);
       const cancelledAppointments = [
         { id: 10, type: "assessment", scheduledDate: "2026-01-25" },
       ];
@@ -577,7 +519,7 @@ describe("useConsultationSubmission", () => {
     }
 
     it("should fetch existing consultation and update on 409, then return isUpdate true", async () => {
-      const existingConsultation = createMockConsultation(99, 2000);
+      const existingConsultation = createMockConsultationResponse(99, 2000);
       mockMutateAsync.mockRejectedValueOnce(create409Error());
       mockGetConsultationByAppointment.mockResolvedValue({
         success: true,
@@ -611,12 +553,14 @@ describe("useConsultationSubmission", () => {
       expect(updateCall.data).toMatchObject({
         mainConcern: treatmentData.mainConcern,
         patientStatus: treatmentData.patientStatus,
-        food: treatmentData.food,
+        homeExercises: treatmentData.homeExercises,
+        painManagement: treatmentData.painManagement,
+        medications: treatmentData.medications,
       });
     });
 
     it("should handle 409 with wrapped axiosError property", async () => {
-      const existingConsultation = createMockConsultation(101, 2001);
+      const existingConsultation = createMockConsultationResponse(101, 2001);
       mockMutateAsync.mockRejectedValueOnce(createWrapped409Error());
       mockGetConsultationByAppointment.mockResolvedValue({
         success: true,
@@ -647,7 +591,7 @@ describe("useConsultationSubmission", () => {
     });
 
     it("should return cancelledAppointments from update response on 409 retry", async () => {
-      const existingConsultation = createMockConsultation(102, 2002);
+      const existingConsultation = createMockConsultationResponse(102, 2002);
       const cancelledAppointments = [
         { id: 20, type: "assessment", scheduledDate: "2026-02-01" },
       ];
@@ -727,7 +671,7 @@ describe("useConsultationSubmission", () => {
     });
 
     it("should re-throw when update fails after 409 fetch succeeds", async () => {
-      const existingConsultation = createMockConsultation(103, 2005);
+      const existingConsultation = createMockConsultationResponse(103, 2005);
       mockMutateAsync.mockRejectedValueOnce(create409Error());
       mockGetConsultationByAppointment.mockResolvedValue({
         success: true,
@@ -775,15 +719,15 @@ describe("useConsultationSubmission", () => {
 
   describe("Data transformation and mapping", () => {
     it("should correctly map form data to API request format", async () => {
-      const mockConsultation = createMockConsultation(555, 1200);
+      const mockConsultation = createMockConsultationResponse(555, 1200);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentData = createMockPostConsultationFormData({
         mainConcern: "Custom complaint",
         patientStatus: "D",
-        food: "Custom food recommendation",
-        water: "Custom water recommendation",
-        ointments: "Custom ointment recommendation",
+        homeExercises: "Custom home exercise plan",
+        painManagement: "Custom pain management plan",
+        medications: "Custom medication plan",
         returnWeeks: 8,
         notes: "Custom notes",
       });
@@ -801,9 +745,9 @@ describe("useConsultationSubmission", () => {
           appointmentId: 1200,
           mainConcern: "Custom complaint",
           patientStatus: "D",
-          food: "Custom food recommendation",
-          water: "Custom water recommendation",
-          ointments: "Custom ointment recommendation",
+          homeExercises: "Custom home exercise plan",
+          painManagement: "Custom pain management plan",
+          medications: "Custom medication plan",
           notes: "Custom notes",
           physiotherapy: true,
           tens: true,
@@ -812,7 +756,7 @@ describe("useConsultationSubmission", () => {
     });
 
     it("should handle empty treatments arrays", async () => {
-      const mockConsultation = createMockConsultation(333, 1400);
+      const mockConsultation = createMockConsultationResponse(333, 1400);
       mockMutateAsync.mockResolvedValue({ consultation: mockConsultation });
 
       const treatmentData = createMockPostConsultationFormData({
@@ -849,8 +793,8 @@ describe("useConsultationSubmission", () => {
 
   describe("Integration scenarios", () => {
     it("should handle sequential calls correctly", async () => {
-      const mockConsultation1 = createMockConsultation(1001, 1500);
-      const mockConsultation2 = createMockConsultation(1002, 1600);
+      const mockConsultation1 = createMockConsultationResponse(1001, 1500);
+      const mockConsultation2 = createMockConsultationResponse(1002, 1600);
 
       mockMutateAsync
         .mockResolvedValueOnce({ consultation: mockConsultation1 })
@@ -878,8 +822,8 @@ describe("useConsultationSubmission", () => {
     });
 
     it("should handle concurrent calls correctly", async () => {
-      const mockConsultation1 = createMockConsultation(2001, 1700);
-      const mockConsultation2 = createMockConsultation(2002, 1800);
+      const mockConsultation1 = createMockConsultationResponse(2001, 1700);
+      const mockConsultation2 = createMockConsultationResponse(2002, 1800);
 
       mockMutateAsync
         .mockResolvedValueOnce({ consultation: mockConsultation1 })

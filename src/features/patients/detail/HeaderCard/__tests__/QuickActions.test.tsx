@@ -30,9 +30,9 @@ describe("QuickActions", () => {
     nextAppointmentDates: [],
     currentRecommendations: {
       date: "2025-01-01",
-      food: "",
-      water: "",
-      ointment: "",
+      homeExercises: "",
+      painManagement: "",
+      medications: "",
       physiotherapy: false,
       tens: false,
       returnWeeks: 2,

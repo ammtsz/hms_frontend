@@ -48,7 +48,7 @@ describe("assessmentHelpers", () => {
       expect(result).toEqual(["1 session - Right Foot"]);
     });
 
-    it("should include color when present", () => {
+    it("should include duration when present", () => {
       const sessions: ActiveTreatmentRow[] = [
         {
           id: 1,
@@ -56,14 +56,14 @@ describe("assessmentHelpers", () => {
           bodyLocation: "Chest",
           plannedSessions: 5,
           completedSessions: 0,
-          color: "Blue",
+          durationMinutes: 45,
           status: "scheduled",
         },
       ];
 
       const result = formatActiveTreatmentRows(sessions);
 
-      expect(result).toEqual(["5 sessions - Chest (color: Blue)"]);
+      expect(result).toEqual(["5 sessions - Chest (45 min)"]);
     });
 
     it("should format multiple sessions", () => {
@@ -74,7 +74,7 @@ describe("assessmentHelpers", () => {
           bodyLocation: "Head",
           plannedSessions: 3,
           completedSessions: 0,
-          color: "Blue",
+          durationMinutes: 45,
           status: "scheduled",
         },
         {
@@ -83,7 +83,7 @@ describe("assessmentHelpers", () => {
           bodyLocation: "Chest",
           plannedSessions: 2,
           completedSessions: 0,
-          color: "Green",
+          durationMinutes: 30,
           status: "scheduled",
         },
       ];
@@ -91,8 +91,8 @@ describe("assessmentHelpers", () => {
       const result = formatActiveTreatmentRows(sessions);
 
       expect(result).toEqual([
-        "3 sessions - Head (color: Blue)",
-        "2 sessions - Chest (color: Green)",
+        "3 sessions - Head (45 min)",
+        "2 sessions - Chest (30 min)",
       ]);
     });
 
@@ -118,21 +118,27 @@ describe("assessmentHelpers", () => {
     it("should render icon and label", () => {
       render(
         <RecommendationItem
-          icon="🍎"
-          label="Food"
-          value="Avoid red meat"
+          icon="🏠"
+          label="Home Exercises"
+          value="Cat-camel and pelvic tilt, 3x daily"
         />,
       );
 
-      expect(screen.getByText(/🍎/)).toBeInTheDocument();
-      expect(screen.getByText(/Food:/)).toBeInTheDocument();
-      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
+      expect(screen.getByText(/🏠/)).toBeInTheDocument();
+      expect(screen.getByText(/Home Exercises:/)).toBeInTheDocument();
+      expect(screen.getByText("Cat-camel and pelvic tilt, 3x daily")).toBeInTheDocument();
     });
 
     it("should render with string value", () => {
-      render(<RecommendationItem icon="💧" label="Water" value="3x daily" />);
+      render(
+        <RecommendationItem
+          icon="💆"
+          label="Pain Management"
+          value="Ice 15 min after activity"
+        />,
+      );
 
-      expect(screen.getByText("3x daily")).toBeInTheDocument();
+      expect(screen.getByText("Ice 15 min after activity")).toBeInTheDocument();
     });
 
     it("should render with React element value", () => {
@@ -164,9 +170,9 @@ describe("assessmentHelpers", () => {
     it("should not apply fullWidth class by default", () => {
       const { container } = render(
         <RecommendationItem
-          icon="🧴"
-          label="Ointment"
-          value="Apply 2x daily"
+          icon="💊"
+          label="Medications"
+          value="Diclofenac gel twice daily as directed"
         />,
       );
 
@@ -176,7 +182,7 @@ describe("assessmentHelpers", () => {
 
     it("should have correct styling classes", () => {
       const { container } = render(
-        <RecommendationItem icon="🍎" label="Test" value="Value" />,
+        <RecommendationItem icon="🏠" label="Home Exercises" value="Cat-camel, 10 reps" />,
       );
 
       const item = container.firstChild as HTMLElement;
@@ -193,9 +199,15 @@ describe("assessmentHelpers", () => {
     });
 
     it("should render label with text-nowrap", () => {
-      render(<RecommendationItem icon="💧" label="Water" value="Test" />);
+      render(
+        <RecommendationItem
+          icon="💆"
+          label="Pain Management"
+          value="Ice 15 min after activity"
+        />,
+      );
 
-      const label = screen.getByText(/Water:/);
+      const label = screen.getByText(/Pain Management:/);
       expect(label).toHaveClass("text-nowrap");
     });
 

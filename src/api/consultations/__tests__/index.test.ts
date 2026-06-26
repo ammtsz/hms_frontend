@@ -25,9 +25,9 @@ describe('Consultations API', () => {
   const mockConsultation = {
     id: 1,
     appointmentId: 1,
-    food: 'Fruits and vegetables',
-    water: 'Mineral water',
-    ointments: 'Healing ointment',
+    homeExercises: '3x daily: cat-camel, pelvic tilt',
+    painManagement: 'Ice 15 min after sessions',
+    medications: 'Diclofenac gel twice daily',
     physiotherapy: true,
     tens: false,
     returnWeeks: 2,
@@ -94,9 +94,9 @@ describe('Consultations API', () => {
     it('should create consultation on success', async () => {
       const treatmentData = {
         appointmentId: 1,
-        food: 'Fruits and vegetables',
-        water: 'Mineral water',
-        ointments: 'Healing ointment',
+        homeExercises: '3x daily: cat-camel, pelvic tilt',
+        painManagement: 'Ice 15 min after sessions',
+        medications: 'Diclofenac gel twice daily',
         physiotherapy: true,
         tens: false,
         returnWeeks: 2,
@@ -117,9 +117,9 @@ describe('Consultations API', () => {
     it('should return error on validation failure', async () => {
       const treatmentData = {
         appointmentId: 0, // Invalid appointment_id
-        food: 'Fruits and vegetables',
-        water: 'Mineral water',
-        ointments: 'Healing ointment',
+        homeExercises: '3x daily: cat-camel, pelvic tilt',
+        painManagement: 'Ice 15 min after sessions',
+        medications: 'Diclofenac gel twice daily',
         physiotherapy: true,
         tens: false,
         returnWeeks: 60, // Invalid returnWeeks (> 52)

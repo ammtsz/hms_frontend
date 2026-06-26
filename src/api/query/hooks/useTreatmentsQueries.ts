@@ -8,7 +8,7 @@ import {
   createTreatment,
 } from '@/api/treatments';
 import type { TreatmentResponseDto } from '@/api/types';
-import type { PhysiotherapyLocationTreatment, TensLocationTreatment } from '@/types/treatment';
+import type { LocationTreatment } from '@/types/treatment';
 import { treatmentsQueryKeys } from '@/api/query/keys/treatmentsQueryKeys';
 
 interface UseTreatmentsByPatientResult {
@@ -39,7 +39,7 @@ export const useTreatmentsByPatient = (patientId: number): UseTreatmentsByPatien
       return response.value || [];
     },
     enabled: patientId > 0,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
     retry: 2,
   });
 
@@ -119,11 +119,6 @@ interface UseEditTreatmentsOptions {
   treatmentType: 'physiotherapy' | 'tens';
   firstSession: TreatmentResponseDto | undefined;
   patientId: number;
-  /**
-   * Visit appointment ID from the session row (`hms_session`), so the first created
-   * row links to this card’s appointment. Differs from `firstSession.appointmentId`
-   * (prescription appointment on the treatment plan).
-   */
   currentAppointmentId?: number;
   onSuccess?: () => void;
   onClose: () => void;
@@ -149,7 +144,7 @@ export function useEditTreatments({
       treatments: rows,
       editSessionIds: treatmentIds,
     }: {
-      treatments: (PhysiotherapyLocationTreatment | TensLocationTreatment)[];
+      treatments: LocationTreatment[];
       editSessionIds: (number | undefined)[];
     }) => {
       if (!firstSession) throw new Error('No session data');
@@ -162,12 +157,8 @@ export function useEditTreatments({
         if (treatmentId !== undefined) {
           const updatePayload: Parameters<typeof updateTreatment>[1] = {
             bodyLocation,
+            durationMinutes: t.duration,
           };
-          if (treatmentType === 'physiotherapy') {
-            const lb = t as PhysiotherapyLocationTreatment;
-            updatePayload.color = lb.color ?? '';
-            updatePayload.durationMinutes = lb.duration ?? 1;
-          }
           const res = await updateTreatment(String(treatmentId), updatePayload);
           if (!res.success) {
             throw new Error(res.error ?? 'Failed to update treatment.');
@@ -182,16 +173,12 @@ export function useEditTreatments({
             bodyLocation,
             startDate: firstSession.startDate,
             plannedSessions: firstSession.plannedSessions,
+            durationMinutes: t.duration,
             reuseAppointmentForFirstSession: true,
             ...(currentAppointmentId !== undefined && {
               firstSessionAppointmentId: currentAppointmentId,
             }),
           };
-          if (treatmentType === 'physiotherapy') {
-            const lb = t as PhysiotherapyLocationTreatment;
-            (createPayload as Record<string, unknown>).durationMinutes = lb.duration ?? 1;
-            (createPayload as Record<string, unknown>).color = lb.color ?? '';
-          }
           const res = await createTreatment(createPayload);
           if (!res.success) {
             throw new Error(res.error ?? 'Failed to create treatment.');

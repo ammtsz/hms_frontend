@@ -12,10 +12,11 @@ import {
   getAvailableLocationsForRow,
   findInactiveOptionByValue,
 } from "../TreatmentRecommendationTable.utils";
-import type {
-  PhysiotherapyLocationTreatment,
-  TensLocationTreatment,
-} from "@/features/board/components/Consultation/types";
+import type { LocationTreatment } from "@/types/treatment";
+import {
+  DEFAULT_PHYSIOTHERAPY_DURATION_MINUTES,
+  DEFAULT_TENS_DURATION_MINUTES,
+} from "@/constants/treatment";
 
 jest.mock("@/utils/timezoneDate", () => {
   const actual = jest.requireActual<typeof import("@/utils/timezoneDate")>(
@@ -82,8 +83,13 @@ describe("TreatmentRecommendationTable.utils", () => {
     ];
 
     it("in edit mode returns first treatment start date", () => {
-      const treatments: PhysiotherapyLocationTreatment[] = [
-        { locations: [], color: "blue", duration: 1, quantity: 1, startDate: "2025-02-01" },
+      const treatments: LocationTreatment[] = [
+        {
+          locations: [],
+          duration: 45,
+          quantity: 1,
+          startDate: "2025-02-01",
+        },
       ];
       expect(
         getDefaultTreatmentStartDate({
@@ -95,9 +101,19 @@ describe("TreatmentRecommendationTable.utils", () => {
     });
 
     it("in create mode with existing treatments returns last treatment start date", () => {
-      const treatments: PhysiotherapyLocationTreatment[] = [
-        { locations: [], color: "blue", duration: 1, quantity: 1, startDate: "2025-02-01" },
-        { locations: [], color: "blue", duration: 1, quantity: 1, startDate: "2025-02-10" },
+      const treatments: LocationTreatment[] = [
+        {
+          locations: [],
+          duration: 45,
+          quantity: 1,
+          startDate: "2025-02-01",
+        },
+        {
+          locations: [],
+          duration: 45,
+          quantity: 1,
+          startDate: "2025-02-10",
+        },
       ];
       expect(
         getDefaultTreatmentStartDate({
@@ -142,16 +158,20 @@ describe("TreatmentRecommendationTable.utils", () => {
       });
       expect(row).toMatchObject({
         locations: [],
-        color: "",
-        duration: 1,
+        duration: DEFAULT_PHYSIOTHERAPY_DURATION_MINUTES,
         quantity: 2,
       });
-      expect((row as PhysiotherapyLocationTreatment).startDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(row.startDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
-    it("creates physiotherapy row in edit mode reusing first row color and duration", () => {
-      const treatments: PhysiotherapyLocationTreatment[] = [
-        { locations: ["Head"], color: "blue", duration: 2, quantity: 5, startDate: "2025-01-15" },
+    it("creates physiotherapy row in edit mode reusing first row duration", () => {
+      const treatments: LocationTreatment[] = [
+        {
+          locations: ["Head"],
+          duration: 60,
+          quantity: 5,
+          startDate: "2025-01-15",
+        },
       ];
       const row = createNewTreatmentRow({
         treatmentType: "physiotherapy",
@@ -159,64 +179,60 @@ describe("TreatmentRecommendationTable.utils", () => {
         defaultQuantity: 1,
         isEditMode: true,
         scheduleSettings,
-      }) as PhysiotherapyLocationTreatment;
-      expect(row.color).toBe("blue");
-      expect(row.duration).toBe(2);
+      });
+      expect(row.duration).toBe(60);
     });
 
-    it("creates tens row without color and duration", () => {
+    it("creates tens row with default duration", () => {
       const row = createNewTreatmentRow({
         treatmentType: "tens",
         treatments: [],
         defaultQuantity: 3,
         isEditMode: false,
         scheduleSettings,
-      }) as TensLocationTreatment;
-      expect(row).toMatchObject({ locations: [], quantity: 3 });
-      expect("color" in row).toBe(false);
-      expect("duration" in row).toBe(false);
+      });
+      expect(row).toMatchObject({
+        locations: [],
+        duration: DEFAULT_TENS_DURATION_MINUTES,
+        quantity: 3,
+      });
     });
   });
 
   describe("getBlockedLocationsForRow", () => {
-    it("for tens, blocks locations used in other rows", () => {
-      const treatments: TensLocationTreatment[] = [
-        { locations: ["Head"], quantity: 1, startDate: "2025-01-01" },
-        { locations: ["Chest"], quantity: 1, startDate: "2025-01-01" },
+    it("blocks locations used in other rows", () => {
+      const treatments: LocationTreatment[] = [
+        { locations: ["Head"], duration: 45, quantity: 1, startDate: "2025-01-01" },
+        { locations: ["Chest"], duration: 45, quantity: 1, startDate: "2025-01-01" },
+        { locations: ["Leg"], duration: 30, quantity: 1, startDate: "2025-01-01" },
       ];
       const blocked = getBlockedLocationsForRow({
-        treatmentType: "tens",
         rowIndex: 0,
         treatments,
       });
       expect(blocked.has("chest")).toBe(true);
+      expect(blocked.has("leg")).toBe(true);
       expect(blocked.has("head")).toBe(false);
-    });
-
-    it("for physiotherapy, blocks locations only for same color", () => {
-      const treatments: PhysiotherapyLocationTreatment[] = [
-        { locations: ["Head"], color: "blue", duration: 1, quantity: 1, startDate: "2025-01-01" },
-        { locations: ["Chest"], color: "blue", duration: 1, quantity: 1, startDate: "2025-01-01" },
-        { locations: ["Leg"], color: "red", duration: 1, quantity: 1, startDate: "2025-01-01" },
-      ];
-      const blocked = getBlockedLocationsForRow({
-        treatmentType: "physiotherapy",
-        rowIndex: 0,
-        treatments,
-      });
-      expect(blocked.has("chest")).toBe(true);
-      expect(blocked.has("leg")).toBe(false);
     });
   });
 
   describe("enforceUniqueLocationsForRow", () => {
     it("removes locations that are blocked", () => {
-      const treatments: TensLocationTreatment[] = [
-        { locations: ["Head", "Chest"], quantity: 1, startDate: "2025-01-01" },
-        { locations: ["Chest"], quantity: 1, startDate: "2025-01-01" },
+      const treatments: LocationTreatment[] = [
+        {
+          locations: ["Head", "Chest"],
+          duration: 30,
+          quantity: 1,
+          startDate: "2025-01-01",
+        },
+        {
+          locations: ["Chest"],
+          duration: 30,
+          quantity: 1,
+          startDate: "2025-01-01",
+        },
       ];
       const result = enforceUniqueLocationsForRow({
-        treatmentType: "tens",
         rowIndex: 0,
         treatments,
       });
@@ -225,11 +241,15 @@ describe("TreatmentRecommendationTable.utils", () => {
     });
 
     it("returns same content when no duplicates", () => {
-      const treatments: TensLocationTreatment[] = [
-        { locations: ["Head"], quantity: 1, startDate: "2025-01-01" },
+      const treatments: LocationTreatment[] = [
+        {
+          locations: ["Head"],
+          duration: 45,
+          quantity: 1,
+          startDate: "2025-01-01",
+        },
       ];
       const result = enforceUniqueLocationsForRow({
-        treatmentType: "tens",
         rowIndex: 0,
         treatments,
       });
@@ -242,12 +262,22 @@ describe("TreatmentRecommendationTable.utils", () => {
     it("filters out blocked locations", () => {
       const active = ["Head", "Chest", "Leg"];
       const blocked = new Set(["chest", "leg"]);
-      expect(getAvailableLocationsForRow({ activeLocations: active, blockedLocations: blocked })).toEqual(["Head"]);
+      expect(
+        getAvailableLocationsForRow({
+          activeLocations: active,
+          blockedLocations: blocked,
+        }),
+      ).toEqual(["Head"]);
     });
     it("filters out blocked locations using normalized comparison", () => {
       const active = ["Head", "Chest"];
       const blocked = new Set(["chest"]);
-      expect(getAvailableLocationsForRow({ activeLocations: active, blockedLocations: blocked })).toEqual(["Head"]);
+      expect(
+        getAvailableLocationsForRow({
+          activeLocations: active,
+          blockedLocations: blocked,
+        }),
+      ).toEqual(["Head"]);
     });
   });
 
@@ -259,8 +289,14 @@ describe("TreatmentRecommendationTable.utils", () => {
     ];
 
     it("returns inactive option matching value (case-insensitive)", () => {
-      expect(findInactiveOptionByValue(options, "chest")).toEqual({ isActive: false, value: "Chest" });
-      expect(findInactiveOptionByValue(options, "  CHEST  ")).toEqual({ isActive: false, value: "Chest" });
+      expect(findInactiveOptionByValue(options, "chest")).toEqual({
+        isActive: false,
+        value: "Chest",
+      });
+      expect(findInactiveOptionByValue(options, "  CHEST  ")).toEqual({
+        isActive: false,
+        value: "Chest",
+      });
     });
     it("returns undefined for active option", () => {
       expect(findInactiveOptionByValue(options, "Head")).toBeUndefined();

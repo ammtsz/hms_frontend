@@ -58,21 +58,18 @@ Open http://localhost:3000 after the backend is available.
 
 **Test Suite:**
 
-- 3,771 tests passing across 264 test suites
-- ~50 seconds execution time locally
+- 3,491 tests passing across 260 test suites
+- ~40 seconds execution time locally
 - Zero failing tests
 
-**Coverage** (`npm test -- --coverage`, May 2026):
+**Coverage** (`npm test -- --coverage`, June 2026):
 
-- Statements: 80.87%
-- Branches: 69.03%
-- Functions: 74.01%
-- Lines: 80.91%
+- Statements: ~81% (run locally for current branch/line/function breakdown)
 
 **Testing Strategy:**
 
 - Co-located tests in `__tests__` folders
-- Factory functions for test data generation
+- Shared fixtures in `src/testFixtures/physiotherapyContext.ts` for consultation/treatment mocks
 - Component, hook, and integration coverage
 - Mocked API responses and dependencies
 

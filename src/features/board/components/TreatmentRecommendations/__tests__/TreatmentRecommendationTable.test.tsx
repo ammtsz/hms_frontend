@@ -59,13 +59,6 @@ jest.mock("@/api/query/hooks/useSystemOptionsQueries", () => ({
       : mockBodyLocationsData.active,
     isLoading: false,
   })),
-  useColors: jest.fn(() => ({
-    data: [
-      { id: 1, value: "Red", isActive: true, usageCount: 3 },
-      { id: 2, value: "Blue", isActive: true, usageCount: 1 },
-    ],
-    isLoading: false,
-  })),
   useCreateBodyLocation: jest.fn(() => ({
     mutateAsync: jest.fn().mockResolvedValue({ value: "NewLocation" }),
     isPending: false,
@@ -123,8 +116,7 @@ describe("TreatmentRecommendationTable", () => {
     treatmentType: "physiotherapy" as const,
     treatments: [] as Array<{
       locations: string[];
-      color?: string;
-      duration?: number;
+      duration: number;
       quantity: number;
       startDate: string;
     }>,
@@ -154,8 +146,7 @@ describe("TreatmentRecommendationTable", () => {
       const treatments = [
         {
           locations: ["Head"],
-          color: "Blue",
-          duration: 1,
+          duration: 45,
           quantity: 2,
           startDate: "2024-01-22",
         },
@@ -174,9 +165,6 @@ describe("TreatmentRecommendationTable", () => {
         screen.getByRole("columnheader", { name: "Body Locations" }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole("columnheader", { name: "Color" }),
-      ).toBeInTheDocument();
-      expect(
         screen.getByRole("columnheader", { name: "Duration" }),
       ).toBeInTheDocument();
       expect(
@@ -186,17 +174,18 @@ describe("TreatmentRecommendationTable", () => {
         screen.getByRole("columnheader", { name: "Start Date" }),
       ).toBeInTheDocument();
       expect(screen.getByText("Head")).toBeInTheDocument();
-      expect(screen.getByText("Blue")).toBeInTheDocument();
+      expect(screen.getByText("45 min")).toBeInTheDocument();
       expect(screen.getByText("2")).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: /Add Treatment/i }),
       ).toBeInTheDocument();
     });
 
-    it("should render table for tens treatment without color and duration columns", () => {
+    it("should render table for tens treatment with duration column", () => {
       const treatments = [
         {
           locations: ["Chest"],
+          duration: 30,
           quantity: 1,
           startDate: "2024-01-22",
         },
@@ -213,7 +202,10 @@ describe("TreatmentRecommendationTable", () => {
 
       expect(screen.getByRole("table")).toBeInTheDocument();
       expect(screen.queryByText("Color")).not.toBeInTheDocument();
-      expect(screen.queryByText("Duration")).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("columnheader", { name: "Duration" }),
+      ).toBeInTheDocument();
+      expect(screen.getByText("30 min")).toBeInTheDocument();
       expect(screen.getByText("Chest")).toBeInTheDocument();
     });
   });
@@ -234,8 +226,7 @@ describe("TreatmentRecommendationTable", () => {
         expect(mockOnChange).toHaveBeenCalledWith([
           expect.objectContaining({
             locations: [],
-            color: "",
-            duration: 1,
+            duration: 45,
             quantity: 1,
             startDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
           }),
@@ -279,8 +270,7 @@ describe("TreatmentRecommendationTable", () => {
         expect(mockOnChange).toHaveBeenCalledWith([
           expect.objectContaining({
             locations: [],
-            color: "",
-            duration: 1,
+            duration: 45,
             quantity: 1,
             startDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
           }),
@@ -308,6 +298,7 @@ describe("TreatmentRecommendationTable", () => {
         expect(mockOnChange).toHaveBeenCalledWith([
           expect.objectContaining({
             locations: [],
+            duration: 30,
             quantity: 1,
             startDate: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
           }),
@@ -317,7 +308,6 @@ describe("TreatmentRecommendationTable", () => {
           unknown
         >;
         expect(call).not.toHaveProperty("color");
-        expect(call).not.toHaveProperty("duration");
       });
     });
 
@@ -351,8 +341,7 @@ describe("TreatmentRecommendationTable", () => {
       const treatments = [
         {
           locations: ["Head"],
-          color: "Blue",
-          duration: 1,
+          duration: 45,
           quantity: 2,
           startDate: "2024-01-22",
         },
@@ -382,8 +371,7 @@ describe("TreatmentRecommendationTable", () => {
       const treatments = [
         {
           locations: ["Head"],
-          color: "Blue",
-          duration: 1,
+          duration: 45,
           quantity: 1,
           startDate: "2024-01-22",
         },
@@ -410,8 +398,7 @@ describe("TreatmentRecommendationTable", () => {
       const treatments = [
         {
           locations: ["Head"],
-          color: "Blue",
-          duration: 1,
+          duration: 45,
           quantity: 1,
           startDate: "2024-01-22",
         },

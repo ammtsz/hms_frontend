@@ -76,9 +76,9 @@ const PostConsultationModal: React.FC = () => {
 
   const isGeneralTabValid =
     formData.noGeneralRecommendations ||
-    (formData.food?.trim() ?? "").length > 0 ||
-    (formData.water?.trim() ?? "").length > 0 ||
-    (formData.ointments?.trim() ?? "").length > 0;
+    (formData.homeExercises?.trim() ?? "").length > 0 ||
+    (formData.painManagement?.trim() ?? "").length > 0 ||
+    (formData.medications?.trim() ?? "").length > 0;
 
   const { data: scheduleSettings } = useScheduleSettings();
   const hasTreatmentRecommendations =

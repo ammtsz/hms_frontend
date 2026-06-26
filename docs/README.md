@@ -5,7 +5,7 @@ Central index for the Healthcare Management System frontend documentation.
 ## Start here
 
 - [Setup Guide](./SETUP.md) — install, environment, local run, and troubleshooting
-- [Architecture & Technical Reference](./ARCHITECTURE.md) — system design, patterns, and code organization
+- [Architecture & Technical Reference](./ARCHITECTURE.md) — system design, patterns, code organization, and **physiotherapy domain model** (consultation fields, durations, scheduling)
 - [Frontend Authentication Documentation](./AUTHENTICATION.md) — auth flow, cookies, proxy, and deployment auth notes
 - [Comprehensive Testing Checklist](./TESTING_CHECKLIST.md) — manual QA and regression checklist
 

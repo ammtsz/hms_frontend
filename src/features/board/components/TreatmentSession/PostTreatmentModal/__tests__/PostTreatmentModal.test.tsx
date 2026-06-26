@@ -49,8 +49,7 @@ const mockTreatmentWithSessions: TreatmentResponseDto = {
   plannedSessions: 10,
   completedSessions: 3,
   status: "in_progress",
-  durationMinutes: 15,
-  color: "Blue",
+  durationMinutes: 45,
   notes: undefined,
   sessions: [
     { ...mockScheduledRecord, sessionNumber: 1, status: "completed" as const },

@@ -24,7 +24,7 @@ const getStatusDates = (
     .sort((a, b) => b.localeCompare(a))
     .join("_");
 
-// Group treatment plans by type, color, and planned session count
+// Group treatment plans by type, duration, and planned session count
 const groupTreatments = (
   treatments: TreatmentGroup[],
 ): GroupedTreatmentRow[] => {
@@ -35,7 +35,7 @@ const groupTreatments = (
     const cancelledDates = getStatusDates(treatment, "cancelled");
     const missedDates = getStatusDates(treatment, "missed");
 
-    const key = `${treatment.treatmentType}-${treatment.color || "none"}-${treatment.plannedSessions}-${treatment.durationMinutes || "0"}-${treatment.completedSessions}-scheduled_${scheduledDates}-cancelled_${cancelledDates}-missed_${missedDates}`;
+    const key = `${treatment.treatmentType}-${treatment.plannedSessions}-${treatment.durationMinutes || "0"}-${treatment.completedSessions}-scheduled_${scheduledDates}-cancelled_${cancelledDates}-missed_${missedDates}`;
 
     if (grouped.has(key)) {
       const existing = grouped.get(key)!;
@@ -56,7 +56,6 @@ const groupTreatments = (
         completedSessions: treatment.completedSessions,
         status: treatment.status,
         durationMinutes: treatment.durationMinutes,
-        color: treatment.color,
         sessions: treatment.sessions ? [...treatment.sessions] : undefined,
       });
     }
@@ -113,7 +112,7 @@ export const ActiveTreatments: React.FC<ActiveTreatmentsProps> = ({
   const [isPhysiotherapyExpanded, setIsPhysiotherapyExpanded] = useState(true);
   const [isTensExpanded, setIsTensExpanded] = useState(true);
 
-  // Group sessions by treatment type, color, and planned sessions
+  // Group sessions by treatment type, duration, and planned sessions
   const groupedPhysiotherapy = useMemo(
     () => groupTreatments(physiotherapySessions),
     [physiotherapySessions],

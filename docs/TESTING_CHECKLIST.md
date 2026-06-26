@@ -192,8 +192,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Treatment details display:
   - [ ] Treatment type badge
   - [ ] Body location(s)
-  - [ ] Color (physiotherapy only)
-  - [ ] Duration (physiotherapy only)
+  - [ ] Session duration in minutes (30, 45, or 60 — physiotherapy and TENS)
   - [ ] Session progress bar
   - [ ] Completed/Planned sessions count
   - [ ] Start and end dates
@@ -327,39 +326,43 @@ This checklist covers all features and edge cases for the Healthcare Management 
 ### Assessment Consultation Workflow
 
 - [ ] Post-appointment modal opens after completion
-- [ ] Tabbed form displays: Basic Info, General Recommendations, Treatment Recommendations
+- [ ] Tabbed form displays: Basic Info, General Recommendations, Treatment Recommendations, Automatic Scheduling
 - [ ] Basic Info tab validates:
   - [ ] Main concern required
-  - [ ] Emergency contact
-  - [ ] Medical history
+  - [ ] Treatment status (N / T / D / C)
+  - [ ] Registration date
+  - [ ] Consultation notes (optional)
 - [ ] General Recommendations tab:
-  - [ ] Dietary restrictions multiselect
-  - [ ] Home recommendations textarea
-  - [ ] Lifestyle advice
+  - [ ] Home Exercises textarea
+  - [ ] Pain Management textarea
+  - [ ] Medications textarea
+  - [ ] "No general recommendations" checkbox disables fields
 - [ ] Treatment Recommendations tab:
-  - [ ] Physiotherapy sessions
-  - [ ] TENS sessions
-  - [ ] Return weeks (follow-up consultation)
-  - [ ] Treatment status (New/Treatment/Discharged/Missed)
+  - [ ] Separate Physiotherapy and TENS tables (same columns)
+  - [ ] Body location, duration (30 / 45 / 60 min), quantity, start date per row
+  - [ ] Default duration: 45 min (physiotherapy), 30 min (TENS)
+  - [ ] "No treatment recommendations" checkbox disables tables
+- [ ] Automatic Scheduling tab:
+  - [ ] Return weeks (follow-up assessment consultation)
+  - [ ] Return when treatment complete option
 - [ ] Tab validation status indicators (✅/⚠️/❌)
 - [ ] Submit disabled until valid
 - [ ] Submit creates consultation (`POST /consultations`)
 - [ ] Submit updates patient status
+- [ ] Discharge (D) or consecutive no-shows (C) cancels open appointments and shows cancelled list in confirmation
 - [ ] Discharge date set if status = 'D'
 
-### Treatment plan creation (physiotherapy / tens)
+### Treatment plan creation (physiotherapy / TENS)
 
-- [ ] Body location multiselect works
+- [ ] Body location multiselect works (per row)
 - [ ] Search functionality in body location selector
-- [ ] Multiple locations selected
-- [ ] "Add treatment" button creates session
-- [ ] Color picker for physiotherapy
-- [ ] Duration field for physiotherapy
+- [ ] Multiple locations per treatment row
+- [ ] Duration required for both types (30, 45, or 60 minutes)
 - [ ] Quantity field for all treatments
-- [ ] Start date selection
-- [ ] Auto-calculated end date
-- [ ] Batch submission (all locations with same params)
-- [ ] Automatic scheduling to schedule
+- [ ] Start date selection (clinic timezone)
+- [ ] Scheduling conflicts detected by **body location** (same patient, same date)
+- [ ] Batch submission creates treatment plans (`hms_treatment`) and session rows
+- [ ] Automatic scheduling to calendar
 - [ ] Sessions skip holidays during scheduling
 
 ### Session progress
@@ -379,6 +382,12 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Delete removes session
 - [ ] Schedule updates after deletion
 - [ ] Error handling on delete failure
+
+### System settings — treatment options (`/settings/system`)
+
+- [ ] Body locations list: create, rename, activate/deactivate
+- [ ] Inactive locations cannot be selected in consultation forms (clear error message)
+- [ ] Schedule settings (hours, concurrency) unchanged
 
 ---
 
@@ -652,11 +661,10 @@ This checklist covers all features and edge cases for the Healthcare Management 
 
 ### Unit Tests
 
-- [ ] 3771+ tests passing
-- [ ] 99.9%+ pass rate maintained
+- [ ] 3491+ tests passing (full `npm test` suite)
 - [ ] All new features have tests
-- [ ] Test coverage > 90%
-- [ ] Mock factories used for test data
+- [ ] Coverage tracked via `npm test -- --coverage` (~81% statements on full `src/` run)
+- [ ] Shared physiotherapy test fixtures used where applicable (`src/testFixtures/physiotherapyContext.ts`)
 
 ### Test Organization
 
@@ -807,7 +815,7 @@ When you find an issue:
 
 ---
 
-**Last Updated:** 2026-01-29
-**Total Test Cases:** 400+
-**Coverage Target:** 90%+
-**Pass Rate Target:** 99.9%+
+**Last Updated:** 2026-06-23
+**Total Test Cases:** 400+ manual checklist items; 3491 automated Jest tests
+**Coverage Target:** ~81%+ statements (see `npm test -- --coverage`)
+**Pass Rate Target:** 100% on CI / local full suite

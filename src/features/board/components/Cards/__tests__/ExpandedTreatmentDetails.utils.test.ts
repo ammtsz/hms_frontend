@@ -5,7 +5,7 @@
 import {
   getUniqueTreatmentPlans,
   groupTreatmentPlansForEdit,
-  groupByTypeColorDuration,
+  groupByTypeDuration,
   getEditEligibility,
   canAddNewTreatmentRow,
 } from "../ExpandedTreatmentDetails.utils";
@@ -27,7 +27,6 @@ function createSession(
     completedSessions: 0,
     status: "in_progress",
     durationMinutes: 30,
-    color: "blue",
     notes: undefined,
     createdDate: "2025-01-01",
     createdTime: "10:00:00",
@@ -78,28 +77,25 @@ describe("ExpandedTreatmentDetails.utils", () => {
   });
 
   describe("groupTreatmentPlansForEdit", () => {
-    it("groups treatment plans by treatmentType, color, plannedSessions, durationMinutes", () => {
+    it("groups treatment plans by treatmentType, plannedSessions, durationMinutes", () => {
       const sessions = [
         createSession({
           id: 1,
           treatmentType: "physiotherapy",
-          color: "blue",
           plannedSessions: 10,
           durationMinutes: 30,
         }),
         createSession({
           id: 2,
           treatmentType: "physiotherapy",
-          color: "blue",
           plannedSessions: 10,
           durationMinutes: 30,
         }),
         createSession({
           id: 3,
           treatmentType: "physiotherapy",
-          color: "red",
           plannedSessions: 10,
-          durationMinutes: 30,
+          durationMinutes: 45,
         }),
       ];
       const result = groupTreatmentPlansForEdit(sessions);
@@ -108,20 +104,18 @@ describe("ExpandedTreatmentDetails.utils", () => {
       expect(result[1]).toHaveLength(1);
     });
 
-    it("groups tens sessions without color/duration", () => {
+    it("groups tens sessions by plannedSessions and duration", () => {
       const sessions = [
         createSession({
           id: 1,
           treatmentType: "tens",
-          color: undefined,
-          durationMinutes: undefined,
+          durationMinutes: 30,
           plannedSessions: 5,
         }),
         createSession({
           id: 2,
           treatmentType: "tens",
-          color: undefined,
-          durationMinutes: undefined,
+          durationMinutes: 30,
           plannedSessions: 5,
         }),
       ];
@@ -131,12 +125,11 @@ describe("ExpandedTreatmentDetails.utils", () => {
     });
   });
 
-  describe("groupByTypeColorDuration", () => {
-    it("groups items by type, color, duration, sessionNumber, plannedSessions", () => {
+  describe("groupByTypeDuration", () => {
+    it("groups items by type, duration, sessionNumber, plannedSessions", () => {
       const s1 = createSession({
         id: 1,
         treatmentType: "physiotherapy",
-        color: "blue",
         durationMinutes: 30,
         plannedSessions: 10,
         bodyLocation: "Head",
@@ -144,16 +137,14 @@ describe("ExpandedTreatmentDetails.utils", () => {
       const s2 = createSession({
         id: 2,
         treatmentType: "physiotherapy",
-        color: "blue",
         durationMinutes: 30,
         plannedSessions: 10,
         bodyLocation: "Neck",
       });
       const items = [withRecord(s1, 1), withRecord(s2, 2)];
-      const result = groupByTypeColorDuration(items);
+      const result = groupByTypeDuration(items);
       expect(result).toHaveLength(2);
       expect(result[0].treatmentType).toBe("physiotherapy");
-      expect(result[0].color).toBe("blue");
       expect(result[0].durationMinutes).toBe(30);
       expect(result[0].sessionNumber).toBe(1);
       expect(result[0].bodyLocations).toEqual(["Head"]);
@@ -174,7 +165,7 @@ describe("ExpandedTreatmentDetails.utils", () => {
         plannedSessions: 5,
       });
       const items = [withRecord(s1, 1), withRecord(s2, 1)];
-      const result = groupByTypeColorDuration(items);
+      const result = groupByTypeDuration(items);
       expect(result).toHaveLength(1);
       expect(result[0].bodyLocations).toContain("Arm");
       expect(result[0].bodyLocations).toContain("Leg");

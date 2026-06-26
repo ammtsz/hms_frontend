@@ -11,7 +11,6 @@ export interface ModalTreatmentSummary {
   plannedSessions: number;
   completedSessions: number;
   status: "scheduled" | "in_progress" | "completed" | "cancelled";
-  color?: string;
   durationMinutes?: number;
 }
 

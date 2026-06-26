@@ -124,11 +124,12 @@ export const ScheduledAppointmentItem: React.FC<
         {/* Physiotherapy Details */}
         {groupedScheduled.treatments.physiotherapy && (
           <PhysiotherapyDetails
-            bodyLocationsWithColors={
-              groupedScheduled.treatments.physiotherapy.bodyLocationsWithColors
+            bodyLocations={
+              groupedScheduled.treatments.physiotherapy.bodyLocations
             }
-            color={groupedScheduled.treatments.physiotherapy.color}
-            duration={groupedScheduled.treatments.physiotherapy.duration}
+            durationMinutes={
+              groupedScheduled.treatments.physiotherapy.durationMinutes
+            }
             sessionNumber={
               groupedScheduled.treatments.physiotherapy.sessionNumber
             }

@@ -23,9 +23,9 @@ const NewPatientCheckInModal: React.FC = () => {
     currentRecommendations: {
       // Default recommendations
       date: "",
-      food: "",
-      water: "",
-      ointment: "",
+      homeExercises: "",
+      painManagement: "",
+      medications: "",
       physiotherapy: false,
       tens: false,
       returnWeeks: 0,

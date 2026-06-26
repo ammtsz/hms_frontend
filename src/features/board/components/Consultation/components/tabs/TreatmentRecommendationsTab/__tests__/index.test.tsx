@@ -47,9 +47,9 @@ describe("TreatmentRecommendationsTab", () => {
     patientStatus: "T" as const,
     startDate: "2024-01-01",
     returnWeeks: 4,
-    food: "Test food",
-    water: "Test water",
-    ointments: "Test ointments",
+    homeExercises: "Stretching daily",
+    painManagement: "Ice after activity",
+    medications: "Diclofenac gel twice daily",
     recommendations: {
       returnWeeks: 4,
       returnWhenTreatmentComplete: false,
@@ -71,8 +71,7 @@ describe("TreatmentRecommendationsTab", () => {
         treatments: [
           {
             locations: ["Head"],
-            color: "blue",
-            duration: 10,
+            duration: 45,
             quantity: 3,
             startDate: "2024-01-01",
           },
@@ -208,8 +207,7 @@ describe("TreatmentRecommendationsTab", () => {
         treatments: [
           {
             locations: ["Head"],
-            color: "blue",
-            duration: 10,
+            duration: 45,
             quantity: 3,
             startDate: "2024-01-01",
           },
@@ -388,8 +386,7 @@ describe("TreatmentRecommendationsTab", () => {
           treatments: [
             {
               locations: ["test"],
-              color: "blue",
-              duration: 10,
+              duration: 45,
               quantity: 5,
               startDate: "2024-01-01",
             },

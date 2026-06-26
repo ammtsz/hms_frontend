@@ -1,7 +1,7 @@
 import React from "react";
-import { getColorCodeWithOpacity } from "@/utils/treatmentColors";
 import { TreatmentProgressBar } from "./TreatmentProgressBar";
 import { Button } from "@/components/ui";
+import { formatTreatmentDurationMinutes } from "@/constants/treatment";
 
 /** One grouped row of treatment plan(s) shown in `ActiveTreatments`. */
 export interface TreatmentGroup {
@@ -14,7 +14,6 @@ export interface TreatmentGroup {
   completedSessions: number;
   status: string;
   durationMinutes?: number;
-  color?: string;
   sessions?: Array<{ status: string; scheduledDate?: string }>;
 }
 
@@ -97,20 +96,9 @@ export const TreatmentGroupCard: React.FC<TreatmentGroupCardProps> = ({
             {locationText} - {group.plannedSessions} sessions
             {isGrouped && ` (${bodyLocations.length} locations)`}
           </span>
-          {group.color && (
-            <span
-              className="text-xs text-gray-800 px-2 py-0.5 rounded-full"
-              style={{
-                backgroundColor: getColorCodeWithOpacity(group.color, 0.25),
-              }}
-            >
-              {group.color}
-            </span>
-          )}
-          {group.durationMinutes && (
+          {group.durationMinutes != null && (
             <span className="text-xs text-gray-500">
-              {group.durationMinutes}{" "}
-              {group.durationMinutes > 1 ? "minutes" : "minute"}
+              {formatTreatmentDurationMinutes(group.durationMinutes)}
             </span>
           )}
         </div>

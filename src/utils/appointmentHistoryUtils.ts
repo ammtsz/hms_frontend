@@ -26,9 +26,9 @@ export interface GroupedAppointment {
       consultationNotes?: string;
       consultationId?: number;
       recommendations?: {
-        food?: string;
-        water?: string;
-        ointment?: string;
+        homeExercises?: string;
+        painManagement?: string;
+        medications?: string;
         physiotherapy?: boolean;
         tens?: boolean;
         returnWeeks?: number;
@@ -36,19 +36,17 @@ export interface GroupedAppointment {
       };
     };
     physiotherapy?: {
-      /** Per body location (same order as first seen when merging sessions). */
-      bodyLocationsWithColors: Array<{ bodyLocation: string; color?: string }>;
-      color?: string;
-      duration?: number;
+      bodyLocations: string[];
+      durationMinutes?: number;
       /** Display fraction completed/total (e.g. `"2/5"`). */
       sessionNumber: string;
-      notes?: string; // Treatment notes
-      appointmentNotes?: string; // Notes from the appointment
-      /** Per-visit rows for this day (from `TreatmentResponseDto.sessions`). */
+      notes?: string;
+      appointmentNotes?: string;
       sessions?: SessionResponseDto[];
     };
     tens?: {
       bodyLocations: string[];
+      durationMinutes?: number;
       sessionNumber: string; // Format: "2/5" (completed/total)
       notes?: string; // Treatment notes
       appointmentNotes?: string; // Notes from the appointment
@@ -73,28 +71,11 @@ const combineNotes = (existingNotes: string | undefined, newNotes: string | unde
   return undefined;
 }
 
-const buildPhysiotherapyLocationFieldsFromMap = (
-  bodyLocationColors: Map<string, string | undefined>
-): {
-  bodyLocationsWithColors: Array<{ bodyLocation: string; color?: string }>;
-  color?: string;
-} => {
-  const bodyLocationsWithColors = Array.from(bodyLocationColors.entries()).map(
-    ([bodyLocation, c]) => ({
-      bodyLocation,
-      ...(c !== undefined && c !== "" ? { color: c } : {}),
-    })
-  );
-  const distinctColors: string[] = [];
-  for (const e of bodyLocationsWithColors) {
-    const t = e.color?.trim();
-    if (t && !distinctColors.includes(t)) distinctColors.push(t);
-  }
-  return {
-    bodyLocationsWithColors,
-    color: distinctColors.length === 1 ? distinctColors[0] : undefined,
-  };
-};
+const buildPhysiotherapyLocationFieldsFromSet = (
+  bodyLocations: Set<string>,
+): { bodyLocations: string[] } => ({
+  bodyLocations: Array.from(bodyLocations),
+});
 
 /** Format notes to be displayed in the UI. Deduplicates lines and numbers multi-line notes. */
 export const formatNotes = (notes: string) => {
@@ -171,9 +152,9 @@ const mergeConsultationIntoGroupedAppointments = (
       consultationId: consultation?.id,
       recommendations: consultation
         ? {
-            food: consultation.food || "",
-            water: consultation.water || "",
-            ointment: consultation.ointments || "",
+            homeExercises: consultation.homeExercises || "",
+            painManagement: consultation.painManagement || "",
+            medications: consultation.medications || "",
             physiotherapy: consultation.physiotherapy || false,
             tens: consultation.tens || false,
             returnWeeks: consultation.returnWeeks || 0,
@@ -189,21 +170,21 @@ const mergeConsultationIntoGroupedAppointments = (
  */
 interface TreatmentDataByDate {
   physiotherapy?: {
-    /** Body location → color for that session row (last write wins if duplicated). */
-    bodyLocationColors: Map<string, string | undefined>;
-    sessionNumber: number; // Single session number for this date
-    duration?: number;
+    bodyLocations: Set<string>;
+    sessionNumber: number;
+    durationMinutes?: number;
     plannedSessions: number;
     appointmentId: number;
     notes: string;
-    appointmentNotes?: string; // Notes from the appointment
-    absenceNotes?: string; // Absence justification
+    appointmentNotes?: string;
+    absenceNotes?: string;
     sessions: SessionResponseDto[];
     status?: 'completed' | 'missed' | 'cancelled';
   };
   tens?: {
     bodyLocations: Set<string>;
-    sessionNumber: number; // Single session number for this date
+    sessionNumber: number;
+    durationMinutes?: number;
     plannedSessions: number;
     appointmentId: number;
     notes: string;
@@ -247,9 +228,9 @@ const groupTreatmentsByDateForHistory = (
               (a) => a.date === sessionDate && a.type === "physiotherapy"
             );
             dateData.physiotherapy = {
-              bodyLocationColors: new Map(),
-              sessionNumber: sessionRow.sessionNumber, // All treatments on same date have same session number
-              duration: treatment.durationMinutes,
+              bodyLocations: new Set(),
+              sessionNumber: sessionRow.sessionNumber,
+              durationMinutes: treatment.durationMinutes,
               plannedSessions: treatment.plannedSessions,
               appointmentId: treatment.appointmentId,
               notes: treatment.notes || "",
@@ -259,19 +240,16 @@ const groupTreatmentsByDateForHistory = (
               status: treatmentStatus,
             };
           }
-          dateData.physiotherapy.bodyLocationColors.set(
-            treatment.bodyLocation,
-            treatment.color
-          );
+          dateData.physiotherapy.bodyLocations.add(treatment.bodyLocation);
         } else if (treatment.treatmentType === "tens") {
           if (!dateData.tens) {
-            // Find matching appointment notes
             const matchingAppointment = appointments.find(
               (a) => a.date === sessionDate && a.type === 'tens'
             );
             dateData.tens = {
               bodyLocations: new Set(),
-              sessionNumber: sessionRow.sessionNumber, // All treatments on same date have same session number
+              sessionNumber: sessionRow.sessionNumber,
+              durationMinutes: treatment.durationMinutes,
               plannedSessions: treatment.plannedSessions,
               appointmentId: treatment.appointmentId,
               notes: treatment.notes || "",
@@ -329,12 +307,12 @@ const mergeTreatmentDataIntoAppointments = (
     // Add physiotherapy treatment data
     if (treatmentData.physiotherapy) {
       grouped.absenceNotes = combineNotes(grouped.absenceNotes, treatmentData.physiotherapy.absenceNotes);
-      const locFields = buildPhysiotherapyLocationFieldsFromMap(
-        treatmentData.physiotherapy.bodyLocationColors
+      const locFields = buildPhysiotherapyLocationFieldsFromSet(
+        treatmentData.physiotherapy.bodyLocations,
       );
       grouped.treatments.physiotherapy = {
         ...locFields,
-        duration: treatmentData.physiotherapy.duration,
+        durationMinutes: treatmentData.physiotherapy.durationMinutes,
         sessionNumber: `${treatmentData.physiotherapy.sessionNumber}/${treatmentData.physiotherapy.plannedSessions}`,
         notes: treatmentData.physiotherapy.notes,
         appointmentNotes: treatmentData.physiotherapy.appointmentNotes,
@@ -342,11 +320,11 @@ const mergeTreatmentDataIntoAppointments = (
       };
     }
 
-    // Add tens treatment data
     if (treatmentData.tens) {
       grouped.absenceNotes = combineNotes(grouped.absenceNotes, treatmentData.tens.absenceNotes);
       grouped.treatments.tens = {
         bodyLocations: Array.from(treatmentData.tens.bodyLocations),
+        durationMinutes: treatmentData.tens.durationMinutes,
         sessionNumber: `${treatmentData.tens.sessionNumber}/${treatmentData.tens.plannedSessions}`,
         notes: treatmentData.tens.notes,
         appointmentNotes: treatmentData.tens.appointmentNotes,
@@ -422,15 +400,15 @@ export interface GroupedScheduledAppointment {
       notes?: string; // Appointment notes (reason for scheduling)
     };
     physiotherapy?: {
-      bodyLocationsWithColors: Array<{ bodyLocation: string; color?: string }>;
-      color?: string;
-      duration?: number;
+      bodyLocations: string[];
+      durationMinutes?: number;
       sessionNumber: string;
       notes?: string;
-      appointmentNotes?: string; // Notes from the scheduled appointment
+      appointmentNotes?: string;
     };
     tens?: {
       bodyLocations: string[];
+      durationMinutes?: number;
       sessionNumber: string;
       notes?: string;
       appointmentNotes?: string; // Notes from the scheduled appointment
@@ -524,17 +502,18 @@ const addScheduledAssessmentData = (
  */
 interface ScheduledTreatmentDataByDate {
   physiotherapy?: {
-    bodyLocationColors: Map<string, string | undefined>;
-    sessionNumber: number; // Single session number for this date
-    duration?: number;
+    bodyLocations: Set<string>;
+    sessionNumber: number;
+    durationMinutes?: number;
     plannedSessions: number;
     notes: string;
-    appointmentNotes?: string; // Notes from the scheduled appointment
+    appointmentNotes?: string;
     status?: 'completed' | 'missed' | 'cancelled';
   };
   tens?: {
     bodyLocations: Set<string>;
-    sessionNumber: number; // Single session number for this date
+    sessionNumber: number;
+    durationMinutes?: number;
     plannedSessions: number;
     notes: string;
     appointmentNotes?: string; // Notes from the scheduled appointment
@@ -578,28 +557,25 @@ const groupScheduledTreatmentsByDate = (
                 (a) => a.date === date && a.type === 'physiotherapy'
               );
               dateData.physiotherapy = {
-                bodyLocationColors: new Map(),
-                sessionNumber: sessionRow.sessionNumber, // Use actual session number
-                duration: treatment.durationMinutes,
+                bodyLocations: new Set(),
+                sessionNumber: sessionRow.sessionNumber,
+                durationMinutes: treatment.durationMinutes,
                 plannedSessions: treatment.plannedSessions,
                 notes: treatment.notes || "",
                 appointmentNotes: matchingAppointment?.notes,
                 status: treatmentStatus,
               };
             }
-            dateData.physiotherapy.bodyLocationColors.set(
-              treatment.bodyLocation,
-              treatment.color
-            );
+            dateData.physiotherapy.bodyLocations.add(treatment.bodyLocation);
           } else if (treatment.treatmentType === "tens") {
             if (!dateData.tens) {
-              // Find matching scheduled appointment notes
               const matchingAppointment = scheduledAppointments.find(
                 (a) => a.date === date && a.type === 'tens'
               );
               dateData.tens = {
                 bodyLocations: new Set(),
-                sessionNumber: sessionRow.sessionNumber, // Use actual session number
+                sessionNumber: sessionRow.sessionNumber,
+                durationMinutes: treatment.durationMinutes,
                 plannedSessions: treatment.plannedSessions,
                 notes: treatment.notes || "",
                 appointmentNotes: matchingAppointment?.notes,
@@ -628,22 +604,22 @@ const mergeScheduledTreatmentDataIntoAppointments = (
 
     // Add physiotherapy treatment data
     if (treatmentData.physiotherapy) {
-      const locFields = buildPhysiotherapyLocationFieldsFromMap(
-        treatmentData.physiotherapy.bodyLocationColors
+      const locFields = buildPhysiotherapyLocationFieldsFromSet(
+        treatmentData.physiotherapy.bodyLocations,
       );
       grouped.treatments.physiotherapy = {
         ...locFields,
-        duration: treatmentData.physiotherapy.duration,
+        durationMinutes: treatmentData.physiotherapy.durationMinutes,
         sessionNumber: `${treatmentData.physiotherapy.sessionNumber}/${treatmentData.physiotherapy.plannedSessions}`,
         notes: treatmentData.physiotherapy.notes,
         appointmentNotes: treatmentData.physiotherapy.appointmentNotes,
       };
     }
 
-    // Add tens treatment data
     if (treatmentData.tens) {
       grouped.treatments.tens = {
         bodyLocations: Array.from(treatmentData.tens.bodyLocations),
+        durationMinutes: treatmentData.tens.durationMinutes,
         sessionNumber: `${treatmentData.tens.sessionNumber}/${treatmentData.tens.plannedSessions}`,
         notes: treatmentData.tens.notes,
         appointmentNotes: treatmentData.tens.appointmentNotes,

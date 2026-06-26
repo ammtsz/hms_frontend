@@ -6,9 +6,9 @@ import { Recommendations } from "@/types/types";
 
 const mockRecommendations = {
   date: "2024-12-20",
-  food: "Light meals",
-  water: "2L/day",
-  ointment: "Apply 2x daily",
+  homeExercises: "Stretching daily",
+  painManagement: "Ice after activity",
+  medications: "Ibuprofen as needed",
   returnWeeks: 4,
 };
 
@@ -19,7 +19,7 @@ const mockPhysiotherapySessions = [
     bodyLocation: "Head",
     plannedSessions: 3,
     completedSessions: 1,
-    color: "Blue",
+    durationMinutes: 45,
     status: "active",
   },
 ];
@@ -31,6 +31,7 @@ const mockTensSessions = [
     bodyLocation: "Back",
     plannedSessions: 5,
     completedSessions: 2,
+    durationMinutes: 30,
     status: "active",
   },
 ];
@@ -46,9 +47,9 @@ describe("TreatmentRecommendationsDisplay", () => {
     );
 
     expect(screen.getByText(/Latest Recommendations/)).toBeInTheDocument();
-    expect(screen.getByText("🍎 Food:")).toBeInTheDocument();
-    expect(screen.getByText("💧 Water:")).toBeInTheDocument();
-    expect(screen.getByText("🧴 Ointment:")).toBeInTheDocument();
+    expect(screen.getByText("🏠 Home Exercises:")).toBeInTheDocument();
+    expect(screen.getByText("💆 Pain Management:")).toBeInTheDocument();
+    expect(screen.getByText("💊 Medications:")).toBeInTheDocument();
     expect(
       screen.getByText(/✨ Physiotherapy \(1 active treatment\):/),
     ).toBeInTheDocument();
@@ -67,9 +68,9 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(screen.getByText("Light meals")).toBeInTheDocument();
-    expect(screen.getByText("2L/day")).toBeInTheDocument();
-    expect(screen.getByText("Apply 2x daily")).toBeInTheDocument();
+    expect(screen.getByText("Stretching daily")).toBeInTheDocument();
+    expect(screen.getByText("Ice after activity")).toBeInTheDocument();
+    expect(screen.getByText("Ibuprofen as needed")).toBeInTheDocument();
     expect(screen.getByText("4 weeks")).toBeInTheDocument();
   });
 
@@ -82,13 +83,10 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    // Physiotherapy details
     expect(
-      screen.getByText(/3 sessions: Head \(color: Blue\)/),
+      screen.getByText(/3 sessions: Head \(45 min\)/),
     ).toBeInTheDocument();
-
-    // TENS details
-    expect(screen.getByText(/5 sessions: Back/)).toBeInTheDocument();
+    expect(screen.getByText(/5 sessions: Back \(30 min\)/)).toBeInTheDocument();
   });
 
   it("shows 'no recommendations' message when all fields are empty", () => {
@@ -124,18 +122,16 @@ describe("TreatmentRecommendationsDisplay", () => {
     expect(
       screen.getByText(/✨ Physiotherapy \(1 active treatment\):/),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/3 sessions: Head \(color: Blue\)/),
-    ).toBeInTheDocument();
-    expect(screen.queryByText("🍎 Food:")).not.toBeInTheDocument();
+    expect(screen.getByText(/3 sessions: Head \(45 min\)/)).toBeInTheDocument();
+    expect(screen.queryByText("🏠 Home Exercises:")).not.toBeInTheDocument();
   });
 
   it("handles undefined date gracefully", () => {
     const recommendationsWithoutDate: { date: string } & Recommendations = {
       date: "",
-      food: mockRecommendations.food,
-      water: mockRecommendations.water,
-      ointment: mockRecommendations.ointment,
+      homeExercises: mockRecommendations.homeExercises,
+      painManagement: mockRecommendations.painManagement,
+      medications: mockRecommendations.medications,
       physiotherapy: false,
       tens: false,
       returnWeeks: mockRecommendations.returnWeeks,
@@ -158,7 +154,7 @@ describe("TreatmentRecommendationsDisplay", () => {
         bodyLocation: "Head",
         plannedSessions: 3,
         completedSessions: 1,
-        color: "Blue",
+        durationMinutes: 45,
         status: "active",
       },
       {
@@ -167,6 +163,7 @@ describe("TreatmentRecommendationsDisplay", () => {
         bodyLocation: "Right Hand",
         plannedSessions: 1,
         completedSessions: 0,
+        durationMinutes: 30,
         status: "active",
       },
     ];
@@ -178,10 +175,8 @@ describe("TreatmentRecommendationsDisplay", () => {
       />,
     );
 
-    expect(
-      screen.getByText(/3 sessions: Head \(color: Blue\)/),
-    ).toBeInTheDocument();
-    expect(screen.getByText(/1 session: Right Hand/)).toBeInTheDocument();
+    expect(screen.getByText(/3 sessions: Head \(45 min\)/)).toBeInTheDocument();
+    expect(screen.getByText(/1 session: Right Hand \(30 min\)/)).toBeInTheDocument();
   });
 
   it("displays consultation notes when present", () => {

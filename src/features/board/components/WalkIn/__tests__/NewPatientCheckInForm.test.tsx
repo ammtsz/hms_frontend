@@ -54,9 +54,9 @@ const mockPatient: Patient = {
   nextAppointmentDates: [],
   currentRecommendations: {
     date: "2026-01-29",
-    food: "",
-    water: "",
-    ointment: "",
+    homeExercises: "",
+    painManagement: "",
+    medications: "",
     physiotherapy: false,
     tens: false,
     returnWeeks: 0,

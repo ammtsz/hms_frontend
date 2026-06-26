@@ -96,9 +96,8 @@ describe("AppointmentHistoryItem", () => {
         absenceJustified: false,
         treatments: {
           physiotherapy: {
-            bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
-            color: "Blue",
-            duration: 15,
+            bodyLocations: ["Head"],
+            durationMinutes: 45,
             sessionNumber: "10",
           },
         },
@@ -291,9 +290,8 @@ describe("AppointmentHistoryItem", () => {
         absenceNotes: "Test",
         treatments: {
           physiotherapy: {
-            bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
-            color: "Blue",
-            duration: 15,
+            bodyLocations: ["Head"],
+            durationMinutes: 45,
             sessionNumber: "10",
           },
         },
@@ -343,9 +341,8 @@ describe("AppointmentHistoryItem", () => {
         absenceNotes: "Test",
         treatments: {
           physiotherapy: {
-            bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
-            color: "Blue",
-            duration: 15,
+            bodyLocations: ["Head"],
+            durationMinutes: 45,
             sessionNumber: "10",
           },
           tens: {
@@ -375,9 +372,8 @@ describe("AppointmentHistoryItem", () => {
       absenceNotes: "Test",
       treatments: {
         physiotherapy: {
-          bodyLocationsWithColors: [{ bodyLocation: "Head", color: "Blue" }],
-          color: "Blue",
-          duration: 15,
+          bodyLocations: ["Head"],
+          durationMinutes: 45,
           sessionNumber: "10",
         },
       },

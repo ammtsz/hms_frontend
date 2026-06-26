@@ -361,6 +361,25 @@ const formatted = formatWithTimezone(date); // Uses clinic timezone from env
 - Automatic date formatting
 - Shared frontend/backend timezone value
 
+### Physiotherapy domain model
+
+The app models a **physiotherapy clinic** (not the legacy community-health diet/light-therapy workflow). Key contracts:
+
+| Area | Frontend (camelCase) | Backend / DB (snake_case) | Notes |
+|------|----------------------|---------------------------|-------|
+| General recommendations | `homeExercises`, `painManagement`, `medications` | `home_exercises`, `pain_management`, `medications` on `hms_consultation` | Replaced legacy food/water/ointments fields |
+| Treatment types | `physiotherapy`, `tens` | Same enum on `hms_treatment` / appointments | UI label for TENS is **TENS** (not Electrotherapy) |
+| Session duration | `durationMinutes` | `duration_minutes` | Required **30, 45, or 60** minutes for both types |
+| Defaults | `DEFAULT_PHYSIOTHERAPY_DURATION_MINUTES` (45), `DEFAULT_TENS_DURATION_MINUTES` (30) | `treatment.constants.ts` / `constants/treatment.ts` | Used in forms and validation |
+| Scheduling conflicts | Body location + date + patient | `scheduling-signature.utils` | Same body location blocks duplicate open appointments |
+| Appointment display grouping | `groupAppointmentsForDisplayWithBodyLocation()` | — | See [.cursor/rules/11-appointment-grouping.mdc](../.cursor/rules/11-appointment-grouping.mdc) |
+
+**Constants:** `src/constants/treatment.ts` (frontend), `src/common/constants/treatment.constants.ts` (backend).
+
+**Test fixtures:** `src/testFixtures/physiotherapyContext.ts` — shared example copy and `createMockConsultationResponse` / `createMockTreatmentResponse` / `createMockPostConsultationFormData` for unit tests.
+
+**Database:** Schema changes require recreating the DB from `hms-backend/init.sql` (or `railway-init.sql`); there are no incremental migrations for this domain shift.
+
 ### Drag & Drop System
 
 **Implementation:** Custom hook with Zustand state
@@ -502,7 +521,8 @@ it("fetches patient data", async () => {
 ### Mocking Strategy
 
 - Mock API calls with MSW or manual mocks
-- Factory functions for test data
+- Prefer `src/testFixtures/physiotherapyContext.ts` for consultation and treatment test data (physiotherapy-aligned field names and durations)
+- Factory functions for other domains; keep mocks aligned with `constants/treatment.ts` (30 / 45 / 60 min)
 - Consistent mock patterns across tests
 
 ## 🔒 Type Safety

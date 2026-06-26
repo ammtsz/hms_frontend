@@ -42,5 +42,6 @@ src/features/board/
 - `src/components/common` for transitional shared components
 - `src/api/query/hooks` for React Query hooks
 - `src/hooks` for cross-feature non-query hooks
+- `src/testFixtures/` for shared Jest mocks (e.g. `physiotherapyContext.ts`)
 
 Keep code inside the feature only when it is owned by that feature.

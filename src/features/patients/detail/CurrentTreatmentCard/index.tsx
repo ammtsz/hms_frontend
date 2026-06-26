@@ -107,9 +107,9 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
 
     return {
       date, // Keep as YYYY-MM-DD string
-      food: latestConsultation.food || "",
-      water: latestConsultation.water || "",
-      ointment: latestConsultation.ointments || "",
+      homeExercises: latestConsultation.homeExercises || "",
+      painManagement: latestConsultation.painManagement || "",
+      medications: latestConsultation.medications || "",
       notes: latestConsultation.notes || "",
       physiotherapy: latestConsultation.physiotherapy || false,
       tens: latestConsultation.tens || false,
@@ -274,9 +274,9 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
             {/* Current Recommendations */}
             <div className="border-t pt-4 border-gray-200">
               {currentRecommendations &&
-              (currentRecommendations.food ||
-                currentRecommendations.water ||
-                currentRecommendations.ointment ||
+              (currentRecommendations.homeExercises ||
+                currentRecommendations.painManagement ||
+                currentRecommendations.medications ||
                 groupedActiveTreatments.physiotherapy.length > 0 ||
                 groupedActiveTreatments.tens.length > 0 ||
                 (currentRecommendations.returnWeeks &&
@@ -342,7 +342,8 @@ export const CurrentTreatmentCard: React.FC<CurrentTreatmentCardProps> = ({
                             ? "Physiotherapy"
                             : "TENS"}
                           : {treatment.bodyLocation}
-                          {treatment.color && ` (color: ${treatment.color})`}
+                          {treatment.durationMinutes != null &&
+                            ` (${treatment.durationMinutes} min)`}
                         </p>
                       </div>
                     </label>

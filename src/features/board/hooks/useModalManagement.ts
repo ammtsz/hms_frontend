@@ -111,9 +111,9 @@ export const useModalManagement = ({
           appointmentId: selectedAppointmentForTreatment.id,
           mainConcern: data.mainConcern,
           patientStatus: data.patientStatus,
-          food: data.food,
-          water: data.water,
-          ointments: data.ointments,
+          homeExercises: data.homeExercises,
+          painManagement: data.painManagement,
+          medications: data.medications,
           returnWeeks: data.returnWeeks,
           notes: data.notes,
           // Legacy physiotherapy/tens flags

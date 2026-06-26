@@ -22,9 +22,9 @@ describe("BasicInfoTab", () => {
     patientStatus: "T",
     startDate: "2024-01-01",
     returnWeeks: 4,
-    food: "Test food",
-    water: "Test water",
-    ointments: "Test ointments",
+    homeExercises: "Stretching daily",
+    painManagement: "Ice after activity",
+    medications: "Ibuprofen as needed",
     recommendations: {
       returnWeeks: 4,
       returnWhenTreatmentComplete: false,

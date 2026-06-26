@@ -15,7 +15,7 @@ export function groupTreatmentPlansForEdit(
   const byKey = new Map<string, TreatmentResponseDto[]>();
 
   treatmentPlans.forEach((plan) => {
-    const key = `${plan.treatmentType}-${plan.color ?? "none"}-${plan.plannedSessions}-${plan.durationMinutes ?? "0"}`;
+    const key = `${plan.treatmentType}-${plan.plannedSessions}-${plan.durationMinutes ?? "0"}`;
     const list = byKey.get(key) ?? [];
     list.push(plan);
     byKey.set(key, list);
@@ -26,7 +26,6 @@ export function groupTreatmentPlansForEdit(
 
 export interface DisplayGroup {
   treatmentType: "physiotherapy" | "tens";
-  color: string | undefined;
   durationMinutes: number | undefined;
   bodyLocations: string[];
   sessionNumber: number;
@@ -37,17 +36,12 @@ export interface DisplayGroup {
 
 function displayGroupKey(item: TreatmentPlanWithSessionRow): string {
   const { treatment, sessionRow } = item;
-  const color =
-    treatment.treatmentType === "physiotherapy" ? (treatment.color ?? "") : "";
-  const duration =
-    treatment.treatmentType === "physiotherapy"
-      ? (treatment.durationMinutes ?? "")
-      : "";
+  const duration = treatment.durationMinutes ?? "";
 
-  return `${treatment.treatmentType}-${color}-${duration}-${sessionRow.sessionNumber}-${treatment.plannedSessions}`;
+  return `${treatment.treatmentType}-${duration}-${sessionRow.sessionNumber}-${treatment.plannedSessions}`;
 }
 
-export function groupByTypeColorDuration(
+export function groupByTypeDuration(
   treatmentsWithSessionRows: TreatmentPlanWithSessionRow[],
 ): DisplayGroup[] {
   const byKey = new Map<string, TreatmentPlanWithSessionRow[]>();
@@ -68,7 +62,6 @@ export function groupByTypeColorDuration(
 
     return {
       treatmentType: treatment.treatmentType,
-      color: treatment.color,
       durationMinutes: treatment.durationMinutes,
       bodyLocations,
       sessionNumber: sessionRow.sessionNumber,

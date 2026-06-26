@@ -9,9 +9,9 @@ import { NotesBox } from "./helpers/treatmentHelpers";
 import { ASSESSMENT_DETAILS_TITLE } from "@/utils/appointmentStatusLabels";
 
 export interface AssessmentRecommendation {
-  food?: string;
-  water?: string;
-  ointment?: string;
+  homeExercises?: string;
+  painManagement?: string;
+  medications?: string;
   physiotherapy?: boolean;
   tens?: boolean;
   returnWeeks?: number;
@@ -46,9 +46,9 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
   const hasTensSessions = tensSessions.length > 0;
 
   const hasRecommendations =
-    recommendations?.food ||
-    recommendations?.water ||
-    recommendations?.ointment ||
+    recommendations?.homeExercises ||
+    recommendations?.painManagement ||
+    recommendations?.medications ||
     hasPhysiotherapySessions ||
     hasTensSessions ||
     (recommendations?.returnWeeks !== undefined &&
@@ -111,27 +111,27 @@ export const AssessmentDetails: React.FC<AssessmentDetailsProps> = ({
             Recommendations:
           </div>
           <div className="flex flex-col gap-y-2 text-xs">
-            {recommendations?.food && (
+            {recommendations?.homeExercises && (
               <RecommendationItem
-                icon="🍎"
-                label="Food"
-                value={recommendations.food}
+                icon="🏠"
+                label="Home Exercises"
+                value={recommendations.homeExercises}
               />
             )}
 
-            {recommendations?.water && (
+            {recommendations?.painManagement && (
               <RecommendationItem
-                icon="💧"
-                label="Water"
-                value={recommendations.water}
+                icon="💆"
+                label="Pain Management"
+                value={recommendations.painManagement}
               />
             )}
 
-            {recommendations?.ointment && (
+            {recommendations?.medications && (
               <RecommendationItem
-                icon="🧴"
-                label="Ointment"
-                value={recommendations.ointment}
+                icon="💊"
+                label="Medications"
+                value={recommendations.medications}
               />
             )}
 

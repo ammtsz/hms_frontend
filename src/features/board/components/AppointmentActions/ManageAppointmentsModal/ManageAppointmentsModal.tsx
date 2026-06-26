@@ -88,8 +88,10 @@ export const ManageAppointmentsModal: React.FC<ManageAppointmentsModalProps> = (
           ? "Physiotherapy"
           : "TENS";
       const loc = row.treatment.bodyLocation ?? "";
-      const color = row.treatment.color ? `, ${row.treatment.color}` : "";
-      map.set(row.sessionRow.appointmentId, `${type} (${loc}${color})`);
+      const duration = row.treatment.durationMinutes
+        ? `, ${row.treatment.durationMinutes} min`
+        : "";
+      map.set(row.sessionRow.appointmentId, `${type} (${loc}${duration})`);
     });
     return map;
   }, [treatmentsWithSessionRows]);
@@ -194,8 +196,8 @@ export const ManageAppointmentsModal: React.FC<ManageAppointmentsModalProps> = (
                             ? "Physiotherapy"
                             : "TENS"}
                           : {row.treatment.bodyLocation}
-                          {row.treatment.color &&
-                            ` (color: ${row.treatment.color})`}
+                          {row.treatment.durationMinutes != null &&
+                            ` (${row.treatment.durationMinutes} min)`}
                         </p>
                       </div>
                     </label>

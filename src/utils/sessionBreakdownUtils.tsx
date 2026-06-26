@@ -99,7 +99,6 @@ export const getStatusDates = (
     .filter(
       (s) =>
         s.treatmentType === session.treatmentType &&
-        s.color === session.color &&
         s.plannedSessions === session.plannedSessions &&
         s.durationMinutes === session.durationMinutes &&
         s.completedSessions === session.completedSessions &&

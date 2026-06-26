@@ -81,19 +81,14 @@ jest.mock(
         addRow: () => {
           const t = props.treatments as Array<{
             locations: string[];
-            color?: string;
             duration?: number;
           }>;
-          const newRow =
-            props.treatmentType === "physiotherapy"
-              ? {
-                  locations: [],
-                  color: "",
-                  duration: 1,
-                  quantity: 1,
-                  startDate: "2025-01-01",
-                }
-              : { locations: [], quantity: 1, startDate: "2025-01-01" };
+          const newRow = {
+            locations: [],
+            duration: props.treatmentType === "physiotherapy" ? 45 : 30,
+            quantity: 1,
+            startDate: "2025-01-01",
+          };
           props.onChange(
             [...t, newRow],
             [...(props.initialEditSessionIds ?? []), undefined],
@@ -128,7 +123,6 @@ const defaultSessions = [
     completedSessions: 0,
     status: "active",
     durationMinutes: 30,
-    color: "blue",
     notes: undefined,
     createdDate: "2025-01-01",
     createdTime: "10:00:00",
@@ -174,7 +168,7 @@ describe("EditTreatmentModal", () => {
     expect(screen.getByText("Edit Physiotherapy")).toBeInTheDocument();
     expect(screen.getByText(/Emily/)).toBeInTheDocument();
     expect(
-      screen.getByText(/body location.*color and duration/),
+      screen.getByText(/body location and duration/),
     ).toBeInTheDocument();
   });
 
@@ -189,8 +183,7 @@ describe("EditTreatmentModal", () => {
             ...defaultSessions[0],
             id: 2,
             treatmentType: "tens",
-            durationMinutes: undefined,
-            color: undefined,
+            durationMinutes: 30,
           },
         ]}
         patientId={1}
@@ -215,7 +208,7 @@ describe("EditTreatmentModal", () => {
       { wrapper: TestWrapper },
     );
     const saveButton = screen.getByRole("button", {
-      name: /Save Changes/i,
+      name: /Save/i,
     });
     fireEvent.click(saveButton);
     await waitFor(() => {
@@ -240,7 +233,7 @@ describe("EditTreatmentModal", () => {
       { wrapper: TestWrapper },
     );
     const saveButton = screen.getByRole("button", {
-      name: /Save Changes/i,
+      name: /Save/i,
     });
     fireEvent.click(saveButton);
     await waitFor(() => {
@@ -248,7 +241,6 @@ describe("EditTreatmentModal", () => {
         "1",
         expect.objectContaining({
           bodyLocation: "Head",
-          color: "blue",
           durationMinutes: 30,
         }),
       );
@@ -279,7 +271,7 @@ describe("EditTreatmentModal", () => {
       />,
       { wrapper: TestWrapper },
     );
-    fireEvent.click(screen.getByRole("button", { name: /Save Changes/i }));
+    fireEvent.click(screen.getByRole("button", { name: /^Save$/i }));
     await waitFor(() => {
       expect(
         screen.getByText(/Network error|Error updating/i),

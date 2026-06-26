@@ -88,7 +88,6 @@ describe("SystemSettings", () => {
     expect(screen.getByText(SYSTEM_SETTINGS_LABELS.priorities)).toBeInTheDocument();
     expect(screen.getByText(SYSTEM_SETTINGS_LABELS.noteCategories)).toBeInTheDocument();
     expect(screen.getByText(SYSTEM_SETTINGS_LABELS.bodyLocations)).toBeInTheDocument();
-    expect(screen.getByText(SYSTEM_SETTINGS_LABELS.colorsPhysiotherapy)).toBeInTheDocument();
   });
 
   it("expands Absence limit and shows input when data loaded", () => {
@@ -216,16 +215,11 @@ describe("SystemSettings", () => {
     expect(mockShowToast).toHaveBeenCalledWith("Network error", "error");
   });
 
-  it("renders TreatmentOptionsList when body locations and colors sections are expanded", () => {
+  it("renders TreatmentOptionsList when body locations section is expanded", () => {
     render(<SystemSettings />);
 
     fireEvent.click(screen.getByRole("button", { name: /Body Locations/i }));
     expect(screen.getAllByTestId("treatment-options-list")).toHaveLength(1);
-
-    fireEvent.click(
-      screen.getByRole("button", { name: /Colors \(Physiotherapy\)/i }),
-    );
-    expect(screen.getAllByTestId("treatment-options-list")).toHaveLength(2);
   });
 
   it("renders PriorityManagementList and NoteCategoriesManagementList when expanded", () => {

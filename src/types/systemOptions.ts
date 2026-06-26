@@ -1,6 +1,5 @@
 export enum SystemOptionType {
   BODY_LOCATION = 'body_location',
-  COLOR = 'color',
   PRIORITY = 'priority',
   NOTE_CATEGORY = 'note_category',
 }

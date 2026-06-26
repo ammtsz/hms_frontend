@@ -9,9 +9,11 @@ import type {
 } from "@/api/types";
 import type {
   TreatmentRecommendation,
-  PhysiotherapyLocationTreatment,
-  TensLocationTreatment,
+  LocationTreatment,
 } from "../types";
+import {
+  isValidTreatmentDuration,
+} from "@/constants/treatment";
 import type { CreatedTreatment } from "../components/CreatedTreatmentsConfirmation";
 import type { TreatmentCreationError } from "../components/TreatmentCreationErrors";
 import { useCloseModal, usePostConsultationModal } from "@/stores/modalStore";
@@ -45,9 +47,9 @@ export interface PostConsultationFormData {
   returnWeeks: number;
 
   // Recommendations section (reusing existing structure)
-  food: string;
-  water: string;
-  ointments: string;
+  homeExercises: string;
+  painManagement: string;
+  medications: string;
   recommendations: TreatmentRecommendation;
   notes: string;
 
@@ -129,37 +131,15 @@ export function usePostConsultationForm() {
 
   // Helper function to validate treatment data before sending to backend
   const validateTreatmentData = useCallback(
-    (
-      treatment: PhysiotherapyLocationTreatment | TensLocationTreatment,
-      treatmentType: "physiotherapy" | "tens",
-    ): string[] => {
+    (treatment: LocationTreatment): string[] => {
       const errors: string[] = [];
 
-      if (treatmentType === "physiotherapy") {
-        const physiotherapyTreatment =
-          treatment as PhysiotherapyLocationTreatment;
-
-        // Validate duration (1-10 units)
-        if (
-          !physiotherapyTreatment.duration ||
-          physiotherapyTreatment.duration < 1 ||
-          physiotherapyTreatment.duration > 10
-        ) {
-          errors.push(
-            `Duration must be between 1 and 10 units (7 to 70 minutes). Current value: ${physiotherapyTreatment.duration}`,
-          );
-        }
-
-        // Validate color
-        if (
-          !physiotherapyTreatment.color ||
-          physiotherapyTreatment.color.trim() === ""
-        ) {
-          errors.push("Color is required for physiotherapy treatments.");
-        }
+      if (!isValidTreatmentDuration(treatment.duration)) {
+        errors.push(
+          `Duration must be 30, 45, or 60 minutes. Current value: ${treatment.duration}`,
+        );
       }
 
-      // Validate common fields
       if (
         !treatment.quantity ||
         treatment.quantity < 1 ||
@@ -278,26 +258,14 @@ export function usePostConsultationForm() {
               // Check for specific validation errors in error message
               if (
                 errorMessage.includes(
-                  "duration_minutes must not be greater than 10",
-                )
-              ) {
-                physiotherapyErrors.push(
-                  "Duration must be between 1 and 10 units (7 to 70 minutes). Check the values provided.",
-                );
-              } else if (
+                  "duration_minutes must not be greater than 60",
+                ) ||
                 errorMessage.includes(
-                  "duration_minutes must not be less than 1",
+                  "duration_minutes must not be less than 30",
                 )
               ) {
                 physiotherapyErrors.push(
-                  "Duration must be at least 1 unit (7 minutes). Check the values provided.",
-                );
-              } else if (
-                errorMessage.includes("color should not be empty") ||
-                errorMessage.includes("color must be a string")
-              ) {
-                physiotherapyErrors.push(
-                  "Color is required for physiotherapy treatments.",
+                  "Duration must be 30, 45, or 60 minutes. Check the values provided.",
                 );
               } else if (
                 errorMessage.includes("Appointment with ID") &&
@@ -313,14 +281,14 @@ export function usePostConsultationForm() {
                 errorMessage.includes("Validation failed")
               ) {
                 physiotherapyErrors.push(
-                  "Validation error when creating physiotherapy sessions. Please check the provided data (duration: 1-10 units, color required).",
+                  "Validation error when creating physiotherapy sessions. Please check the provided data (duration: 30, 45, or 60 minutes).",
                 );
               } else if (
                 errorMessage.includes("400") ||
                 errorMessage.includes("Bad Request")
               ) {
                 physiotherapyErrors.push(
-                  "Invalid data for physiotherapy. Check duration (1-10 units), color and other fields.",
+                  "Invalid data for physiotherapy. Check duration (30, 45, or 60 minutes) and other fields.",
                 );
               }
             }
@@ -470,16 +438,12 @@ export function usePostConsultationForm() {
       ) {
         for (const treatment of recommendations.physiotherapy.treatments) {
           // Validate treatment data before processing
-          const validationErrors = validateTreatmentData(
-            treatment,
-            "physiotherapy",
-          );
+          const validationErrors = validateTreatmentData(treatment);
           if (validationErrors.length > 0) {
             physiotherapyErrors.push(...validationErrors);
-            continue; // Skip this treatment if validation fails
+            continue;
           }
 
-          // Create a session request for each location in the treatment
           for (const location of treatment.locations) {
             treatmentRowsToCreate.push({
               consultationId: consultationId,
@@ -489,8 +453,7 @@ export function usePostConsultationForm() {
               bodyLocation: location,
               startDate: treatment.startDate,
               plannedSessions: treatment.quantity,
-              durationMinutes: treatment.duration, // Duration is already in 7-minute units
-              color: treatment.color,
+              durationMinutes: treatment.duration,
               notes: "",
             });
           }
@@ -504,13 +467,12 @@ export function usePostConsultationForm() {
       ) {
         for (const treatment of recommendations.tens.treatments) {
           // Validate treatment data before processing
-          const validationErrors = validateTreatmentData(treatment, "tens");
+          const validationErrors = validateTreatmentData(treatment);
           if (validationErrors.length > 0) {
             tensErrors.push(...validationErrors);
-            continue; // Skip this treatment if validation fails
+            continue;
           }
 
-          // Create a session request for each location in the treatment
           for (const location of treatment.locations) {
             treatmentRowsToCreate.push({
               consultationId: consultationId,
@@ -520,6 +482,7 @@ export function usePostConsultationForm() {
               bodyLocation: location,
               startDate: treatment.startDate,
               plannedSessions: treatment.quantity,
+              durationMinutes: treatment.duration,
               notes: "",
             });
           }
@@ -582,7 +545,6 @@ export function usePostConsultationForm() {
             completedSessions: treatmentRow.completedSessions,
             status: treatmentRow.status,
             durationMinutes: treatmentRow.durationMinutes,
-            color: treatmentRow.color,
             notes: treatmentRow.notes,
             sessions: treatmentRow.sessions,
             createdDate: treatmentRow.createdDate,
@@ -618,14 +580,11 @@ export function usePostConsultationForm() {
       // General recommendations tab: if not acknowledged as "none apply", must have at least one
       if (!data.noGeneralRecommendations) {
         const hasGeneralRecommendation =
-          (data.food?.trim() ?? "").length > 0 ||
-          (data.water?.trim() ?? "").length > 0 ||
-          (data.ointments?.trim() ?? "").length > 0;
+          (data.homeExercises?.trim() ?? "").length > 0 ||
+          (data.painManagement?.trim() ?? "").length > 0 ||
+          (data.medications?.trim() ?? "").length > 0;
         if (!hasGeneralRecommendation) {
-          {
-            /* translate to english */
-          }
-          return "Add at least one general recommendation (food, water or ointments) or mark none apply";
+          return "Add at least one general recommendation (home exercises, pain management, or medications) or mark none apply";
         }
       }
 
@@ -661,11 +620,8 @@ export function usePostConsultationForm() {
           if (!treatment.locations || treatment.locations.length === 0) {
             return "All physiotherapy locations must be specified";
           }
-          if (!treatment.color) {
-            return "Physiotherapy color is required for all locations";
-          }
-          if (treatment.duration < 1 || treatment.duration > 10) {
-            return "Physiotherapy time must be between 1 and 10 units (7-70 minutes)";
+          if (!isValidTreatmentDuration(treatment.duration)) {
+            return "Physiotherapy duration must be 30, 45, or 60 minutes";
           }
           if (treatment.quantity < 1 || treatment.quantity > 20) {
             return "Physiotherapy quantity must be between 1 and 20";
@@ -684,6 +640,9 @@ export function usePostConsultationForm() {
         for (const treatment of treatments) {
           if (!treatment.locations || treatment.locations.length === 0) {
             return "All TENS treatment locations must be specified";
+          }
+          if (!isValidTreatmentDuration(treatment.duration)) {
+            return "TENS duration must be 30, 45, or 60 minutes";
           }
           if (treatment.quantity < 1 || treatment.quantity > 20) {
             return "TENS treatment quantity must be between 1 and 20";
@@ -833,9 +792,9 @@ export function usePostConsultationForm() {
       patientStatus: "T", // Default to "T - In Treatment""
       startDate: today,
       returnWeeks: 1, // Default to 1 week, will be updated from database
-      food: "",
-      water: "",
-      ointments: "",
+      homeExercises: "",
+      painManagement: "",
+      medications: "",
       recommendations: {
         returnWeeks: 1,
         returnWhenTreatmentComplete: false,
@@ -894,9 +853,9 @@ export function usePostConsultationForm() {
       patientStatus: currentTreatmentStatus as PatientStatusValue,
       startDate,
       returnWeeks,
-      food: "",
-      water: "",
-      ointments: "",
+      homeExercises: "",
+      painManagement: "",
+      medications: "",
       recommendations: {
         returnWeeks,
         returnWhenTreatmentComplete,

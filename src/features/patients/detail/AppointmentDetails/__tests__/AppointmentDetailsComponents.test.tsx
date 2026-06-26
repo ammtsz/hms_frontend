@@ -13,8 +13,7 @@ describe("AppointmentDetails components", () => {
       render(
         <PhysiotherapyDetails
           bodyLocations={["Head", "Shoulder"]}
-          color="blue"
-          duration={21}
+          durationMinutes={45}
           sessionNumber={"1/3"}
           showSessions={true}
           sessionLabel="Sessions"
@@ -22,9 +21,8 @@ describe("AppointmentDetails components", () => {
       );
 
       expect(screen.getByText(/✨ Physiotherapy/)).toBeInTheDocument();
-      expect(screen.getByText("blue")).toBeInTheDocument();
       expect(screen.getByText(/Head, Shoulder/)).toBeInTheDocument();
-      expect(screen.getByText(/21 units/)).toBeInTheDocument();
+      expect(screen.getByText(/45 min/)).toBeInTheDocument();
       expect(screen.getByText(/Sessions:/)).toBeInTheDocument();
       expect(screen.getByText(/1\/3/)).toBeInTheDocument();
     });
@@ -99,8 +97,9 @@ describe("AppointmentDetails components", () => {
   describe("AssessmentDetails", () => {
     it("renders recommendations correctly", () => {
       const recommendations = {
-        food: "Avoid red meat",
-        water: "Drink water",
+        homeExercises: "Stretch daily",
+        painManagement: "Use ice",
+        medications: "Ibuprofen",
         physiotherapy: true,
         returnWeeks: 4,
       };
@@ -109,15 +108,16 @@ describe("AppointmentDetails components", () => {
 
       expect(screen.getByText(ASSESSMENT_DETAILS_TITLE)).toBeInTheDocument();
       expect(screen.getByText("Recommendations:")).toBeInTheDocument();
-      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
-      expect(screen.getByText("Drink water")).toBeInTheDocument();
+      expect(screen.getByText("Stretch daily")).toBeInTheDocument();
+      expect(screen.getByText("Use ice")).toBeInTheDocument();
+      expect(screen.getByText("Ibuprofen")).toBeInTheDocument();
       expect(screen.getByText("4 weeks")).toBeInTheDocument();
     });
 
     it("renders recommendations with treatment session details", () => {
       const recommendations = {
-        food: "Avoid red meat",
-        water: "Drink water",
+        homeExercises: "Stretch daily",
+        painManagement: "Use ice",
         returnWeeks: 4,
       };
 
@@ -128,7 +128,7 @@ describe("AppointmentDetails components", () => {
           bodyLocation: "Head",
           plannedSessions: 3,
           completedSessions: 0,
-          color: "blue",
+          durationMinutes: 45,
           status: "active",
         },
       ];
@@ -140,6 +140,7 @@ describe("AppointmentDetails components", () => {
           bodyLocation: "shoulder",
           plannedSessions: 2,
           completedSessions: 0,
+          durationMinutes: 30,
           status: "active",
         },
       ];
@@ -154,18 +155,20 @@ describe("AppointmentDetails components", () => {
 
       expect(screen.getByText(ASSESSMENT_DETAILS_TITLE)).toBeInTheDocument();
       expect(screen.getByText("Recommendations:")).toBeInTheDocument();
-      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
-      expect(screen.getByText("Drink water")).toBeInTheDocument();
+      expect(screen.getByText("Stretch daily")).toBeInTheDocument();
+      expect(screen.getByText("Use ice")).toBeInTheDocument();
       expect(
-        screen.getByText("3 sessions - Head (color: blue)"),
+        screen.getByText("3 sessions - Head (45 min)"),
       ).toBeInTheDocument();
-      expect(screen.getByText("2 sessions - shoulder")).toBeInTheDocument();
+      expect(
+        screen.getByText("2 sessions - shoulder (30 min)"),
+      ).toBeInTheDocument();
       expect(screen.getByText("4 weeks")).toBeInTheDocument();
     });
 
     it("renders without treatment sessions when not provided", () => {
       const recommendations = {
-        food: "Avoid red meat",
+        homeExercises: "Stretch daily",
         returnWeeks: 2,
       };
 
@@ -173,7 +176,7 @@ describe("AppointmentDetails components", () => {
 
       expect(screen.getByText(ASSESSMENT_DETAILS_TITLE)).toBeInTheDocument();
       expect(screen.getByText("Recommendations:")).toBeInTheDocument();
-      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
+      expect(screen.getByText("Stretch daily")).toBeInTheDocument();
       expect(screen.getByText("2 weeks")).toBeInTheDocument();
       // Should not show physiotherapy or tens without sessions
       expect(screen.queryByText(/Physiotherapy/)).not.toBeInTheDocument();

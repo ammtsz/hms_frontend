@@ -11,17 +11,14 @@ import {
   hasSlotsForTreatmentOnDate,
   useScheduleSettings,
 } from "@/api/query/hooks/useScheduleSettingQueries";
-import {
-  useBodyLocations,
-  useColors,
-  useCreateBodyLocation,
-} from "@/api/query/hooks/useSystemOptionsQueries";
+import { useBodyLocations, useCreateBodyLocation } from "@/api/query/hooks/useSystemOptionsQueries";
 import { TREATMENT_SLOTS_UNAVAILABLE_MESSAGE } from "@/utils/scheduleTreatmentSlots";
 import { formatDisplayDate } from "@/utils/dateUtils";
-import type {
-  PhysiotherapyLocationTreatment,
-  TensLocationTreatment,
-} from "@/features/board/components/Consultation/types";
+import type { LocationTreatment } from "@/types/treatment";
+import {
+  TREATMENT_SESSION_DURATIONS,
+  formatTreatmentDurationMinutes,
+} from "@/constants/treatment";
 import LocationChipInput from "./LocationChipInput";
 import type { TreatmentResponseDto } from "@/api/types";
 import {
@@ -43,29 +40,20 @@ import {
 /** Session data for edit mode: one row per session. Used by parent to build initial treatments and initialEditSessionIds. */
 export type EditModeSession = Pick<
   TreatmentResponseDto,
-  | "id"
-  | "bodyLocation"
-  | "color"
-  | "durationMinutes"
-  | "plannedSessions"
-  | "startDate"
+  "id" | "durationMinutes" | "plannedSessions" | "startDate"
 >;
 
 interface TreatmentRecommendationTableProps {
   treatmentType: "physiotherapy" | "tens";
-  treatments: (PhysiotherapyLocationTreatment | TensLocationTreatment)[];
+  treatments: LocationTreatment[];
   onChange: (
-    treatments: (PhysiotherapyLocationTreatment | TensLocationTreatment)[],
+    treatments: LocationTreatment[],
     editSessionIds?: (number | undefined)[],
   ) => void;
   disabled?: boolean;
-  /** When adding a new row, use this quantity. If same-type rows exist, parent passes last row's quantity; if first row of this type, parent passes other type's last quantity or 1. */
   defaultQuantity?: number;
-  /** When adding a new row, use this start date for the first row of this type (e.g. copied from other treatment type). */
   defaultStartDate?: string;
-  /** When 'edit', quantity and start date are read-only; rows are tied to session ids for update/cancel. */
   mode?: "create" | "edit";
-  /** In edit mode, session id per row (same length as treatments). New rows have undefined. */
   initialEditSessionIds?: number[];
 }
 
@@ -101,7 +89,6 @@ const TreatmentRecommendationTable = forwardRef<
       (number | undefined)[]
     >(() => (isEditMode ? initialEditSessionIds : []));
 
-    // In edit mode, initialize editSessionIds from parent when lengths match (e.g. modal just opened)
     useEffect(() => {
       if (
         isEditMode &&
@@ -118,7 +105,6 @@ const TreatmentRecommendationTable = forwardRef<
       editSessionIds.length,
     ]);
 
-    // Keep editSessionIds length in sync with treatments when in edit mode (e.g. parent reset)
     useEffect(() => {
       if (!isEditMode) return;
       if (treatments.length !== editSessionIds.length) {
@@ -136,11 +122,9 @@ const TreatmentRecommendationTable = forwardRef<
 
     const { data: scheduleSettings } = useScheduleSettings();
     const { data: bodyLocations = [] } = useBodyLocations();
-    const { data: allBodyLocations = [] } = useBodyLocations(true); // Include inactive
-    const { data: colors = [] } = useColors();
+    const { data: allBodyLocations = [] } = useBodyLocations(true);
     const createBodyLocationMutation = useCreateBodyLocation();
 
-    // Close edit mode when clicking outside the table
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
         if (
@@ -178,7 +162,7 @@ const TreatmentRecommendationTable = forwardRef<
       } else {
         onChange(newTreatments);
       }
-      setEditingRowIndex(newTreatments.length - 1); // Start editing the new row
+      setEditingRowIndex(newTreatments.length - 1);
     }, [
       treatmentType,
       treatments,
@@ -213,17 +197,13 @@ const TreatmentRecommendationTable = forwardRef<
       field: string,
       value: string | string[] | number,
     ) => {
-      const updatedTreatments = [...treatments] as Array<
-        PhysiotherapyLocationTreatment | TensLocationTreatment
-      >;
-      const nextRow = {
+      const updatedTreatments = [...treatments];
+      updatedTreatments[index] = {
         ...updatedTreatments[index],
         [field]: value,
-      } as PhysiotherapyLocationTreatment | TensLocationTreatment;
-      updatedTreatments[index] = nextRow;
+      };
 
       const uniqueTreatments = enforceUniqueLocationsForRow({
-        treatmentType,
         rowIndex: index,
         treatments: updatedTreatments,
       });
@@ -234,7 +214,6 @@ const TreatmentRecommendationTable = forwardRef<
         onChange(uniqueTreatments);
       }
 
-      // Clear error when user makes changes
       if (creationError?.rowIndex === index) {
         setCreationError(null);
       }
@@ -242,20 +221,12 @@ const TreatmentRecommendationTable = forwardRef<
 
     useImperativeHandle(ref, () => ({ addRow: handleAddRow }), [handleAddRow]);
 
-    const isPhysiotherapy = treatmentType === "physiotherapy";
-
-    // Get active locations and colors
     const activeLocations = bodyLocations
       .filter((loc) => loc.isActive)
       .map((loc) => loc.value);
 
-    const activeColors = colors
-      .filter((color) => color.isActive)
-      .map((color) => color.value);
-
     return (
       <div className="space-y-4">
-        {/* Table View */}
         {treatments.length > 0 && (
           <div
             ref={tableRef}
@@ -269,16 +240,9 @@ const TreatmentRecommendationTable = forwardRef<
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider max-w-3xs">
                     Body Locations
                   </th>
-                  {isPhysiotherapy && (
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Color
-                    </th>
-                  )}
-                  {isPhysiotherapy && (
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                      Duration
-                    </th>
-                  )}
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                    Duration
+                  </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Quantity
                   </th>
@@ -301,15 +265,12 @@ const TreatmentRecommendationTable = forwardRef<
                       scheduleSettings,
                     );
                   const isEditing = editingRowIndex === index;
-                  const physiotherapyTreatment =
-                    treatment as PhysiotherapyLocationTreatment;
 
                   const canRemoveRow =
                     !disabled &&
                     (!isEditMode || editSessionIds[index] === undefined);
 
                   const blockedLocationSet = getBlockedLocationsForRow({
-                    treatmentType,
                     rowIndex: index,
                     treatments,
                   });
@@ -325,7 +286,6 @@ const TreatmentRecommendationTable = forwardRef<
                       className={`hover:bg-gray-50 ${stackedTableClasses.row}`}
                       onClick={() => !disabled && setEditingRowIndex(index)}
                     >
-                      {/* Locations */}
                       <td className="block py-2 md:table-cell md:max-w-3xs md:py-3 md:pl-3 md:pr-1 md:align-bottom">
                         <TableMobileLabel>Body Locations</TableMobileLabel>
                         {isEditing ? (
@@ -350,7 +310,6 @@ const TreatmentRecommendationTable = forwardRef<
                                     );
                                   return newLocation.value;
                                 } catch (error) {
-                                  // Check if the location exists but is inactive
                                   const inactiveLocation =
                                     findInactiveOptionByValue(
                                       allBodyLocations,
@@ -399,83 +358,34 @@ const TreatmentRecommendationTable = forwardRef<
                         )}
                       </td>
 
-                      {/* Color (Physiotherapy only) */}
-                      {isPhysiotherapy && (
-                        <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
-                          <TableMobileLabel>Color</TableMobileLabel>
-                          {isEditing ? (
-                            <Select
-                              value={physiotherapyTreatment.color || ""}
-                              onChange={(e) =>
-                                handleFieldChange(
-                                  index,
-                                  "color",
-                                  e.target.value,
-                                )
-                              }
-                              disabled={disabled}
-                              className="min-h-8 px-2 py-1 text-sm"
-                            >
-                              <option value="">Select</option>
-                              {activeColors.map((color) => (
-                                <option key={color} value={color}>
-                                  {color}
-                                </option>
-                              ))}
-                            </Select>
-                          ) : (
-                            <span className="text-sm text-gray-900">
-                              {physiotherapyTreatment.color || (
-                                <span className="text-gray-400 italic">
-                                  Not defined
-                                </span>
-                              )}
-                            </span>
-                          )}
-                        </td>
-                      )}
+                      <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
+                        <TableMobileLabel>Duration</TableMobileLabel>
+                        {isEditing ? (
+                          <Select
+                            value={treatment.duration}
+                            onChange={(e) =>
+                              handleFieldChange(
+                                index,
+                                "duration",
+                                parseInt(e.target.value, 10),
+                              )
+                            }
+                            disabled={disabled}
+                            className="min-h-8 px-2 py-1 text-sm"
+                          >
+                            {TREATMENT_SESSION_DURATIONS.map((minutes) => (
+                              <option key={minutes} value={minutes}>
+                                {formatTreatmentDurationMinutes(minutes)}
+                              </option>
+                            ))}
+                          </Select>
+                        ) : (
+                          <span className="text-sm text-gray-900">
+                            {formatTreatmentDurationMinutes(treatment.duration)}
+                          </span>
+                        )}
+                      </td>
 
-                      {/* Duration (Physiotherapy only) */}
-                      {isPhysiotherapy && (
-                        <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
-                          <TableMobileLabel>Duration</TableMobileLabel>
-                          {isEditing ? (
-                            <Select
-                              value={physiotherapyTreatment.duration || 1}
-                              onChange={(e) =>
-                                handleFieldChange(
-                                  index,
-                                  "duration",
-                                  parseInt(e.target.value),
-                                )
-                              }
-                              disabled={disabled}
-                              className="min-h-8 px-2 py-1 text-sm"
-                            >
-                              <option value={1}>1 unit (7 min)</option>
-                              <option value={2}>2 units (14 min)</option>
-                              <option value={3}>3 units (21 min)</option>
-                              <option value={4}>4 units (28 min)</option>
-                              <option value={5}>5 units (35 min)</option>
-                              <option value={6}>6 units (42 min)</option>
-                              <option value={7}>7 units (49 min)</option>
-                              <option value={8}>8 units (56 min)</option>
-                              <option value={9}>9 units (63 min)</option>
-                              <option value={10}>10 units (70 min)</option>
-                            </Select>
-                          ) : (
-                            <span className="text-sm text-gray-900">
-                              {physiotherapyTreatment.duration} unit
-                              {physiotherapyTreatment.duration !== 1
-                                ? "s"
-                                : ""}{" "}
-                              ({physiotherapyTreatment.duration * 7} min)
-                            </span>
-                          )}
-                        </td>
-                      )}
-
-                      {/* Quantity (read-only in edit mode) */}
                       <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
                         <TableMobileLabel>Quantity</TableMobileLabel>
                         {isEditing ? (
@@ -486,7 +396,7 @@ const TreatmentRecommendationTable = forwardRef<
                               handleFieldChange(
                                 index,
                                 "quantity",
-                                parseInt(e.target.value) || 1,
+                                parseInt(e.target.value, 10) || 1,
                               )
                             }
                             disabled={disabled || isEditMode}
@@ -506,7 +416,6 @@ const TreatmentRecommendationTable = forwardRef<
                         )}
                       </td>
 
-                      {/* Start Date (read-only in edit mode) */}
                       <td className="block py-2 md:table-cell md:px-1 md:py-3 md:align-bottom">
                         <TableMobileLabel>Start Date</TableMobileLabel>
                         {isEditing ? (
@@ -558,7 +467,6 @@ const TreatmentRecommendationTable = forwardRef<
                         )}
                       </td>
 
-                      {/* Actions */}
                       <td className="block border-t border-gray-100 py-2 pt-3 md:table-cell md:border-0 md:py-3 md:pl-1 md:pr-3 md:text-center md:align-bottom">
                         <TableMobileLabel>Actions</TableMobileLabel>
                         <div className="flex h-8 items-center justify-end md:justify-center">

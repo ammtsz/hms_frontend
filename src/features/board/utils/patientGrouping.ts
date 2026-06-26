@@ -8,17 +8,17 @@ export interface IGroupedPatient extends AppointmentStatusDetail {
   appointmentIds: number[]; // Track all appointment IDs for this patient
 }
 
-// Define color mappings for treatment combinations
+/** Maps treatment types on a grouped card to its legend/color scheme (physiotherapy, tens, or combined). */
 export const getTreatmentCombinationColor = (treatmentTypes: AppointmentType[]): 'physiotherapy' | 'tens' | 'combined' => {
   const hasPhysiotherapy = treatmentTypes.includes('physiotherapy');
   const hasTens = treatmentTypes.includes('tens');
 
   if (hasPhysiotherapy && hasTens) {
-    return 'combined'; // Green color for both treatments
+    return 'combined';
   } else if (hasPhysiotherapy) {
-    return 'physiotherapy'; // Yellow color for physiotherapy only
+    return 'physiotherapy';
   } else if (hasTens) {
-    return 'tens'; // Blue color for tens only
+    return 'tens';
   }
 
   // Fallback - shouldn't happen in physiotherapy + tens section

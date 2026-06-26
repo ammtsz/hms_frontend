@@ -1,10 +1,8 @@
 import type { ScheduleSettingResponseDto } from "@/api/types";
 import { getTodayClinic, addCalendarDaysToLocalYmd } from "@/utils/timezoneDate";
 import { getNextDateWithTreatmentSlots } from "@/api/query/hooks/useScheduleSettingQueries";
-import type {
-  PhysiotherapyLocationTreatment,
-  TensLocationTreatment,
-} from "@/features/board/components/Consultation/types";
+import type { LocationTreatment } from "@/types/treatment";
+import { getDefaultDurationForTreatmentType } from "@/constants/treatment";
 
 export type TreatmentType = "physiotherapy" | "tens";
 
@@ -24,7 +22,7 @@ export function clampTreatmentQuantity(
 
 export function getDefaultTreatmentStartDate(params: {
   isEditMode: boolean;
-  treatments: Array<PhysiotherapyLocationTreatment | TensLocationTreatment>;
+  treatments: LocationTreatment[];
   scheduleSettings: ScheduleSettingResponseDto[] | null | undefined;
   /** When adding the first row of this type, use this start date (e.g. copied from other treatment type). */
   defaultStartDate?: string;
@@ -33,11 +31,9 @@ export function getDefaultTreatmentStartDate(params: {
 
   if (treatments.length > 0) {
     if (isEditMode) {
-      // In edit mode, keep start date consistent with the first existing session
       return treatments[0].startDate;
     }
 
-    // In create mode, when adding new rows, reuse the previous row's start date
     const lastTreatment = treatments[treatments.length - 1];
     if (lastTreatment.startDate) {
       return lastTreatment.startDate;
@@ -55,83 +51,54 @@ export function getDefaultTreatmentStartDate(params: {
 
 export function createNewTreatmentRow(params: {
   treatmentType: TreatmentType;
-  treatments: Array<PhysiotherapyLocationTreatment | TensLocationTreatment>;
+  treatments: LocationTreatment[];
   defaultQuantity: number;
   isEditMode: boolean;
   scheduleSettings: ScheduleSettingResponseDto[] | null | undefined;
   defaultStartDate?: string;
-}): PhysiotherapyLocationTreatment | TensLocationTreatment {
-  const {
-    treatmentType,
-    treatments,
-    defaultQuantity,
-    isEditMode,
-  } = params;
+}): LocationTreatment {
+  const { treatmentType, treatments, defaultQuantity, isEditMode } = params;
 
   const quantity = clampTreatmentQuantity(defaultQuantity, 1);
   const startDate = getDefaultTreatmentStartDate(params);
-
-  if (treatmentType === "physiotherapy") {
-    const firstPhysiotherapy = treatments[0] as PhysiotherapyLocationTreatment | undefined;
-    return {
-      locations: [],
-      color: isEditMode && firstPhysiotherapy?.color ? firstPhysiotherapy.color : "",
-      duration:
-        isEditMode && firstPhysiotherapy?.duration ? firstPhysiotherapy.duration : 1,
-      quantity,
-      startDate,
-    };
-  }
+  const firstRow = treatments[0];
 
   return {
     locations: [],
+    duration:
+      isEditMode && firstRow?.duration
+        ? firstRow.duration
+        : getDefaultDurationForTreatmentType(treatmentType),
     quantity,
     startDate,
   };
 }
 
 export function getBlockedLocationsForRow(params: {
-  treatmentType: TreatmentType;
   rowIndex: number;
-  treatments: Array<PhysiotherapyLocationTreatment | TensLocationTreatment>;
+  treatments: LocationTreatment[];
 }): Set<string> {
-  const { treatmentType, rowIndex, treatments } = params;
+  const { rowIndex, treatments } = params;
   const blocked = new Set<string>();
-
-  if (treatmentType === "tens") {
-    treatments.forEach((t, i) => {
-      if (i === rowIndex) return;
-      t.locations.forEach((loc) => blocked.add(normalizeString(loc)));
-    });
-    return blocked;
-  }
-
-  const row = treatments[rowIndex] as PhysiotherapyLocationTreatment | undefined;
-  const rowColor = normalizeString(row?.color ?? "");
 
   treatments.forEach((t, i) => {
     if (i === rowIndex) return;
-    const other = t as PhysiotherapyLocationTreatment;
-    const otherColor = normalizeString(other.color ?? "");
-    if (otherColor !== rowColor) return;
-    other.locations.forEach((loc) => blocked.add(normalizeString(loc)));
+    t.locations.forEach((loc) => blocked.add(normalizeString(loc)));
   });
 
   return blocked;
 }
 
 export function enforceUniqueLocationsForRow(params: {
-  treatmentType: TreatmentType;
   rowIndex: number;
-  treatments: Array<PhysiotherapyLocationTreatment | TensLocationTreatment>;
-}): Array<PhysiotherapyLocationTreatment | TensLocationTreatment> {
+  treatments: LocationTreatment[];
+}): LocationTreatment[] {
   const { rowIndex, treatments } = params;
   const nextTreatments = [...treatments];
   const row = nextTreatments[rowIndex];
   if (!row) return nextTreatments;
 
   const blocked = getBlockedLocationsForRow({
-    treatmentType: params.treatmentType,
     rowIndex,
     treatments: nextTreatments,
   });
@@ -145,7 +112,7 @@ export function enforceUniqueLocationsForRow(params: {
   nextTreatments[rowIndex] = {
     ...row,
     locations: nextLocations,
-  } as PhysiotherapyLocationTreatment | TensLocationTreatment;
+  };
 
   return nextTreatments;
 }
@@ -174,4 +141,3 @@ export function findInactiveOptionByValue(
     (opt) => !opt.isActive && normalizeString(opt.value) === normalized,
   );
 }
-

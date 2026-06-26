@@ -7,6 +7,11 @@ import {
 } from '../appointmentHistoryUtils';
 import type { PreviousAppointment, AppointmentType, Recommendations } from '../../types/types';
 import type { TreatmentResponseDto, ConsultationResponseDto, SessionResponseDto } from '../../api/types';
+import {
+  EXAMPLE_HOME_EXERCISES,
+  EXAMPLE_PAIN_MANAGEMENT,
+  EXAMPLE_MEDICATIONS,
+} from '@/testFixtures/physiotherapyContext';
 
 jest.mock("@/utils/timezoneDate", () => ({
   ...jest.requireActual<typeof import("@/utils/timezoneDate")>("@/utils/timezoneDate"),
@@ -25,7 +30,7 @@ describe('appointmentHistoryUtils', () => {
 
     it('should return physiotherapy label', () => {
       const treatments: GroupedAppointment['treatments'] = {
-        physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' }
+        physiotherapy: { bodyLocations: ['Head'], sessionNumber: '1/5' }
       };
       
       expect(getTreatmentTypesLabel(treatments)).toBe('Physiotherapy');
@@ -42,7 +47,7 @@ describe('appointmentHistoryUtils', () => {
     it('should combine multiple treatment types - assessment and physiotherapy', () => {
       const treatments: GroupedAppointment['treatments'] = {
         assessment: { notes: 'Notes' },
-        physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' }
+        physiotherapy: { bodyLocations: ['Head'], sessionNumber: '1/5' }
       };
       
       expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation + Physiotherapy');
@@ -59,7 +64,7 @@ describe('appointmentHistoryUtils', () => {
 
     it('should combine multiple treatment types - physiotherapy and tens', () => {
       const treatments: GroupedAppointment['treatments'] = {
-        physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '3/10' },
+        physiotherapy: { bodyLocations: ['Head'], sessionNumber: '3/10' },
         tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/5' }
       };
       
@@ -69,7 +74,7 @@ describe('appointmentHistoryUtils', () => {
     it('should combine all three treatment types', () => {
       const treatments: GroupedAppointment['treatments'] = {
         assessment: { notes: 'Notes' },
-        physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '2/7' },
+        physiotherapy: { bodyLocations: ['Head'], sessionNumber: '2/7' },
         tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/4' }
       };
       
@@ -95,7 +100,7 @@ describe('appointmentHistoryUtils', () => {
     it('should handle null treatments object', () => {
       // Test the conditional logic branches
       const treatments1: GroupedAppointment['treatments'] = { assessment: { notes: 'test' } };
-      const treatments2: GroupedAppointment['treatments'] = { physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' } };
+      const treatments2: GroupedAppointment['treatments'] = { physiotherapy: { bodyLocations: ['Head'], sessionNumber: '1/5' } };
       const treatments3: GroupedAppointment['treatments'] = { tens: { bodyLocations: ['Left Arm'], sessionNumber: '2/8' } };
       
       expect(getTreatmentTypesLabel(treatments1)).toContain('Assessment Consultation');
@@ -127,7 +132,7 @@ describe('appointmentHistoryUtils', () => {
 
     it('should return physiotherapy label', () => {
       const treatments: GroupedScheduledAppointment['treatments'] = {
-        physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' }
+        physiotherapy: { bodyLocations: ['Head'], sessionNumber: '1/5' }
       };
       
       expect(getTreatmentTypesLabel(treatments)).toBe('Physiotherapy');
@@ -144,7 +149,7 @@ describe('appointmentHistoryUtils', () => {
     it('should combine multiple treatment types - assessment and physiotherapy', () => {
       const treatments: GroupedScheduledAppointment['treatments'] = {
         assessment: { isScheduled: true },
-        physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' }
+        physiotherapy: { bodyLocations: ['Head'], sessionNumber: '1/5' }
       };
       
       expect(getTreatmentTypesLabel(treatments)).toBe('Assessment Consultation + Physiotherapy');
@@ -161,7 +166,7 @@ describe('appointmentHistoryUtils', () => {
 
     it('should combine multiple treatment types - physiotherapy and tens', () => {
       const treatments: GroupedScheduledAppointment['treatments'] = {
-        physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' },
+        physiotherapy: { bodyLocations: ['Head'], sessionNumber: '1/5' },
         tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/3' }
       };
       
@@ -171,7 +176,7 @@ describe('appointmentHistoryUtils', () => {
     it('should combine all three treatment types', () => {
       const treatments: GroupedScheduledAppointment['treatments'] = {
         assessment: { isScheduled: true },
-        physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' },
+        physiotherapy: { bodyLocations: ['Head'], sessionNumber: '1/5' },
         tens: { bodyLocations: ['Left Shoulder'], sessionNumber: '1/3' }
       };
       
@@ -196,7 +201,7 @@ describe('appointmentHistoryUtils', () => {
 
     it('should handle partial treatment data', () => {
       const treatments: GroupedScheduledAppointment['treatments'] = {
-        physiotherapy: { bodyLocationsWithColors: [], sessionNumber: '0/0' }
+        physiotherapy: { bodyLocations: [], sessionNumber: '0/0' }
       };
       
       expect(getTreatmentTypesLabel(treatments)).toBe('Physiotherapy');
@@ -233,7 +238,7 @@ describe('appointmentHistoryUtils', () => {
     it('should test all conditional branches for type checking', () => {
       // Test each conditional branch individually
       const assessmentOnly: GroupedScheduledAppointment['treatments'] = { assessment: { isScheduled: true } };
-      const physiotherapyOnly: GroupedScheduledAppointment['treatments'] = { physiotherapy: { bodyLocationsWithColors: [{ bodyLocation: 'Head' }], sessionNumber: '1/5' } };
+      const physiotherapyOnly: GroupedScheduledAppointment['treatments'] = { physiotherapy: { bodyLocations: ['Head'], sessionNumber: '1/5' } };
       const tensOnly: GroupedScheduledAppointment['treatments'] = { tens: { bodyLocations: ['Left Arm'], sessionNumber: '2/8' } };
       
       // Test the if conditions one by one
@@ -338,9 +343,9 @@ describe('appointmentHistoryUtils', () => {
           id: 1,
           appointmentId: 1,
           mainConcern: 'Test complaint',
-          food: 'Test food',
-          water: 'Test water',
-          ointments: 'Test ointment',
+          homeExercises: EXAMPLE_HOME_EXERCISES,
+          painManagement: EXAMPLE_PAIN_MANAGEMENT,
+          medications: EXAMPLE_MEDICATIONS,
           physiotherapy: true,
           tens: false,
           returnWeeks: 4,
@@ -355,9 +360,9 @@ describe('appointmentHistoryUtils', () => {
       const result = groupHistoryAppointmentsByDate(appointments, [], consultations);
 
       expect(result[0].treatments.assessment?.recommendations).toEqual({
-        food: 'Test food',
-        water: 'Test water',
-        ointment: 'Test ointment',
+        homeExercises: EXAMPLE_HOME_EXERCISES,
+        painManagement: EXAMPLE_PAIN_MANAGEMENT,
+        medications: EXAMPLE_MEDICATIONS,
         physiotherapy: true,
         tens: false,
         returnWeeks: 4,
@@ -367,9 +372,9 @@ describe('appointmentHistoryUtils', () => {
 
     it('should handle assessment appointment with fallback recommendations', () => {
       const recommendations: Recommendations = {
-        food: 'Fallback food',
-        water: 'Fallback water',
-        ointment: 'Fallback ointment',
+        homeExercises: 'Pelvic tilt and bridges, daily',
+        painManagement: 'Heat pack 20 min before exercises',
+        medications: 'Topical NSAID as directed',
         physiotherapy: false,
         tens: true,
         returnWeeks: 2
@@ -430,7 +435,6 @@ describe('appointmentHistoryUtils', () => {
           completedSessions: 5,
           status: 'completed',
           durationMinutes: 30,
-          color: 'blue',
           notes: 'Treatment notes',
           sessions: [sessionRecord],
           createdDate: '2025-01-15',
@@ -444,9 +448,8 @@ describe('appointmentHistoryUtils', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].treatments.physiotherapy).toEqual({
-        bodyLocationsWithColors: [{ bodyLocation: 'Head', color: 'blue' }],
-        color: 'blue',
-        duration: 30,
+        bodyLocations: ['Head'],
+        durationMinutes: 30,
         sessionNumber: '5/10',
         notes: 'Treatment notes',
         appointmentNotes: 'Physiotherapy session',
@@ -562,7 +565,6 @@ describe('appointmentHistoryUtils', () => {
           completedSessions: 2,
           status: 'completed',
           durationMinutes: 30,
-          color: 'blue',
           sessions: [sessionRecord1],
           createdDate: '2025-01-15',
           createdTime: '10:00:00',
@@ -581,7 +583,6 @@ describe('appointmentHistoryUtils', () => {
           completedSessions: 3,
           status: 'completed',
           durationMinutes: 30,
-          color: 'blue',
           sessions: [sessionRecord2],
           createdDate: '2025-01-15',
           createdTime: '10:00:00',
@@ -594,12 +595,8 @@ describe('appointmentHistoryUtils', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].treatments.physiotherapy).toEqual({
-        bodyLocationsWithColors: [
-          { bodyLocation: 'Head', color: 'blue' },
-          { bodyLocation: 'Chest', color: 'blue' },
-        ],
-        color: 'blue',
-        duration: 30,
+        bodyLocations: ['Head', 'Chest'],
+        durationMinutes: 30,
         sessionNumber: '2/5',
         notes: '',
         appointmentNotes: 'Multiple physiotherapy sessions',
@@ -607,7 +604,7 @@ describe('appointmentHistoryUtils', () => {
       });
     });
 
-    it('should keep separate colors per body location when physiotherapy colors differ on same date', () => {
+    it('should merge multiple body locations for physiotherapy on same date', () => {
       const sessionRecord1: SessionResponseDto = {
         id: 1,
         treatmentId: 1,
@@ -637,7 +634,7 @@ describe('appointmentHistoryUtils', () => {
           appointmentId: '1',
           date: '2025-01-15',
           type: 'physiotherapy',
-          notes: 'Mixed colors',
+          notes: 'Mixed locations',
           recommendations: null,
           createdDate: '2025-01-15',
           updatedDate: '2025-01-15'
@@ -657,7 +654,6 @@ describe('appointmentHistoryUtils', () => {
           completedSessions: 2,
           status: 'completed',
           durationMinutes: 30,
-          color: 'White',
           sessions: [sessionRecord1],
           createdDate: '2025-01-15',
           createdTime: '10:00:00',
@@ -676,7 +672,6 @@ describe('appointmentHistoryUtils', () => {
           completedSessions: 3,
           status: 'completed',
           durationMinutes: 30,
-          color: 'Blue',
           sessions: [sessionRecord2],
           createdDate: '2025-01-15',
           createdTime: '10:00:00',
@@ -688,10 +683,9 @@ describe('appointmentHistoryUtils', () => {
       const result = groupHistoryAppointmentsByDate(appointments, treatments, []);
 
       expect(result).toHaveLength(1);
-      expect(result[0].treatments.physiotherapy?.color).toBeUndefined();
-      expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual([
-        { bodyLocation: 'Head', color: 'White' },
-        { bodyLocation: 'Lumbar', color: 'Blue' },
+      expect(result[0].treatments.physiotherapy?.bodyLocations).toEqual([
+        'Head',
+        'Lumbar',
       ]);
     });
 
@@ -850,7 +844,6 @@ describe('appointmentHistoryUtils', () => {
           completedSessions: 0,
           status: 'scheduled',
           durationMinutes: 30,
-          color: 'blue',
           sessions: [sessionRecord],
           createdDate: '2025-01-15',
           createdTime: '10:00:00',
@@ -867,9 +860,8 @@ describe('appointmentHistoryUtils', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].treatments.physiotherapy).toEqual({
-        bodyLocationsWithColors: [{ bodyLocation: 'Head', color: 'blue' }],
-        color: 'blue',
-        duration: 30,
+        bodyLocations: ['Head'],
+        durationMinutes: 30,
         sessionNumber: '1/10',
         notes: '',
         appointmentNotes: undefined
@@ -1061,7 +1053,6 @@ describe('appointmentHistoryUtils', () => {
           plannedSessions: 5,
           completedSessions: 0,
           status: 'scheduled',
-          color: 'blue',
           durationMinutes: 30,
           sessions: [sessionRecord],
           createdDate: '2025-01-15',
@@ -1080,7 +1071,6 @@ describe('appointmentHistoryUtils', () => {
           plannedSessions: 8,
           completedSessions: 0,
           status: 'scheduled',
-          color: 'blue',
           durationMinutes: 30,
           sessions: [sessionRecord],
           createdDate: '2025-01-15',
@@ -1097,9 +1087,9 @@ describe('appointmentHistoryUtils', () => {
       const result = groupScheduledAppointmentsByDate(scheduledAppointments, treatments);
 
       expect(result).toHaveLength(1);
-      expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual([
-        { bodyLocation: 'Head', color: 'blue' },
-        { bodyLocation: 'Chest', color: 'blue' },
+      expect(result[0].treatments.physiotherapy?.bodyLocations).toEqual([
+        'Head',
+        'Chest',
       ]);
       expect(result[0].treatments.physiotherapy?.sessionNumber).toBe('1/5'); // First session from first treatment
     });

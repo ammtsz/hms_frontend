@@ -14,9 +14,9 @@ describe("GeneralRecommendationsTab", () => {
     patientStatus: "N",
     startDate: "2024-01-01",
     returnWeeks: 4,
-    food: "Test food recommendations",
-    water: "2L per day",
-    ointments: "Test ointment",
+    homeExercises: "Stretching daily",
+    painManagement: "Ice after activity",
+    medications: "Ibuprofen as needed",
     recommendations: {
       returnWeeks: 4,
       returnWhenTreatmentComplete: false,
@@ -53,7 +53,7 @@ describe("GeneralRecommendationsTab", () => {
 
     expect(
       screen.getByText(
-        "Provide general guidance on food, hydration, and complementary care.",
+        "Provide guidance on home exercises, pain management, and medications.",
       ),
     ).toBeInTheDocument();
   });
@@ -66,14 +66,18 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    expect(screen.getByLabelText("Food")).toHaveValue(
-      "Test food recommendations",
+    expect(screen.getByLabelText("Home Exercises")).toHaveValue(
+      "Stretching daily",
     );
-    expect(screen.getByLabelText("Water")).toHaveValue("2L per day");
-    expect(screen.getByLabelText("Ointments")).toHaveValue("Test ointment");
+    expect(screen.getByLabelText("Pain Management")).toHaveValue(
+      "Ice after activity",
+    );
+    expect(screen.getByLabelText("Medications")).toHaveValue(
+      "Ibuprofen as needed",
+    );
   });
 
-  it("should call onFormDataChange when food textarea changes", () => {
+  it("should call onFormDataChange when home exercises textarea changes", () => {
     render(
       <GeneralRecommendationsTab
         formData={mockFormData}
@@ -81,18 +85,18 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const foodTextarea = screen.getByLabelText("Food");
-    fireEvent.change(foodTextarea, {
-      target: { value: "New food recommendation" },
+    const textarea = screen.getByLabelText("Home Exercises");
+    fireEvent.change(textarea, {
+      target: { value: "New exercise recommendation" },
     });
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith(
-      "food",
-      "New food recommendation",
+      "homeExercises",
+      "New exercise recommendation",
     );
   });
 
-  it("should call onFormDataChange when water input changes", () => {
+  it("should call onFormDataChange when pain management textarea changes", () => {
     render(
       <GeneralRecommendationsTab
         formData={mockFormData}
@@ -100,47 +104,57 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const waterInput = screen.getByLabelText("Water");
-    fireEvent.change(waterInput, { target: { value: "3L per day" } });
-
-    expect(mockOnFormDataChange).toHaveBeenCalledWith("water", "3L per day");
-  });
-
-  it("should call onFormDataChange when ointments input changes", () => {
-    render(
-      <GeneralRecommendationsTab
-        formData={mockFormData}
-        onFormDataChange={mockOnFormDataChange}
-      />,
-    );
-
-    const ointmentsInput = screen.getByLabelText("Ointments");
-    fireEvent.change(ointmentsInput, { target: { value: "New ointment" } });
+    const textarea = screen.getByLabelText("Pain Management");
+    fireEvent.change(textarea, { target: { value: "Rest and ice" } });
 
     expect(mockOnFormDataChange).toHaveBeenCalledWith(
-      "ointments",
-      "New ointment",
+      "painManagement",
+      "Rest and ice",
+    );
+  });
+
+  it("should call onFormDataChange when medications input changes", () => {
+    render(
+      <GeneralRecommendationsTab
+        formData={mockFormData}
+        onFormDataChange={mockOnFormDataChange}
+      />,
+    );
+
+    const input = screen.getByLabelText("Medications");
+    fireEvent.change(input, { target: { value: "New medication" } });
+
+    expect(mockOnFormDataChange).toHaveBeenCalledWith(
+      "medications",
+      "New medication",
     );
   });
 
   it("should display placeholder texts correctly", () => {
     render(
       <GeneralRecommendationsTab
-        formData={{ ...mockFormData, food: "", water: "", ointments: "" }}
+        formData={{
+          ...mockFormData,
+          homeExercises: "",
+          painManagement: "",
+          medications: "",
+        }}
         onFormDataChange={mockOnFormDataChange}
       />,
     );
 
     expect(
       screen.getByPlaceholderText(
-        "Dietary recommendations (e.g. avoid red meat, prioritize vegetables, etc.)",
+        "Home exercise recommendations (e.g. stretching, strengthening, etc.)",
       ),
     ).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("e.g. 2L of water per day"),
+      screen.getByPlaceholderText(
+        "Pain management guidance (e.g. ice/heat, rest, posture, etc.)",
+      ),
     ).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("Recommended ointments..."),
+      screen.getByPlaceholderText("Recommended medications or supplements..."),
     ).toBeInTheDocument();
   });
 
@@ -153,13 +167,13 @@ describe("GeneralRecommendationsTab", () => {
     );
 
     expect(
-      screen.getByText("Specific guidance on diet and food during treatment"),
+      screen.getByText("Exercises the patient should perform at home"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Recommended amount and type of water"),
+      screen.getByText("Strategies for managing pain between sessions"),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Topical products for external application"),
+      screen.getByText("Medication recommendations or reminders"),
     ).toBeInTheDocument();
   });
 
@@ -174,7 +188,6 @@ describe("GeneralRecommendationsTab", () => {
     const mainContainer = container.firstChild;
     expect(mainContainer).toHaveClass("space-y-6");
 
-    // Text inputs and textareas have full styling; checkbox has different styling
     const textInputs = container.querySelectorAll(
       "input[type='text'], textarea",
     );
@@ -193,9 +206,9 @@ describe("GeneralRecommendationsTab", () => {
   it("should handle empty form data correctly", () => {
     const emptyFormData = {
       ...mockFormData,
-      food: "",
-      water: "",
-      ointments: "",
+      homeExercises: "",
+      painManagement: "",
+      medications: "",
     };
 
     render(
@@ -205,9 +218,9 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    expect(screen.getByLabelText("Food")).toHaveValue("");
-    expect(screen.getByLabelText("Water")).toHaveValue("");
-    expect(screen.getByLabelText("Ointments")).toHaveValue("");
+    expect(screen.getByLabelText("Home Exercises")).toHaveValue("");
+    expect(screen.getByLabelText("Pain Management")).toHaveValue("");
+    expect(screen.getByLabelText("Medications")).toHaveValue("");
   });
 
   it("should call onFormDataChange with correct field names", () => {
@@ -218,21 +231,25 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const foodTextarea = screen.getByLabelText("Food");
-    const waterInput = screen.getByLabelText("Water");
-    const ointmentsInput = screen.getByLabelText("Ointments");
+    const homeExercises = screen.getByLabelText("Home Exercises");
+    const painManagement = screen.getByLabelText("Pain Management");
+    const medications = screen.getByLabelText("Medications");
 
-    fireEvent.change(foodTextarea, { target: { value: "test" } });
-    fireEvent.change(waterInput, { target: { value: "test" } });
-    fireEvent.change(ointmentsInput, { target: { value: "test" } });
+    fireEvent.change(homeExercises, { target: { value: "test" } });
+    fireEvent.change(painManagement, { target: { value: "test" } });
+    fireEvent.change(medications, { target: { value: "test" } });
 
-    expect(mockOnFormDataChange).toHaveBeenNthCalledWith(1, "food", "test");
-    expect(mockOnFormDataChange).toHaveBeenNthCalledWith(2, "water", "test");
     expect(mockOnFormDataChange).toHaveBeenNthCalledWith(
-      3,
-      "ointments",
+      1,
+      "homeExercises",
       "test",
     );
+    expect(mockOnFormDataChange).toHaveBeenNthCalledWith(
+      2,
+      "painManagement",
+      "test",
+    );
+    expect(mockOnFormDataChange).toHaveBeenNthCalledWith(3, "medications", "test");
   });
 
   it("should have correct input types and attributes", () => {
@@ -243,14 +260,15 @@ describe("GeneralRecommendationsTab", () => {
       />,
     );
 
-    const foodTextarea = screen.getByLabelText("Food");
-    const waterInput = screen.getByLabelText("Water");
-    const ointmentsInput = screen.getByLabelText("Ointments");
+    const homeExercises = screen.getByLabelText("Home Exercises");
+    const painManagement = screen.getByLabelText("Pain Management");
+    const medications = screen.getByLabelText("Medications");
 
-    expect(foodTextarea.tagName.toLowerCase()).toBe("textarea");
-    expect(foodTextarea).toHaveAttribute("rows", "3");
-    expect(waterInput).toHaveAttribute("type", "text");
-    expect(ointmentsInput).toHaveAttribute("type", "text");
+    expect(homeExercises.tagName.toLowerCase()).toBe("textarea");
+    expect(homeExercises).toHaveAttribute("rows", "3");
+    expect(painManagement.tagName.toLowerCase()).toBe("textarea");
+    expect(painManagement).toHaveAttribute("rows", "3");
+    expect(medications).toHaveAttribute("type", "text");
   });
 
   it("should maintain focus styles", () => {
@@ -297,7 +315,7 @@ describe("GeneralRecommendationsTab", () => {
   });
 
   describe("disabled state when no general recommendations is checked", () => {
-    it("should disable food, water and ointments fields when noGeneralRecommendations is true", () => {
+    it("should disable recommendation fields when noGeneralRecommendations is true", () => {
       const formDataWithNoRecommendations = {
         ...mockFormData,
         noGeneralRecommendations: true,
@@ -310,9 +328,9 @@ describe("GeneralRecommendationsTab", () => {
         />,
       );
 
-      expect(screen.getByLabelText("Food")).toBeDisabled();
-      expect(screen.getByLabelText("Water")).toBeDisabled();
-      expect(screen.getByLabelText("Ointments")).toBeDisabled();
+      expect(screen.getByLabelText("Home Exercises")).toBeDisabled();
+      expect(screen.getByLabelText("Pain Management")).toBeDisabled();
+      expect(screen.getByLabelText("Medications")).toBeDisabled();
     });
 
     it("should apply lighter label styling when noGeneralRecommendations is true", () => {
@@ -328,13 +346,13 @@ describe("GeneralRecommendationsTab", () => {
         />,
       );
 
-      const foodLabel = screen.getByText("Food");
-      const waterLabel = screen.getByText("Water");
-      const ointmentsLabel = screen.getByText("Ointments");
+      const homeExercisesLabel = screen.getByText("Home Exercises");
+      const painManagementLabel = screen.getByText("Pain Management");
+      const medicationsLabel = screen.getByText("Medications");
 
-      expect(foodLabel).toHaveClass("text-gray-400");
-      expect(waterLabel).toHaveClass("text-gray-400");
-      expect(ointmentsLabel).toHaveClass("text-gray-400");
+      expect(homeExercisesLabel).toHaveClass("text-gray-400");
+      expect(painManagementLabel).toHaveClass("text-gray-400");
+      expect(medicationsLabel).toHaveClass("text-gray-400");
     });
   });
 });

@@ -66,15 +66,15 @@ describe('Type System', () => {
   describe('Interface Structures', () => {
     it('should create Recommendations interface correctly', () => {
       const recommendations: Recommendations = {
-        food: "Test food",
-        water: "Test water",
-        ointment: "Test ointment",
+        homeExercises: "Test exercises",
+        painManagement: "Test pain management",
+        medications: "Test medications",
         physiotherapy: true,
         tens: false,
         returnWeeks: 2
       };
       
-      expect(recommendations.food).toBe("Test food");
+      expect(recommendations.homeExercises).toBe("Test exercises");
       expect(recommendations.physiotherapy).toBe(true);
       expect(recommendations.returnWeeks).toBe(2);
     });
@@ -131,9 +131,9 @@ describe('Type System', () => {
         }],
         currentRecommendations: {
           date: "2025-01-01",
-          food: "Light meals",
-          water: "2L daily",
-          ointment: "None",
+          homeExercises: "Light exercises",
+          painManagement: "Ice as needed",
+          medications: "None",
           physiotherapy: true,
           tens: false,
           returnWeeks: 1

@@ -299,7 +299,7 @@ After setup, verify everything works:
 
    ```bash
    npm test
-   # Should see: 3,771 tests passing
+   # Should see: 3,491+ tests passing
    ```
 
 3. **No TypeScript errors:**
@@ -317,13 +317,13 @@ After setup, verify everything works:
 
 ## 📊 Test Coverage
 
-Current test metrics:
+Current test metrics (June 2026):
 
-- **Tests:** 3,771 passing (264 test suites)
-- **Statements:** 80.87%
-- **Branches:** 69.03%
-- **Functions:** 74.01%
-- **Lines:** 80.91%
+- **Tests:** 3,491 passing (260 test suites)
+- **Statements:** ~81% (run `npm test -- --coverage` for current breakdown)
+- **Fixtures:** `src/testFixtures/physiotherapyContext.ts` for consultation/treatment mocks
+
+When testing against a local API, ensure the backend database was initialized from the current `init.sql` (physiotherapy schema — see backend `docs/SETUP.md` reset instructions).
 
 Run `npm test -- --coverage` to view detailed coverage report.
 

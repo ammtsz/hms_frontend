@@ -5,40 +5,29 @@ import BaseModal from "@/components/common/BaseModal";
 import { Button } from "@/components/ui";
 import TreatmentRecommendationTable from "../TreatmentRecommendations/TreatmentRecommendationTable";
 import type { TreatmentRecommendationTableRef } from "../TreatmentRecommendations/TreatmentRecommendationTable";
-import type {
-  PhysiotherapyLocationTreatment,
-  TensLocationTreatment,
-} from "../Consultation/types";
+import type { LocationTreatment } from "../Consultation/types";
 import type { TreatmentResponseDto } from "@/api/types";
 import { useEditTreatments } from "@/api/query/hooks/useTreatmentsQueries";
 import { canAddNewTreatmentRow } from "../Cards/ExpandedTreatmentDetails.utils";
+import { getDefaultDurationForTreatmentType } from "@/constants/treatment";
 
 /** Re-enable when multi-row edit + scheduling (e.g. endOfDay) is aligned. */
 export const IS_ADD_TREATMENT_ROW_IN_EDIT_MODAL_ENABLED = false;
 
 function treatmentPlansToInitialState(
   treatmentPlans: TreatmentResponseDto[],
-  treatmentType: "physiotherapy" | "tens",
 ): {
-  treatments: (PhysiotherapyLocationTreatment | TensLocationTreatment)[];
+  treatments: LocationTreatment[];
   initialEditSessionIds: number[];
 } {
-  const treatments: (PhysiotherapyLocationTreatment | TensLocationTreatment)[] =
-    treatmentPlans.map((plan) => {
-      const base = {
-        locations: [plan.bodyLocation],
-        quantity: plan.plannedSessions,
-        startDate: plan.startDate,
-      };
-      if (treatmentType === "physiotherapy") {
-        return {
-          ...base,
-          color: plan.color ?? "",
-          duration: plan.durationMinutes ?? 1,
-        } as PhysiotherapyLocationTreatment;
-      }
-      return base as TensLocationTreatment;
-    });
+  const treatments: LocationTreatment[] = treatmentPlans.map((plan) => ({
+    locations: [plan.bodyLocation],
+    quantity: plan.plannedSessions,
+    startDate: plan.startDate,
+    duration:
+      plan.durationMinutes ??
+      getDefaultDurationForTreatmentType(plan.treatmentType),
+  }));
   const initialEditSessionIds = treatmentPlans.map((plan) => plan.id);
   return { treatments, initialEditSessionIds };
 }
@@ -52,9 +41,6 @@ export interface EditTreatmentModalProps {
   patientId: number;
   patientName: string;
   onSuccess?: () => void;
-  /** Visit appointment ID (from the session row). Used so that any
-   *  newly added body location is linked to this appointment and immediately
-   *  visible in the card. Differs from treatmentPlan.appointmentId (prescription). */
   currentAppointmentId?: number;
 }
 
@@ -73,15 +59,14 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
   const { treatments: initialTreatments, initialEditSessionIds } = useMemo(
     () =>
       firstSession
-        ? treatmentPlansToInitialState(treatmentPlans, treatmentType)
+        ? treatmentPlansToInitialState(treatmentPlans)
         : { treatments: [], initialEditSessionIds: [] },
-    [treatmentPlans, treatmentType, firstSession],
+    [treatmentPlans, firstSession],
   );
 
-  const [treatments, setTreatments] =
-    useState<(PhysiotherapyLocationTreatment | TensLocationTreatment)[]>(
-      initialTreatments,
-    );
+  const [treatments, setTreatments] = useState<LocationTreatment[]>(
+    initialTreatments,
+  );
   const [editSessionIds, setEditSessionIds] = useState<(number | undefined)[]>(
     initialEditSessionIds,
   );
@@ -104,20 +89,19 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
     [treatmentPlans],
   );
 
-  // Reset state when modal opens with new data
   React.useEffect(() => {
     if (isOpen && firstSession) {
       const { treatments: t, initialEditSessionIds: ids } =
-        treatmentPlansToInitialState(treatmentPlans, treatmentType);
+        treatmentPlansToInitialState(treatmentPlans);
       setTreatments(t);
       setEditSessionIds(ids);
       setSubmitError(null);
     }
-  }, [isOpen, treatmentPlans, treatmentType, firstSession]);
+  }, [isOpen, treatmentPlans, firstSession]);
 
   const handleChange = useCallback(
     (
-      newTreatments: (PhysiotherapyLocationTreatment | TensLocationTreatment)[],
+      newTreatments: LocationTreatment[],
       newEditSessionIds?: (number | undefined)[],
     ) => {
       setTreatments(newTreatments);
@@ -134,15 +118,9 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
       if (!t.locations.length || t.locations.some((l) => !l.trim())) {
         return "Fill in the body location for all rows.";
       }
-      if (treatmentType === "physiotherapy") {
-        const lb = t as PhysiotherapyLocationTreatment;
-        if (!lb.color?.trim()) {
-          return "Select the color for all rows in Physiotherapy.";
-        }
-      }
     }
     return null;
-  }, [treatments, treatmentType]);
+  }, [treatments]);
 
   const handleSubmit = useCallback(async () => {
     if (!firstSession) return;
@@ -170,7 +148,7 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
       isOpen={isOpen}
       onClose={onClose}
       title={title}
-      subtitle={`${patientName} — Edit the body location${treatmentType === "physiotherapy" ? ", color and duration" : ""}. The quantity and start date cannot be changed.`}
+      subtitle={`${patientName} — Edit the body location and duration. The quantity and start date cannot be changed.`}
       maxWidth="4xl"
       preventOverflow
     >
@@ -198,30 +176,27 @@ export const EditTreatmentModal: React.FC<EditTreatmentModalProps> = ({
               variant="outline"
               data-testid="edit-treatment-modal-add-row"
               onClick={() => treatmentFormRef.current?.addRow()}
-              disabled={
-                isSubmitting || treatments.length === 0 || !allowAddTreatmentRow
-              }
-              title={
-                !allowAddTreatmentRow
-                  ? "It's only possible to add a new treatment when no sessions from the original treatment have been modified."
-                  : undefined
-              }
-              className="mr-auto"
+              disabled={isSubmitting || !allowAddTreatmentRow}
             >
-              Add New Treatment
+              Add body location
             </Button>
           )}
-          <Button type="button" variant="ghost" onClick={onClose}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onClose}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button
             type="button"
             onClick={handleSubmit}
+            disabled={isSubmitting}
             isLoading={isSubmitting}
             loadingText="Saving..."
-            disabled={isSubmitting || treatments.length === 0}
           >
-            Save changes
+            Save
           </Button>
         </div>
       </div>

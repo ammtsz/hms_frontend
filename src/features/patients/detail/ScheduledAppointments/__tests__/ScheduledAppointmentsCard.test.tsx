@@ -120,7 +120,8 @@ jest.mock("../ScheduledAppointmentItem", () => ({
       treatments: {
         assessment?: { isScheduled?: boolean };
         physiotherapy?: {
-          bodyLocationsWithColors?: { bodyLocation: string; color?: string }[];
+          bodyLocations?: string[];
+          durationMinutes?: number;
         };
         tens?: { bodyLocations?: string[] };
       };
@@ -287,9 +288,8 @@ describe("ScheduledAppointmentsCard", () => {
         treatments: {
           assessment: { isScheduled: true },
           physiotherapy: {
-            bodyLocationsWithColors: [{ bodyLocation: "head", color: "blue" }],
-            color: "blue",
-            duration: 30,
+            bodyLocations: ["head"],
+            durationMinutes: 45,
             sessionNumber: "3",
           },
         },
@@ -437,9 +437,8 @@ describe("ScheduledAppointmentsCard", () => {
         treatments: {
           assessment: { isScheduled: true },
           physiotherapy: {
-            bodyLocationsWithColors: [],
-            color: "blue",
-            duration: 30,
+            bodyLocations: [],
+            durationMinutes: 45,
             sessionNumber: "1",
           },
           tens: { bodyLocations: [], sessionNumber: "1" },

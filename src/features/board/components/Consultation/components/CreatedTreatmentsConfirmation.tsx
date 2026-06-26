@@ -28,7 +28,6 @@ export interface CreatedTreatment {
   endDate?: string;
   status: string;
   durationMinutes?: number;
-  color?: string;
   notes?: string;
   sessions?: SessionResponseDto[];
   createdDate: string;

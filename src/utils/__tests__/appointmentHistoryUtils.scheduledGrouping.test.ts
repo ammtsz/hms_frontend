@@ -39,8 +39,7 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
         treatmentType: "physiotherapy",
         bodyLocation: "Head",
         startDate: "2026-02-20",
-        color: "Blue",
-        durationMinutes: 15,
+        durationMinutes: 45,
         plannedSessions: 5,
         completedSessions: 0,
         status: "scheduled",
@@ -82,10 +81,8 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
     );
 
     expect(result[0].treatments.physiotherapy).toBeDefined();
-    expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual(
-      [{ bodyLocation: "Head", color: "Blue" }],
-    );
-    expect(result[0].treatments.physiotherapy?.color).toBe("Blue");
+    expect(result[0].treatments.physiotherapy?.bodyLocations).toEqual(["Head"]);
+    expect(result[0].treatments.physiotherapy?.durationMinutes).toBe(45);
     expect(result[0].treatments.physiotherapy?.sessionNumber).toBe("1/5");
   });
 
@@ -125,8 +122,7 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
         treatmentType: "physiotherapy",
         bodyLocation: "Left Arm",
         startDate: "2026-02-20",
-        color: "Green",
-        durationMinutes: 10,
+        durationMinutes: 45,
         plannedSessions: 3,
         completedSessions: 0,
         status: "scheduled",
@@ -157,7 +153,7 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
         treatmentType: "tens",
         bodyLocation: "Right Leg",
         startDate: "2026-02-20",
-        durationMinutes: 0,
+        durationMinutes: 30,
         plannedSessions: 7,
         completedSessions: 0,
         status: "scheduled",
@@ -196,8 +192,8 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
     expect(result[0].treatments.physiotherapy).toBeDefined();
     expect(result[0].treatments.tens).toBeDefined();
 
-    expect(result[0].treatments.physiotherapy?.bodyLocationsWithColors).toEqual(
-      [{ bodyLocation: "Left Arm", color: "Green" }],
+    expect(result[0].treatments.physiotherapy?.bodyLocations).toEqual(
+      ["Left Arm"],
     );
     expect(result[0].treatments.tens?.bodyLocations).toEqual(["Right Leg"]);
   });
@@ -222,8 +218,7 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
         treatmentType: "physiotherapy",
         bodyLocation: "Head",
         startDate: "2026-02-20",
-        color: "Blue",
-        durationMinutes: 15,
+        durationMinutes: 45,
         plannedSessions: 5,
         completedSessions: 1,
         status: "in_progress",
@@ -254,8 +249,7 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
         treatmentType: "physiotherapy",
         bodyLocation: "Right Arm",
         startDate: "2026-02-20",
-        color: "Blue",
-        durationMinutes: 15,
+        durationMinutes: 45,
         plannedSessions: 5,
         completedSessions: 1,
         status: "in_progress",
@@ -289,12 +283,9 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
     expect(result).toHaveLength(1);
     expect(result[0].treatments.physiotherapy).toBeDefined();
     expect(
-      result[0].treatments.physiotherapy?.bodyLocationsWithColors,
+      result[0].treatments.physiotherapy?.bodyLocations,
     ).toHaveLength(2);
-    const lbLocs =
-      result[0].treatments.physiotherapy?.bodyLocationsWithColors?.map(
-        (e) => e.bodyLocation,
-      ) ?? [];
+    const lbLocs = result[0].treatments.physiotherapy?.bodyLocations ?? [];
     expect(lbLocs).toContain("Head");
     expect(lbLocs).toContain("Right Arm");
     expect(result[0].treatments.physiotherapy?.sessionNumber).toBe("2/5"); // Same session number
@@ -432,12 +423,11 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
         treatmentType: "physiotherapy",
         bodyLocation: "Abdomen",
         startDate: "2026-02-20",
-        color: "Blue",
-        durationMinutes: 15,
+        durationMinutes: 45,
         plannedSessions: 2,
         completedSessions: 0,
         status: "scheduled",
-        notes: "Physiotherapy - Blue - 1 units(s)",
+        notes: "Physiotherapy - Abdomen - 45 min",
         patientId: 1,
         createdDate: "2026-02-20",
         createdTime: "10:00:00",
@@ -486,8 +476,8 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
     expect(firstDate?.treatments.physiotherapy).toBeDefined();
     expect(firstDate?.treatments.physiotherapy?.sessionNumber).toBe("1/2");
     expect(
-      firstDate?.treatments.physiotherapy?.bodyLocationsWithColors,
-    ).toEqual([{ bodyLocation: "Abdomen", color: "Blue" }]);
+      firstDate?.treatments.physiotherapy?.bodyLocations,
+    ).toEqual(["Abdomen"]);
 
     // Second date (2026-03-06) should have session 2/2
     const secondDate = result.find((a) => a.date === "2026-03-06");
@@ -495,7 +485,7 @@ describe("groupScheduledAppointmentsByDate - Multiple Appointments Same Date", (
     expect(secondDate?.treatments.physiotherapy).toBeDefined();
     expect(secondDate?.treatments.physiotherapy?.sessionNumber).toBe("2/2");
     expect(
-      secondDate?.treatments.physiotherapy?.bodyLocationsWithColors,
-    ).toEqual([{ bodyLocation: "Abdomen", color: "Blue" }]);
+      secondDate?.treatments.physiotherapy?.bodyLocations,
+    ).toEqual(["Abdomen"]);
   });
 });

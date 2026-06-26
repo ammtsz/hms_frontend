@@ -7,7 +7,6 @@ export interface PostTreatmentRow {
   appointmentId: number;
   treatmentType: "physiotherapy" | "tens";
   bodyLocation: string;
-  color?: string;
   durationMinutes?: number;
   plannedSessions: number;
   completedSessions: number;

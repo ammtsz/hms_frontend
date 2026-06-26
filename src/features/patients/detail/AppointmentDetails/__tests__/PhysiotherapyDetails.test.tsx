@@ -27,39 +27,17 @@ describe("PhysiotherapyDetails", () => {
     expect(screen.getByText("Head")).toBeInTheDocument();
   });
 
-  it("should display color when provided", () => {
-    render(<PhysiotherapyDetails {...defaultProps} color="Blue" />);
+  it("should display duration when durationMinutes is provided", () => {
+    render(<PhysiotherapyDetails {...defaultProps} durationMinutes={45} />);
 
-    expect(screen.getByText("Blue")).toBeInTheDocument();
+    expect(screen.getByText(/Duration:/)).toBeInTheDocument();
+    expect(screen.getByText(/45 min/)).toBeInTheDocument();
   });
 
-  it("should show distinct color badges and per-location lowercase colors when multiple colors", () => {
-    render(
-      <PhysiotherapyDetails
-        bodyLocationsWithColors={[
-          { bodyLocation: "Head", color: "White" },
-          { bodyLocation: "Lumbar", color: "Blue" },
-        ]}
-      />,
-    );
+  it("should not display duration when durationMinutes is not provided", () => {
+    render(<PhysiotherapyDetails {...defaultProps} />);
 
-    expect(screen.getByText("White")).toBeInTheDocument();
-    expect(screen.getByText("Blue")).toBeInTheDocument();
-    expect(
-      screen.getByText(/Head \(white\), Lumbar \(blue\)/),
-    ).toBeInTheDocument();
-  });
-
-  it("should display duration in singular when 1 unit", () => {
-    render(<PhysiotherapyDetails {...defaultProps} duration={1} />);
-
-    expect(screen.getByText(/1 unit/)).toBeInTheDocument();
-  });
-
-  it("should display duration in plural when multiple units", () => {
-    render(<PhysiotherapyDetails {...defaultProps} duration={15} />);
-
-    expect(screen.getByText(/15 units/)).toBeInTheDocument();
+    expect(screen.queryByText(/Duration:/)).not.toBeInTheDocument();
   });
 
   it("should display sessions when showSessions is true", () => {
@@ -142,8 +120,7 @@ describe("PhysiotherapyDetails", () => {
     render(
       <PhysiotherapyDetails
         bodyLocations={["Head", "Chest", "Legs"]}
-        color="Blue"
-        duration={20}
+        durationMinutes={60}
         sessionNumber="3/5"
         showSessions={true}
         notes="Treatment progressing well"
@@ -152,9 +129,8 @@ describe("PhysiotherapyDetails", () => {
     );
 
     expect(screen.getByText(/Physiotherapy/)).toBeInTheDocument();
-    expect(screen.getByText("Blue")).toBeInTheDocument();
     expect(screen.getByText(/Head, Chest, Legs/)).toBeInTheDocument();
-    expect(screen.getByText(/20 units/)).toBeInTheDocument();
+    expect(screen.getByText(/60 min/)).toBeInTheDocument();
     expect(screen.getByText(/3\/5/)).toBeInTheDocument();
     expect(screen.getByText("Treatment progressing well")).toBeInTheDocument();
   });

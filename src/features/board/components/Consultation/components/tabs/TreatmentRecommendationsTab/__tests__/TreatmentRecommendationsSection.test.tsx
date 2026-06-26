@@ -43,13 +43,13 @@ jest.mock(
               treatmentType === "physiotherapy"
                 ? {
                     locations: ["test-location"],
-                    color: "blue",
-                    duration: 1,
+                    duration: 45,
                     quantity: 1,
                     startDate: "2024-01-22",
                   }
                 : {
                     locations: ["test-location"],
+                    duration: 30,
                     quantity: 1,
                     startDate: "2024-01-22",
                   };
@@ -90,8 +90,7 @@ describe("TreatmentRecommendationsSection", () => {
       treatments: [
         {
           locations: ["chest", "back"],
-          color: "blue",
-          duration: 2,
+          duration: 45,
           quantity: 3,
           startDate: "2024-01-22",
         },
@@ -107,6 +106,7 @@ describe("TreatmentRecommendationsSection", () => {
       treatments: [
         {
           locations: ["left-arm"],
+          duration: 30,
           quantity: 2,
           startDate: "2024-01-22",
         },
@@ -122,8 +122,7 @@ describe("TreatmentRecommendationsSection", () => {
       treatments: [
         {
           locations: ["chest"],
-          color: "red",
-          duration: 1,
+          duration: 45,
           quantity: 1,
           startDate: "2024-01-22",
         },
@@ -295,8 +294,7 @@ describe("TreatmentRecommendationsSection", () => {
             ...mockRecommendationsWithPhysiotherapy.physiotherapy!.treatments,
             {
               locations: ["test-location"],
-              color: "blue",
-              duration: 1,
+              duration: 45,
               quantity: 1,
               startDate: "2024-01-22",
             },
@@ -319,14 +317,16 @@ describe("TreatmentRecommendationsSection", () => {
       const addButton = screen.getByTestId("add-treatment-tens");
       fireEvent.click(addButton);
 
-      expect(mockOnChange).toHaveBeenCalledWith({
-        ...mockRecommendationsWithTens,
+      expect(mockOnChange).toHaveBeenLastCalledWith({
+        returnWeeks: 1,
+        returnWhenTreatmentComplete: false,
         tens: {
           ...mockRecommendationsWithTens.tens!,
           treatments: [
             ...mockRecommendationsWithTens.tens!.treatments,
             {
               locations: ["test-location"],
+              duration: 30,
               quantity: 1,
               startDate: "2024-01-22",
             },

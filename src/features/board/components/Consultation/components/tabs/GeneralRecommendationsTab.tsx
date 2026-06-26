@@ -31,71 +31,71 @@ const GeneralRecommendationsTab: React.FC<GeneralRecommendationsTabProps> = ({
           General Recommendations
         </h3>
         <p className="text-sm text-gray-600">
-          Provide general guidance on food, hydration, and complementary care.
+          Provide guidance on home exercises, pain management, and medications.
         </p>
       </div>
 
       <Field
-        label={<span className={labelClass}>Food</span>}
-        htmlFor="food"
-        helpText="Specific guidance on diet and food during treatment"
+        label={<span className={labelClass}>Home Exercises</span>}
+        htmlFor="homeExercises"
+        helpText="Exercises the patient should perform at home"
       >
         <Textarea
-          id="food"
-          name="food"
-          value={formData.food}
+          id="homeExercises"
+          name="homeExercises"
+          value={formData.homeExercises}
           onChange={handleInputChange}
           disabled={isFieldsDisabled}
           rows={3}
-          placeholder="Dietary recommendations (e.g. avoid red meat, prioritize vegetables, etc.)"
+          placeholder="Home exercise recommendations (e.g. stretching, strengthening, etc.)"
         />
       </Field>
 
       <Field
-        label={<span className={labelClass}>Water</span>}
-        htmlFor="water"
-        helpText="Recommended amount and type of water"
+        label={<span className={labelClass}>Pain Management</span>}
+        htmlFor="painManagement"
+        helpText="Strategies for managing pain between sessions"
       >
-        <Input
-          type="text"
-          id="water"
-          name="water"
-          value={formData.water}
+        <Textarea
+          id="painManagement"
+          name="painManagement"
+          value={formData.painManagement}
           onChange={handleInputChange}
           disabled={isFieldsDisabled}
-          placeholder="e.g. 2L of water per day"
+          rows={3}
+          placeholder="Pain management guidance (e.g. ice/heat, rest, posture, etc.)"
         />
       </Field>
 
       <Field
-        label={<span className={labelClass}>Ointments</span>}
-        htmlFor="ointments"
-        helpText="Topical products for external application"
+        label={<span className={labelClass}>Medications</span>}
+        htmlFor="medications"
+        helpText="Medication recommendations or reminders"
       >
         <Input
           type="text"
-          id="ointments"
-          name="ointments"
-          value={formData.ointments}
+          id="medications"
+          name="medications"
+          value={formData.medications}
           onChange={handleInputChange}
           disabled={isFieldsDisabled}
-          placeholder="Recommended ointments..."
+          placeholder="Recommended medications or supplements..."
         />
       </Field>
 
-      {/* Acknowledgment checkbox - prevents accidental submit without reviewing */}
       <div className="pt-4 border-t border-gray-200">
         {!formData.noGeneralRecommendations &&
-          !(formData.food?.trim() ?? "").length &&
-          !(formData.water?.trim() ?? "").length &&
-          !(formData.ointments?.trim() ?? "").length && (
+          !(formData.homeExercises?.trim() ?? "").length &&
+          !(formData.painManagement?.trim() ?? "").length &&
+          !(formData.medications?.trim() ?? "").length && (
             <div
               className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md"
               role="alert"
             >
               <p className="text-sm text-red-700">
-                Add at least one recommendation (food, water, or ointments), or
-                mark the option below indicating that none apply.
+                Add at least one recommendation (home exercises, pain
+                management, or medications), or mark the option below indicating
+                that none apply.
               </p>
             </div>
           )}
@@ -116,8 +116,8 @@ const GeneralRecommendationsTab: React.FC<GeneralRecommendationsTabProps> = ({
               No general recommendations apply to this appointment
             </label>
             <p className="text-xs text-gray-600 mt-1">
-              Check this option if there are no diet, hydration, or ointment
-              recommendations for this appointment.
+              Check this option if there are no home exercise, pain management,
+              or medication recommendations for this appointment.
             </p>
           </div>
         </div>

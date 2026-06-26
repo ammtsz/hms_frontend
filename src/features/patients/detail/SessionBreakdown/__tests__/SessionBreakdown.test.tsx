@@ -60,9 +60,9 @@ const mockPatient: Patient = {
   nextAppointmentDates: [],
   currentRecommendations: {
     date: "2026-02-01",
-    food: "",
-    water: "",
-    ointment: "",
+    homeExercises: "",
+    painManagement: "",
+    medications: "",
     notes: "",
     physiotherapy: false,
     tens: false,
@@ -90,7 +90,6 @@ describe("SessionBreakdownCard", () => {
       treatmentType: "physiotherapy",
       bodyLocation: "Head",
       plannedSessions: 10,
-      color: "Blue",
     },
     {
       id: 2,
@@ -107,7 +106,6 @@ describe("SessionBreakdownCard", () => {
       treatmentType: "physiotherapy",
       bodyLocation: "Head",
       plannedSessions: 10,
-      color: "Blue",
     },
     {
       id: 3,
@@ -209,7 +207,10 @@ describe("SessionBreakdownCard", () => {
         id: 5,
         sessionNumber: 1,
         treatmentId: 3,
-        color: "Green",
+        bodyLocation: "Chest",
+        plannedSessions: 8,
+        durationMinutes: 60,
+        scheduledDate: "2026-02-01T00:00:00.000Z",
       },
     ];
 
@@ -227,11 +228,12 @@ describe("SessionBreakdownCard", () => {
 
     await expandCard();
 
-    // Should show first 2 treatment groups
-    expect(screen.getByText(/BLUE/)).toBeInTheDocument();
+    // Should show first 2 treatment groups (sorted by latest session date)
+    expect(screen.getByText(/LEGS/)).toBeInTheDocument();
+    expect(screen.getByText(/HEAD/)).toBeInTheDocument();
 
-    // Third group (Green) should not be visible yet
-    expect(screen.queryByText(/GREEN/)).not.toBeInTheDocument();
+    // Third group (Chest) should not be visible yet
+    expect(screen.queryByText(/CHEST/)).not.toBeInTheDocument();
 
     // Click "View more" button
     const showMoreButton = screen.getByRole("button", { name: /View more/i });
@@ -239,7 +241,7 @@ describe("SessionBreakdownCard", () => {
 
     // Should now show all treatment groups including the third one
     await waitFor(() => {
-      expect(screen.getByText(/GREEN/)).toBeInTheDocument();
+      expect(screen.getByText(/CHEST/)).toBeInTheDocument();
     });
   });
 
@@ -542,25 +544,6 @@ describe("SessionBreakdownCard", () => {
     });
   });
 
-  it("should display color in group header when present", async () => {
-    mockGetSessionsByPatient.mockResolvedValue({
-      success: true,
-      value: [mockSessions[0]],
-    });
-
-    renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
-    });
-    await expandCard();
-
-    await waitFor(() => {
-      // Color is displayed in uppercase in the group header
-      expect(screen.getByText(/BLUE/)).toBeInTheDocument();
-    });
-  });
-
   it("should display planned sessions in session number", async () => {
     mockGetSessionsByPatient.mockResolvedValue({
       success: true,
@@ -596,28 +579,6 @@ describe("SessionBreakdownCard", () => {
       expect(screen.getByText(/🪄/)).toBeInTheDocument(); // 🪄 magic wand icon
       expect(screen.getByText(/TENS/)).toBeInTheDocument();
     });
-  });
-
-  it("should not display color when not present", async () => {
-    mockGetSessionsByPatient.mockResolvedValue({
-      success: true,
-      value: [mockSessions[2]],
-    });
-
-    renderWithQueryClient(<SessionBreakdownCard patient={mockPatient} />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Treatment History/)).toBeInTheDocument();
-    });
-    await expandCard();
-
-    await waitFor(() => {
-      expect(screen.getByText(/Session 3/)).toBeInTheDocument();
-    });
-
-    // TENS session has no color, so uppercase text check won't find color badges
-    expect(screen.queryByText(/GREEN/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/RED/)).not.toBeInTheDocument();
   });
 
   describe("Status Badges", () => {
@@ -749,7 +710,6 @@ describe("SessionBreakdownCard", () => {
           treatmentType: "physiotherapy",
           bodyLocation: "Arms",
           plannedSessions: 5,
-          color: "Green",
         },
       ];
 

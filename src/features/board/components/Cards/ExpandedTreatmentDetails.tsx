@@ -1,14 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { TreatmentPlanWithSessionRow } from "@/api/query/hooks/useTreatmentsWithSessionRows";
 import { PatientResponseDto, TreatmentResponseDto } from "@/api/types";
-import { getColorCode } from "@/utils/treatmentColors";
-import EditTreatmentModal from "../TreatmentSession/EditTreatmentModal";
 import {
   getEditEligibility,
   getUniqueTreatmentPlans,
-  groupByTypeColorDuration,
+  groupByTypeDuration,
   groupTreatmentPlansForEdit,
 } from "./ExpandedTreatmentDetails.utils";
+import EditTreatmentModal from "../TreatmentSession/EditTreatmentModal";
 import { Button } from "@/components/ui";
 
 interface ExpandedTreatmentDetailsProps {
@@ -47,7 +46,7 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
     [uniqueTreatmentPlans],
   );
   const displayGroups = useMemo(
-    () => groupByTypeColorDuration(treatmentsWithSessionRows),
+    () => groupByTypeDuration(treatmentsWithSessionRows),
     [treatmentsWithSessionRows],
   );
   const editableGroups = useMemo(
@@ -107,10 +106,6 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
                     : eligibility.reason === "notEffectiveFirstDay"
                       ? "Make necessary edits on the first effective day of treatment."
                       : "This treatment cannot be edited at this moment.";
-              const physiotherapyColor =
-                treatmentType === "physiotherapy"
-                  ? treatmentPlans[0]?.color
-                  : undefined;
               return (
                 <Button
                   key={`edit-${treatmentType}-${treatmentPlans.map((t) => t.id).join("-")}`}
@@ -128,9 +123,6 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
                 >
                   Edit{" "}
                   {treatmentType === "physiotherapy" ? "Physiotherapy" : "TENS"}
-                  {treatmentType === "physiotherapy" && physiotherapyColor
-                    ? ` - ${physiotherapyColor}`
-                    : ""}
                 </Button>
               );
             },
@@ -162,7 +154,7 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
 
       {displayGroups.map((group, groupIndex) => (
         <div
-          key={`${group.treatmentType}-${group.color ?? ""}-${group.durationMinutes ?? ""}-${group.sessionNumber}-${group.plannedSessions}-${groupIndex}`}
+          key={`${group.treatmentType}-${group.durationMinutes ?? ""}-${group.sessionNumber}-${group.plannedSessions}-${groupIndex}`}
           className="bg-gray-50 rounded-lg p-3 text-sm space-y-2"
         >
           <div>
@@ -184,30 +176,15 @@ const ExpandedTreatmentDetails: React.FC<ExpandedTreatmentDetailsProps> = ({
             </span>
           </div>
 
-          {group.treatmentType === "physiotherapy" && group.color && (
+          {group.durationMinutes != null && (
             <div>
-              <span className="text-gray-700 font-semibold">Color: </span>
-              <span
-                className="px-2 py-0.5 rounded text-xs text-white font-normal"
-                style={{
-                  backgroundColor: getColorCode(group.color),
-                }}
-              >
-                {group.color}
+              <span className="text-gray-700 font-semibold">Duration: </span>
+              <span className="text-gray-800 font-normal">
+                {group.durationMinutes}{" "}
+                {group.durationMinutes === 1 ? "minute" : "minutes"}
               </span>
             </div>
           )}
-
-          {group.treatmentType === "physiotherapy" &&
-            group.durationMinutes != null && (
-              <div>
-                <span className="text-gray-700 font-semibold">Duration: </span>
-                <span className="text-gray-800 font-normal">
-                  {group.durationMinutes}{" "}
-                  {group.durationMinutes === 1 ? "minute" : "minutes"}
-                </span>
-              </div>
-            )}
 
           {group.notes && (
             <div className="text-xs text-gray-600 italic border-t border-gray-200 pt-2 mt-2">

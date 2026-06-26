@@ -72,7 +72,6 @@ const ViewCompletedConsultationModal: React.FC = () => {
         endDate: treatment.endDate,
         status: treatment.status,
         durationMinutes: treatment.durationMinutes,
-        color: treatment.color,
         notes: treatment.notes,
         sessions: treatment.sessions,
         createdDate: treatment.createdDate,
@@ -133,31 +132,31 @@ const ViewCompletedConsultationModal: React.FC = () => {
             </div>
 
             {/* General recommendations */}
-            {(consultation.food ||
-              consultation.water ||
-              consultation.ointments ||
+            {(consultation.homeExercises ||
+              consultation.painManagement ||
+              consultation.medications ||
               consultation.notes) && (
               <div className="mb-6 p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
                 <h3 className="text-sm font-semibold text-gray-900 mb-3">
                   General Recommendations
                 </h3>
                 <div className="space-y-4 text-sm text-gray-700">
-                  {consultation.food && (
+                  {consultation.homeExercises && (
                     <div>
-                      <span className="font-semibold">🍎 FOOD:</span>{" "}
-                      {consultation.food}
+                      <span className="font-semibold">🏠 HOME EXERCISES:</span>{" "}
+                      {consultation.homeExercises}
                     </div>
                   )}
-                  {consultation.water && (
+                  {consultation.painManagement && (
                     <div>
-                      <span className="font-semibold">💧 WATER:</span>{" "}
-                      {consultation.water}
+                      <span className="font-semibold">💆 PAIN MANAGEMENT:</span>{" "}
+                      {consultation.painManagement}
                     </div>
                   )}
-                  {consultation.ointments && (
+                  {consultation.medications && (
                     <div>
-                      <span className="font-semibold">🧴 OINTMENTS:</span>{" "}
-                      {consultation.ointments}
+                      <span className="font-semibold">💊 MEDICATIONS:</span>{" "}
+                      {consultation.medications}
                     </div>
                   )}
                   {consultation.notes && (

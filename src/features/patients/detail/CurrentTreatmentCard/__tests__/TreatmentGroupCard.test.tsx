@@ -1,5 +1,4 @@
 import React from "react";
-import { getColorCodeWithOpacity } from "@/utils/treatmentColors";
 import { render, screen, fireEvent } from "@/utils/testUtils";
 import { TreatmentGroupCard } from "../TreatmentGroupCard";
 
@@ -25,7 +24,6 @@ const mockPhysiotherapyGroup = {
   completedSessions: 3,
   status: "in_progress",
   durationMinutes: 30,
-  color: "blue",
   sessions: [{ status: "scheduled" }, { status: "completed" }],
 };
 
@@ -55,12 +53,7 @@ describe("TreatmentGroupCard", () => {
     );
 
     expect(screen.getByText(/Head/)).toBeInTheDocument();
-    const colorBadge = screen.getByText("blue");
-    expect(colorBadge).toBeInTheDocument();
-    expect(colorBadge).toHaveStyle({
-      backgroundColor: getColorCodeWithOpacity("blue", 0.25),
-    });
-    expect(screen.getByText(/30 minutes/)).toBeInTheDocument();
+    expect(screen.getByText(/30 min/)).toBeInTheDocument();
     expect(screen.getByTestId("progress-bar")).toHaveTextContent("3/10");
   });
 

@@ -13,25 +13,7 @@ jest.mock('@/api/treatments');
 
 const mockedTreatmentsApi = treatmentsApi as jest.Mocked<typeof treatmentsApi>;
 
-// Test data factories
-const createMockTreatment = (id = 1) => ({
-  id,
-  consultationId: 1,
-  appointmentId: 1,
-  patientId: 1,
-  treatmentType: 'physiotherapy' as const,
-  bodyLocation: 'head',
-  startDate: '2025-01-01',
-  plannedSessions: 5,
-  completedSessions: 0,
-  status: 'active',
-  durationMinutes: 60,
-  color: 'blue',
-  createdDate: '2025-01-01',
-  createdTime: '10:00:00',
-  updatedDate: '2025-01-01',
-  updatedTime: '10:00:00',
-});
+import { createMockTreatmentResponse } from '@/testFixtures/physiotherapyContext';
 
 // Test wrapper with QueryClient
 const createWrapper = () => {
@@ -63,7 +45,7 @@ describe('useTreatmentTrackingQueries', () => {
 
   describe('useCreateTreatment', () => {
     test('should create treatment session successfully', async () => {
-      const mockSession = createMockTreatment(99);
+      const mockSession = createMockTreatmentResponse(99);
       const sessionData = {
         consultationId: 1,
         appointmentId: 1,
@@ -132,8 +114,8 @@ describe('useTreatmentTrackingQueries', () => {
   describe('useBulkCreateTreatments', () => {
     test('should bulk create treatment sessions successfully', async () => {
       const mockSessions = [
-        createMockTreatment(1),
-        createMockTreatment(2),
+        createMockTreatmentResponse(1),
+        createMockTreatmentResponse(2),
       ];
       const bulkData = {
         consultationId: 1,

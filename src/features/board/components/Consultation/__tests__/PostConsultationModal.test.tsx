@@ -15,9 +15,9 @@ const mockUsePostAppointmentForm = {
     patientStatus: "N" as const,
     startDate: "2025-11-26",
     returnWeeks: 1,
-    food: "",
-    water: "",
-    ointments: "",
+    homeExercises: "",
+    painManagement: "",
+    medications: "",
     recommendations: {
       physiotherapy: { treatments: [] },
       tens: { treatments: [] },
@@ -115,16 +115,16 @@ jest.mock("../components/tabs", () => ({
     formData,
     onFormDataChange,
   }: {
-    formData: { food: string };
+    formData: { homeExercises: string };
     onFormDataChange: (field: string, value: string) => void;
   }) => (
     <div data-testid="general-recommendations-tab">
       <h3>General Recommendations</h3>
       <input
-        data-testid="food-input"
-        value={formData.food}
-        onChange={(e) => onFormDataChange("food", e.target.value)}
-        placeholder="Food recommendations"
+        data-testid="home-exercises-input"
+        value={formData.homeExercises}
+        onChange={(e) => onFormDataChange("homeExercises", e.target.value)}
+        placeholder="Home exercises"
       />
     </div>
   ),
@@ -308,9 +308,9 @@ describe("PostConsultationModal", () => {
         patientStatus: "N" as const,
         startDate: "2025-11-26",
         returnWeeks: 1,
-        food: "",
-        water: "",
-        ointments: "",
+        homeExercises: "",
+        painManagement: "",
+        medications: "",
         recommendations: {
           physiotherapy: { treatments: [] },
           tens: { treatments: [] },
@@ -533,8 +533,8 @@ describe("PostConsultationModal", () => {
 
       await user.click(screen.getByTestId("tab-general"));
 
-      const input = screen.getByTestId("food-input");
-      await user.type(input, "Test food");
+      const input = screen.getByTestId("home-exercises-input");
+      await user.type(input, "Stretching daily");
 
       expect(mockUsePostAppointmentForm.handleChange).toHaveBeenCalled();
     });

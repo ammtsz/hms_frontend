@@ -63,7 +63,7 @@ export const sortPatientsByPriority = <T extends {
 
 /**
  * BR-306: blocks only when scheduling a second open assessment the same day.
- * Physiotherapy / tens allow multiple same-day entries (location/color enforced on backend).
+ * Physiotherapy / tens allow multiple same-day entries (body location enforced on backend).
  */
 export const isPatientAlreadyScheduledForAssessment = (
   patientName: string,

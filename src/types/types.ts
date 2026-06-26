@@ -34,9 +34,9 @@ export type AppointmentProgression = "scheduled" | "checkedIn" | "onGoing" | "co
 export type UISection = "assessment" | "mixed"; // assessment room and mixed room (physiotherapy + tens)
 
 export interface Recommendations {
-  food: string;
-  water: string;
-  ointment: string;
+  homeExercises: string;
+  painManagement: string;
+  medications: string;
   physiotherapy: boolean;
   tens: boolean;
   returnWeeks: number;

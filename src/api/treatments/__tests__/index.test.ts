@@ -36,8 +36,7 @@ describe('Treatments API', () => {
     plannedSessions: 10,
     completedSessions: 0,
     status: 'scheduled',
-    durationMinutes: 7,
-    color: 'blue',
+  durationMinutes: 45,
     notes: 'Test',
     createdDate: '2025-01-15',
     createdTime: '10:00:00',
@@ -97,8 +96,7 @@ describe('Treatments API', () => {
         bodyLocation: 'chest',
         startDate: '2025-01-15',
         plannedSessions: 12,
-        durationMinutes: 21, // 3 units of 7 minutes
-        color: 'blue',
+        durationMinutes: 45,
         notes: 'Standard physiotherapy treatment series'
       };
       const mockResponse = { data: mockTreatment };

@@ -31,9 +31,8 @@ export const TreatmentRow: React.FC<TreatmentRowProps> = ({
         />
         <span className="text-sm font-medium text-gray-900">
           {row.bodyLocation}
-          {row.color && ` • ${row.color}`}
           {row.durationMinutes != null &&
-            ` • ${row.durationMinutes} ${row.durationMinutes === 1 ? "unit" : "units"}`}
+            ` • ${row.durationMinutes} min`}
         </span>
       </label>
       <div className="ml-auto shrink-0">

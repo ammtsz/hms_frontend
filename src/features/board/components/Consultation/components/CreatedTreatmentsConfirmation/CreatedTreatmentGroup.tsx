@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { formatDisplayDate } from "@/utils/dateUtils";
-import { getColorCodeWithOpacity } from "@/utils/treatmentColors";
+import { formatTreatmentDurationMinutes } from "@/constants/treatment";
 import type { CreatedTreatment } from "../CreatedTreatmentsConfirmation";
 import { ScheduledAppointmentsPreview } from "./ScheduledAppointmentsPreview";
 import {
@@ -14,12 +14,6 @@ interface CreatedTreatmentGroupProps {
   getScheduledDates: (
     treatment: CreatedTreatment,
   ) => Array<{ date: string; time?: string }>;
-}
-
-function formatDuration(durationInUnits?: number): string {
-  if (!durationInUnits) return "";
-  const minutes = durationInUnits * 7;
-  return `${minutes} min`;
 }
 
 function mergeScheduledDates(
@@ -45,7 +39,7 @@ function mergeScheduledDates(
 
 /**
  * CreatedTreatmentGroup — physiotherapy or tens block: groups created treatments that
- * differ only by body location (shared color, duration, planned count, start date).
+ * differ only by body location (shared duration, planned count, start date).
  */
 export const CreatedTreatmentGroup: React.FC<CreatedTreatmentGroupProps> = ({
   treatments,
@@ -107,36 +101,15 @@ export const CreatedTreatmentGroup: React.FC<CreatedTreatmentGroupProps> = ({
                     </span>
                   </div>
 
-                  {rep.treatmentType === "physiotherapy" && (
-                    <>
-                      {rep.color && (
-                        <span className="flex items-center space-x-1">
-                          <span className={`text-sm font-medium text-gray-900`}>
-                            Color:
-                          </span>
-                          <span
-                            className="px-2 py-1/2 rounded-md"
-                            style={{
-                              backgroundColor: getColorCodeWithOpacity(
-                                rep.color,
-                                0.25,
-                              ),
-                            }}
-                          >
-                            {rep.color}
-                          </span>
-                        </span>
-                      )}
-                      {rep.durationMinutes !== undefined &&
-                        rep.durationMinutes !== null && (
-                          <span className="flex items-center space-x-1">
-                            <span className="text-sm font-medium text-gray-900">
-                              Duration:
-                            </span>
-                            <span>{formatDuration(rep.durationMinutes)}</span>
-                          </span>
-                        )}
-                    </>
+                  {rep.durationMinutes != null && (
+                    <span className="flex items-center space-x-1">
+                      <span className="text-sm font-medium text-gray-900">
+                        Duration:
+                      </span>
+                      <span>
+                        {formatTreatmentDurationMinutes(rep.durationMinutes)}
+                      </span>
+                    </span>
                   )}
                 </div>
 

@@ -1,19 +1,20 @@
 import { CONSULTATION_NOTES_HEADING } from "@/utils/appointmentStatusLabels";
 import { formatDisplayDate } from "@/utils/dateUtils";
+import { formatTreatmentDurationMinutes } from "@/constants/treatment";
 import type { ActiveTreatmentRow } from "@/features/patients/detail/AppointmentDetails/helpers/assessmentHelpers";
 
 interface Recommendations {
-  date?: string; // YYYY-MM-DD format
-  food?: string;
-  water?: string;
-  ointment?: string;
+  date?: string;
+  homeExercises?: string;
+  painManagement?: string;
+  medications?: string;
   notes?: string;
   returnWeeks?: number;
   returnWhenTreatmentComplete?: boolean;
 }
 
 interface TreatmentRecommendationsDisplayProps {
-  recommendations: { date: string } & Recommendations; // Include date field (YYYY-MM-DD format)
+  recommendations: { date: string } & Recommendations;
   physiotherapySessions?: ActiveTreatmentRow[];
   tensSessions?: ActiveTreatmentRow[];
 }
@@ -21,33 +22,31 @@ interface TreatmentRecommendationsDisplayProps {
 export const TreatmentRecommendationsDisplay: React.FC<
   TreatmentRecommendationsDisplayProps
 > = ({ recommendations, physiotherapySessions = [], tensSessions = [] }) => {
-  /** Display strings for active treatment rows (colon separator for this card). */
   const formatTreatmentRecommendationDetails = (
     treatments: ActiveTreatmentRow[],
   ): string[] => {
     if (treatments.length === 0) return [];
 
-    const details = treatments.map((treatment) => {
+    return treatments.map((treatment) => {
       const location = treatment.bodyLocation || "not specified";
-      const color = treatment.color ? ` (color: ${treatment.color})` : "";
+      const duration = treatment.durationMinutes
+        ? ` (${formatTreatmentDurationMinutes(treatment.durationMinutes)})`
+        : "";
       const sessionsText =
         treatment.plannedSessions === 1
           ? "1 session"
           : `${treatment.plannedSessions} sessions`;
-      return `${sessionsText}: ${location}${color}`;
+      return `${sessionsText}: ${location}${duration}`;
     });
-
-    return details;
   };
 
-  // Check if there are any recommendations to show
   const hasPhysiotherapySessions = physiotherapySessions.length > 0;
   const hasTensSessions = tensSessions.length > 0;
 
   const hasRecommendations =
-    recommendations.food ||
-    recommendations.water ||
-    recommendations.ointment ||
+    recommendations.homeExercises ||
+    recommendations.painManagement ||
+    recommendations.medications ||
     recommendations.notes ||
     hasPhysiotherapySessions ||
     hasTensSessions ||
@@ -72,33 +71,33 @@ export const TreatmentRecommendationsDisplay: React.FC<
       </h3>
       <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
         <div className="space-y-4">
-          {recommendations.food && (
+          {recommendations.homeExercises && (
             <div className="flex items-start justify-start">
               <span className="text-gray-700 text-nowrap mr-2 font-semibold">
-                🍎 Food:
+                🏠 Home Exercises:
               </span>
               <span className="text-gray-900 text-sm">
-                {recommendations.food}
+                {recommendations.homeExercises}
               </span>
             </div>
           )}
-          {recommendations.water && (
+          {recommendations.painManagement && (
             <div className="flex items-start justify-start">
               <span className="text-gray-700 text-nowrap mr-2 font-semibold">
-                💧 Water:
+                💆 Pain Management:
               </span>
               <span className="text-gray-900 text-sm">
-                {recommendations.water}
+                {recommendations.painManagement}
               </span>
             </div>
           )}
-          {recommendations.ointment && (
+          {recommendations.medications && (
             <div className="flex items-start justify-start">
               <span className="text-gray-700 text-nowrap mr-2 font-semibold">
-                🧴 Ointment:
+                💊 Medications:
               </span>
               <span className="text-gray-900 text-sm">
-                {recommendations.ointment}
+                {recommendations.medications}
               </span>
             </div>
           )}

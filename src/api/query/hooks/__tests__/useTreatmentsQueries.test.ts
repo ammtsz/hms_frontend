@@ -44,8 +44,7 @@ describe('useTreatmentsByPatient', () => {
     plannedSessions: 10,
     completedSessions: 3,
     status: 'in_progress',
-    durationMinutes: 30,
-    color: 'blue',
+    durationMinutes: 45,
     notes: 'Treatment going well',
     sessions: [],
     createdDate: '2025-01-01',
@@ -252,8 +251,7 @@ describe('useEditTreatments', () => {
     plannedSessions: 10,
     completedSessions: 0,
     status: 'in_progress',
-    durationMinutes: 30,
-    color: 'blue',
+    durationMinutes: 45,
     notes: undefined,
     createdDate: '2025-01-01',
     createdTime: '10:00:00',
@@ -289,7 +287,7 @@ describe('useEditTreatments', () => {
         treatments: [
           {
             locations: ['Neck'],
-            color: 'blue',
+            durationMinutes: 45,
             duration: 30,
             quantity: 10,
             startDate: '2025-01-01',

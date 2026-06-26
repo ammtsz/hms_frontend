@@ -18,9 +18,7 @@ import {
 } from "@/components/ui";
 import {
   useBodyLocations,
-  useColors,
   useCreateBodyLocation,
-  useCreateColor,
   useCheckSimilarOptions,
 } from "@/api/query/hooks/useSystemOptionsQueries";
 import { SystemOptionType, SimilarOption } from "@/types/systemOptions";
@@ -30,13 +28,10 @@ import { UserRole } from "@/types/auth";
 const DEFAULT_MAX_VALUE_LENGTH = 50;
 
 interface TreatmentOptionsListProps {
-  type: SystemOptionType;
-  /** Max length for the option value (matches backend `hms_system_options.value`). */
   maxValueLength?: number;
 }
 
 export default function TreatmentOptionsList({
-  type,
   maxValueLength = DEFAULT_MAX_VALUE_LENGTH,
 }: TreatmentOptionsListProps) {
   const { user } = useAuthContext();
@@ -48,29 +43,13 @@ export default function TreatmentOptionsList({
   const [showSimilarWarning, setShowSimilarWarning] = useState(false);
 
   const checkSimilarOptions = useCheckSimilarOptions();
-  const isBodyLocation = type === SystemOptionType.BODY_LOCATION;
-
-  // Call all hooks unconditionally (React rules) - include inactive for settings management
-  const bodyLocationsQuery = useBodyLocations(true);
-  const colorsQuery = useColors(true);
-  const createBodyLocationMutation = useCreateBodyLocation();
-  const createColorMutation = useCreateColor();
-
-  // Select the correct hooks based on type
-  const { data: options, isLoading } = isBodyLocation
-    ? bodyLocationsQuery
-    : colorsQuery;
-  const createMutation = isBodyLocation
-    ? createBodyLocationMutation
-    : createColorMutation;
-
-  const label = isBodyLocation ? "body location" : "color";
-  const labelCapitalized = isBodyLocation ? "Body Location" : "Color";
+  const { data: options, isLoading } = useBodyLocations(true);
+  const createMutation = useCreateBodyLocation();
 
   const handleAdd = async () => {
     const trimmed = newValue.trim();
     if (!trimmed) {
-      setError(`Name of ${label} is required`);
+      setError("Name of body location is required");
       return;
     }
 
@@ -79,7 +58,10 @@ export default function TreatmentOptionsList({
       return;
     }
 
-    const similarResult = await checkSimilarOptions(type, trimmed);
+    const similarResult = await checkSimilarOptions(
+      SystemOptionType.BODY_LOCATION,
+      trimmed,
+    );
 
     if (
       similarResult.success &&
@@ -97,7 +79,7 @@ export default function TreatmentOptionsList({
   const createOption = async () => {
     const trimmed = newValue.trim();
     if (!trimmed) {
-      setError(`Name of ${label} is required`);
+      setError("Name of body location is required");
       return;
     }
     if (trimmed.length > maxValueLength) {
@@ -115,9 +97,9 @@ export default function TreatmentOptionsList({
       if (
         (err as { response?: { status?: number } }).response?.status === 409
       ) {
-        setError(`This ${label} already exists`);
+        setError("This body location already exists");
       } else {
-        setError(`Error creating ${label}. Please try again.`);
+        setError("Error creating body location. Please try again.");
       }
     }
   };
@@ -145,7 +127,6 @@ export default function TreatmentOptionsList({
 
   return (
     <div className="space-y-4">
-      {/* Table Container */}
       <TableContainer className="[&>div]:overflow-visible md:[&>div]:overflow-x-auto">
         <Table className={stackedTableClasses.table}>
           <TableHeader className={stackedTableClasses.header}>
@@ -164,7 +145,7 @@ export default function TreatmentOptionsList({
                 <TreatmentOptionRow
                   key={option.id}
                   option={option}
-                  type={type}
+                  type={SystemOptionType.BODY_LOCATION}
                 />
               ))
             ) : (
@@ -174,7 +155,7 @@ export default function TreatmentOptionsList({
                   align="center"
                   className="py-8 text-gray-500"
                 >
-                  No {label} found
+                  No body location found
                 </TableCell>
               </TableRow>
             )}
@@ -182,11 +163,10 @@ export default function TreatmentOptionsList({
         </Table>
       </TableContainer>
 
-      {/* Add New Form — admin only; collaborators create body locations from appointment forms */}
       {isAdding && isAdmin ? (
         <Card className="border-blue-300 bg-blue-50 p-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            {labelCapitalized}
+            Body Location
           </label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Input
@@ -195,7 +175,7 @@ export default function TreatmentOptionsList({
               onChange={(e) =>
                 setNewValue(e.target.value.slice(0, maxValueLength))
               }
-              placeholder={`Name of ${label}`}
+              placeholder="Name of body location"
               className="flex-1"
               maxLength={maxValueLength}
               autoFocus
@@ -218,7 +198,6 @@ export default function TreatmentOptionsList({
             </Button>
           </div>
 
-          {/* Similar Names Warning */}
           {showSimilarWarning && similarOptions.length > 0 && (
             <div className="mt-3 rounded-md bg-amber-50 p-4 border border-amber-200">
               <div className="flex">
@@ -237,11 +216,11 @@ export default function TreatmentOptionsList({
                 </div>
                 <div className="ml-3 flex-1">
                   <h3 className="text-sm font-medium text-amber-800">
-                    Similar {labelCapitalized}s Found
+                    Similar Body Locations Found
                   </h3>
                   <div className="mt-2 text-sm text-amber-700">
                     <p>
-                      The following {label}s are very similar to &ldquo;
+                      The following body locations are very similar to &ldquo;
                       {newValue}&rdquo;:
                     </p>
                     <ul className="list-disc list-inside mt-1">
@@ -293,7 +272,7 @@ export default function TreatmentOptionsList({
             className="w-full border-2 border-dashed border-gray-300 text-gray-600 hover:border-blue-500 hover:text-blue-600"
           >
             <Plus className="w-5 h-5" />
-            Add New {labelCapitalized}
+            Add New Body Location
           </Button>
         )
       )}

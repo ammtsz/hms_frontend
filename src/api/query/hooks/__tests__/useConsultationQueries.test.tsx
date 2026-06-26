@@ -16,6 +16,11 @@ import type {
   CreateConsultationRequest,
   UpdateConsultationRequest,
 } from "@/api/types";
+import {
+  EXAMPLE_HOME_EXERCISES,
+  EXAMPLE_PAIN_MANAGEMENT,
+  EXAMPLE_MEDICATIONS,
+} from "@/testFixtures/physiotherapyContext";
 
 // Mock the API module
 jest.mock("@/api/consultations");
@@ -55,9 +60,9 @@ describe("useConsultationQueries hooks", () => {
     id: 1,
     appointmentId: 123,
     mainConcern: "Test complaint",
-    food: "Light meals",
-    water: "2L/day",
-    ointments: "Healing ointments",
+    homeExercises: EXAMPLE_HOME_EXERCISES,
+    painManagement: EXAMPLE_PAIN_MANAGEMENT,
+    medications: EXAMPLE_MEDICATIONS,
     physiotherapy: true,
     tens: false,
     returnWeeks: 2,
@@ -312,8 +317,8 @@ describe("useConsultationQueries hooks", () => {
       const createData: CreateConsultationRequest = {
         appointmentId: 123,
         mainConcern: "Test complaint",
-        food: "Light meals",
-        water: "2L/day",
+        homeExercises: EXAMPLE_HOME_EXERCISES,
+        painManagement: EXAMPLE_PAIN_MANAGEMENT,
         physiotherapy: true,
         returnWeeks: 2,
       };

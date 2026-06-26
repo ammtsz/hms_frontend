@@ -1,28 +1,27 @@
 /** Treatment session data shapes shared across hooks, forms and components. */
 
-export interface PhysiotherapyLocationTreatment {
+export interface LocationTreatment {
   locations: string[];
-  color: string;
-  duration: number; // in 7-minute units (1 = 7min, 2 = 14min, etc.)
   quantity: number;
   startDate: string; // YYYY-MM-DD format
+  duration: number; // minutes: 30 | 45 | 60
 }
 
-export interface TensLocationTreatment {
-  locations: string[];
-  quantity: number;
-  startDate: string; // YYYY-MM-DD format
-}
+/** @deprecated Use LocationTreatment — kept as alias for gradual migration */
+export type PhysiotherapyLocationTreatment = LocationTreatment;
+
+/** @deprecated Use LocationTreatment — kept as alias for gradual migration */
+export type TensLocationTreatment = LocationTreatment;
 
 export interface TreatmentRecommendation {
   physiotherapy?: {
     startDate: string;
-    treatments: PhysiotherapyLocationTreatment[];
+    treatments: LocationTreatment[];
     notes?: string;
   };
   tens?: {
     startDate: string;
-    treatments: TensLocationTreatment[];
+    treatments: LocationTreatment[];
     notes?: string;
   };
   returnWeeks: number;

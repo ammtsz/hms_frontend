@@ -21,9 +21,9 @@ import {
 import { useFetchDayFinalizationStatus } from "@/api/query/hooks/useDayFinalizationQueries";
 
 const initialRecommendations: Recommendations = {
-  food: "",
-  water: "",
-  ointment: "",
+  homeExercises: "",
+  painManagement: "",
+  medications: "",
   physiotherapy: false,
   tens: false,
   returnWeeks: 0,

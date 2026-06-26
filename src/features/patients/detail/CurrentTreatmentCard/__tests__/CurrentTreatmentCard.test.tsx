@@ -9,6 +9,11 @@ import {
   useCancelTreatments,
 } from "@/api/query/hooks/useTreatmentsQueries";
 import { useConsultations } from "@/api/query/hooks/useConsultationQueries";
+import {
+  EXAMPLE_HOME_EXERCISES,
+  EXAMPLE_PAIN_MANAGEMENT,
+  EXAMPLE_MEDICATIONS,
+} from "@/testFixtures/physiotherapyContext";
 
 // Prevent any real API calls (avoids XMLHttpRequest open handles)
 jest.mock("@/api/lib/axios", () => ({
@@ -102,9 +107,9 @@ const mockPatient: Patient = {
   ],
   currentRecommendations: {
     date: "2024-12-20",
-    food: "Light meals",
-    water: "2L/day",
-    ointment: "Apply 2x daily",
+    homeExercises: EXAMPLE_HOME_EXERCISES,
+    painManagement: EXAMPLE_PAIN_MANAGEMENT,
+    medications: EXAMPLE_MEDICATIONS,
     physiotherapy: true,
     tens: false,
     returnWeeks: 2,
@@ -125,7 +130,6 @@ const mockTreatmentPlan = {
   completedSessions: 3,
   status: "active" as const,
   durationMinutes: 30,
-  color: "blue",
   notes: "Treatment going well",
   sessions: [],
   createdAt: "2025-01-01T10:00:00Z",
@@ -214,9 +218,9 @@ describe("CurrentTreatmentCard", () => {
         /Latest Recommendations|Latest Recommendations|Recommendations/,
       ),
     ).toBeInTheDocument();
-    expect(screen.getByText("🍎 Food:")).toBeInTheDocument();
-    expect(screen.getByText("💧 Water:")).toBeInTheDocument();
-    expect(screen.getByText("🧴 Ointment:")).toBeInTheDocument();
+    expect(screen.getByText("🏠 Home Exercises:")).toBeInTheDocument();
+    expect(screen.getByText("💆 Pain Management:")).toBeInTheDocument();
+    expect(screen.getByText("💊 Medications:")).toBeInTheDocument();
     // Note: Treatment sections like "Physiotherapy" and "TENS" are only shown
     // in recommendations when there are active treatment sessions
   });
@@ -224,10 +228,10 @@ describe("CurrentTreatmentCard", () => {
   it("displays recommendation values correctly", () => {
     renderWithClient(<CurrentTreatmentCard patient={mockPatient} />);
 
-    expect(screen.getByText("Light meals")).toBeInTheDocument();
-    expect(screen.getByText("2L/day")).toBeInTheDocument();
-    expect(screen.getByText("Apply 2x daily")).toBeInTheDocument();
-    expect(screen.getByText(/2 weeks|2 weeks/)).toBeInTheDocument();
+    expect(screen.getByText(EXAMPLE_HOME_EXERCISES)).toBeInTheDocument();
+    expect(screen.getByText(EXAMPLE_PAIN_MANAGEMENT)).toBeInTheDocument();
+    expect(screen.getByText(EXAMPLE_MEDICATIONS)).toBeInTheDocument();
+    expect(screen.getByText(/2 weeks/)).toBeInTheDocument();
   });
 
   it("shows treatment status badges with correct active/inactive states", () => {
@@ -594,9 +598,9 @@ describe("CurrentTreatmentCard", () => {
       id: 1,
       appointmentId: 123, // This should match one of the patient's appointment IDs
       patientId: "1",
-      food: "Avoid red meat",
-      water: "Drink water",
-      ointments: "Apply arnica ointment",
+      homeExercises: "Cat-camel and pelvic tilt, 3x daily",
+      painManagement: "Ice after activity",
+      medications: "Ibuprofen as needed",
       physiotherapy: true,
       tens: false,
       returnWeeks: 4,
@@ -634,9 +638,9 @@ describe("CurrentTreatmentCard", () => {
         ],
         currentRecommendations: {
           date: "2024-12-31",
-          food: "",
-          water: "",
-          ointment: "",
+          homeExercises: "",
+          painManagement: "",
+          medications: "",
           physiotherapy: false,
           tens: false,
           returnWeeks: 0,
@@ -647,10 +651,10 @@ describe("CurrentTreatmentCard", () => {
         <CurrentTreatmentCard patient={patientWithAppointment} />,
       );
 
-      // Recommendations come from persisted consultation (food / water / ointments)
-      expect(screen.getByText("Avoid red meat")).toBeInTheDocument();
-      expect(screen.getByText("Drink water")).toBeInTheDocument();
-      expect(screen.getByText("Apply arnica ointment")).toBeInTheDocument();
+      // Recommendations come from persisted consultation (home exercises / pain management / medications)
+      expect(screen.getByText("Cat-camel and pelvic tilt, 3x daily")).toBeInTheDocument();
+      expect(screen.getByText("Ice after activity")).toBeInTheDocument();
+      expect(screen.getByText("Ibuprofen as needed")).toBeInTheDocument();
 
       // The new format displays treatments as lists in "Latest Recommendations"
       // Physiotherapy and tens treatments are shown as lists with details
@@ -668,7 +672,7 @@ describe("CurrentTreatmentCard", () => {
       ).toBeInTheDocument();
 
       // Note: returnWeeks display behavior is tested separately
-      // Confirmed by food / water / ointment strings above
+      // Confirmed by home exercises / pain management / medications strings above
     });
 
     it("should use appointment date in header instead of consultation createdDate", () => {
@@ -688,9 +692,9 @@ describe("CurrentTreatmentCard", () => {
         ],
         currentRecommendations: {
           date: "2024-12-31",
-          food: "",
-          water: "",
-          ointment: "",
+          homeExercises: "",
+          painManagement: "",
+          medications: "",
           physiotherapy: false,
           tens: false,
           returnWeeks: 0,
@@ -719,9 +723,9 @@ describe("CurrentTreatmentCard", () => {
         ...mockPatient,
         currentRecommendations: {
           date: "2024-10-25",
-          food: "Light meals",
-          water: "Regular water",
-          ointment: "No ointment",
+          homeExercises: EXAMPLE_HOME_EXERCISES,
+          painManagement: "Ice regularly",
+          medications: "No medications",
           physiotherapy: false,
           tens: true,
           returnWeeks: 2,
@@ -733,9 +737,9 @@ describe("CurrentTreatmentCard", () => {
       );
 
       // Verify fallback to patient recommendations
-      expect(screen.getByText("Light meals")).toBeInTheDocument();
-      expect(screen.getByText("Regular water")).toBeInTheDocument();
-      expect(screen.getByText("No ointment")).toBeInTheDocument();
+      expect(screen.getByText(EXAMPLE_HOME_EXERCISES)).toBeInTheDocument();
+      expect(screen.getByText("Ice regularly")).toBeInTheDocument();
+      expect(screen.getByText("No medications")).toBeInTheDocument();
       expect(screen.getByText("2 weeks")).toBeInTheDocument();
     });
 

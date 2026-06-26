@@ -278,9 +278,9 @@ describe('API Transformers', () => {
 
       expect(result.currentRecommendations).toEqual({
         date: expect.stringMatching(/^\d{4}-\d{2}-\d{2}$/),
-        food: '',
-        water: '',
-        ointment: '',
+        homeExercises: '',
+        painManagement: '',
+        medications: '',
         physiotherapy: false,
         tens: false,
         returnWeeks: 0
@@ -582,9 +582,9 @@ describe('API Transformers', () => {
       updatedDate: '2024-01-15',
       updatedTime: '10:00:00',
       mainConcern: 'Test',
-      food: '',
-      water: '',
-      ointments: '',
+      homeExercises: '',
+      painManagement: '',
+      medications: '',
       physiotherapy: false,
       tens: false,
       returnWeeks: 2,

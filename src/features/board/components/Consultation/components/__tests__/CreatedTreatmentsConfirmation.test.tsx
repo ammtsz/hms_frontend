@@ -58,9 +58,8 @@ describe("CreatedTreatmentsConfirmation", () => {
     plannedSessions: 5,
     completedSessions: 0,
     status: "scheduled",
-    durationMinutes: 3, // 3 units = 21 minutes
-    color: "Blue",
-    notes: "Physiotherapy - Blue - 21 minutes",
+    durationMinutes: 45,
+    notes: "Physiotherapy - Head - 45 min",
     createdDate: "2025-09-16",
     createdTime: "10:00:00",
     updatedDate: "2025-09-16",
@@ -151,9 +150,8 @@ describe("CreatedTreatmentsConfirmation", () => {
     // Check body location (grouped card shows location label)
     expect(screen.getByText("Head")).toBeInTheDocument();
 
-    // Check color and duration
-    expect(screen.getByText("Blue")).toBeInTheDocument();
-    expect(screen.getByText("21 min")).toBeInTheDocument();
+    // Check duration
+    expect(screen.getByText("45 min")).toBeInTheDocument();
 
     // Check session count
     expect(screen.getByText("5 sessions")).toBeInTheDocument();

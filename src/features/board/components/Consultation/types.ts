@@ -1,4 +1,5 @@
 export type {
+  LocationTreatment,
   PhysiotherapyLocationTreatment,
   TensLocationTreatment,
   TreatmentRecommendation,
