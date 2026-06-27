@@ -352,7 +352,7 @@ describe("AppointmentTimes Component", () => {
       );
 
       expect(screen.getByText(/check-in: 14:30/)).toBeInTheDocument();
-      expect(screen.getByText(/appointment: 15:00/)).toBeInTheDocument();
+      expect(screen.getByText(/started: 15:00/)).toBeInTheDocument();
     });
 
     it("should gracefully handle invalid times", () => {

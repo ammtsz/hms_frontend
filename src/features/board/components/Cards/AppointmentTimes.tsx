@@ -28,7 +28,7 @@ const AppointmentTimes: React.FC<AppointmentTimesProps> = ({
         {shouldShowCheckedIn && `check-in: ${formatDisplayTime(checkedInTime)}`}
       </span>
       <span className="mx-auto text-gray-500">
-        {shouldShowOnGoing && `appointment: ${formatDisplayTime(onGoingTime)}`}
+        {shouldShowOnGoing && `started: ${formatDisplayTime(onGoingTime)}`}
       </span>
     </div>
   );

@@ -102,7 +102,7 @@ const UnresolvedPastAppointmentsModal: React.FC = () => {
                     {formatDisplayDate(dateInfo.date)}
                   </p>
                   <p className="text-sm text-gray-600">
-                    {dateInfo.count} {dateInfo.count}{" "}
+                    {dateInfo.count}{" "}
                     {dateInfo.count === 1 ? "appointment" : "appointments"}
                     {dateInfo.statuses && (
                       <span className="text-gray-500 ml-1">
