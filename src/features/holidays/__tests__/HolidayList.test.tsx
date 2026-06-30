@@ -24,7 +24,7 @@ const mockHolidays = [
     id: 1,
     holidayDate: "2026-12-25",
     name: "Christmas",
-    description: "National Holiday",
+    description: "Federal Statutory Holiday",
     holidayGroupId: null,
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
@@ -151,7 +151,7 @@ describe("HolidayList", () => {
     const table = getHolidayTable();
     expect(table.getByText("Christmas")).toBeInTheDocument();
     expect(table.getByText("New Year")).toBeInTheDocument();
-    expect(table.getByText("National Holiday")).toBeInTheDocument();
+    expect(table.getByText("Federal Statutory Holiday")).toBeInTheDocument();
   });
 
   it("displays table headers", () => {
@@ -199,7 +199,7 @@ describe("HolidayList", () => {
         id: 1,
         holidayDate: "2026-12-25",
         name: "Christmas",
-        description: "National Holiday",
+        description: "Federal Statutory Holiday",
         blockedTreatmentTypes: ["assessment", "physiotherapy"],
         holidayGroupId: null,
         createdDate: "2026-01-01",

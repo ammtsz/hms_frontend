@@ -108,7 +108,7 @@ export const TemplateFormModal: React.FC<TemplateFormModalProps> = ({
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. National Brazilian Holidays"
+            placeholder="e.g. Canadian Federal Holidays"
             required
           />
         </Field>

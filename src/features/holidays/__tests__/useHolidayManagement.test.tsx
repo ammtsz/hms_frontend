@@ -11,7 +11,7 @@ const mockHolidays = [
     id: 1,
     holidayDate: "2026-12-25",
     name: "Christmas",
-    description: "National Holiday",
+    description: "Federal Statutory Holiday",
     createdDate: "2026-01-01",
     updatedDate: "2026-01-01",
   },

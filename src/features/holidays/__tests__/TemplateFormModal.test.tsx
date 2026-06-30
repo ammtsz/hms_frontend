@@ -38,8 +38,8 @@ describe("TemplateFormModal", () => {
   it("should show edit mode title when template is provided", () => {
     const mockTemplate = {
       id: 1,
-      name: "National Holidays",
-      description: "Brazilian National Holidays",
+      name: "Fixed Statutory Holidays",
+      description: "Canadian federal statutory holidays",
       holidays: [],
       createdDate: "2024-01-01",
     };
@@ -98,7 +98,7 @@ describe("TemplateFormModal", () => {
 
     // Fill in template name
     const nameInput = screen.getByPlaceholderText(
-      "e.g. National Brazilian Holidays",
+      "e.g. Canadian Federal Holidays",
     );
     fireEvent.change(nameInput, { target: { value: "Test Template" } });
 

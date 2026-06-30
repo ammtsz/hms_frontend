@@ -10,7 +10,7 @@ const mockGroup: HolidayGroup = {
       id: 1,
       holidayDate: "2026-12-25",
       name: "Christmas",
-      description: "National Holiday",
+      description: "Federal Statutory Holiday",
       holidayGroupId: null,
       createdDate: "2026-01-01",
       updatedDate: "2026-01-01",
@@ -18,7 +18,7 @@ const mockGroup: HolidayGroup = {
   ],
   dateRange: "12/25/2026",
   displayName: "Christmas",
-  description: "National Holiday",
+  description: "Federal Statutory Holiday",
   isPeriod: false,
 };
 
@@ -33,7 +33,7 @@ describe("HolidayListCard", () => {
 
     expect(screen.getByText("12/25/2026")).toBeInTheDocument();
     expect(screen.getByText("Christmas")).toBeInTheDocument();
-    expect(screen.getByText("National Holiday")).toBeInTheDocument();
+    expect(screen.getByText("Federal Statutory Holiday")).toBeInTheDocument();
     expect(screen.getByText("1 day")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /Edit/i }));

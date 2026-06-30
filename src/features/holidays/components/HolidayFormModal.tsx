@@ -426,7 +426,7 @@ const HolidayFormModal: React.FC<HolidayFormModalProps> = ({
             }
             disabled={isPending}
             maxLength={255}
-            placeholder="e.g. Christmas, New Year, Carnival, etc."
+            placeholder="e.g. Christmas, Canada Day, Remembrance Day, etc."
             invalid={Boolean(errors.name)}
           />
         </Field>

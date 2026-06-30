@@ -25,7 +25,7 @@ const mockHoliday = {
   id: 1,
   holidayDate: "2026-12-25",
   name: "Christmas",
-  description: "National Holiday",
+  description: "Federal Statutory Holiday",
   blockedTreatmentTypes: ["assessment", "physiotherapy"],
   createdDate: "2026-01-01",
   updatedDate: "2026-01-01",
@@ -125,7 +125,7 @@ describe("HolidayFormModal", () => {
     );
 
     expect(screen.getByDisplayValue("Christmas")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("National Holiday")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("Federal Statutory Holiday")).toBeInTheDocument();
     expect(screen.getByDisplayValue("2026-12-25")).toBeInTheDocument();
   });
 
@@ -294,7 +294,7 @@ describe("HolidayFormModal", () => {
           id: 1,
           data: {
             name: "Updated Name",
-            description: "National Holiday",
+            description: "Federal Statutory Holiday",
             blockedTreatmentTypes: ["assessment", "physiotherapy"],
           },
         },
@@ -329,7 +329,7 @@ describe("HolidayFormModal", () => {
           id: 1,
           data: {
             name: "Christmas",
-            description: "National Holiday",
+            description: "Federal Statutory Holiday",
             blockedTreatmentTypes: ["physiotherapy", "tens"],
           },
         },
@@ -890,7 +890,7 @@ describe("HolidayFormModal", () => {
             groupId: "group-123-uuid",
             data: {
               name: "Updated Holiday Name",
-              description: "National Holiday",
+              description: "Federal Statutory Holiday",
               blockedTreatmentTypes: ["assessment", "physiotherapy"],
             },
           },
@@ -925,7 +925,7 @@ describe("HolidayFormModal", () => {
             id: 1,
             data: {
               name: "Updated Single Holiday",
-              description: "National Holiday",
+              description: "Federal Statutory Holiday",
               blockedTreatmentTypes: ["assessment", "physiotherapy"],
             },
           },
