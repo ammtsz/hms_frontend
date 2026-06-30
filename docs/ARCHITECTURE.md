@@ -350,8 +350,10 @@ Rules of thumb:
 // Context exposes the resolved clinic timezone
 const { clinicTimezone } = useClinicTimezone();
 
-// Formatters use the resolved clinic timezone automatically
-const formatted = formatWithTimezone(date); // Uses clinic timezone from env
+// React components: useDateHelpers(); non-React code: getTodayClinic() / formatDateClinic()
+const { getTodayDate, formatDate } = useDateHelpers();
+const today = getTodayDate();
+const formatted = formatDate(date);
 ```
 
 **Features:**

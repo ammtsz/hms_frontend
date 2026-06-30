@@ -69,7 +69,7 @@ This checklist covers all features and edge cases for the Healthcare Management 
 - [ ] Top navigation shows the read-only clinic timezone label
 - [ ] No timezone selector is exposed in the UI
 - [ ] Date formatting uses the clinic timezone consistently
-- [ ] Invalid timezone env values fall back to `America/Sao_Paulo`
+- [ ] Invalid timezone env values fall back to `America/Vancouver`
 
 ---
 

@@ -28,7 +28,7 @@ Create a .env.local file with the values required by the frontend and auth flow.
 API_URL=http://localhost:3002
 JWT_SECRET=your_shared_secret
 BFF_INTERNAL_SECRET=your_shared_secret
-NEXT_PUBLIC_CLINIC_TIMEZONE=America/Sao_Paulo
+NEXT_PUBLIC_CLINIC_TIMEZONE=America/Vancouver
 ```
 
 If you use the BFF auth flow, also set BFF_INTERNAL_SECRET to the same value as the backend.

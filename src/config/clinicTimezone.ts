@@ -1,7 +1,7 @@
 /**
  * Clinic timezone from deployment env (must match backend CLINIC_TIMEZONE).
  */
-export const DEFAULT_CLINIC_TIMEZONE = 'America/Sao_Paulo';
+export const DEFAULT_CLINIC_TIMEZONE = 'America/Vancouver';
 
 function resolveClinicTimezoneFromEnv(): string {
   const raw = process.env.NEXT_PUBLIC_CLINIC_TIMEZONE?.trim();

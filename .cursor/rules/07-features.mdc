@@ -33,7 +33,7 @@ alwaysApply: true
 
 ### Cross-Cutting Features
 
-- **Timezone Support** - 12 timezones, browser detection, localStorage persistence
+- **Timezone Support** - Fixed clinic timezone from `NEXT_PUBLIC_CLINIC_TIMEZONE` (must match backend `CLINIC_TIMEZONE`)
 - **Form Handling** - Client-side validation, Portuguese error messages
 - **Error Handling** - Error boundaries, loading states, retry mechanisms
 

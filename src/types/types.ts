@@ -109,7 +109,6 @@ export interface Patient extends PatientBasic {
   mainConcern: string,
   startDate: string, // YYYY-MM-DD string format
   dischargeDate: string | null, // YYYY-MM-DD string format or null
-  timezone?: string,
   nextAppointmentDates: {
     date: string, // YYYY-MM-DD string format
     type: AppointmentType,

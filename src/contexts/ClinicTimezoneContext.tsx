@@ -2,13 +2,9 @@
 
 import React, { createContext, useContext, useMemo } from "react";
 import { CLINIC_TIMEZONE } from "@/config/clinicTimezone";
-import { getTimezoneOffsetString } from "@/utils/timezoneUtils";
-import { getTodayInTimezone } from "@/utils/timezoneDate";
 
 export interface ClinicTimezoneContextValue {
   clinicTimezone: string;
-  clinicTimezoneLabel: string;
-  clinicToday: string;
 }
 
 const ClinicTimezoneContext = createContext<ClinicTimezoneContextValue | undefined>(
@@ -20,14 +16,12 @@ export function ClinicTimezoneProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const value = useMemo((): ClinicTimezoneContextValue => {
-    const offset = getTimezoneOffsetString(CLINIC_TIMEZONE);
-    return {
+  const value = useMemo(
+    (): ClinicTimezoneContextValue => ({
       clinicTimezone: CLINIC_TIMEZONE,
-      clinicTimezoneLabel: offset,
-      clinicToday: getTodayInTimezone(CLINIC_TIMEZONE),
-    };
-  }, []);
+    }),
+    [],
+  );
 
   return (
     <ClinicTimezoneContext.Provider value={value}>

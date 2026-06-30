@@ -9,18 +9,13 @@
 
 import { useCallback } from "react";
 import { useClinicTimezone } from "@/contexts/ClinicTimezoneContext";
-import {
-  getTodayInTimezone,
-  formatDateInTimezone as formatDateInTz,
-} from "@/utils/timezoneDate";
+import { getTodayInTimezone } from "@/utils/timezoneDate";
 
 const DISPLAY_LOCALE = "en-US";
 
 export interface UseDateHelpersReturn {
   getTodayDate: () => string;
   formatDate: (date?: string | Date | null) => string;
-  getNow: () => Date;
-  formatDateInTimezone: (date: string | Date, timezone?: string) => string;
   /** Format a calendar date as MM/DD/YYYY (en-US display). */
   formatDisplayDate: (date?: string | Date | null) => string;
 }
@@ -76,23 +71,9 @@ export function useDateHelpers(): UseDateHelpersReturn {
     [formatDate],
   );
 
-  const getNow = useCallback((): Date => {
-    return new Date();
-  }, []);
-
-  const formatDateInTimezone = useCallback(
-    (date: string | Date, timezone?: string): string => {
-      const targetTimezone = timezone || clinicTimezone;
-      return formatDateInTz(date, targetTimezone);
-    },
-    [clinicTimezone],
-  );
-
   return {
     getTodayDate,
     formatDate,
-    getNow,
-    formatDateInTimezone,
     formatDisplayDate,
   };
 }

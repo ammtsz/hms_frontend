@@ -15,15 +15,15 @@ import {
 describe('timezoneDate utilities', () => {
   describe('getTodayInTimezone', () => {
     it('should return date in YYYY-MM-DD format', () => {
-      const result = getTodayInTimezone('America/Sao_Paulo');
+      const result = getTodayInTimezone('America/Vancouver');
       expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
     it('should return different dates for different timezones', () => {
-      const saoPaulo = getTodayInTimezone('America/Sao_Paulo');
+      const vancouver = getTodayInTimezone('America/Vancouver');
       const tokyo = getTodayInTimezone('Asia/Tokyo');
 
-      expect(saoPaulo).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(vancouver).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(tokyo).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
@@ -53,36 +53,36 @@ describe('timezoneDate utilities', () => {
 
   describe('formatDateInTimezone', () => {
     it('should format date string in specified timezone', () => {
-      const result = formatDateInTimezone('2026-01-21', 'America/Sao_Paulo');
+      const result = formatDateInTimezone('2026-01-21', 'America/Vancouver');
       expect(result).toBe('2026-01-21');
     });
 
     it('should format Date object in specified timezone', () => {
       const date = new Date('2026-01-21T12:00:00Z');
-      const result = formatDateInTimezone(date, 'America/Sao_Paulo');
+      const result = formatDateInTimezone(date, 'America/Vancouver');
       expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
     it('should return today if date is null', () => {
-      const result = formatDateInTimezone(null, 'America/Sao_Paulo');
-      const expected = getTodayInTimezone('America/Sao_Paulo');
+      const result = formatDateInTimezone(null, 'America/Vancouver');
+      const expected = getTodayInTimezone('America/Vancouver');
       expect(result).toBe(expected);
     });
 
     it('should return today if date is undefined', () => {
-      const result = formatDateInTimezone(undefined, 'America/Sao_Paulo');
-      const expected = getTodayInTimezone('America/Sao_Paulo');
+      const result = formatDateInTimezone(undefined, 'America/Vancouver');
+      const expected = getTodayInTimezone('America/Vancouver');
       expect(result).toBe(expected);
     });
 
     it('should handle already formatted YYYY-MM-DD strings', () => {
-      const result = formatDateInTimezone('2026-01-21', 'America/Sao_Paulo');
+      const result = formatDateInTimezone('2026-01-21', 'America/Vancouver');
       expect(result).toBe('2026-01-21');
     });
 
     it('should handle invalid date strings gracefully', () => {
       const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation();
-      const result = formatDateInTimezone('invalid-date', 'America/Sao_Paulo');
+      const result = formatDateInTimezone('invalid-date', 'America/Vancouver');
 
       expect(result).toMatch(/^\d{4}-\d{2}-\d{2}$/);
       expect(consoleWarnSpy).toHaveBeenCalled();
@@ -127,8 +127,8 @@ describe('timezoneDate utilities', () => {
 
   describe('timezone consistency', () => {
     it('should produce consistent results for same timezone', () => {
-      const result1 = getTodayInTimezone('America/Sao_Paulo');
-      const result2 = getTodayInTimezone('America/Sao_Paulo');
+      const result1 = getTodayInTimezone('America/Vancouver');
+      const result2 = getTodayInTimezone('America/Vancouver');
 
       expect(result1).toBe(result2);
     });

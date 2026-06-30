@@ -132,7 +132,7 @@ export const useSetSelectedDate = () =>
 
 ### Current Usage
 
-- **Timezone Settings** - see [TimezoneContext.tsx](mdc:src/contexts/TimezoneContext.tsx)
+- **Clinic Timezone** - see [ClinicTimezoneContext.tsx](mdc:src/contexts/ClinicTimezoneContext.tsx)
 - **Theme Preferences** (planned)
 
 ### Context Pattern

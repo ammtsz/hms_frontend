@@ -126,8 +126,8 @@ describe("UnresolvedPastAppointmentsModal", () => {
       expect(screen.getByText("01/28/2026")).toBeInTheDocument();
 
       // Check counts
-      expect(screen.getByText(/3\s+3\s+appointments/)).toBeInTheDocument();
-      expect(screen.getByText(/2\s+2\s+appointments/)).toBeInTheDocument();
+      expect(screen.getByText(/3\s+appointments/)).toBeInTheDocument();
+      expect(screen.getByText(/2\s+appointments/)).toBeInTheDocument();
     });
 
     it("should translate statuses to English labels", () => {

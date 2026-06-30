@@ -46,13 +46,11 @@ describe("TopNavigation", () => {
   const mockPush = jest.fn();
 
   const mockClinicTimezoneValue = {
-    clinicTimezone: "America/Sao_Paulo",
-    clinicTimezoneLabel: "GMT-3",
-    clinicToday: "2024-01-15",
+    clinicTimezone: "America/Vancouver",
   };
 
   const originalNodeEnv = process.env.NODE_ENV;
-  const clinicTimezoneLabelText = "São Paulo (GMT-3)";
+  const clinicTimezoneLabelText = "Vancouver (GMT-8)";
 
   const mockAuthUser: User = {
     id: 1,
@@ -68,8 +66,8 @@ describe("TopNavigation", () => {
 
   beforeEach(() => {
     mockUseClinicTimezone.mockReturnValue(mockClinicTimezoneValue);
-    mockGetTimezoneCityName.mockReturnValue("São Paulo");
-    mockGetTimezoneOffsetString.mockReturnValue("GMT-3");
+    mockGetTimezoneCityName.mockReturnValue("Vancouver");
+    mockGetTimezoneOffsetString.mockReturnValue("GMT-8");
 
     mockUseAuthContext.mockReturnValue({
       user: mockAuthUser,
@@ -151,13 +149,13 @@ describe("TopNavigation", () => {
     it("should show read-only clinic timezone label", () => {
       render(<TopNavigation />);
 
-      expect(screen.getByText("São Paulo (GMT-3)")).toBeInTheDocument();
+      expect(screen.getByText("Vancouver (GMT-8)")).toBeInTheDocument();
     });
 
     it("should show timezone display on desktop but not on mobile", () => {
       render(<TopNavigation />);
 
-      const timezoneText = screen.getByText("São Paulo (GMT-3)");
+      const timezoneText = screen.getByText("Vancouver (GMT-8)");
       expect(timezoneText).toHaveClass("hidden", "sm:inline");
     });
 
@@ -174,7 +172,7 @@ describe("TopNavigation", () => {
       render(<TopNavigation />);
 
       const timezoneContainer =
-        screen.getByText("São Paulo (GMT-3)").parentElement;
+        screen.getByText("Vancouver (GMT-8)").parentElement;
       expect(timezoneContainer).toHaveClass(
         "flex",
         "items-center",
@@ -273,8 +271,6 @@ describe("TopNavigation", () => {
     it("should render when clinic timezone is empty", () => {
       mockUseClinicTimezone.mockReturnValue({
         clinicTimezone: "",
-        clinicTimezoneLabel: "GMT",
-        clinicToday: "2024-01-15",
       });
 
       render(<TopNavigation />);

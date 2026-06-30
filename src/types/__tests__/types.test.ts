@@ -124,7 +124,6 @@ describe('Type System', () => {
         mainConcern: "Test complaint",
         startDate: "2025-01-01",
         dischargeDate: null,
-        timezone: "America/Sao_Paulo",
         nextAppointmentDates: [{
           date: "2025-01-15",
           type: "assessment"
@@ -143,7 +142,6 @@ describe('Type System', () => {
       };
       
       expect(patient.name).toBe("Test Patient");
-      expect(patient.timezone).toBe("America/Sao_Paulo");
       expect(patient.nextAppointmentDates).toHaveLength(1);
     });
   });

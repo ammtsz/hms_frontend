@@ -57,7 +57,7 @@ JWT_SECRET=CHANGE_ME_same_as_backend
 NODE_ENV=development
 
 # Clinic timezone (fixed per deployment; must match backend CLINIC_TIMEZONE)
-NEXT_PUBLIC_CLINIC_TIMEZONE=America/Sao_Paulo
+NEXT_PUBLIC_CLINIC_TIMEZONE=America/Vancouver
 ```
 
 > **Note:** `JWT_SECRET` must also be set here because `proxy.ts` verifies
@@ -67,7 +67,7 @@ NEXT_PUBLIC_CLINIC_TIMEZONE=America/Sao_Paulo
 > validated by the backend only.
 >
 > The backend typically runs on port 3002. Adjust `API_URL` if different.
-> Set `CLINIC_TIMEZONE=America/Sao_Paulo` on the backend with the same fixed
+> Set `CLINIC_TIMEZONE=America/Vancouver` on the backend with the same fixed
 > IANA value as `NEXT_PUBLIC_CLINIC_TIMEZONE`. The clinic timezone is a
 > deployment setting; users do not pick timezones in the UI.
 
@@ -200,7 +200,7 @@ API_URL=https://your-backend-api.com
 BFF_INTERNAL_SECRET=<same value as Railway>
 JWT_SECRET=<same value as backend>
 NODE_ENV=production
-NEXT_PUBLIC_CLINIC_TIMEZONE=America/Sao_Paulo
+NEXT_PUBLIC_CLINIC_TIMEZONE=America/Vancouver
 ```
 
 > **Do NOT** set `NEXT_PUBLIC_API_URL` for server-side code. Add it only if a

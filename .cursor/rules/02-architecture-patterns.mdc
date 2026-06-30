@@ -27,7 +27,7 @@ const setSelectedDate = useBoardStore((state) => state.setSelectedDate);
 
 ```typescript
 // ✅ CORRECT: Global settings with Context
-const { currentTimezone } = useTimezone();
+const { clinicTimezone } = useClinicTimezone();
 ```
 
 ## Component Organization

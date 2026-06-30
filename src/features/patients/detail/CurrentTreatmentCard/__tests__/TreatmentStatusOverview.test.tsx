@@ -40,7 +40,6 @@ const mockPatient: Patient = {
   priority: "2",
   startDate: "2024-01-15",
   dischargeDate: "2024-06-15",
-  timezone: "America/Sao_Paulo",
   nextAppointmentDates: [
     {
       date: "2024-12-28",

@@ -9,7 +9,7 @@ import { CLINIC_TIMEZONE } from '@/config/clinicTimezone';
 
 /**
  * Get today's date in YYYY-MM-DD format in a specific timezone
- * @param timezone - IANA timezone identifier (e.g., "America/Los_Angeles", "America/Sao_Paulo")
+ * @param timezone - IANA timezone identifier (e.g., "America/Vancouver", "America/Los_Angeles")
  * @returns Date string in YYYY-MM-DD format
  */
 export function getTodayInTimezone(timezone: string): string {

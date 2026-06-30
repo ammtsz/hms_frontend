@@ -20,7 +20,7 @@ describe('useDateHelpers', () => {
       expect(today).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 
-    it('should use user timezone from context', () => {
+    it('should use clinic timezone from context', () => {
       const { result } = renderHook(() => useDateHelpers(), { wrapper });
       
       const today = result.current.getTodayDate();
@@ -75,53 +75,6 @@ describe('useDateHelpers', () => {
       expect(consoleWarnSpy).toHaveBeenCalled();
       
       consoleWarnSpy.mockRestore();
-    });
-  });
-
-  describe('getNow', () => {
-    it('should return a Date object', () => {
-      const { result } = renderHook(() => useDateHelpers(), { wrapper });
-      
-      const now = result.current.getNow();
-      expect(now).toBeInstanceOf(Date);
-    });
-
-    it('should return current time', () => {
-      const { result } = renderHook(() => useDateHelpers(), { wrapper });
-      
-      const before = Date.now();
-      const now = result.current.getNow();
-      const after = Date.now();
-      
-      expect(now.getTime()).toBeGreaterThanOrEqual(before);
-      expect(now.getTime()).toBeLessThanOrEqual(after);
-    });
-  });
-
-  describe('formatDateInTimezone', () => {
-    it('should format date in specified timezone', () => {
-      const { result } = renderHook(() => useDateHelpers(), { wrapper });
-      
-      const date = new Date('2026-01-21T12:00:00Z');
-      const formatted = result.current.formatDateInTimezone(date, 'America/Los_Angeles');
-      
-      expect(formatted).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    });
-
-    it('should use user timezone if not specified', () => {
-      const { result } = renderHook(() => useDateHelpers(), { wrapper });
-      
-      const date = new Date('2026-01-21T12:00:00Z');
-      const formatted = result.current.formatDateInTimezone(date);
-      
-      expect(formatted).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    });
-
-    it('should handle string dates', () => {
-      const { result } = renderHook(() => useDateHelpers(), { wrapper });
-      
-      const formatted = result.current.formatDateInTimezone('2026-01-21', 'America/Sao_Paulo');
-      expect(formatted).toBe('2026-01-21');
     });
   });
 

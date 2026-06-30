@@ -10,7 +10,7 @@ description: Enforces timezone-aware date handling to prevent UTC vs local timez
 ## ❌ NEVER DO THIS
 
 ```typescript
-// WRONG - Returns UTC date, not user's timezone
+// WRONG - Returns UTC date, not clinic timezone
 const today = new Date().toISOString().slice(0, 10);
 
 // WRONG - In stores
@@ -63,7 +63,7 @@ Need a date?
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | Get today         | `const { getTodayDate } = useDateHelpers();<br>const today = getTodayDate();`                                             | `import { getTodayClinic } from '@/utils/timezoneDate';<br>const today = getTodayClinic();`                               |
 | Format date       | `const { formatDate } = useDateHelpers();<br>const formatted = formatDate(date);`                                         | `import { formatDateClinic } from '@/utils/timezoneDate';<br>const formatted = formatDateClinic(date);`                   |
-| Specific timezone | `const { formatDateInTimezone } = useDateHelpers();<br>const laDate = formatDateInTimezone(date, "America/Los_Angeles");` | `import { getTodayInTimezone } from '@/utils/timezoneDate';<br>const laDate = getTodayInTimezone("America/Los_Angeles");` |
+| Specific timezone | `import { formatDateInTimezone } from '@/utils/timezoneDate';<br>const laDate = formatDateInTimezone(date, "America/Los_Angeles");` | `import { getTodayInTimezone } from '@/utils/timezoneDate';<br>const laDate = getTodayInTimezone("America/Los_Angeles");` |
 
 ## Usage Context Reference
 
