@@ -30,6 +30,10 @@ describe("getBackendUrl – H3 server-only URL", () => {
     ).restore;
   }
 
+  function setProductionServerPhase(): void {
+    process.env.NEXT_PHASE = "phase-production-server";
+  }
+
   it("returns API_URL when set", async () => {
     process.env.API_URL = "https://api.example.com";
     delete process.env.NEXT_PUBLIC_API_URL;
@@ -61,6 +65,7 @@ describe("getBackendUrl – H3 server-only URL", () => {
   it("throws in production when API_URL is absent", async () => {
     delete process.env.API_URL;
     setNodeEnv("production");
+    setProductionServerPhase();
     const { getBackendUrl } = await import("../getBackendUrl");
     expect(() => getBackendUrl()).toThrow(
       "API_URL environment variable must be set in production",
@@ -75,5 +80,37 @@ describe("getBackendUrl – H3 server-only URL", () => {
     const url = getBackendUrl();
     expect(url).not.toBe("https://should-not-be-used.example.com");
     expect(url).toBe("http://localhost:3002");
+  });
+
+  it("strips trailing slashes from API_URL", async () => {
+    process.env.API_URL = "https://api.example.com/";
+    setNodeEnv("production");
+    setProductionServerPhase();
+    const { getBackendUrl } = await import("../getBackendUrl");
+    expect(getBackendUrl()).toBe("https://api.example.com");
+  });
+
+  it("rejects railway.internal hostnames in production", async () => {
+    process.env.API_URL = "https://postgres.railway.internal:5432";
+    setNodeEnv("production");
+    setProductionServerPhase();
+    const { getBackendUrl } = await import("../getBackendUrl");
+    expect(() => getBackendUrl()).toThrow("public Railway backend URL");
+  });
+
+  it("rejects localhost API_URL in production", async () => {
+    process.env.API_URL = "http://localhost:3002";
+    setNodeEnv("production");
+    setProductionServerPhase();
+    const { getBackendUrl } = await import("../getBackendUrl");
+    expect(() => getBackendUrl()).toThrow("cannot point to localhost");
+  });
+
+  it("allows localhost API_URL during production build", async () => {
+    process.env.API_URL = "http://localhost:3002";
+    setNodeEnv("production");
+    process.env.NEXT_PHASE = "phase-production-build";
+    const { getBackendUrl } = await import("../getBackendUrl");
+    expect(getBackendUrl()).toBe("http://localhost:3002");
   });
 });

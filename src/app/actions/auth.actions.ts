@@ -21,8 +21,67 @@ import {
 } from '@/api/utils/functions';
 import { AUTH_ERROR_MESSAGES } from '@/utils/authFormLabels';
 
-// Server-only backend URL (H3): uses private API_URL, never exposes NEXT_PUBLIC_API_URL
-const BACKEND_URL = getBackendUrl();
+/** Detailed ops messages are for development/logs only — never expose infra details in production UI. */
+function isProductionLoginErrorMode(): boolean {
+  return process.env.NODE_ENV === 'production';
+}
+
+function userFacingLoginError(detailedMessage: string): string {
+  return isProductionLoginErrorMode()
+    ? AUTH_ERROR_MESSAGES.loginFailedGeneric
+    : detailedMessage;
+}
+
+function formatLoginCatchError(error: unknown): string {
+  if (isProductionLoginErrorMode()) {
+    return AUTH_ERROR_MESSAGES.loginFailedGeneric;
+  }
+
+  if (!(error instanceof Error)) {
+    return AUTH_ERROR_MESSAGES.loginFailedGeneric;
+  }
+
+  const message = error.message;
+
+  if (
+    message.includes('API_URL') ||
+    message.includes('BFF_INTERNAL_SECRET') ||
+    message.includes('Login response missing tokens')
+  ) {
+    return message;
+  }
+
+  const cause = error.cause;
+  const causeCode =
+    cause &&
+    typeof cause === 'object' &&
+    'code' in cause &&
+    typeof cause.code === 'string'
+      ? cause.code
+      : undefined;
+
+  if (
+    message.includes('fetch failed') ||
+    causeCode === 'ENOTFOUND' ||
+    causeCode === 'ECONNREFUSED' ||
+    causeCode === 'ECONNRESET' ||
+    causeCode === 'ETIMEDOUT'
+  ) {
+    return (
+      'Cannot reach the backend from Vercel. Verify API_URL is the public Railway HTTPS URL ' +
+      '(https://your-backend.up.railway.app), not localhost or railway.internal.'
+    );
+  }
+
+  if (error instanceof SyntaxError) {
+    return (
+      'Backend returned an invalid login response. Verify API_URL points to the NestJS backend, ' +
+      'not the database or another Railway service.'
+    );
+  }
+
+  return AUTH_ERROR_MESSAGES.loginFailedGeneric;
+}
 
 /**
  * Login action - authenticates user and sets HTTP-only cookies
@@ -31,7 +90,8 @@ export async function loginAction(
   credentials: LoginCredentials
 ): Promise<ServerActionResult<User>> {
   try {
-    const response = await fetch(`${BACKEND_URL}/auth/login`, {
+    const backendUrl = getBackendUrl();
+    const response = await fetch(`${backendUrl}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,6 +106,22 @@ export async function loginAction(
 
     if (!response.ok) {
       const errorData = (await response.json().catch(() => ({}))) as ClientErrorBody;
+      const backendMessage =
+        typeof errorData.message === 'string' ? errorData.message : undefined;
+
+      // BffSecretGuard returns 401 "Unauthorized" — distinct from bad credentials
+      if (
+        response.status === 401 &&
+        backendMessage === 'Unauthorized'
+      ) {
+        return {
+          success: false,
+          error: userFacingLoginError(
+            'Login blocked by backend security check. Verify BFF_INTERNAL_SECRET matches on Vercel and Railway, then redeploy both services.',
+          ),
+        };
+      }
+
       return {
         success: false,
         error: resolveClientErrorMessage(response.status, errorData, {
@@ -57,11 +133,22 @@ export async function loginAction(
     const data = await response.json();
     // Transform snake_case to camelCase (backend returns snake_case)
     const transformed = transformKeys.toCamelCase(data) as {
-      accessToken: string;
-      refreshToken: string;
-      user: User;
+      accessToken?: string;
+      refreshToken?: string;
+      user?: User;
     };
     const { accessToken, refreshToken, user } = transformed;
+
+    if (!accessToken || !refreshToken || !user) {
+      console.error('Login response missing tokens or user', {
+        hasAccessToken: Boolean(accessToken),
+        hasRefreshToken: Boolean(refreshToken),
+        hasUser: Boolean(user),
+      });
+      throw new Error(
+        'Login response missing tokens. Verify API_URL points to the NestJS backend.',
+      );
+    }
 
     // Store tokens in HTTP-only cookies (secure, not accessible to JavaScript)
     const cookieStore = await cookies();
@@ -75,9 +162,10 @@ export async function loginAction(
     };
   } catch (error) {
     console.error('Login error:', error);
+
     return {
       success: false,
-      error: AUTH_ERROR_MESSAGES.loginFailedGeneric,
+      error: formatLoginCatchError(error),
     };
   }
 }
@@ -87,6 +175,7 @@ export async function loginAction(
  */
 export async function logoutAction(): Promise<void> {
   try {
+    const backendUrl = getBackendUrl();
     const cookieStore = await cookies();
     const accessToken = cookieStore.get('access_token')?.value;
     const refreshToken = cookieStore.get('refresh_token')?.value;
@@ -101,7 +190,7 @@ export async function logoutAction(): Promise<void> {
         .filter(Boolean)
         .join('; ');
 
-      await fetch(`${BACKEND_URL}/auth/logout`, {
+      await fetch(`${backendUrl}/auth/logout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

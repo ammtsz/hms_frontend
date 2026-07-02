@@ -6,7 +6,7 @@ export const BFF_SECRET_HEADER = 'x-bff-secret';
  * Server-only: BFF_INTERNAL_SECRET must never use NEXT_PUBLIC_ prefix.
  */
 export function getBffSecretHeaders(): Record<string, string> {
-  const secret = process.env.BFF_INTERNAL_SECRET;
+  const secret = process.env.BFF_INTERNAL_SECRET?.trim();
   if (!secret) {
     if (process.env.NODE_ENV === 'production') {
       throw new Error(

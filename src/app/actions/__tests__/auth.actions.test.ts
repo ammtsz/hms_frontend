@@ -34,6 +34,15 @@ jest.mock('next/headers', () => ({
 global.fetch = jest.fn();
 
 describe('auth.actions', () => {
+  const originalNodeEnv = process.env.NODE_ENV;
+
+  afterEach(() => {
+    Object.defineProperty(process.env, 'NODE_ENV', {
+      value: originalNodeEnv,
+      configurable: true,
+    });
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     delete process.env.BFF_INTERNAL_SECRET;
@@ -206,6 +215,66 @@ describe('auth.actions', () => {
       const result = await loginAction({
         email: 'test@example.com',
         password: 'password123',
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe(AUTH_ERROR_MESSAGES.loginFailedGeneric);
+    });
+
+    it('returns generic error for BFF rejection in production', async () => {
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'production',
+        configurable: true,
+      });
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        json: async () => ({ message: 'Unauthorized' }),
+      });
+
+      const result = await loginAction({
+        email: 'test@example.com',
+        password: 'password123456',
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toBe(AUTH_ERROR_MESSAGES.loginFailedGeneric);
+    });
+
+    it('returns detailed BFF rejection message in development', async () => {
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'development',
+        configurable: true,
+      });
+      (global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        json: async () => ({ message: 'Unauthorized' }),
+      });
+
+      const result = await loginAction({
+        email: 'test@example.com',
+        password: 'password123456',
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('BFF_INTERNAL_SECRET');
+    });
+
+    it('returns generic error for network failures in production', async () => {
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'production',
+        configurable: true,
+      });
+      const networkError = new Error('fetch failed');
+      (networkError as Error & { cause: { code: string } }).cause = {
+        code: 'ENOTFOUND',
+      };
+      (global.fetch as jest.Mock).mockRejectedValueOnce(networkError);
+
+      const result = await loginAction({
+        email: 'test@example.com',
+        password: 'password123456',
       });
 
       expect(result.success).toBe(false);
