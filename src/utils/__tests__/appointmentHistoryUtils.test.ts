@@ -718,6 +718,67 @@ describe('appointmentHistoryUtils', () => {
       expect(result[1].date).toBe('2025-01-10');
     });
 
+    it('should merge physiotherapy when appointment date is ISO and session is UTC midnight', () => {
+      const appointments: PreviousAppointment[] = [
+        {
+          appointmentId: '26',
+          date: '2026-01-04',
+          type: 'assessment',
+          notes: '',
+          recommendations: null,
+          status: 'completed',
+          createdDate: '2026-01-04',
+          updatedDate: '2026-01-04',
+        },
+        {
+          appointmentId: '27',
+          date: '2026-01-11T00:00:00.000Z',
+          type: 'physiotherapy',
+          notes: '',
+          recommendations: null,
+          status: 'completed',
+          createdDate: '2026-01-10',
+          updatedDate: '2026-01-10',
+        },
+      ];
+
+      const sessions: SessionResponseDto[] = [
+        {
+          id: 23,
+          treatmentId: 5,
+          appointmentId: 27,
+          sessionNumber: 1,
+          scheduledDate: '2026-01-11T00:00:00.000Z',
+          status: 'completed',
+        } as SessionResponseDto,
+      ];
+
+      const treatments: TreatmentResponseDto[] = [
+        {
+          id: 5,
+          appointmentId: 26,
+          consultationId: 1,
+          patientId: 4,
+          treatmentType: 'physiotherapy',
+          bodyLocation: 'Left Knee',
+          plannedSessions: 4,
+          completedSessions: 1,
+          status: 'completed',
+          durationMinutes: 45,
+          sessions,
+        } as TreatmentResponseDto,
+      ];
+
+      const result = groupHistoryAppointmentsByDate(appointments, treatments, []);
+
+      const physioCard = result.find((entry) => entry.date === '2026-01-11');
+      expect(physioCard).toBeDefined();
+      expect(physioCard!.treatments.physiotherapy?.sessionNumber).toBe('1/4');
+      expect(physioCard!.treatments.physiotherapy?.bodyLocations).toEqual([
+        'Left Knee',
+      ]);
+    });
+
     it('should create new appointment entry when treatment session has no matching appointment', () => {
       const sessionRecord: SessionResponseDto = {
         id: 1,

@@ -2,6 +2,7 @@ import { groupScheduledAppointmentsByDate } from "../appointmentHistoryUtils";
 import type { TreatmentResponseDto } from "@/api/types";
 
 jest.mock("@/utils/timezoneDate", () => ({
+  ...jest.requireActual<typeof import("@/utils/timezoneDate")>("@/utils/timezoneDate"),
   getTodayClinic: () => "2026-02-20",
 }));
 

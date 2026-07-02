@@ -4,7 +4,7 @@ import type {
   SessionResponseDto,
 } from "@/api/types";
 import type { PreviousAppointment, AppointmentType } from "@/types/types";
-import { formatDateClinic, getTodayClinic } from "@/utils/timezoneDate";
+import { getTodayClinic, toCalendarDateString } from "@/utils/timezoneDate";
 
 // Grouped appointment by date and treatment type
 export interface GroupedAppointment {
@@ -57,7 +57,13 @@ export interface GroupedAppointment {
 
 /** Build map key from date and status so same-day appointments with different statuses stay separate */
 const dateStatusKey = (date: string, status?: string): string =>
-  `${date}-${status ?? "completed"}`;
+  `${toCalendarDateString(date)}-${status ?? "completed"}`;
+
+/** Extract YYYY-MM-DD from a date-status map key (e.g. `2026-03-11-completed`). */
+const parseDateFromDateStatusKey = (dateKey: string): string => {
+  const match = dateKey.match(/^(\d{4}-\d{2}-\d{2})-/);
+  return match ? match[1] : toCalendarDateString(dateKey);
+};
 
 /** Combine notes from different appointments on the same date */
 const combineNotes = (existingNotes: string | undefined, newNotes: string | undefined) => {
@@ -104,7 +110,7 @@ const createBaseAppointments = (
 
     if (!appointmentMap.has(key)) {
       appointmentMap.set(key, {
-        date: appointment.date,
+        date: toCalendarDateString(appointment.date),
         appointmentId: appointment.appointmentId,
         appointmentIds: [appointment.appointmentId],
         notes: appointment.notes,
@@ -210,7 +216,7 @@ const groupTreatmentsByDateForHistory = (
 
     treatment.sessions?.forEach((sessionRow) => {
       const sessionRowStatus = sessionRow.status;
-      const sessionDate = formatDateClinic(sessionRow.scheduledDate);
+      const sessionDate = toCalendarDateString(sessionRow.scheduledDate);
 
       if (sessionDate <= clinicToday) {
         const dateKey = dateStatusKey(sessionDate, sessionRowStatus);
@@ -291,13 +297,13 @@ const mergeTreatmentDataIntoAppointments = (
         ids.push(String(treatmentData.tens.appointmentId));
 
       grouped = {
-        date: dateKey.split("-")[0],
+        date: parseDateFromDateStatusKey(dateKey),
         appointmentId: appointmentId.toString(),
         appointmentIds: ids.length > 0 ? ids : [appointmentId.toString()],
         notes,
         absenceNotes: treatmentData.physiotherapy?.appointmentNotes || treatmentData.tens?.appointmentNotes,
-        createdDate: dateKey.split("-")[0],
-        updatedDate: dateKey.split("-")[0],
+        createdDate: parseDateFromDateStatusKey(dateKey),
+        updatedDate: parseDateFromDateStatusKey(dateKey),
         cancelledDate: undefined,
         treatments: {},
       };
@@ -537,7 +543,7 @@ const groupScheduledTreatmentsByDate = (
 
     treatment.sessions?.forEach((sessionRow) => {
         // Use the session row's scheduled date
-        const date = sessionRow.scheduledDate.split("T")[0];
+        const date = toCalendarDateString(sessionRow.scheduledDate);
         const dateKey = dateStatusKey(date, sessionRow.status);
         const sessionDate = new Date(date + "T00:00:00");
 

@@ -7,7 +7,7 @@ import {
   AppointmentStatus as ApiAppointmentStatus, 
   UpdateConsultationResponseDto
 } from '@/api/types';
-import { formatDateClinic } from '@/utils/timezoneDate';
+import { formatDateClinic, toCalendarDateString } from '@/utils/timezoneDate';
 import { 
   PatientBasic,
   Patient,
@@ -132,7 +132,7 @@ export const transformSinglePatientFromApi = (apiPatient: PatientResponseDto): P
 export const transformAppointmentToPrevious = (apiAppointment: AppointmentResponseDto): PreviousAppointment => {
   return {
     appointmentId: apiAppointment.id.toString(),
-    date: apiAppointment.scheduledDate, // Keep as string: "YYYY-MM-DD"
+    date: toCalendarDateString(apiAppointment.scheduledDate), // YYYY-MM-DD
     type: transformAppointmentType(apiAppointment.type),
     notes: apiAppointment.notes || '',
     recommendations: null, // TODO: We need to implement recommendations mapping when backend provides this data
@@ -141,7 +141,9 @@ export const transformAppointmentToPrevious = (apiAppointment: AppointmentRespon
     absenceJustified: apiAppointment.absenceJustified,
     createdDate: apiAppointment.createdAt.split("T")[0],
     updatedDate: apiAppointment.updatedAt.split("T")[0],
-    cancelledDate: apiAppointment.cancelledDate,
+    cancelledDate: apiAppointment.cancelledDate
+      ? toCalendarDateString(apiAppointment.cancelledDate)
+      : apiAppointment.cancelledDate,
   };
 };
 
@@ -160,7 +162,7 @@ export const transformAppointmentToNext = (apiAppointment: AppointmentResponseDt
 } => {
   return {
     appointmentId: String(apiAppointment.id),
-    date: apiAppointment.scheduledDate, // Keep as string: "YYYY-MM-DD"
+    date: toCalendarDateString(apiAppointment.scheduledDate), // YYYY-MM-DD
     type: transformAppointmentType(apiAppointment.type),
     parentAppointmentId: apiAppointment.parentAppointmentId,
     status: apiAppointment.status as 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled',
@@ -168,7 +170,9 @@ export const transformAppointmentToNext = (apiAppointment: AppointmentResponseDt
     notes: apiAppointment.notes,
     createdDate: apiAppointment.createdAt.split("T")[0],
     updatedDate: apiAppointment.updatedAt.split("T")[0],
-    cancelledDate: apiAppointment.cancelledDate,
+    cancelledDate: apiAppointment.cancelledDate
+      ? toCalendarDateString(apiAppointment.cancelledDate)
+      : apiAppointment.cancelledDate,
   };
 };
 
