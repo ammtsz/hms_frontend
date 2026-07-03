@@ -170,7 +170,7 @@ describe("NewPatientCheckInForm", () => {
 
     expect(screen.getByDisplayValue("John Smith")).toBeInTheDocument();
     expect(screen.getByDisplayValue("(555) 123-4567")).toBeInTheDocument();
-    expect(screen.getByDisplayValue("1990-01-01")).toBeInTheDocument();
+    expect(screen.getByDisplayValue("01/01/1990")).toBeInTheDocument();
 
     // Check priority select by getting the element and checking its value
     const prioritySelect = screen.getByRole("combobox");
@@ -212,7 +212,7 @@ describe("NewPatientCheckInForm", () => {
     renderComponent();
 
     // Clear birth date field
-    const birthDateInput = screen.getByDisplayValue("1990-01-01");
+    const birthDateInput = screen.getByDisplayValue("01/01/1990");
     fireEvent.change(birthDateInput, { target: { value: "" } });
 
     // Try to submit
@@ -245,10 +245,10 @@ describe("NewPatientCheckInForm", () => {
   it("handles birth date field changes", () => {
     renderComponent();
 
-    const birthDateInput = screen.getByDisplayValue("1990-01-01");
-    fireEvent.change(birthDateInput, { target: { value: "1985-05-15" } });
+    const birthDateInput = screen.getByDisplayValue("01/01/1990");
+    fireEvent.change(birthDateInput, { target: { value: "05/15/1985" } });
 
-    expect(birthDateInput).toHaveValue("1985-05-15");
+    expect(birthDateInput).toHaveValue("05/15/1985");
   });
 
   it("creates new appointment when no appointmentId provided", async () => {

@@ -15,7 +15,7 @@ import { formatPhoneNumber } from "@/utils/formUtils";
 import ErrorDisplay from "@/components/common/ErrorDisplay";
 import { formatDateForInput, getTodayClinic } from "@/utils/timezoneDate";
 import { useSelectablePrioritiesForForm } from "@/features/board/hooks/useSelectablePrioritiesForForm";
-import { Button, Field, Input, Select } from "@/components/ui";
+import { Button, Field, FormDateInput, Input, Select } from "@/components/ui";
 
 interface NewPatientCheckInFormProps {
   patient: Patient;
@@ -187,13 +187,14 @@ const NewPatientCheckInForm: React.FC<NewPatientCheckInFormProps> = ({
         </Field>
 
         <Field label="Birth Date *" htmlFor="new-patient-checkin-birth-date">
-          <Input
+          <FormDateInput
             id="new-patient-checkin-birth-date"
-            type="date"
-            lang="en-US"
             value={formData.birthDate}
-            onChange={(e) => handleInputChange("birthDate", e.target.value)}
+            onValueChange={(isoValue) =>
+              handleInputChange("birthDate", isoValue)
+            }
             disabled={isSubmitting}
+            required
           />
         </Field>
 

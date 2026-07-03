@@ -13,6 +13,8 @@ export { Checkbox } from "./Checkbox";
 export type { CheckboxProps } from "./Checkbox";
 export { Field } from "./Field";
 export type { FieldProps } from "./Field";
+export { FormDateInput } from "./FormDateInput";
+export type { FormDateInputProps } from "./FormDateInput";
 export { IconButton } from "./IconButton";
 export type { IconButtonProps, IconButtonTone } from "./IconButton";
 export { Input } from "./Input";

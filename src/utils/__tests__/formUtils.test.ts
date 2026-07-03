@@ -3,7 +3,10 @@ import {
   formatPhoneNumber,
   createSafeDate,
   validatePhoneFormat,
-  validatePatientForm
+  validatePatientForm,
+  formatBirthDateMask,
+  birthDateIsoToDisplay,
+  birthDateDisplayToIso,
 } from '../formUtils';
 
 describe('formUtils', () => {
@@ -35,6 +38,54 @@ describe('formUtils', () => {
       expect(isValidDateString('2025-0')).toBe(false);
       expect(isValidDateString('2025-02-30')).toBe(false);
       expect(isValidDateString('')).toBe(false);
+    });
+  });
+
+  describe('formatBirthDateMask', () => {
+    it('masks digits as MM/DD/YYYY', () => {
+      expect(formatBirthDateMask('0')).toBe('0');
+      expect(formatBirthDateMask('05')).toBe('05');
+      expect(formatBirthDateMask('051')).toBe('05/1');
+      expect(formatBirthDateMask('0515')).toBe('05/15');
+      expect(formatBirthDateMask('05151990')).toBe('05/15/1990');
+    });
+
+    it('strips non-digits and limits to 8 digits', () => {
+      expect(formatBirthDateMask('05/15/1990')).toBe('05/15/1990');
+      expect(formatBirthDateMask('abc')).toBe('');
+      expect(formatBirthDateMask('051519901234')).toBe('05/15/1990');
+    });
+  });
+
+  describe('birthDateIsoToDisplay', () => {
+    it('converts valid ISO to MM/DD/YYYY', () => {
+      expect(birthDateIsoToDisplay('1990-05-15')).toBe('05/15/1990');
+    });
+
+    it('returns empty for invalid or empty ISO', () => {
+      expect(birthDateIsoToDisplay('')).toBe('');
+      expect(birthDateIsoToDisplay(null)).toBe('');
+      expect(birthDateIsoToDisplay('1990-02-30')).toBe('');
+      expect(birthDateIsoToDisplay('not-a-date')).toBe('');
+    });
+  });
+
+  describe('birthDateDisplayToIso', () => {
+    it('converts complete valid display to ISO', () => {
+      expect(birthDateDisplayToIso('05/15/1990')).toBe('1990-05-15');
+      expect(birthDateDisplayToIso('02/29/2024')).toBe('2024-02-29');
+    });
+
+    it('returns null for incomplete or invalid calendar dates', () => {
+      expect(birthDateDisplayToIso('05/15')).toBeNull();
+      expect(birthDateDisplayToIso('05/15/19')).toBeNull();
+      expect(birthDateDisplayToIso('02/31/1990')).toBeNull();
+      expect(birthDateDisplayToIso('13/01/1990')).toBeNull();
+      expect(birthDateDisplayToIso('')).toBeNull();
+    });
+
+    it('does not reject future dates (form validation owns that)', () => {
+      expect(birthDateDisplayToIso('01/01/2099')).toBe('2099-01-01');
     });
   });
 

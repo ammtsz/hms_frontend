@@ -500,9 +500,9 @@ describe("PatientWalkInForm", () => {
       await user.click(newPatientSwitch);
 
       const dateInput = screen.getByLabelText("Date of Birth *");
-      await user.type(dateInput, "2000-01-15");
+      await user.type(dateInput, "01152000");
 
-      expect(dateInput).toHaveValue("2000-01-15");
+      expect(dateInput).toHaveValue("01/15/2000");
     });
 
     it("handles priority selection", async () => {
@@ -693,7 +693,7 @@ describe("PatientWalkInForm", () => {
 
       // Fill birth date to enable form submission
       const birthDateInput = screen.getByLabelText("Date of Birth *");
-      await user.type(birthDateInput, "2000-01-15");
+      await user.type(birthDateInput, "01152000");
 
       expect(submitButton).toBeEnabled();
     });
@@ -738,8 +738,8 @@ describe("PatientWalkInForm", () => {
       expect(phoneInput).toHaveValue("(555) 123-4567"); // Should be formatted
 
       const birthDateInput = screen.getByLabelText("Date of Birth *");
-      await user.type(birthDateInput, "2000-01-15");
-      expect(birthDateInput).toHaveValue("2000-01-15");
+      await user.type(birthDateInput, "01152000");
+      expect(birthDateInput).toHaveValue("01/15/2000");
 
       // Submit button should be enabled when form is valid
       const submitButton = screen.getByRole("button", {
@@ -774,7 +774,7 @@ describe("PatientWalkInForm", () => {
       await user.type(phoneInput, "5551234567");
 
       const birthDateInput = screen.getByLabelText("Date of Birth *");
-      await user.type(birthDateInput, "2000-01-15");
+      await user.type(birthDateInput, "01152000");
 
       const submitButton = screen.getByRole("button", {
         name: /check.in|register|save/i,
@@ -813,7 +813,7 @@ describe("PatientWalkInForm", () => {
       await user.type(phoneInput, "5551234567");
 
       const birthDateInput = screen.getByLabelText("Date of Birth *");
-      await user.type(birthDateInput, "2000-01-15");
+      await user.type(birthDateInput, "01152000");
 
       const submitButton = screen.getByRole("button", {
         name: /check.in|register|save/i,

@@ -1,7 +1,42 @@
 // Common form utility functions
 
+import { isValidDateString } from "@/utils/timezoneDate";
+
 /** User-facing hint for the expected phone display format */
 export const PHONE_FORMAT_MESSAGE = "Phone must be in the format (XXX) XXX-XXXX";
+
+/**
+ * Masks birth-date text entry as MM/DD/YYYY (digits only, max 8).
+ */
+export function formatBirthDateMask(raw: string): string {
+  const digits = raw.replace(/\D/g, "").slice(0, 8);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 4) {
+    return `${digits.slice(0, 2)}/${digits.slice(2)}`;
+  }
+  return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+}
+
+/**
+ * Converts ISO YYYY-MM-DD to MM/DD/YYYY display, or "" if invalid/empty.
+ */
+export function birthDateIsoToDisplay(iso: string | null | undefined): string {
+  if (!iso || !isValidDateString(iso)) return "";
+  const [year, month, day] = iso.split("-");
+  return `${month}/${day}/${year}`;
+}
+
+/**
+ * Converts complete MM/DD/YYYY display to ISO YYYY-MM-DD, or null if incomplete/invalid.
+ * Does not enforce "not in the future" — that stays in form validation.
+ */
+export function birthDateDisplayToIso(display: string): string | null {
+  const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(display.trim());
+  if (!match) return null;
+  const [, month, day, year] = match;
+  const iso = `${year}-${month}-${day}`;
+  return isValidDateString(iso) ? iso : null;
+}
 
 /**
  * Formats phone number for US standards

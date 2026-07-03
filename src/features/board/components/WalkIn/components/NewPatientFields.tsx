@@ -1,9 +1,9 @@
 import React from "react";
 import { Priority } from "@/types/types";
 import { formatPhoneNumber } from "@/utils/formUtils";
-import { formatDateForInput, getTodayClinic } from "@/utils/timezoneDate";
+import { formatDateForInput } from "@/utils/timezoneDate";
 import { useSelectablePrioritiesForForm } from "@/features/board/hooks/useSelectablePrioritiesForForm";
-import { Field, Input, Select } from "@/components/ui";
+import { Field, FormDateInput, Input, Select } from "@/components/ui";
 
 interface NewPatientFieldsProps {
   phone: string;
@@ -36,10 +36,6 @@ export const NewPatientFields: React.FC<NewPatientFieldsProps> = ({
     onPhoneChange(formatted);
   };
 
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onBirthDateChange(e.target.value);
-  };
-
   return (
     <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
       <h3 className="text-sm font-medium text-blue-800 mb-3">
@@ -60,16 +56,13 @@ export const NewPatientFields: React.FC<NewPatientFieldsProps> = ({
         </Field>
 
         <Field label="Date of Birth *" htmlFor="birthDate">
-          <Input
+          <FormDateInput
             id="birthDate"
             name="birthDate"
-            type="date"
-            lang="en-US"
             value={formatDateForInput(birthDate)}
-            onChange={handleDateChange}
+            onValueChange={onBirthDateChange}
             disabled={isSubmitting}
             required
-            max={getTodayClinic()}
           />
         </Field>
 

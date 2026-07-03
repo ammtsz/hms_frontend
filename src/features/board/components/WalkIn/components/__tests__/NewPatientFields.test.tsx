@@ -84,9 +84,9 @@ describe("NewPatientFields", () => {
     render(<NewPatientFields {...mockProps} />);
 
     const dateInput = screen.getByLabelText("Date of Birth *");
-    fireEvent.change(dateInput, { target: { value: "2000-01-01" } });
+    fireEvent.change(dateInput, { target: { value: "01/01/2000" } });
 
-    expect(mockProps.onBirthDateChange).toHaveBeenCalled();
+    expect(mockProps.onBirthDateChange).toHaveBeenCalledWith("2000-01-01");
   });
 
   it("should call onPriorityChange when priority changes", () => {

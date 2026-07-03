@@ -15,6 +15,7 @@ import {
   CardBody,
   CardHeader,
   Field,
+  FormDateInput,
   Input,
   Select,
   Textarea,
@@ -174,16 +175,22 @@ const PatientFormFields: React.FC<PatientFormFieldsProps> = React.memo(
             htmlFor="birthDate"
             error={validationErrors.birthDate}
           >
-            <Input
+            <FormDateInput
               id="birthDate"
               name="birthDate"
-              type="date"
               invalid={Boolean(validationErrors.birthDate)}
               value={formatDateForInput(patient.birthDate)}
-              onChange={handleChange}
+              onValueChange={(isoValue) => {
+                const syntheticEvent = {
+                  target: {
+                    name: "birthDate",
+                    value: isoValue,
+                    type: "date",
+                  },
+                } as React.ChangeEvent<HTMLInputElement>;
+                handleChange(syntheticEvent);
+              }}
               required
-              lang="en-US"
-              max={getTodayDate()}
             />
           </Field>
           <Field label="Priority" htmlFor="priority">
