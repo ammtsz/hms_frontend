@@ -20,7 +20,7 @@ export default function TabNav() {
 
   return (
     <nav className="sticky top-0 z-20 w-full shrink-0 bg-[color:var(--surface)] px-2 py-2 sm:py-3">
-      <div className="relative flex w-full snap-x snap-mandatory overflow-x-auto bg-gray-50">
+      <div className="relative flex w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden bg-gray-50">
         <div className="absolute bottom-0 left-0 right-0 z-0 h-px bg-[#e2e8f0]" />
         {tabs.map((tab) => {
           const isActive = pathname.startsWith(tab.href);
