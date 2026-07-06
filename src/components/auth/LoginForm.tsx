@@ -6,6 +6,7 @@ import { useSetCurrentUser } from "@/api/query/hooks/useAuthQueries";
 import { loginAction } from "@/app/actions/auth.actions";
 import type { LoginFormData } from "@/types/auth";
 import { getSafeRedirectPath } from "@/utils/authRedirect";
+import { APP_DEMO_LABEL, APP_TAGLINE, APP_TITLE } from "@/config/appBranding";
 import { LOGIN_FORM_LABELS } from "@/utils/authFormLabels";
 import { Button, Field, Input } from "@/components/ui";
 
@@ -69,13 +70,15 @@ export function LoginForm() {
   };
 
   return (
-    <div className="mx-4 w-full max-w-sm">
+    <div className="mx-4 w-full max-w-md">
       <div className="space-y-6 rounded-xl border border-gray-200 bg-white px-4 py-8 shadow-md sm:px-8 sm:py-10 md:px-10">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl text-gray-700">
-            {LOGIN_FORM_LABELS.clinicHeading}
-          </h1>
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl text-gray-700">{APP_TITLE}</h1>
+          <p className="mt-2 text-sm text-gray-500">{APP_TAGLINE}</p>
+          {APP_DEMO_LABEL ? (
+            <p className="mt-2 text-xs text-gray-400">{APP_DEMO_LABEL}</p>
+          ) : null}
         </div>
 
         {/* Login Form */}

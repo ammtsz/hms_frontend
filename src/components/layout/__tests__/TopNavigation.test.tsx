@@ -1,6 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { TopNavigation } from "../TopNavigation";
+import { APP_TAGLINE, APP_TITLE } from "@/config/appBranding";
 import { useClinicTimezone } from "@/contexts/ClinicTimezoneContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useLogout } from "@/api/query/hooks/useAuthQueries";
@@ -103,18 +104,16 @@ describe("TopNavigation", () => {
 
       expect(
         screen.getByRole("heading", {
-          name: "Healthcare Management System",
+          name: APP_TITLE,
         }),
       ).toBeInTheDocument();
 
-      const subtitle = screen.getByText(
-        "Appointment and physiotherapy treatment management system",
-      );
+      const subtitle = screen.getByText(APP_TAGLINE);
       expect(subtitle).toBeInTheDocument();
 
       expect(
         screen.getByRole("img", {
-          name: "Healthcare Management System",
+          name: APP_TITLE,
         }),
       ).toBeInTheDocument();
     });
@@ -207,7 +206,7 @@ describe("TopNavigation", () => {
       expect(screen.getByRole("navigation")).toBeInTheDocument();
 
       const heading = screen.getByRole("heading", { level: 1 });
-      expect(heading).toHaveTextContent("Healthcare Management System");
+      expect(heading).toHaveTextContent(APP_TITLE);
     });
   });
 
@@ -228,7 +227,7 @@ describe("TopNavigation", () => {
       render(<TopNavigation />);
 
       const logo = screen.getByRole("img", {
-        name: "Healthcare Management System",
+        name: APP_TITLE,
       });
       expect(logo).toBeInTheDocument();
     });
@@ -237,7 +236,7 @@ describe("TopNavigation", () => {
       render(<TopNavigation />);
 
       const title = screen.getByRole("heading", {
-        name: "Healthcare Management System",
+        name: APP_TITLE,
       });
       expect(title).toHaveClass(
         "truncate",
@@ -246,9 +245,7 @@ describe("TopNavigation", () => {
         "sm:text-xl",
       );
 
-      const subtitle = screen.getByText(
-        "Appointment and physiotherapy treatment management system",
-      );
+      const subtitle = screen.getByText(APP_TAGLINE);
       expect(subtitle).toHaveClass(
         "hidden",
         "text-xs",
@@ -261,7 +258,7 @@ describe("TopNavigation", () => {
       render(<TopNavigation />);
 
       const brandingContainer = screen.getByRole("heading", {
-        name: "Healthcare Management System",
+        name: APP_TITLE,
       }).parentElement?.parentElement;
       expect(brandingContainer).toHaveClass("space-x-3");
     });
@@ -277,7 +274,7 @@ describe("TopNavigation", () => {
 
       expect(
         screen.getByRole("heading", {
-          name: "Healthcare Management System",
+          name: APP_TITLE,
         }),
       ).toBeInTheDocument();
     });

@@ -6,6 +6,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { LoginForm } from "../LoginForm";
+import { APP_TAGLINE, APP_TITLE } from "@/config/appBranding";
 import { LOGIN_FORM_LABELS } from "@/utils/authFormLabels";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
@@ -43,9 +44,10 @@ describe("LoginForm", () => {
     expect(
       screen.getByRole("heading", {
         level: 1,
-        name: LOGIN_FORM_LABELS.clinicHeading,
+        name: APP_TITLE,
       }),
     ).toBeInTheDocument();
+    expect(screen.getByText(APP_TAGLINE)).toBeInTheDocument();
   });
 
   it("shows validation error when submitting empty form", async () => {

@@ -1,5 +1,7 @@
+import { APP_TITLE } from "@/config/appBranding";
+
 export const LOGIN_FORM_LABELS = {
-  clinicHeading: "Healthcare Management System",
+  clinicHeading: APP_TITLE,
   emailLabel: "Email",
   passwordLabel: "Password",
   emailPlaceholder: "you@example.com",

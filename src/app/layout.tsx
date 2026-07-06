@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { APP_TAGLINE, APP_TITLE } from "@/config/appBranding";
 import "./globals.css";
 import TabNav from "@/components/common/TabNav";
 import { TopNavigation } from "@/components/layout/TopNavigation";
@@ -16,8 +17,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Healthcare Management System",
-  description: "Appointment and physiotherapy treatment management system",
+  title: APP_TITLE,
+  description: APP_TAGLINE,
 };
 
 export default function RootLayout({

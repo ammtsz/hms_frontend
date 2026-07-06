@@ -9,6 +9,7 @@ import { useClinicTimezone } from "@/contexts/ClinicTimezoneContext";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useLogout } from "@/api/query/hooks/useAuthQueries";
 import { Button } from "@/components/ui";
+import { APP_TAGLINE, APP_TITLE } from "@/config/appBranding";
 import {
   getTimezoneCityName,
   getTimezoneOffsetString,
@@ -80,7 +81,7 @@ export function TopNavigation() {
           <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-lg">
             <Image
               src={appIcon}
-              alt="Healthcare Management System"
+              alt={APP_TITLE}
               width={40}
               height={40}
               className="h-full w-full object-cover"
@@ -89,10 +90,10 @@ export function TopNavigation() {
           </div>
           <div className="min-w-0">
             <h1 className="truncate text-base text-gray-900 sm:text-xl">
-              Healthcare Management System
+              {APP_TITLE}
             </h1>
             <p className="hidden text-xs text-gray-500 sm:block">
-              Appointment and physiotherapy treatment management system
+              {APP_TAGLINE}
             </p>
           </div>
         </div>
