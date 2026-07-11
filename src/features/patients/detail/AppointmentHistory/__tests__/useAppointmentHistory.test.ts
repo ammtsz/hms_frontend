@@ -411,32 +411,34 @@ describe("useAppointmentHistory", () => {
   it("should handle refresh with animation timing", async () => {
     jest.useFakeTimers();
 
-    const { result } = renderHook(() =>
-      useAppointmentHistory({
-        patient: mockPatient,
-        statusFilter: "all",
-      }),
-    );
+    try {
+      const { result } = renderHook(() =>
+        useAppointmentHistory({
+          patient: mockPatient,
+          statusFilter: "all",
+        }),
+      );
 
-    expect(result.current.isRefreshing).toBe(false);
-
-    // Call handleRefresh
-    await waitFor(() => {
-      result.current.handleRefresh();
-    });
-
-    expect(mockRefetch).toHaveBeenCalledTimes(2); // appointments + treatments
-
-    // After 200ms, isRefreshing should be reset to false
-    await waitFor(() => {
-      jest.advanceTimersByTime(200);
-    });
-
-    await waitFor(() => {
       expect(result.current.isRefreshing).toBe(false);
-    });
 
-    jest.useRealTimers();
+      // Call handleRefresh
+      await waitFor(() => {
+        result.current.handleRefresh();
+      });
+
+      expect(mockRefetch).toHaveBeenCalledTimes(2); // appointments + treatments
+
+      // After 200ms, isRefreshing should be reset to false
+      await waitFor(() => {
+        jest.advanceTimersByTime(200);
+      });
+
+      await waitFor(() => {
+        expect(result.current.isRefreshing).toBe(false);
+      });
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("should return treatments and consultations", () => {

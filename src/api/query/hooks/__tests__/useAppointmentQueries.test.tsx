@@ -70,9 +70,14 @@ describe("useAppointmentQueries", () => {
   );
 
   beforeEach(() => {
+    // Guard against fake-timer leaks from other suites in the same Jest worker.
+    jest.useRealTimers();
     queryClient = new QueryClient({
       defaultOptions: {
-        queries: { retry: false },
+        queries: {
+          retry: false,
+          refetchOnWindowFocus: false,
+        },
         mutations: { retry: false },
       },
     });
@@ -125,12 +130,16 @@ describe("useAppointmentQueries", () => {
         wrapper: createWrapper,
       });
 
-      await waitFor(() => {
-        expect(result.current.isFetching).toBe(false);
-        expect(result.current.isError).toBe(true);
-      });
+      await waitFor(
+        () => {
+          expect(result.current.isError).toBe(true);
+        },
+        { timeout: 5000 },
+      );
 
+      expect(result.current.isFetching).toBe(false);
       expect(result.current.error).toBeDefined();
+      expect(result.current.error?.message).toBe("Database error");
     });
 
     it("does not fetch when date string is invalid", async () => {

@@ -74,13 +74,16 @@ describe("AppointmentsBoardHeader", () => {
   describe("Date Input Interaction", () => {
     it("does not call onDateChange for draft-only input changes", () => {
       jest.useFakeTimers();
-      render(<AppointmentsBoardHeader {...defaultProps} />);
+      try {
+        render(<AppointmentsBoardHeader {...defaultProps} />);
 
-      const dateInput = screen.getByDisplayValue("2025-01-15");
-      fireEvent.change(dateInput, { target: { value: "2025-01-20" } });
+        const dateInput = screen.getByDisplayValue("2025-01-15");
+        fireEvent.change(dateInput, { target: { value: "2025-01-20" } });
 
-      expect(mockOnDateChange).not.toHaveBeenCalled();
-      jest.useRealTimers();
+        expect(mockOnDateChange).not.toHaveBeenCalled();
+      } finally {
+        jest.useRealTimers();
+      }
     });
 
     it("calls onDateChange when date is committed via blur after typing", () => {
@@ -96,18 +99,21 @@ describe("AppointmentsBoardHeader", () => {
 
     it("calls onDateChange when native picker change is debounced", () => {
       jest.useFakeTimers();
-      render(<AppointmentsBoardHeader {...defaultProps} />);
+      try {
+        render(<AppointmentsBoardHeader {...defaultProps} />);
 
-      const dateInput = screen.getByDisplayValue("2025-01-15");
-      fireEvent.mouseDown(dateInput);
-      fireEvent.change(dateInput, { target: { value: "2025-01-20" } });
+        const dateInput = screen.getByDisplayValue("2025-01-15");
+        fireEvent.mouseDown(dateInput);
+        fireEvent.change(dateInput, { target: { value: "2025-01-20" } });
 
-      expect(mockOnDateChange).not.toHaveBeenCalled();
+        expect(mockOnDateChange).not.toHaveBeenCalled();
 
-      jest.advanceTimersByTime(350);
+        jest.advanceTimersByTime(350);
 
-      expect(mockOnDateChange).toHaveBeenCalledWith("2025-01-20");
-      jest.useRealTimers();
+        expect(mockOnDateChange).toHaveBeenCalledWith("2025-01-20");
+      } finally {
+        jest.useRealTimers();
+      }
     });
 
     it("has correct attributes on date input", () => {

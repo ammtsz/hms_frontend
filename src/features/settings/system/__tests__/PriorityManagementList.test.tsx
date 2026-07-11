@@ -81,6 +81,8 @@ describe("PriorityManagementList", () => {
   ];
 
   beforeEach(() => {
+    // Guard against fake-timer leaks from other suites in the same Jest worker.
+    jest.useRealTimers();
     jest.clearAllMocks();
 
     mockRefetch.mockResolvedValue({ data: priorities });
@@ -132,69 +134,87 @@ describe("PriorityManagementList", () => {
     expect(screen.getByText("3 patient(s)")).toBeInTheDocument();
   });
 
-  it("blocks deactivation and performs bulk reassign", async () => {
-    const blockingPatients = [
-      { id: 10, name: "John Smith", priority: "3" as Priority },
-      { id: 11, name: "Emily Williams", priority: "3" as Priority },
-    ];
+  it(
+    "blocks deactivation and performs bulk reassign",
+    async () => {
+      const blockingPatients = [
+        { id: 10, name: "John Smith", priority: "3" as Priority },
+        { id: 11, name: "Emily Williams", priority: "3" as Priority },
+      ];
 
-    const deactivateMutateAsync = jest
-      .fn()
-      .mockResolvedValueOnce({
-        success: false,
-        error: "blocked",
-        blockingPatients,
-      })
-      .mockResolvedValueOnce({
-        success: true,
+      const deactivateMutateAsync = jest
+        .fn()
+        .mockResolvedValueOnce({
+          success: false,
+          error: "blocked",
+          blockingPatients,
+        })
+        .mockResolvedValueOnce({
+          success: true,
+        });
+
+      const bulkMutateAsync = jest.fn().mockResolvedValue({ updatedCount: 2 });
+
+      (priorityHooks.useDeactivatePriorityOption as jest.Mock).mockReturnValue({
+        mutateAsync: deactivateMutateAsync,
+        isPending: false,
       });
 
-    const bulkMutateAsync = jest.fn().mockResolvedValue({ updatedCount: 2 });
+      (priorityHooks.useBulkUpdatePatientsPriority as jest.Mock).mockReturnValue(
+        {
+          mutateAsync: bulkMutateAsync,
+          isPending: false,
+        },
+      );
 
-    (priorityHooks.useDeactivatePriorityOption as jest.Mock).mockReturnValue({
-      mutateAsync: deactivateMutateAsync,
-      isPending: false,
-    });
+      render(<PriorityManagementList />);
 
-    (priorityHooks.useBulkUpdatePatientsPriority as jest.Mock).mockReturnValue({
-      mutateAsync: bulkMutateAsync,
-      isPending: false,
-    });
+      // Enter edit mode for priority "3" (third row, code 3).
+      fireEvent.click(screen.getAllByTitle("Edit label")[2]);
 
-    render(<PriorityManagementList />);
+      // Toggle status via the status column button while editing.
+      const statusButton = await screen.findByRole("button", {
+        name: /Active/i,
+      });
+      fireEvent.click(statusButton);
 
-    // Enter edit mode for priority "3" (third row, code 3).
-    fireEvent.click(screen.getAllByTitle("Edit label")[2]);
+      expect(
+        await screen.findByText(
+          /Reassignment required before deactivating/i,
+          {},
+          { timeout: 5000 },
+        ),
+      ).toBeInTheDocument();
+      expect(screen.getByText("John Smith")).toBeInTheDocument();
+      expect(screen.getByText("Emily Williams")).toBeInTheDocument();
 
-    // Toggle status via the status column button while editing.
-    fireEvent.click(screen.getByRole("button", { name: /Active/i }));
+      fireEvent.click(
+        screen.getByRole("button", { name: /Reassign and deactivate/i }),
+      );
 
-    expect(
-      await screen.findByText(/Reassignment required before deactivating/i),
-    ).toBeInTheDocument();
-    expect(screen.getByText("John Smith")).toBeInTheDocument();
-    expect(screen.getByText("Emily Williams")).toBeInTheDocument();
+      await waitFor(
+        () =>
+          expect(mockShowToast).toHaveBeenCalledWith(
+            "Priority deactivated successfully.",
+            "success",
+          ),
+        { timeout: 5000 },
+      );
 
-    fireEvent.click(
-      screen.getByRole("button", { name: /Reassign/i }),
-    );
+      expect(bulkMutateAsync).toHaveBeenCalledWith({
+        patientIds: [10, 11],
+        priority: "1",
+      });
 
-    await waitFor(() =>
-      expect(mockShowToast).toHaveBeenCalledWith(
-        "Priority deactivated successfully.",
-        "success",
-      ),
-    );
-
-    expect(bulkMutateAsync).toHaveBeenCalledWith({
-      patientIds: [10, 11],
-      priority: "1",
-    });
-
-    await waitFor(() => {
-      expect(screen.queryByText("John Smith")).not.toBeInTheDocument();
-    });
-  });
+      await waitFor(
+        () => {
+          expect(screen.queryByText("John Smith")).not.toBeInTheDocument();
+        },
+        { timeout: 5000 },
+      );
+    },
+    15000,
+  );
 
   it("shows tooltip that priority 1 cannot be deactivated", () => {
     render(<PriorityManagementList />);

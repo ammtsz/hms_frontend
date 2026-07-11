@@ -58,13 +58,16 @@ describe("ScheduleCalendarFilters", () => {
 
   it("does not call setSelectedDate for draft-only date input changes", () => {
     jest.useFakeTimers();
-    render(<ScheduleCalendarFilters {...defaultProps} />);
+    try {
+      render(<ScheduleCalendarFilters {...defaultProps} />);
 
-    const dateInput = screen.getByLabelText("Select a date to filter");
-    fireEvent.change(dateInput, { target: { value: "2026-03-25" } });
+      const dateInput = screen.getByLabelText("Select a date to filter");
+      fireEvent.change(dateInput, { target: { value: "2026-03-25" } });
 
-    expect(defaultProps.setSelectedDate).not.toHaveBeenCalled();
-    jest.useRealTimers();
+      expect(defaultProps.setSelectedDate).not.toHaveBeenCalled();
+    } finally {
+      jest.useRealTimers();
+    }
   });
 
   it("calls setSelectedDate when date is committed via blur after typing", () => {
