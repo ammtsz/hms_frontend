@@ -19,9 +19,9 @@ describe("appBranding", () => {
       "../appBranding"
     );
 
-    expect(APP_TITLE).toBe("Treatment & Scheduling Platform");
+    expect(APP_TITLE).toBe("Clinic Operations Platform");
     expect(APP_TAGLINE).toBe(
-      "Appointments, treatments, and daily operations",
+      "Manage appointments, treatments, and daily clinic operations",
     );
     expect(APP_DEMO_LABEL).toBe("");
   });

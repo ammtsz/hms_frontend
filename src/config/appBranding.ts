@@ -1,10 +1,10 @@
 /**
  * App branding from deployment env. Override per environment (portfolio vs production).
  */
-export const DEFAULT_APP_TITLE = "Treatment & Scheduling Platform";
+export const DEFAULT_APP_TITLE = "Clinic Operations Platform";
 
 export const DEFAULT_APP_TAGLINE =
-  "Appointments, treatments, and daily operations";
+  "Manage appointments, treatments, and daily clinic operations";
 
 function resolveBrandingFromEnv(
   envValue: string | undefined,
