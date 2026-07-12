@@ -4,6 +4,14 @@ Frontend for a healthcare management system originally built for a community hea
 
 **Status:** ✅ Deployed and operational | 🔄 Active development
 
+## Privacy & public demo
+
+This repository is a **sanitized portfolio demo**, not the live clinic system.
+
+- **No production data is public.** The demo uses fictional/sample data only. Real patient and clinic records are never included in this repo, the demo deployment, or public documentation.
+- **Confidential repositories and environment details stay private.** The production codebase, private deployment configuration, and real environment/setup details are not shared with employers or third parties.
+- **Production credentials are never shared.** Only the published demo staff login below is available for review. Admin and production secrets, tokens, and passwords are never published.
+
 ## Overview
 
 This app is a Next.js frontend with:
@@ -96,3 +104,16 @@ Open http://localhost:3000 after the backend is available.
 
 - The app uses same-origin `/api` traffic in the browser; the backend must be running for most features.
 - The architecture and authentication docs are the source of truth for implementation details.
+
+## Public demo login
+
+For the portfolio demo deployment (sanitized data, staff role only):
+
+| Field | Value |
+| --- | --- |
+| Email | `staff@demo.com` |
+| Password | `staffdemopassword` |
+
+- This account is marked `isDemo`: password change is disabled (UI + API), and login lockout is skipped so visitors cannot lock everyone out.
+- Do not enter real patient or personal data; the demo database is reset periodically.
+- Admin and production credentials are not published (see [Privacy & public demo](#privacy--public-demo)).

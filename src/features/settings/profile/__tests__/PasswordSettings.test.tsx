@@ -4,8 +4,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import PasswordSettings from "../PasswordSettings";
 import { changeOwnPassword } from "@/api/users";
 import { PASSWORD_CHANGE_ERROR_MESSAGES } from "@/utils/passwordChangeErrorMessages";
+import { useAuth } from "@/contexts/AuthContext";
+import { UserRole } from "@/types/auth";
 
 jest.mock("@/api/users");
+jest.mock("@/contexts/AuthContext", () => ({
+  useAuth: jest.fn(),
+}));
+
+const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -22,9 +29,30 @@ const mockChangeOwnPassword = changeOwnPassword as jest.MockedFunction<
   typeof changeOwnPassword
 >;
 
+function mockAuthUser(overrides: { isDemo?: boolean } = {}) {
+  mockUseAuth.mockReturnValue({
+    user: {
+      id: 1,
+      email: "user@example.com",
+      name: "Test User",
+      role: UserRole.STAFF,
+      isActive: true,
+      mustChangePassword: false,
+      isDemo: false,
+      lastLogin: null,
+      createdAt: new Date(),
+      ...overrides,
+    },
+    isAuthenticated: true,
+    isLoading: false,
+    refreshUser: jest.fn(),
+  });
+}
+
 describe("PasswordSettings", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockAuthUser();
   });
 
   it("renders password change form", () => {
@@ -36,6 +64,42 @@ describe("PasswordSettings", () => {
     expect(
       screen.getByRole("button", { name: /change password/i }),
     ).toBeInTheDocument();
+  });
+
+  it("disables password change for demo accounts and explains why", () => {
+    mockAuthUser({ isDemo: true });
+
+    render(<PasswordSettings />, { wrapper: createWrapper() });
+
+    expect(
+      screen.getByText(/public demo account/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText(/enter your current password/i),
+    ).toBeDisabled();
+    expect(
+      screen.getByPlaceholderText(/minimum 12 characters/i),
+    ).toBeDisabled();
+    expect(
+      screen.getByPlaceholderText(/re-enter the password/i),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: /change password/i }),
+    ).toBeDisabled();
+  });
+
+  it("does not submit when demo account form is submitted", async () => {
+    mockAuthUser({ isDemo: true });
+
+    render(<PasswordSettings />, { wrapper: createWrapper() });
+
+    fireEvent.submit(
+      screen.getByRole("button", { name: /change password/i }).closest("form")!,
+    );
+
+    await waitFor(() => {
+      expect(mockChangeOwnPassword).not.toHaveBeenCalled();
+    });
   });
 
   it("toggles visibility for new password only", () => {

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useChangeOwnPassword } from "@/api/query/hooks/useUserQueries";
+import { useAuth } from "@/contexts/AuthContext";
 import { Eye, EyeOff, Lock } from "lucide-react";
 import {
   normalizePasswordChangeErrorMessage,
@@ -9,7 +10,12 @@ import {
 } from "@/utils/passwordChangeErrorMessages";
 import { Button, Field, IconButton, Input } from "@/components/ui";
 
+const DEMO_PASSWORD_LOCKED_MESSAGE =
+  "This is the public demo account. The password is fixed so visitors can always log in with the published credentials.";
+
 export default function PasswordSettings() {
+  const { user } = useAuth();
+  const isDemoAccount = Boolean(user?.isDemo);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -58,6 +64,10 @@ export default function PasswordSettings() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isDemoAccount) {
+      return;
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -99,6 +109,15 @@ export default function PasswordSettings() {
 
   return (
     <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      {isDemoAccount && (
+        <div
+          className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-sm"
+          role="status"
+        >
+          {DEMO_PASSWORD_LOCKED_MESSAGE}
+        </div>
+      )}
+
       {errors.submit && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {errors.submit}
@@ -125,6 +144,7 @@ export default function PasswordSettings() {
           invalid={Boolean(errors.currentPassword)}
           placeholder="Enter your current password"
           autoComplete="current-password"
+          disabled={isDemoAccount}
         />
       </Field>
 
@@ -144,6 +164,7 @@ export default function PasswordSettings() {
             invalid={Boolean(errors.newPassword)}
             placeholder="Minimum 12 characters"
             autoComplete="new-password"
+            disabled={isDemoAccount}
           />
           <IconButton
             onClick={() =>
@@ -156,6 +177,7 @@ export default function PasswordSettings() {
             aria-label={
               showPasswords.new ? "Hide new password" : "Show new password"
             }
+            disabled={isDemoAccount}
           >
             {showPasswords.new ? (
               <EyeOff className="h-5 w-5" />
@@ -195,6 +217,7 @@ export default function PasswordSettings() {
             invalid={Boolean(errors.confirmPassword)}
             placeholder="Re-enter the password"
             autoComplete="new-password"
+            disabled={isDemoAccount}
           />
           <IconButton
             onClick={() =>
@@ -209,6 +232,7 @@ export default function PasswordSettings() {
                 : "Show password confirmation"
             }
             className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            disabled={isDemoAccount}
           >
             {showPasswords.confirm ? (
               <EyeOff className="h-5 w-5" />
@@ -226,6 +250,7 @@ export default function PasswordSettings() {
           isLoading={isLoading}
           loadingText="Changing..."
           className="bg-blue-600 hover:bg-blue-700"
+          disabled={isDemoAccount}
         >
           <Lock className="h-4 w-4" />
           Change Password

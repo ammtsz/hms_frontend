@@ -331,6 +331,39 @@ describe("PersonalDataSettings", () => {
     });
   });
 
+  it("disables display name and save for demo accounts", () => {
+    mockUseAuth.mockReturnValue({
+      user: {
+        id: 1,
+        name: "Demo Staff",
+        email: "staff@demo.com",
+        displayName: "Demo User",
+        role: UserRole.STAFF,
+        createdAt: new Date("2024-01-01"),
+        mustChangePassword: false,
+        isDemo: true,
+        isActive: true,
+        lastLogin: null,
+      },
+      refreshUser: mockRefreshUser,
+      isLoading: false,
+      isAuthenticated: true,
+    });
+
+    render(<PersonalDataSettings />, { wrapper: createWrapper() });
+
+    expect(
+      screen.getByRole("status"),
+    ).toHaveTextContent(/public demo account/i);
+    expect(screen.getByDisplayValue("Demo User")).toBeDisabled();
+    expect(
+      screen.getByText(/Display name cannot be changed on the public demo account/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Save Changes/i }),
+    ).toBeDisabled();
+  });
+
   it("displays error message on update failure", async () => {
     mockUseAuth.mockReturnValue({
       user: {

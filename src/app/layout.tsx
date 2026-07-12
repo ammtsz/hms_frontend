@@ -19,6 +19,14 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: APP_TITLE,
   description: APP_TAGLINE,
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
 };
 
 export default function RootLayout({

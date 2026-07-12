@@ -8,6 +8,7 @@ import { Button, Field, Input } from "@/components/ui";
 
 export default function PersonalDataSettings() {
   const { user, refreshUser } = useAuth();
+  const isDemoAccount = Boolean(user?.isDemo);
 
   const [profileData, setProfileData] = useState({
     name: "",
@@ -58,6 +59,10 @@ export default function PersonalDataSettings() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isDemoAccount) {
+      return;
+    }
+
     if (!validateForm()) {
       return;
     }
@@ -91,6 +96,16 @@ export default function PersonalDataSettings() {
 
   return (
     <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      {isDemoAccount && (
+        <div
+          className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-900 text-sm"
+          role="status"
+        >
+          This is the public demo account. Profile fields are fixed so the demo
+          stays consistent for all visitors.
+        </div>
+      )}
+
       {errors.submit && (
         <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
           {errors.submit}
@@ -124,7 +139,7 @@ export default function PersonalDataSettings() {
                 name: e.target.value,
               })
             }
-            disabled={user.role !== "admin"}
+            disabled={user.role !== "admin" || isDemoAccount}
             invalid={Boolean(errors.name)}
             maxLength={100}
           />
@@ -149,7 +164,7 @@ export default function PersonalDataSettings() {
                 email: e.target.value,
               })
             }
-            disabled={user.role !== "admin"}
+            disabled={user.role !== "admin" || isDemoAccount}
             invalid={Boolean(errors.email)}
           />
         </Field>
@@ -159,7 +174,11 @@ export default function PersonalDataSettings() {
       <Field
         label="Display Name"
         error={errors.displayName}
-        helpText="This name will be shown in the system instead of your full name"
+        helpText={
+          isDemoAccount
+            ? "Display name cannot be changed on the public demo account"
+            : "This name will be shown in the system instead of your full name"
+        }
       >
         <Input
           type="text"
@@ -173,6 +192,7 @@ export default function PersonalDataSettings() {
           invalid={Boolean(errors.displayName)}
           placeholder="How you want to be addressed (optional)"
           maxLength={50}
+          disabled={isDemoAccount}
         />
       </Field>
 
@@ -198,6 +218,7 @@ export default function PersonalDataSettings() {
           isLoading={isLoading}
           loadingText="Saving..."
           className="bg-blue-600 hover:bg-blue-700"
+          disabled={isDemoAccount}
         >
           <Save className="h-4 w-4" />
           Save Changes

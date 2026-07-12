@@ -4,10 +4,10 @@
  */
 
 export enum UserRole {
-  STAFF = 'staff',
-  ADMIN = 'admin',
-  DOCTOR = 'doctor',
-  THERAPIST = 'therapist',
+  STAFF = "staff",
+  ADMIN = "admin",
+  DOCTOR = "doctor",
+  THERAPIST = "therapist",
 }
 
 export interface User {
@@ -18,6 +18,7 @@ export interface User {
   role: UserRole;
   isActive: boolean;
   mustChangePassword: boolean;
+  isDemo?: boolean;
   lastLogin: Date | null;
   createdAt: Date;
 }
@@ -91,10 +92,10 @@ export interface ChangePasswordRequest {
 
 // Role labels for UI display
 export const ROLE_LABELS: Record<UserRole, string> = {
-  [UserRole.ADMIN]: 'Administrator',
-  [UserRole.STAFF]: 'Staff',
-  [UserRole.DOCTOR]: 'Doctor', // Hidden in UI for now
-  [UserRole.THERAPIST]: 'Therapist', // Hidden in UI for now
+  [UserRole.ADMIN]: "Administrator",
+  [UserRole.STAFF]: "Staff",
+  [UserRole.DOCTOR]: "Doctor", // Hidden in UI for now
+  [UserRole.THERAPIST]: "Therapist", // Hidden in UI for now
 } as const;
 
 // Visible roles in user creation dropdown
