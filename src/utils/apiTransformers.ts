@@ -17,7 +17,8 @@ import {
   AppointmentType,
   AppointmentProgression,
   AppointmentStatusDetail,
-  AppointmentByDate
+  AppointmentByDate,
+  UpcomingAppointmentStatus,
 } from '@/types/types';
 import { ProcessEndOfDayResponse } from '@/api/day-finalization';
 
@@ -136,7 +137,7 @@ export const transformAppointmentToPrevious = (apiAppointment: AppointmentRespon
     type: transformAppointmentType(apiAppointment.type),
     notes: apiAppointment.notes || '',
     recommendations: null, // TODO: We need to implement recommendations mapping when backend provides this data
-    status: apiAppointment.status as 'completed' | 'missed' | 'cancelled',
+    status: apiAppointment.status,
     absenceNotes: apiAppointment.absenceNotes,
     absenceJustified: apiAppointment.absenceJustified,
     createdDate: apiAppointment.createdAt.split("T")[0],
@@ -153,7 +154,7 @@ export const transformAppointmentToNext = (apiAppointment: AppointmentResponseDt
   date: string;
   type: AppointmentType;
   parentAppointmentId?: number;
-  status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+  status?: UpcomingAppointmentStatus;
   absenceNotes?: string;
   notes?: string; // Appointment notes for assessment consultations
   createdDate: string;
@@ -165,7 +166,7 @@ export const transformAppointmentToNext = (apiAppointment: AppointmentResponseDt
     date: toCalendarDateString(apiAppointment.scheduledDate), // YYYY-MM-DD
     type: transformAppointmentType(apiAppointment.type),
     parentAppointmentId: apiAppointment.parentAppointmentId,
-    status: apiAppointment.status as 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled',
+    status: apiAppointment.status as UpcomingAppointmentStatus,
     absenceNotes: apiAppointment.absenceNotes,
     notes: apiAppointment.notes,
     createdDate: apiAppointment.createdAt.split("T")[0],

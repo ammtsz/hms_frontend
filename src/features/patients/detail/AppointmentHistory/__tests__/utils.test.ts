@@ -40,6 +40,14 @@ describe("AppointmentHistory Utils", () => {
       expect(config.icon).toBeNull();
     });
 
+    it("should return scheduled config for scheduled status", () => {
+      const config = getStatusConfig("scheduled");
+
+      expect(config.label).toBe(APPOINTMENT_HISTORY_STATUS_LABELS.scheduled);
+      expect(config.badgeClass).toContain("bg-gray-200");
+      expect(config.badgeClass).toContain("text-gray-800");
+    });
+
     it("should return completed config for undefined status", () => {
       const config = getStatusConfig(undefined);
 

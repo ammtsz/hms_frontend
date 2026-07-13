@@ -2,8 +2,14 @@ import type {
   TreatmentResponseDto,
   ConsultationResponseDto,
   SessionResponseDto,
+  SessionAppointmentStatus,
 } from "@/api/types";
-import type { PreviousAppointment, AppointmentType } from "@/types/types";
+import type {
+  PreviousAppointment,
+  AppointmentType,
+  AppointmentWorkflowStatus,
+  UpcomingAppointmentStatus,
+} from "@/types/types";
 import { getTodayClinic, toCalendarDateString } from "@/utils/timezoneDate";
 
 // Grouped appointment by date and treatment type
@@ -13,7 +19,7 @@ export interface GroupedAppointment {
   /** All appointment IDs in this group (same date); use for reschedule (send all). */
   appointmentIds: string[];
   notes: string;
-  status?: 'completed' | 'missed' | 'cancelled'; // Appointment status
+  status?: AppointmentWorkflowStatus;
   absenceNotes?: string; // Absence justification
   absenceJustified?: boolean; // Whether absence was justified
   createdDate: string; // YY-MM-DD
@@ -185,7 +191,7 @@ interface TreatmentDataByDate {
     appointmentNotes?: string;
     absenceNotes?: string;
     sessions: SessionResponseDto[];
-    status?: 'completed' | 'missed' | 'cancelled';
+    status?: SessionAppointmentStatus;
   };
   tens?: {
     bodyLocations: Set<string>;
@@ -197,7 +203,7 @@ interface TreatmentDataByDate {
     appointmentNotes?: string; // Notes from the appointment
     absenceNotes?: string; // Absence justification
     sessions: SessionResponseDto[];
-    status?: 'completed' | 'missed' | 'cancelled';
+    status?: SessionAppointmentStatus;
   };
 }
 
@@ -212,61 +218,80 @@ const groupTreatmentsByDateForHistory = (
   const clinicToday = getTodayClinic();
 
   treatments.forEach((treatment) => {
-    const treatmentStatus = treatment.status as 'completed' | 'missed' | 'cancelled';
-
     treatment.sessions?.forEach((sessionRow) => {
       const sessionRowStatus = sessionRow.status;
       const sessionDate = toCalendarDateString(sessionRow.scheduledDate);
+      const isResolvedSession =
+        sessionRowStatus === "completed" ||
+        sessionRowStatus === "missed" ||
+        sessionRowStatus === "cancelled";
+      // Session rows only use scheduled|completed|missed|cancelled (not appointment
+      // progression statuses like checked_in / in_progress).
+      const isOpenSession = sessionRowStatus === "scheduled";
 
-      if (sessionDate <= clinicToday) {
-        const dateKey = dateStatusKey(sessionDate, sessionRowStatus);
+      // History: resolved sessions on/before today, plus past open sessions
+      // (unresolved-past). Today's open sessions belong in Upcoming.
+      const includeInHistory =
+        (isResolvedSession && sessionDate <= clinicToday) ||
+        (isOpenSession && sessionDate < clinicToday);
 
-        if (!treatmentDataByDate.has(dateKey)) {
-          treatmentDataByDate.set(dateKey, {});
-        }
+      if (!includeInHistory) {
+        return;
+      }
 
-        const dateData = treatmentDataByDate.get(dateKey)!;
+      const dateKey = dateStatusKey(sessionDate, sessionRowStatus);
 
-        if (treatment.treatmentType === "physiotherapy") {
-          if (!dateData.physiotherapy) {
-            // Find matching appointment notes
+      if (!treatmentDataByDate.has(dateKey)) {
+        treatmentDataByDate.set(dateKey, {});
+      }
+
+      const dateData = treatmentDataByDate.get(dateKey)!;
+      const sessionStatus = sessionRowStatus;
+
+      if (treatment.treatmentType === "physiotherapy") {
+        if (!dateData.physiotherapy) {
             const matchingAppointment = appointments.find(
-              (a) => a.date === sessionDate && a.type === "physiotherapy"
+              (a) =>
+                toCalendarDateString(a.date) === sessionDate &&
+                a.type === "physiotherapy",
             );
-            dateData.physiotherapy = {
-              bodyLocations: new Set(),
-              sessionNumber: sessionRow.sessionNumber,
-              durationMinutes: treatment.durationMinutes,
-              plannedSessions: treatment.plannedSessions,
-              appointmentId: treatment.appointmentId,
-              notes: treatment.notes || "",
-              appointmentNotes: matchingAppointment?.notes,
-              absenceNotes: matchingAppointment?.absenceNotes,
-              sessions: treatment.sessions || [],
-              status: treatmentStatus,
-            };
-          }
-          dateData.physiotherapy.bodyLocations.add(treatment.bodyLocation);
-        } else if (treatment.treatmentType === "tens") {
-          if (!dateData.tens) {
-            const matchingAppointment = appointments.find(
-              (a) => a.date === sessionDate && a.type === 'tens'
-            );
-            dateData.tens = {
-              bodyLocations: new Set(),
-              sessionNumber: sessionRow.sessionNumber,
-              durationMinutes: treatment.durationMinutes,
-              plannedSessions: treatment.plannedSessions,
-              appointmentId: treatment.appointmentId,
-              notes: treatment.notes || "",
-              appointmentNotes: matchingAppointment?.notes,
-              absenceNotes: matchingAppointment?.absenceNotes,
-              sessions: treatment.sessions || [],
-              status: treatmentStatus,
-            };
-          }
-          dateData.tens.bodyLocations.add(treatment.bodyLocation);
+          dateData.physiotherapy = {
+            bodyLocations: new Set(),
+            sessionNumber: sessionRow.sessionNumber,
+            durationMinutes: treatment.durationMinutes,
+            plannedSessions: treatment.plannedSessions,
+            appointmentId:
+              sessionRow.appointmentId ?? treatment.appointmentId,
+            notes: treatment.notes || "",
+            appointmentNotes: matchingAppointment?.notes,
+            absenceNotes: matchingAppointment?.absenceNotes,
+            sessions: treatment.sessions || [],
+            status: sessionStatus,
+          };
         }
+        dateData.physiotherapy.bodyLocations.add(treatment.bodyLocation);
+      } else if (treatment.treatmentType === "tens") {
+        if (!dateData.tens) {
+            const matchingAppointment = appointments.find(
+              (a) =>
+                toCalendarDateString(a.date) === sessionDate &&
+                a.type === "tens",
+            );
+          dateData.tens = {
+            bodyLocations: new Set(),
+            sessionNumber: sessionRow.sessionNumber,
+            durationMinutes: treatment.durationMinutes,
+            plannedSessions: treatment.plannedSessions,
+            appointmentId:
+              sessionRow.appointmentId ?? treatment.appointmentId,
+            notes: treatment.notes || "",
+            appointmentNotes: matchingAppointment?.notes,
+            absenceNotes: matchingAppointment?.absenceNotes,
+            sessions: treatment.sessions || [],
+            status: sessionStatus,
+          };
+        }
+        dateData.tens.bodyLocations.add(treatment.bodyLocation);
       }
     });
   });
@@ -301,6 +326,10 @@ const mergeTreatmentDataIntoAppointments = (
         appointmentId: appointmentId.toString(),
         appointmentIds: ids.length > 0 ? ids : [appointmentId.toString()],
         notes,
+        status:
+          treatmentData.physiotherapy?.status ||
+          treatmentData.tens?.status ||
+          "completed",
         absenceNotes: treatmentData.physiotherapy?.appointmentNotes || treatmentData.tens?.appointmentNotes,
         createdDate: parseDateFromDateStatusKey(dateKey),
         updatedDate: parseDateFromDateStatusKey(dateKey),
@@ -372,16 +401,19 @@ export const groupHistoryAppointmentsByDate = (
   // Step 5: Merge treatment data into appointments
   mergeTreatmentDataIntoAppointments(appointmentMap, treatmentDataByDate);
 
-  // Step 5: Filter to only include past dates or today's non-scheduled statuses
+  // Step 5: Past dates (any status, including unresolved scheduled) + today only
+  // when resolved. Today's open slots stay under Upcoming Appointments.
   const today = getTodayClinic();
-  const filteredAppointments = Array.from(appointmentMap.values()).filter((appointment) => {
-    if (appointment.date < today) return true; // Past dates
-    if (appointment.date === today) {
-      // Today: only show if completed, missed, cancelled, checked_in, or in_progress
-      return appointment.status && ['completed', 'missed', 'cancelled', 'checked_in', 'in_progress'].includes(appointment.status);
-    }
-    return false; // Future dates excluded
-  });
+  const openStatuses = new Set(["scheduled", "checked_in", "in_progress"]);
+  const filteredAppointments = Array.from(appointmentMap.values()).filter(
+    (appointment) => {
+      if (appointment.date < today) return true;
+      if (appointment.date === today) {
+        return !appointment.status || !openStatuses.has(appointment.status);
+      }
+      return false;
+    },
+  );
 
   // Step 6: Return sorted array (most recent first)
   return filteredAppointments.sort((a, b) => b.date.localeCompare(a.date));
@@ -395,7 +427,7 @@ export interface GroupedScheduledAppointment {
   /** All appointment IDs in this group (same date); use for reschedule (send all). */
   appointmentIds: string[];
   parentAppointmentId?: number; // Links follow-ups to original consultation
-  status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+  status?: UpcomingAppointmentStatus;
   absenceNotes?: string; // Cancellation reason
   createdDate: string; // YYYY-MM-DD
   updatedDate: string; // YYYY-MM-DD
@@ -431,7 +463,7 @@ const createBaseScheduledAppointments = (
     date: string;
     type: AppointmentType;
     parentAppointmentId?: number;
-    status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+    status?: UpcomingAppointmentStatus;
     absenceNotes?: string;
     notes?: string;
     updatedDate: string;
@@ -487,7 +519,7 @@ const addScheduledAssessmentData = (
     date: string;
     type: AppointmentType;
     notes?: string;
-    status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+    status?: UpcomingAppointmentStatus;
   }[]
 ): void => {
   scheduledAppointments.forEach((appointment) => {
@@ -514,7 +546,7 @@ interface ScheduledTreatmentDataByDate {
     plannedSessions: number;
     notes: string;
     appointmentNotes?: string;
-    status?: 'completed' | 'missed' | 'cancelled';
+    status?: SessionAppointmentStatus;
   };
   tens?: {
     bodyLocations: Set<string>;
@@ -523,7 +555,7 @@ interface ScheduledTreatmentDataByDate {
     plannedSessions: number;
     notes: string;
     appointmentNotes?: string; // Notes from the scheduled appointment
-    status?: 'completed' | 'missed' | 'cancelled';
+    status?: SessionAppointmentStatus;
   };
 }
 
@@ -539,9 +571,9 @@ const groupScheduledTreatmentsByDate = (
   const today = new Date(todayStr + "T00:00:00");
 
   treatments.forEach((treatment) => {
-    const treatmentStatus = treatment.status as 'completed' | 'missed' | 'cancelled';
+  const treatmentStatus = treatment.status as SessionAppointmentStatus;
 
-    treatment.sessions?.forEach((sessionRow) => {
+  treatment.sessions?.forEach((sessionRow) => {
         // Use the session row's scheduled date
         const date = toCalendarDateString(sessionRow.scheduledDate);
         const dateKey = dateStatusKey(date, sessionRow.status);
@@ -646,7 +678,7 @@ export const groupScheduledAppointmentsByDate = (
     date: string;
     type: AppointmentType;
     parentAppointmentId?: number;
-    status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled';
+    status?: UpcomingAppointmentStatus;
     absenceNotes?: string;
     notes?: string;
     updatedDate: string;

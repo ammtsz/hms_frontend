@@ -837,6 +837,122 @@ describe('appointmentHistoryUtils', () => {
       expect(result).toEqual([]);
     });
 
+    it('shows past scheduled treatment sessions in history with scheduled status', () => {
+      // getTodayClinic is mocked to 2026-02-20 in this file.
+      const sessions: SessionResponseDto[] = [
+        {
+          id: 1,
+          treatmentId: 12,
+          sessionNumber: 1,
+          scheduledDate: '2026-01-28',
+          status: 'completed',
+          appointmentId: 65,
+        } as SessionResponseDto,
+        {
+          id: 2,
+          treatmentId: 12,
+          sessionNumber: 2,
+          scheduledDate: '2026-02-04',
+          status: 'completed',
+          appointmentId: 66,
+        } as SessionResponseDto,
+        {
+          id: 3,
+          treatmentId: 12,
+          sessionNumber: 3,
+          scheduledDate: '2026-02-11',
+          status: 'completed',
+          appointmentId: 67,
+        } as SessionResponseDto,
+        {
+          id: 4,
+          treatmentId: 12,
+          sessionNumber: 4,
+          scheduledDate: '2026-02-18',
+          status: 'scheduled',
+          appointmentId: 68,
+        } as SessionResponseDto,
+      ];
+
+      const appointments: PreviousAppointment[] = [
+        {
+          appointmentId: '64',
+          date: '2026-01-21',
+          type: 'assessment',
+          notes: '',
+          recommendations: null,
+          status: 'completed',
+          createdDate: '2026-01-21',
+          updatedDate: '2026-01-21',
+        },
+        {
+          appointmentId: '65',
+          date: '2026-01-28',
+          type: 'physiotherapy',
+          notes: '',
+          recommendations: null,
+          status: 'completed',
+          createdDate: '2026-01-28',
+          updatedDate: '2026-01-28',
+        },
+        {
+          appointmentId: '66',
+          date: '2026-02-04',
+          type: 'physiotherapy',
+          notes: '',
+          recommendations: null,
+          status: 'completed',
+          createdDate: '2026-02-04',
+          updatedDate: '2026-02-04',
+        },
+        {
+          appointmentId: '67',
+          date: '2026-02-11',
+          type: 'physiotherapy',
+          notes: '',
+          recommendations: null,
+          status: 'completed',
+          createdDate: '2026-02-11',
+          updatedDate: '2026-02-11',
+        },
+        {
+          appointmentId: '68',
+          date: '2026-02-18',
+          type: 'physiotherapy',
+          notes: 'Rescheduled: 2026-02-18 → 2026-02-18 (+0 days)',
+          recommendations: null,
+          status: 'scheduled',
+          createdDate: '2026-02-18',
+          updatedDate: '2026-02-18',
+        },
+      ];
+
+      const treatments: TreatmentResponseDto[] = [
+        {
+          id: 12,
+          consultationId: 1,
+          appointmentId: 64,
+          patientId: 13,
+          treatmentType: 'physiotherapy',
+          bodyLocation: 'Lumbar',
+          startDate: '2026-01-28',
+          plannedSessions: 4,
+          completedSessions: 3,
+          status: 'scheduled',
+          durationMinutes: 45,
+          sessions,
+        } as TreatmentResponseDto,
+      ];
+
+      const result = groupHistoryAppointmentsByDate(appointments, treatments, []);
+      const unresolved = result.find((entry) => entry.date === '2026-02-18');
+
+      expect(unresolved).toBeDefined();
+      expect(unresolved?.status).toBe('scheduled');
+      expect(unresolved?.treatments.physiotherapy?.sessionNumber).toBe('4/4');
+      expect(result).toHaveLength(5);
+    });
+
     it('should handle treatment plans without completed visits or nested visit rows', () => {
       const treatments: TreatmentResponseDto[] = [
         {

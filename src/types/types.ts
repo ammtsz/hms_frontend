@@ -7,6 +7,8 @@
  * New API types are re-exported for seamless integration.
  */
 
+import { AppointmentStatus as ApiAppointmentStatus } from "@/api/types";
+
 // Re-export new API types
 export {
   PatientPriority,
@@ -29,6 +31,15 @@ export type Priority = "1" | "2" | "3" | "4" | "5";
 export type Status = "N" | "T" | "D" | "C";
 export type AppointmentType = "assessment" | "physiotherapy" | "tens" | "combined"; // combined for calendar view
 export type AppointmentProgression = "scheduled" | "checkedIn" | "onGoing" | "completed";
+
+/** Appointment workflow status string values (API `AppointmentStatus` enum). */
+export type AppointmentWorkflowStatus = `${ApiAppointmentStatus}`;
+
+/** Open/upcoming statuses plus cancelled (scheduled lists / next appointments). */
+export type UpcomingAppointmentStatus = Extract<
+  AppointmentWorkflowStatus,
+  "scheduled" | "checked_in" | "in_progress" | "cancelled"
+>;
 
 // UI section types for the room layout  
 export type UISection = "assessment" | "mixed"; // assessment room and mixed room (physiotherapy + tens)
@@ -112,7 +123,7 @@ export interface Patient extends PatientBasic {
   nextAppointmentDates: {
     date: string, // YYYY-MM-DD string format
     type: AppointmentType,
-    status?: 'scheduled' | 'checked_in' | 'in_progress' | 'cancelled',
+    status?: UpcomingAppointmentStatus,
     absenceNotes?: string, // Cancellation reason
   }[],
   currentRecommendations: {
@@ -131,7 +142,8 @@ export interface PreviousAppointment {
   type: AppointmentType;
   notes: string;
   recommendations: Recommendations | null;
-  status?: 'completed' | 'missed' | 'cancelled'; // Add status for display
+  /** Includes open statuses so past unresolved slots can appear in history. */
+  status?: AppointmentWorkflowStatus;
   absenceNotes?: string; // Absence justification for missed/cancelled
   absenceJustified?: boolean; // Whether absence was justified
   createdDate: string; // YY-MM-DD 

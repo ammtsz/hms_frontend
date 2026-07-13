@@ -3,7 +3,13 @@ import { AlertTriangle, Ban } from "lucide-react";
 import { getAppointmentTypeLabel } from "@/utils/apiTransformers";
 import { APPOINTMENT_HISTORY_STATUS_LABELS } from "@/utils/appointmentStatusLabels";
 
-export type AppointmentStatus = "completed" | "missed" | "cancelled";
+export type AppointmentStatus =
+  | "completed"
+  | "missed"
+  | "cancelled"
+  | "scheduled"
+  | "checked_in"
+  | "in_progress";
 
 export { APPOINTMENT_HISTORY_STATUS_LABELS } from "@/utils/appointmentStatusLabels";
 
@@ -32,6 +38,18 @@ export const getStatusConfig = (status?: string): StatusConfig => {
         badgeClass: "bg-orange-100 text-orange-800 border border-orange-300",
         icon: <Ban size={16} className="inline mr-1" />,
         label: APPOINTMENT_HISTORY_STATUS_LABELS.cancelled,
+      };
+    case "scheduled":
+    case "checked_in":
+    case "in_progress":
+      return {
+        borderColor: "border border-gray-50",
+        badgeClass: "bg-gray-200 text-gray-800 border border-gray-300",
+        icon: null,
+        label:
+          status === "in_progress"
+            ? APPOINTMENT_HISTORY_STATUS_LABELS.inProgress
+            : APPOINTMENT_HISTORY_STATUS_LABELS.scheduled,
       };
     default: // completed
       return {
